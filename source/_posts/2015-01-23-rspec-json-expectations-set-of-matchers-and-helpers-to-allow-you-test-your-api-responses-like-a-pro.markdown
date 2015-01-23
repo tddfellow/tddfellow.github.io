@@ -69,4 +69,4 @@ If you match with nested Arrays you will get numbers in your JSON path within fa
 
 For further reading and instructions: [github](https://github.com/waterlink/rspec-json_expectations) and [cucumber generated documentation](http://www.relishapp.com/waterlink/rspec-json-expectations/docs/json-expectations).
 
-Feedback is highly appreciated, contact me on twitter ([@waterlink000](https://twitter.com/waterlink000)) or on [github issues](https://github.com/waterlink/rspec-json_expectations).
+Feedback is highly appreciated, contact me on twitter ([@waterlink000](https://twitter.com/waterlink000)) or on [github issues](https://github.com/waterlink/rspec-json_expectations/issues).
