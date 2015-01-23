@@ -1,0 +1,50 @@
+// Here you can easily change your sites's color scheme.
+// To give it a try, uncomment some of the lines below rebuild your blog, and see how it works.
+// If you need a handy color picker try http://hslpicker.com
+
+$base: #444;
+$base-bg: #fff;
+
+// kill noise images
+$noise-bg: none;
+$nav-bg-front: none;
+$footer-bg-front: none;
+$page-bg-image: none;
+$img-border: none;
+
+// header
+$header-bg: $base-bg;
+$title-color: $base;
+$subtitle-color: $base;
+
+// navigation
+$nav-bg: $base-bg !default;
+$nav-bg-back: none !default;
+$nav-color: $base;
+$nav-placeholder: $base !default;
+$nav-border: $base !default;
+$nav-border-top: $base-bg !default;
+$nav-border-bottom: $base-bg !default;
+$nav-border-left: $base-bg !default;
+$nav-border-right: $base !default;
+
+// sidebar
+$sidebar-bg: $base-bg !default;
+$sidebar-color: $base !default;
+$sidebar-border: $base-bg !default;
+$sidebar-border-hover: $base-bg !default;
+
+// footer
+$footer-color: $base !default;
+$footer-bg: $base-bg !default;
+$footer-bg-back: none !default;
+$footer-color: $base-bg !default;
+$footer-color-hover: $base-bg !default;
+$footer-border-top: $base-bg !default;
+$footer-border-bottom: $base-bg !default;
+$page-border-bottom: $base-bg !default;
+
+// main
+$main-bg: $base-bg !default;
+$page-bg: $base-bg !default;
+$article-border: $base-bg !default;
