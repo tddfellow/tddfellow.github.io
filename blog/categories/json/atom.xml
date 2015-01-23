@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Json | waterlink blog]]></title>
   <link href="http://waterlink.github.io/blog/categories/json/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2015-01-23T03:54:26+02:00</updated>
+  <updated>2015-01-23T04:03:12+02:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Alexey Fedorov (waterlink)]]></name>
@@ -75,6 +75,8 @@ end
 </code></pre>
 
 <p>For further reading and instructions: <a href="https://github.com/waterlink/rspec-json_expectations">github</a> and <a href="http://www.relishapp.com/waterlink/rspec-json-expectations/docs/json-expectations">cucumber generated documentation</a>.</p>
+
+<p>Feedback is highly appreciated, contact me on twitter (<a href="https://twitter.com/waterlink000">@waterlink000</a>) or on <a href="https://github.com/waterlink/rspec-json_expectations">github issues</a>.</p>
 ]]></content>
   </entry>
   
