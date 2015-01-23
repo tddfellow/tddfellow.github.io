@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[waterlink blog]]></title>
+  <link href="http://waterlink.github.io/atom.xml" rel="self"/>
+  <link href="http://waterlink.github.io/"/>
+  <updated>2015-01-23T02:19:36+02:00</updated>
+  <id>http://waterlink.github.io/</id>
+  <author>
+    <name><![CDATA[Alexey Fedorov (waterlink)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+</feed>

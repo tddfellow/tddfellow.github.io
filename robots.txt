@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+
+Sitemap: http://waterlink.github.io/sitemap.xml 
