@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>waterlink blog</title>
+  <title>Dismantling Effective Go Article - waterlink blog</title>
   <meta name="author" content="Alexey Fedorov (waterlink)">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://waterlink.github.io/">
+  <link rel="canonical" href="http://waterlink.github.io/blog/2015/01/30/dismantling-effective-go-article/">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="waterlink blog" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -54,15 +54,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/01/30/dismantling-effective-go-article/">Dismantling Effective Go Article</a></h1>
+      <h1 class="entry-title">Dismantling Effective Go Article</h1>
     
     
       <p class="meta">
@@ -78,7 +75,7 @@
   </header>
 
 
-  <div class="entry-content"><p>Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome.</p>
+<div class="entry-content"><p>Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome.</p>
 
 <p>Article itself: <a href="https://golang.org/doc/effective_go.html">https://golang.org/doc/effective_go.html</a></p>
 
@@ -273,140 +270,48 @@ codeUsing(f, d)
 
 <p>To be continued&hellip;</p>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Alexey Fedorov (waterlink)</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-01-30T23:39:11+02:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:39 pm</span></time>
+      
+
+
+    </p>
     
-      <h1 class="entry-title"><a href="/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/">RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-01-23T02:56:19+02:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>2:56 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="https://github.com/waterlink/rspec-json_expectations">rspec-json_expectations</a> library provides powerful <code>include_json</code> matcher for your RSpec suites. It allows to match string with JSON or already parsed ruby <code>Hash</code> against other ruby <code>Hash</code>, which is very convenient and creates very readable spec code. Lets jump to some examples.</p>
-
-<p>It can handle some plain json:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has basic info about user&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
-</span><span class='line'>    <span class="nb">id</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">email</span><span class="p">:</span> <span class="s2">&quot;john.smith@example.com&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And nested json:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has gamification info for user&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
-</span><span class='line'>    <span class="ss">code</span><span class="p">:</span> <span class="s2">&quot;7wxMw32&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">gamification</span><span class="p">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="ss">rating</span><span class="p">:</span> <span class="mi">93</span><span class="p">,</span>
-</span><span class='line'>      <span class="ss">score</span><span class="p">:</span> <span class="mi">355</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You can even do some regex matching:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has basic info about user&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
-</span><span class='line'>    <span class="ss">code</span><span class="p">:</span> <span class="sr">/^[a-z0-9]{10}$/</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">url</span><span class="p">:</span> <span class="sr">%r{api/v5/users/[a-z0-9]{10}.json}</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Most can agree, that this method of specifying JSON responses in ruby is very readable, but what about failure messages? How helpful they are?</p>
-
-<p>For example with failure in nested JSON things can become tricky, but this gem solves them quite nice:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>             json atom at path "gamification/score" is not equal to expected value:
-</span><span class='line'>
-</span><span class='line'>               expected: 355
-</span><span class='line'>                    got: 397</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you match with nested Arrays you will get numbers in your JSON path within failure message, for example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>             json atom at path "results/2/badges/0" is not equal to expected value:
-</span><span class='line'>
-</span><span class='line'>               expected: "first flight"
-</span><span class='line'>                    got: "day & night"
-</span><span class='line'>
-</span><span class='line'>             json atom at path "results/3" is missing</span></code></pre></td></tr></table></div></figure>
-
-
-<p>For further reading and instructions: <a href="https://github.com/waterlink/rspec-json_expectations">github</a> and <a href="http://www.relishapp.com/waterlink/rspec-json-expectations/docs/json-expectations">cucumber generated documentation</a>.</p>
-
-<p>Feedback is highly appreciated, contact me on twitter (<a href="https://twitter.com/waterlink000">@waterlink000</a>) or on <a href="https://github.com/waterlink/rspec-json_expectations/issues">github issues</a>.</p>
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://waterlink.github.io/blog/2015/01/30/dismantling-effective-go-article/" data-via="waterlink000" data-counturl="http://waterlink.github.io/blog/2015/01/30/dismantling-effective-go-article/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
 </div>
-  
-  
 
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/" title="Previous Post: RSpec Json Expectations - Set of matchers and helpers to allow you test your API responses like a pro">&laquo; RSpec Json Expectations - Set of matchers and helpers to allow you test your API responses like a pro</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
 </div>
+
 <aside class="sidebar">
   
     <section>
@@ -459,6 +364,7 @@ codeUsing(f, d)
 
   
 </aside>
+
 
     </div>
   </div>
