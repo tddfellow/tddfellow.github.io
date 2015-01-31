@@ -3,7 +3,7 @@ layout: post
 title: "Dismantling Effective Go Article"
 date: 2015-01-30 23:39:11 +0200
 comments: true
-categories: 
+categories: go
 ---
 
 Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome.
