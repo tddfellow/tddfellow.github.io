@@ -4,3 +4,11 @@
 html {
   background: $page-bg $page-bg-image;
 }
+
+table {
+  tr {
+    td + td, th + th {
+      padding-left: 10px;
+    }
+  }
+}
