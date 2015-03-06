@@ -4,7 +4,7 @@
   <title><![CDATA[waterlink blog]]></title>
   <link href="http://waterlink.github.io/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2015-01-31T02:03:47+02:00</updated>
+  <updated>2015-03-06T04:57:58+02:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Alexey Fedorov (waterlink)]]></name>
@@ -12,6 +12,323 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Introduction to contracts.ruby]]></title>
+    <link href="http://waterlink.github.io/blog/2015/03/06/introduction-to-contracts-dot-ruby/"/>
+    <updated>2015-03-06T00:55:40+02:00</updated>
+    <id>http://waterlink.github.io/blog/2015/03/06/introduction-to-contracts-dot-ruby</id>
+    <content type="html"><![CDATA[<h2>Slides from my talk on RUG-B Mar 2015</h2>
+
+<p>A short introduction to a powerful Design by Contract technique and its implementation in ruby contracts.ruby.</p>
+
+<p>Design by Contract allows one to do defensive programming in very elegant fashion, allows to set contracts on methods (expectations on input - arguments; and on output - return result) and invariants on classes. This allows to reason about code much much better.</p>
+
+<iframe src="//www.slideshare.net/slideshow/embed_code/45498085" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+
+
+<h2>Classical defensive programming</h2>
+
+<p>Lets start from simple code example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you want to be really confident in implementation and usage of this method, you would probably use something like that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">raise</span> <span class="s2">&quot;a should be Fixnum or Float&quot;</span> <span class="k">unless</span> <span class="n">a</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Fixnum</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>    <span class="n">a</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">Float</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">raise</span> <span class="s2">&quot;b should be Fixnum or Float&quot;</span> <span class="k">unless</span> <span class="n">b</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Fixnum</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>    <span class="n">b</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">Float</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">result</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</span><span class='line'>  <span class="k">raise</span> <span class="s2">&quot;result should be Fixnum or Float&quot;</span> <span class="k">unless</span> <span class="n">result</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Fixnum</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>    <span class="n">result</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">Float</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">result</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Which definitely provides guarantees for input and output values.</p>
+
+<p>But this code is extremely ugly, unmaintainable and unreadable. You can always extract <code>assert</code>-like helper methods, but it will not improve readability too much, you want to have just this simple <code>a + b</code> in the body of this method.</p>
+
+<h2><code>gem "contracts"</code></h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">Num</span><span class="p">,</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This code does the same thing, but readability at a totally different level. Developers who know haskell may find this notation quite familiar.</p>
+
+<h2>Design by contract</h2>
+
+<p>When applying design by contract technique to development of any system or service, it allows you to answer the following questions:</p>
+
+<ul>
+<li>What does it expect? - Restrictions on input data for the system.</li>
+<li>What does it guarantee? - Restrictions on output data (return value) of the system.</li>
+<li>What does it maintain? - Restrictions on the inner state of the system (if your system is stateful, of course).</li>
+</ul>
+
+
+<h2>Benefits</h2>
+
+<p>Benefits of being able to answer this questions and enforce them on a runtime level are:</p>
+
+<ul>
+<li>Clients of your system can be confident using its public APIs. They can be sure, that if they provide something wrong, then they will get a convenient error immediately. And they can be sure, that system returns the right value as a result.</li>
+<li>System or service itself can be confident in its own operations. Implementation of system, that is covered with contracts, can assume that all the data flowing through the system is right and expected, and don&rsquo;t waste time (and lines of code, and sanity of the developer/maintainer) on different checks, conversions and so on (ie on defensive programming), it can just do what it needs to do, in confident, concise and convenient way, right up to the point.</li>
+</ul>
+
+
+<h2><code>assert</code> on steroids. And it is not only about types</h2>
+
+<p>Up until now it may seem like some kind of runtime type-checking system. But it is not, it is way more powerful.</p>
+
+<p>You can check for exact value:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="mi">200</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="ss">:get</span> <span class="o">=&gt;</span> <span class="s2">&quot;ok&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can check for types:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">User</span><span class="p">,</span> <span class="no">Time</span> <span class="o">=&gt;</span> <span class="no">Or</span><span class="o">[</span><span class="no">TrueClass</span><span class="p">,</span> <span class="no">FalseClass</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can check for anything that is available to you at runtime:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">ActiveUser</span> <span class="o">=&gt;</span> <span class="no">Rating</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">rating_for</span><span class="p">(</span><span class="n">active_user</span><span class="p">)</span>
+</span><span class='line'>  <span class="c1"># .. calculate rating for active user ..</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">ActiveUser</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">valid?</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">user</span><span class="o">.</span><span class="n">last_activity</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">.</span><span class="n">weeks</span><span class="o">.</span><span class="n">ago</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you expect when contract check on <code>active_user</code> argument happens, it will just call <code>ActiveUser.valid?(active_user)</code> and in case of falsy result will raise contract violation error.</p>
+
+<h2>Very useful contract violation errors</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="ss">ContractError</span><span class="p">:</span> <span class="no">Contract</span> <span class="n">violation</span> <span class="k">for</span> <span class="n">argument</span> <span class="mi">1</span> <span class="n">of</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>    <span class="ss">Expected</span><span class="p">:</span> <span class="no">ActiveUser</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">Actual</span><span class="p">:</span> <span class="c1">#&lt;User:0x00000101059540&gt; {last_activity=27.11.2014}</span>
+</span><span class='line'>    <span class="no">Value</span> <span class="n">guarded</span> <span class="k">in</span><span class="p">:</span> <span class="no">Object</span><span class="o">::</span><span class="n">rating_for</span>
+</span><span class='line'>    <span class="no">With</span> <span class="ss">Contract</span><span class="p">:</span> <span class="no">ActiveUser</span> <span class="o">=&gt;</span> <span class="no">Rating</span>
+</span><span class='line'>    <span class="ss">At</span><span class="p">:</span> <span class="p">(</span><span class="n">irb</span><span class="p">):</span><span class="mi">10</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">.</span><span class="o">.</span> <span class="n">backtrace</span> <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This kind of errors tell you, what exactly you did wrong and where exactly you did it wrong. It is totally different from usual <code>NoMethodError :something for nil:NilClass</code>, because usually these kind of no-method errors can occur in totally different part of codebase comparing to where these errors actually were introduced. Contract violation will be issued exactly at the place where you passed invalid data into or out from your system. So that when you see a contract violation error, there is a high chance that you already know how to fix it.</p>
+
+<h2>Pattern matching, sorta..</h2>
+
+<p>You can say even method overloading. Very simple example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># factorial in classic way</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="mi">1</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>    <span class="n">n</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># factorial using pattern matching</span>
+</span><span class='line'><span class="no">Contract</span> <span class="mi">1</span> <span class="o">=&gt;</span> <span class="mi">1</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+</span><span class='line'>  <span class="mi">1</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Contract</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">number</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When I saw this example, my first reaction was: &ldquo;Wow!&rdquo;. I was very excited about this feature.</p>
+
+<h2>Something useful with pattern matching</h2>
+
+<p>Last example was not particularly useful for our everyday development, but here you go.</p>
+
+<p>Imagine you have a concurrent evented system, that needs to make asynchronous requests to some external http service(s). You may eventually end up with handler functions like these:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Classical way</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">handle_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">200</span>
+</span><span class='line'>    <span class="n">transform_response</span><span class="p">(</span><span class="no">JSON</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>    <span class="n">wrap_in_error</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># And using pattern matching:</span>
+</span><span class='line'><span class="no">Contract</span> <span class="mi">200</span><span class="p">,</span> <span class="no">JsonString</span> <span class="o">=&gt;</span> <span class="no">JsonString</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">handle_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">transform_response</span><span class="p">(</span><span class="no">JSON</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Contract</span> <span class="no">Fixnum</span><span class="p">,</span> <span class="nb">String</span> <span class="o">=&gt;</span> <span class="no">JsonString</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">handle_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">wrap_in_error</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Limitless benefits</h2>
+
+<ul>
+<li>All your input data is consistent</li>
+<li>All data flows inside of your system are consistent</li>
+<li>State of your system is consistent</li>
+<li>Output of your system is consistent (or it is a contract violation error)</li>
+<li>Blows up loudly on any logical error in your system</li>
+</ul>
+
+
+<p>Last point is extremely important, because sometimes logical errors in classical programs will not lead to any failure at all, they will just do the wrong thing. For example, transfer money to wrong bank account. In such mission critical systems it is really important to fail fast to not allow error to propagate throughout your system.</p>
+
+<h2>Caveats: Performance</h2>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">Benchmark</th>
+<th style="text-align:left;">Slowdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;"><code>a+b</code></td>
+<td style="text-align:left;">900% slowdown</td>
+</tr>
+<tr>
+<td style="text-align:left;">production system with network IO</td>
+<td style="text-align:left;">5-10% slowdown</td>
+</tr>
+<tr>
+<td style="text-align:left;"><code>NO_CONTRACTS=1</code></td>
+<td style="text-align:left;">0% slowdown</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><p/></p>
+
+<p>First benchmark is simple comparision of <code>a + b</code> with and without contract. Since <code>a + b</code> itself is very fast, then the slowdown is huge. But if you try to benchmark any real world system, that actually does something useful (communicates to other services through network for example), then slowdown is very very small.</p>
+
+<p>And you have ability to disable contracts in production with <code>NO_CONTRACTS=1</code> environment variable. But beware, you lose extremely important benefit of blowing up on logical error immediately before letting error propagate. This benefit itself outweights these 5-10%, at least for me.</p>
+
+<h2>Useful links</h2>
+
+<ul>
+<li><a href="https://github.com/egonSchiele/contracts.ruby">Github</a></li>
+<li><a href="http://egonschiele.github.io/contracts.ruby">Nice tutorial</a></li>
+<li><a href="https://github.com/egonSchiele">Creator</a></li>
+<li><a href="https://github.com/waterlink">Me, co-maintainer</a></li>
+</ul>
+
+
+<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues with using <code>contracts.ruby</code>, you can always create an <a href="https://github.com/egonSchiele/contracts.ruby/issues">issue on github</a> and Pull Requests are welcome.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Dismantling Effective Go Article]]></title>

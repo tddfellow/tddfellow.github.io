@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Ruby | waterlink blog]]></title>
-  <link href="http://waterlink.github.io/blog/categories/ruby/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Design by Contract | waterlink blog]]></title>
+  <link href="http://waterlink.github.io/blog/categories/design-by-contract/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
   <updated>2015-03-06T04:57:58+02:00</updated>
   <id>http://waterlink.github.io/</id>
@@ -240,73 +240,6 @@ end
 
 
 <p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues with using <code>contracts.ruby</code>, you can always create an <a href="https://github.com/egonSchiele/contracts.ruby/issues">issue on github</a> and Pull Requests are welcome.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro]]></title>
-    <link href="http://waterlink.github.io/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/"/>
-    <updated>2015-01-23T02:56:19+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro</id>
-    <content type="html"><![CDATA[<p><a href="https://github.com/waterlink/rspec-json_expectations">rspec-json_expectations</a> library provides powerful <code>include_json</code> matcher for your RSpec suites. It allows to match string with JSON or already parsed ruby <code>Hash</code> against other ruby <code>Hash</code>, which is very convenient and creates very readable spec code. Lets jump to some examples.</p>
-
-<p>It can handle some plain json:</p>
-
-<pre><code class="ruby">it "has basic info about user" do
-  expect(response).to include_json(
-    id: 25,
-    email: "john.smith@example.com",
-    name: "John"
-  )
-end
-</code></pre>
-
-<p>And nested json:</p>
-
-<pre><code class="ruby">it "has gamification info for user" do
-  expect(response).to include_json(
-    code: "7wxMw32",
-    gamification: {
-      rating: 93,
-      score: 355
-    }
-  )
-end
-</code></pre>
-
-<p>You can even do some regex matching:</p>
-
-<pre><code class="ruby">it "has basic info about user" do
-  expect(response).to include_json(
-    code: /^[a-z0-9]{10}$/,
-    url: %r{api/v5/users/[a-z0-9]{10}.json}
-  )
-end
-</code></pre>
-
-<p>Most can agree, that this method of specifying JSON responses in ruby is very readable, but what about failure messages? How helpful they are?</p>
-
-<p>For example with failure in nested JSON things can become tricky, but this gem solves them quite nice:</p>
-
-<pre><code class="plain">                 json atom at path "gamification/score" is not equal to expected value:
-
-                   expected: 355
-                        got: 397
-</code></pre>
-
-<p>If you match with nested Arrays you will get numbers in your JSON path within failure message, for example:</p>
-
-<pre><code class="plain">                 json atom at path "results/2/badges/0" is not equal to expected value:
-
-                   expected: "first flight"
-                        got: "day &amp; night"
-
-                 json atom at path "results/3" is missing
-</code></pre>
-
-<p>For further reading and instructions: <a href="https://github.com/waterlink/rspec-json_expectations">github</a> and <a href="http://www.relishapp.com/waterlink/rspec-json-expectations/docs/json-expectations">cucumber generated documentation</a>.</p>
-
-<p>Feedback is highly appreciated, contact me on twitter (<a href="https://twitter.com/waterlink000">@waterlink000</a>) or on <a href="https://github.com/waterlink/rspec-json_expectations/issues">github issues</a>.</p>
 ]]></content>
   </entry>
   
