@@ -26,6 +26,7 @@ And my answer, you can easily do that:
 Contract RespondTo[:save, :has_valid?], RespondTo[:to_s] => Any
 def assign_user_a_default_email(user, default_email)
   user.email = default_email unless user.has_valid?(:email)
+  user.save
 end
 ```
 
