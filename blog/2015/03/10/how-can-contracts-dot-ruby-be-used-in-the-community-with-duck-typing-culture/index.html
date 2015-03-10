@@ -102,9 +102,11 @@ end One can ask: &ldquo;But it is ruby, what about duck typing, I &hellip;">
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
+<span class='line-number'>5</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:save</span><span class="p">,</span> <span class="ss">:has_valid?</span><span class="o">]</span><span class="p">,</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:to_s</span><span class="o">]</span> <span class="o">=&gt;</span> <span class="no">Any</span>
 </span><span class='line'><span class="k">def</span> <span class="nf">assign_user_a_default_email</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">default_email</span><span class="p">)</span>
 </span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">default_email</span> <span class="k">unless</span> <span class="n">user</span><span class="o">.</span><span class="n">has_valid?</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">save</span>
 </span><span class='line'><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure>
 
