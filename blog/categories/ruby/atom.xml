@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ruby | waterlink blog]]></title>
   <link href="http://waterlink.github.io/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2015-03-10T11:29:40+01:00</updated>
+  <updated>2015-03-10T11:36:13+01:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Alexey Fedorov (waterlink)]]></name>
@@ -12,6 +12,35 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[How Can contracts.ruby Be Used in the Community With Duck Typing Culture?]]></title>
+    <link href="http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/"/>
+    <updated>2015-03-10T11:11:23+01:00</updated>
+    <id>http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture</id>
+    <content type="html"><![CDATA[<p>So, given simple example:</p>
+
+<pre><code class="ruby">Contract Num, Num =&gt; Num
+def add(a, b)
+  a + b
+end
+</code></pre>
+
+<p>One can ask: &ldquo;But it is ruby, what about duck typing, I want just pass two things that have certain methods defined on them&rdquo;</p>
+
+<p>And my answer, you can easily do that:</p>
+
+<pre><code class="ruby">Contract RespondTo[:save, :has_valid?], RespondTo[:to_s] =&gt; Any
+def assign_user_a_default_email(user, default_email)
+  user.email = default_email unless user.has_valid?(:email)
+end
+</code></pre>
+
+<p>This is a built-in <code>RespondTo</code> contract. You can get a list of all of them here: <a href="http://egonschiele.github.io/contracts.ruby/#built-in-contracts">http://egonschiele.github.io/contracts.ruby/#built-in-contracts</a></p>
+
+<p>If you have any questions, you can always ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Introduction to contracts.ruby]]></title>
