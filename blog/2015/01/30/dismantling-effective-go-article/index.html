@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Dismantling Effective Go Article - waterlink blog</title>
+  <meta name="author" content="Alexey Fedorov (waterlink)">
+
+  
+  <meta name="description" content="Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome. Article itself &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://waterlink.github.io/blog/2015/01/30/dismantling-effective-go-article/">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="waterlink blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">waterlink blog</a></h1>
+  
+    <h2>A technical blog from me.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Dismantling Effective Go Article</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-01-30T22:39:11+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:39 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome.</p>
+
+<p>Article itself: <a href="https://golang.org/doc/effective_go.html">https://golang.org/doc/effective_go.html</a></p>
+
+<p>And here is a list of my thoughts.</p>
+
+<h2>Formatting</h2>
+
+<p>I generally like this approach, it is nice to have such feature in your language tools available right there and with already existing integrations to popular editors.</p>
+
+<p>Except one thing:</p>
+
+<blockquote><p>Parentheses</p>
+
+<p>Go needs fewer parentheses than C and Java: control structures (if, for, switch) do not have parentheses in their syntax. Also, the operator precedence hierarchy is shorter and clearer, so</p>
+
+<pre><code>x&lt;&lt;8 + y&lt;&lt;16
+</code></pre></blockquote>
+
+<p>So we kill parentheses and replace them with whitespace. I am not entirely sure it is better. How will this work then?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">x</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span> <span class="o">+</span> <span class="nx">y</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And what about this?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">x</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span>    <span class="o">+</span>    <span class="nx">y</span>  <span class="o">&lt;&lt;</span>  <span class="mi">16</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Probably nobody will write it like that, but one space miss, and lots of minutes lost in debugging.</p>
+
+<h2>Semicolons</h2>
+
+<p>Oh, lexer inserting semicolons where it pleases? What can go wrong. Reminds me about javascript and its problems when you omit semicolons.</p>
+
+<p>And this example looked strange to me:</p>
+
+<blockquote><p>One consequence of the semicolon insertion rules is that you cannot put the opening brace of a control structure (if, for, switch, or select) on the next line. If you do, a semicolon will be inserted before the brace, which <strong>could cause unwanted effects</strong>. Write them like this</p>
+
+<pre><code> if i &lt; f() {
+     g()
+ }
+</code></pre>
+
+<p>not like this</p>
+
+<pre><code> if i &lt; f()  // wrong!
+ {           // wrong!
+      g()
+ }
+</code></pre></blockquote>
+
+<p>First I thought that it will accept this input, put a semicolon after if, compile successfully and always execute statement inside of block, especially because it said &ldquo;could cause unwanted effects&rdquo;. But turned out this code results in compilation error - so no problem here, but probably this should have been clarified in the article.</p>
+
+<h2>Control Structure</h2>
+
+<p>Mandatory block - looks good to me.</p>
+
+<p>But the last example worries me:</p>
+
+<blockquote><p>This is an example of a common situation where code must guard against a sequence of error conditions. The code reads well if the successful flow of control runs down the page, eliminating error cases as they arise. Since error cases tend to end in return statements, the resulting code needs no else statements.</p>
+
+<pre><code>f, err := os.Open(name)
+if err != nil {
+     return err
+}
+d, err := f.Stat()
+if err != nil {
+     f.Close()
+     return err
+}
+codeUsing(f, d)
+</code></pre></blockquote>
+
+<p>That code is definitely not narrative, I will put some comments with kind of operation that is done:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>   <span class="c1">// get input</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>           <span class="c1">// check errors, guard</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">err</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nx">d</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>        <span class="c1">// get additional input</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>           <span class="c1">// check for errors, again, guard</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>             <span class="c1">// cleanups</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">err</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>           <span class="c1">// do something</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This way it is hard to understand and reason about.</p>
+
+<p>Why not just:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>         <span class="c1">// get input</span>
+</span><span class='line'><span class="nx">d</span> <span class="p">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>              <span class="c1">// get input</span>
+</span><span class='line'><span class="nx">result</span> <span class="p">=</span> <span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>  <span class="c1">// do something</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">IsErorr</span><span class="p">()</span> <span class="p">{</span>     <span class="c1">// handle errors</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>             <span class="c1">// cleanup</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Of course <code>f</code>, <code>d</code> and <code>result</code> are just <code>Result</code>/<code>Either</code> monads, they can be either in normal or faulty state. Whenever you try to do anything on <code>Result</code> in faulty state, it will just return itself. But <code>Result</code> in normal state will proxy call to its contents and wrap it in another <code>Result</code> monad (normal or faulty - depends on if call was successful or not). Probably I am too critical about that, because here I used some patterns that are not part of the language itself, but yeah, I can&rsquo;t look at code that mixes guards and actions.</p>
+
+<p>Probably, somebody out there in go-lang world can tell me, is it common to use patterns like <code>Maybe</code>, <code>Result</code>, <code>NullObject</code> and so on in go-lang? Or everybody just go with simple code without any magic behind the scenes, and just do it like in the article&rsquo;s example? Feel free to ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<h2>For</h2>
+
+<p>Lets move on..</p>
+
+<blockquote><p>For strings, the range does more work for you, breaking out individual Unicode code points by parsing the UTF-8. Erroneous encodings consume one byte and produce the replacement rune U+FFFD. (The name (with associated builtin type) rune is Go terminology for a single Unicode code point. See the language specification for details.)</p></blockquote>
+
+<p>I really like that a term for this &ldquo;unicode minimal entity&rdquo; was invented. And after some while the name actually makes a lot of sense. And it sounds good.</p>
+
+<h2>Switch</h2>
+
+<p>That surprised me. Feels like assembler:</p>
+
+<blockquote><p>Although they are not nearly as common in Go as some other C-like languages, break statements can be used to terminate a switch early. Sometimes, though, it&rsquo;s necessary to break out of a surrounding loop, not the switch, and in Go that can be accomplished by putting a label on the loop and &ldquo;breaking&rdquo; to that label. This example shows both uses.</p>
+
+<pre><code>Loop:
+    for n := 0; n &lt; len(src); n += size {
+        switch {
+            case src[n] &lt; sizeOne:
+                if validateOnly {
+                    break
+                }
+                size = 1
+                update(src[n])
+
+            case src[n] &lt; sizeTwo:
+                if n+1 &gt;= len(src) {
+                    err = errShortInput
+                    break Loop
+                }
+                if validateOnly {
+                    break
+                }
+                size = 2
+                update(src[n] + src[n+1]&lt;&lt;shift)
+            }
+        }
+</code></pre></blockquote>
+
+<p>Not exactly the original assembler label, one only use it to mark (aka tag) the loop itself and use it to break out of it. Interesting concept, but something clicks in my head when I look at this.</p>
+
+<h2>Type switch</h2>
+
+<p>Good one, &ldquo;Switching on Type&rdquo;, (usually) a code smell, builtin into language. But still it has its own uses when used carefully.</p>
+
+<h2>Multiple return values</h2>
+
+<p>Why not tuples? If you just introduce tuples and destructuring, then you don&rsquo;t need multiple return values, only one return value - tuple itself.</p>
+
+<h2>Defer</h2>
+
+<p>This is a nice one. Allows to simplify previous example with files even more:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>         <span class="c1">// get input</span>
+</span><span class='line'><span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>           <span class="c1">// deferred cleanup right after acquiring of `f`</span>
+</span><span class='line'><span class="nx">d</span> <span class="p">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>              <span class="c1">// get input</span>
+</span><span class='line'><span class="nx">result</span> <span class="p">=</span> <span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>  <span class="c1">// do something</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Particularly interesting example with trace/untrace follows in the article.</p>
+
+<hr />
+
+<p>To be continued&hellip;</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Alexey Fedorov (waterlink)</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-01-30T22:39:11+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:39 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/go/'>go</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://waterlink.github.io/blog/2015/01/30/dismantling-effective-go-article/" data-via="waterlink000" data-counturl="http://waterlink.github.io/blog/2015/01/30/dismantling-effective-go-article/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/" title="Previous Post: RSpec Json Expectations - Set of matchers and helpers to allow you test your API responses like a pro">&laquo; RSpec Json Expectations - Set of matchers and helpers to allow you test your API responses like a pro</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/03/05/introduction-to-contracts-dot-ruby/" title="Next Post: Introduction to contracts.ruby">Introduction to contracts.ruby &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/">How Can contracts.ruby Be Used in the Community With Duck Typing Culture?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/03/05/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/30/dismantling-effective-go-article/">Dismantling Effective Go Article</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/">RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/waterlink">@waterlink</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'waterlink',
+            count: 7,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Alexey Fedorov (waterlink) -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

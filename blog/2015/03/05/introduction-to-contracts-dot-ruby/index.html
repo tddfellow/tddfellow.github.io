@@ -5,17 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>waterlink blog</title>
+  <title>Introduction to contracts.ruby - waterlink blog</title>
   <meta name="author" content="Alexey Fedorov (waterlink)">
 
   
-  <meta name="description" content="So, given simple example: 1
-2
-3
-4
-Contract Num, Num =&gt; Num
-def add(a, b) a + b
-end One can ask: &ldquo;But it is ruby, what about duck typing, I &hellip;">
+  <meta name="description" content="Slides from my talk on RUG-B Mar 2015 A short introduction to a powerful Design by Contract technique and its implementation in ruby contracts.ruby. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -24,7 +18,7 @@ end One can ask: &ldquo;But it is ruby, what about duck typing, I &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://waterlink.github.io/">
+  <link rel="canonical" href="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="waterlink blog" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -60,74 +54,12 @@ end One can ask: &ldquo;But it is ruby, what about duck typing, I &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/">How Can contracts.ruby Be Used in the Community With Duck Typing Culture?</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-03-10T11:11:23+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:11 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>So, given simple example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">Num</span><span class="p">,</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>One can ask: &ldquo;But it is ruby, what about duck typing, I want just pass two things that have certain methods defined on them&rdquo;</p>
-
-<p>And my answer, you can easily do that:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:save</span><span class="p">,</span> <span class="ss">:has_valid?</span><span class="o">]</span><span class="p">,</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:to_s</span><span class="o">]</span> <span class="o">=&gt;</span> <span class="no">Any</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">assign_user_a_default_email</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">default_email</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">default_email</span> <span class="k">unless</span> <span class="n">user</span><span class="o">.</span><span class="n">has_valid?</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This is a built-in <code>RespondTo</code> contract. You can get a list of all of them here: <a href="http://egonschiele.github.io/contracts.ruby/#built-in-contracts">http://egonschiele.github.io/contracts.ruby/#built-in-contracts</a></p>
-
-<p>If you have any questions, you can always ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/03/05/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></h1>
+      <h1 class="entry-title">Introduction to contracts.ruby</h1>
     
     
       <p class="meta">
@@ -143,7 +75,7 @@ end One can ask: &ldquo;But it is ruby, what about duck typing, I &hellip;">
   </header>
 
 
-  <div class="entry-content"><h2>Slides from my talk on RUG-B Mar 2015</h2>
+<div class="entry-content"><h2>Slides from my talk on RUG-B Mar 2015</h2>
 
 <p>A short introduction to a powerful Design by Contract technique and its implementation in ruby contracts.ruby.</p>
 
@@ -453,362 +385,56 @@ end One can ask: &ldquo;But it is ruby, what about duck typing, I &hellip;">
 
 <p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues with using <code>contracts.ruby</code>, you can always create an <a href="https://github.com/egonSchiele/contracts.ruby/issues">issue on github</a> and Pull Requests are welcome.</p>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/01/30/dismantling-effective-go-article/">Dismantling Effective Go Article</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-01-30T22:39:11+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:39 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome.</p>
-
-<p>Article itself: <a href="https://golang.org/doc/effective_go.html">https://golang.org/doc/effective_go.html</a></p>
-
-<p>And here is a list of my thoughts.</p>
-
-<h2>Formatting</h2>
-
-<p>I generally like this approach, it is nice to have such feature in your language tools available right there and with already existing integrations to popular editors.</p>
-
-<p>Except one thing:</p>
-
-<blockquote><p>Parentheses</p>
-
-<p>Go needs fewer parentheses than C and Java: control structures (if, for, switch) do not have parentheses in their syntax. Also, the operator precedence hierarchy is shorter and clearer, so</p>
-
-<pre><code>x&lt;&lt;8 + y&lt;&lt;16
-</code></pre></blockquote>
-
-<p>So we kill parentheses and replace them with whitespace. I am not entirely sure it is better. How will this work then?</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">x</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span> <span class="o">+</span> <span class="nx">y</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And what about this?</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">x</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span>    <span class="o">+</span>    <span class="nx">y</span>  <span class="o">&lt;&lt;</span>  <span class="mi">16</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Probably nobody will write it like that, but one space miss, and lots of minutes lost in debugging.</p>
-
-<h2>Semicolons</h2>
-
-<p>Oh, lexer inserting semicolons where it pleases? What can go wrong. Reminds me about javascript and its problems when you omit semicolons.</p>
-
-<p>And this example looked strange to me:</p>
-
-<blockquote><p>One consequence of the semicolon insertion rules is that you cannot put the opening brace of a control structure (if, for, switch, or select) on the next line. If you do, a semicolon will be inserted before the brace, which <strong>could cause unwanted effects</strong>. Write them like this</p>
-
-<pre><code> if i &lt; f() {
-     g()
- }
-</code></pre>
-
-<p>not like this</p>
-
-<pre><code> if i &lt; f()  // wrong!
- {           // wrong!
-      g()
- }
-</code></pre></blockquote>
-
-<p>First I thought that it will accept this input, put a semicolon after if, compile successfully and always execute statement inside of block, especially because it said &ldquo;could cause unwanted effects&rdquo;. But turned out this code results in compilation error - so no problem here, but probably this should have been clarified in the article.</p>
-
-<h2>Control Structure</h2>
-
-<p>Mandatory block - looks good to me.</p>
-
-<p>But the last example worries me:</p>
-
-<blockquote><p>This is an example of a common situation where code must guard against a sequence of error conditions. The code reads well if the successful flow of control runs down the page, eliminating error cases as they arise. Since error cases tend to end in return statements, the resulting code needs no else statements.</p>
-
-<pre><code>f, err := os.Open(name)
-if err != nil {
-     return err
-}
-d, err := f.Stat()
-if err != nil {
-     f.Close()
-     return err
-}
-codeUsing(f, d)
-</code></pre></blockquote>
-
-<p>That code is definitely not narrative, I will put some comments with kind of operation that is done:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>   <span class="c1">// get input</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>           <span class="c1">// check errors, guard</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">err</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="nx">d</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>        <span class="c1">// get additional input</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>           <span class="c1">// check for errors, again, guard</span>
-</span><span class='line'>    <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>             <span class="c1">// cleanups</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">err</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>           <span class="c1">// do something</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This way it is hard to understand and reason about.</p>
-
-<p>Why not just:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>         <span class="c1">// get input</span>
-</span><span class='line'><span class="nx">d</span> <span class="p">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>              <span class="c1">// get input</span>
-</span><span class='line'><span class="nx">result</span> <span class="p">=</span> <span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>  <span class="c1">// do something</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">IsErorr</span><span class="p">()</span> <span class="p">{</span>     <span class="c1">// handle errors</span>
-</span><span class='line'>    <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>             <span class="c1">// cleanup</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Of course <code>f</code>, <code>d</code> and <code>result</code> are just <code>Result</code>/<code>Either</code> monads, they can be either in normal or faulty state. Whenever you try to do anything on <code>Result</code> in faulty state, it will just return itself. But <code>Result</code> in normal state will proxy call to its contents and wrap it in another <code>Result</code> monad (normal or faulty - depends on if call was successful or not). Probably I am too critical about that, because here I used some patterns that are not part of the language itself, but yeah, I can&rsquo;t look at code that mixes guards and actions.</p>
-
-<p>Probably, somebody out there in go-lang world can tell me, is it common to use patterns like <code>Maybe</code>, <code>Result</code>, <code>NullObject</code> and so on in go-lang? Or everybody just go with simple code without any magic behind the scenes, and just do it like in the article&rsquo;s example? Feel free to ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<h2>For</h2>
-
-<p>Lets move on..</p>
-
-<blockquote><p>For strings, the range does more work for you, breaking out individual Unicode code points by parsing the UTF-8. Erroneous encodings consume one byte and produce the replacement rune U+FFFD. (The name (with associated builtin type) rune is Go terminology for a single Unicode code point. See the language specification for details.)</p></blockquote>
-
-<p>I really like that a term for this &ldquo;unicode minimal entity&rdquo; was invented. And after some while the name actually makes a lot of sense. And it sounds good.</p>
-
-<h2>Switch</h2>
-
-<p>That surprised me. Feels like assembler:</p>
-
-<blockquote><p>Although they are not nearly as common in Go as some other C-like languages, break statements can be used to terminate a switch early. Sometimes, though, it&rsquo;s necessary to break out of a surrounding loop, not the switch, and in Go that can be accomplished by putting a label on the loop and &ldquo;breaking&rdquo; to that label. This example shows both uses.</p>
-
-<pre><code>Loop:
-    for n := 0; n &lt; len(src); n += size {
-        switch {
-            case src[n] &lt; sizeOne:
-                if validateOnly {
-                    break
-                }
-                size = 1
-                update(src[n])
-
-            case src[n] &lt; sizeTwo:
-                if n+1 &gt;= len(src) {
-                    err = errShortInput
-                    break Loop
-                }
-                if validateOnly {
-                    break
-                }
-                size = 2
-                update(src[n] + src[n+1]&lt;&lt;shift)
-            }
-        }
-</code></pre></blockquote>
-
-<p>Not exactly the original assembler label, one only use it to mark (aka tag) the loop itself and use it to break out of it. Interesting concept, but something clicks in my head when I look at this.</p>
-
-<h2>Type switch</h2>
-
-<p>Good one, &ldquo;Switching on Type&rdquo;, (usually) a code smell, builtin into language. But still it has its own uses when used carefully.</p>
-
-<h2>Multiple return values</h2>
-
-<p>Why not tuples? If you just introduce tuples and destructuring, then you don&rsquo;t need multiple return values, only one return value - tuple itself.</p>
-
-<h2>Defer</h2>
-
-<p>This is a nice one. Allows to simplify previous example with files even more:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>         <span class="c1">// get input</span>
-</span><span class='line'><span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>           <span class="c1">// deferred cleanup right after acquiring of `f`</span>
-</span><span class='line'><span class="nx">d</span> <span class="p">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>              <span class="c1">// get input</span>
-</span><span class='line'><span class="nx">result</span> <span class="p">=</span> <span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>  <span class="c1">// do something</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Particularly interesting example with trace/untrace follows in the article.</p>
-
-<hr />
-
-<p>To be continued&hellip;</p>
-</div>
-  
   
 
+<span class="byline author vcard">Posted by <span class="fn">Alexey Fedorov (waterlink)</span></span>
 
-    </article>
-  
-  
-    <article>
       
-  <header>
+
+
+
+
+<time class='entry-date' datetime='2015-03-05T23:55:40+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:55 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/design-by-contract/'>design by contract</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+    </p>
     
-      <h1 class="entry-title"><a href="/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/">RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-01-23T01:56:19+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>1:56 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="https://github.com/waterlink/rspec-json_expectations">rspec-json_expectations</a> library provides powerful <code>include_json</code> matcher for your RSpec suites. It allows to match string with JSON or already parsed ruby <code>Hash</code> against other ruby <code>Hash</code>, which is very convenient and creates very readable spec code. Lets jump to some examples.</p>
-
-<p>It can handle some plain json:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has basic info about user&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
-</span><span class='line'>    <span class="nb">id</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">email</span><span class="p">:</span> <span class="s2">&quot;john.smith@example.com&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And nested json:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has gamification info for user&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
-</span><span class='line'>    <span class="ss">code</span><span class="p">:</span> <span class="s2">&quot;7wxMw32&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">gamification</span><span class="p">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="ss">rating</span><span class="p">:</span> <span class="mi">93</span><span class="p">,</span>
-</span><span class='line'>      <span class="ss">score</span><span class="p">:</span> <span class="mi">355</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You can even do some regex matching:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has basic info about user&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
-</span><span class='line'>    <span class="ss">code</span><span class="p">:</span> <span class="sr">/^[a-z0-9]{10}$/</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">url</span><span class="p">:</span> <span class="sr">%r{api/v5/users/[a-z0-9]{10}.json}</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Most can agree, that this method of specifying JSON responses in ruby is very readable, but what about failure messages? How helpful they are?</p>
-
-<p>For example with failure in nested JSON things can become tricky, but this gem solves them quite nice:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>             json atom at path "gamification/score" is not equal to expected value:
-</span><span class='line'>
-</span><span class='line'>               expected: 355
-</span><span class='line'>                    got: 397</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you match with nested Arrays you will get numbers in your JSON path within failure message, for example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>             json atom at path "results/2/badges/0" is not equal to expected value:
-</span><span class='line'>
-</span><span class='line'>               expected: "first flight"
-</span><span class='line'>                    got: "day & night"
-</span><span class='line'>
-</span><span class='line'>             json atom at path "results/3" is missing</span></code></pre></td></tr></table></div></figure>
-
-
-<p>For further reading and instructions: <a href="https://github.com/waterlink/rspec-json_expectations">github</a> and <a href="http://www.relishapp.com/waterlink/rspec-json-expectations/docs/json-expectations">cucumber generated documentation</a>.</p>
-
-<p>Feedback is highly appreciated, contact me on twitter (<a href="https://twitter.com/waterlink000">@waterlink000</a>) or on <a href="https://github.com/waterlink/rspec-json_expectations/issues">github issues</a>.</p>
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/" data-via="waterlink000" data-counturl="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
 </div>
-  
-  
 
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/01/30/dismantling-effective-go-article/" title="Previous Post: Dismantling Effective Go Article">&laquo; Dismantling Effective Go Article</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/" title="Next Post: How can contracts.ruby be used in the community with duck typing culture?">How can contracts.ruby be used in the community with duck typing culture? &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
 
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
 </div>
+
 <aside class="sidebar">
   
     <section>
@@ -869,6 +495,7 @@ codeUsing(f, d)
 
   
 </aside>
+
 
     </div>
   </div>

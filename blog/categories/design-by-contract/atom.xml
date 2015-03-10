@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Design by Contract | waterlink blog]]></title>
+  <link href="http://waterlink.github.io/blog/categories/design-by-contract/atom.xml" rel="self"/>
+  <link href="http://waterlink.github.io/"/>
+  <updated>2015-03-10T11:29:40+01:00</updated>
+  <id>http://waterlink.github.io/</id>
+  <author>
+    <name><![CDATA[Alexey Fedorov (waterlink)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Introduction to contracts.ruby]]></title>
+    <link href="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/"/>
+    <updated>2015-03-05T23:55:40+01:00</updated>
+    <id>http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby</id>
+    <content type="html"><![CDATA[<h2>Slides from my talk on RUG-B Mar 2015</h2>
+
+<p>A short introduction to a powerful Design by Contract technique and its implementation in ruby contracts.ruby.</p>
+
+<p>Design by Contract allows one to do defensive programming in very elegant fashion, allows to set contracts on methods (expectations on input - arguments; and on output - return result) and invariants on classes. This allows to reason about code much much better.</p>
+
+<iframe src="//www.slideshare.net/slideshow/embed_code/45498085" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+
+
+<h2>Classical defensive programming</h2>
+
+<p>Lets start from simple code example:</p>
+
+<pre><code class="ruby">def add(a, b)
+  a + b
+end
+</code></pre>
+
+<p>If you want to be really confident in implementation and usage of this method, you would probably use something like that:</p>
+
+<pre><code class="ruby">def add(a, b)
+  raise "a should be Fixnum or Float" unless a.is_a?(Fixnum) ||
+    a.is_a?(Float)
+  raise "b should be Fixnum or Float" unless b.is_a?(Fixnum) ||
+    b.is_a?(Float)
+  result = a + b
+  raise "result should be Fixnum or Float" unless result.is_a?(Fixnum) ||
+    result.is_a?(Float)
+  result
+end
+</code></pre>
+
+<p>Which definitely provides guarantees for input and output values.</p>
+
+<p>But this code is extremely ugly, unmaintainable and unreadable. You can always extract <code>assert</code>-like helper methods, but it will not improve readability too much, you want to have just this simple <code>a + b</code> in the body of this method.</p>
+
+<h2><code>gem "contracts"</code></h2>
+
+<pre><code class="ruby">Contract Num, Num =&gt; Num
+def add(a, b)
+  a + b
+end
+</code></pre>
+
+<p>This code does the same thing, but readability at a totally different level. Developers who know haskell may find this notation quite familiar.</p>
+
+<h2>Design by contract</h2>
+
+<p>When applying design by contract technique to development of any system or service, it allows you to answer the following questions:</p>
+
+<ul>
+<li>What does it expect? - Restrictions on input data for the system.</li>
+<li>What does it guarantee? - Restrictions on output data (return value) of the system.</li>
+<li>What does it maintain? - Restrictions on the inner state of the system (if your system is stateful, of course).</li>
+</ul>
+
+
+<h2>Benefits</h2>
+
+<p>Benefits of being able to answer this questions and enforce them on a runtime level are:</p>
+
+<ul>
+<li>Clients of your system can be confident using its public APIs. They can be sure, that if they provide something wrong, then they will get a convenient error immediately. And they can be sure, that system returns the right value as a result.</li>
+<li>System or service itself can be confident in its own operations. Implementation of system, that is covered with contracts, can assume that all the data flowing through the system is right and expected, and don&rsquo;t waste time (and lines of code, and sanity of the developer/maintainer) on different checks, conversions and so on (ie on defensive programming), it can just do what it needs to do, in confident, concise and convenient way, right up to the point.</li>
+</ul>
+
+
+<h2><code>assert</code> on steroids. And it is not only about types</h2>
+
+<p>Up until now it may seem like some kind of runtime type-checking system. But it is not, it is way more powerful.</p>
+
+<p>You can check for exact value:</p>
+
+<pre><code class="ruby">Contract 200, nil, :get =&gt; "ok"
+</code></pre>
+
+<p>You can check for types:</p>
+
+<pre><code class="ruby">Contract User, Time =&gt; Or[TrueClass, FalseClass]
+</code></pre>
+
+<p>You can check for anything that is available to you at runtime:</p>
+
+<pre><code class="ruby">Contract ActiveUser =&gt; Rating
+def rating_for(active_user)
+  # .. calculate rating for active user ..
+end
+
+class ActiveUser
+  def self.valid?(user)
+    user.last_activity &gt; 2.weeks.ago
+  end
+end
+</code></pre>
+
+<p>As you expect when contract check on <code>active_user</code> argument happens, it will just call <code>ActiveUser.valid?(active_user)</code> and in case of falsy result will raise contract violation error.</p>
+
+<h2>Very useful contract violation errors</h2>
+
+<pre><code class="ruby">ContractError: Contract violation for argument 1 of 1:
+    Expected: ActiveUser,
+    Actual: #&lt;User:0x00000101059540&gt; {last_activity=27.11.2014}
+    Value guarded in: Object::rating_for
+    With Contract: ActiveUser =&gt; Rating
+    At: (irb):10
+    ... backtrace ...
+</code></pre>
+
+<p>This kind of errors tell you, what exactly you did wrong and where exactly you did it wrong. It is totally different from usual <code>NoMethodError :something for nil:NilClass</code>, because usually these kind of no-method errors can occur in totally different part of codebase comparing to where these errors actually were introduced. Contract violation will be issued exactly at the place where you passed invalid data into or out from your system. So that when you see a contract violation error, there is a high chance that you already know how to fix it.</p>
+
+<h2>Pattern matching, sorta..</h2>
+
+<p>You can say even method overloading. Very simple example:</p>
+
+<pre><code class="ruby"># factorial in classic way
+def factorial(n)
+  if n == 1
+    1
+  else
+    n * factorial(n - 1)
+  end
+end
+</code></pre>
+
+<pre><code class="ruby"># factorial using pattern matching
+Contract 1 =&gt; 1
+def factorial(_)
+  1
+end
+
+Contract Num =&gt; Num
+def factorial(number)
+  number * factorial(number - 1)
+end
+</code></pre>
+
+<p>When I saw this example, my first reaction was: &ldquo;Wow!&rdquo;. I was very excited about this feature.</p>
+
+<h2>Something useful with pattern matching</h2>
+
+<p>Last example was not particularly useful for our everyday development, but here you go.</p>
+
+<p>Imagine you have a concurrent evented system, that needs to make asynchronous requests to some external http service(s). You may eventually end up with handler functions like these:</p>
+
+<pre><code class="ruby"># Classical way
+def handle_response(status, response)
+  if status == 200
+    transform_response(JSON.parse(response))
+  else
+    wrap_in_error(status, response)
+  end
+end
+</code></pre>
+
+<pre><code class="ruby"># And using pattern matching:
+Contract 200, JsonString =&gt; JsonString
+def handle_response(status, response)
+  transform_response(JSON.parse(response))
+end
+
+Contract Fixnum, String =&gt; JsonString
+def handle_response(status, response)
+  wrap_in_error(status, response)
+end
+</code></pre>
+
+<h2>Limitless benefits</h2>
+
+<ul>
+<li>All your input data is consistent</li>
+<li>All data flows inside of your system are consistent</li>
+<li>State of your system is consistent</li>
+<li>Output of your system is consistent (or it is a contract violation error)</li>
+<li>Blows up loudly on any logical error in your system</li>
+</ul>
+
+
+<p>Last point is extremely important, because sometimes logical errors in classical programs will not lead to any failure at all, they will just do the wrong thing. For example, transfer money to wrong bank account. In such mission critical systems it is really important to fail fast to not allow error to propagate throughout your system.</p>
+
+<h2>Caveats: Performance</h2>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">Benchmark</th>
+<th style="text-align:left;">Slowdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;"><code>a+b</code></td>
+<td style="text-align:left;">900% slowdown</td>
+</tr>
+<tr>
+<td style="text-align:left;">production system with network IO</td>
+<td style="text-align:left;">5-10% slowdown</td>
+</tr>
+<tr>
+<td style="text-align:left;"><code>NO_CONTRACTS=1</code></td>
+<td style="text-align:left;">0% slowdown</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><p/></p>
+
+<p>First benchmark is simple comparision of <code>a + b</code> with and without contract. Since <code>a + b</code> itself is very fast, then the slowdown is huge. But if you try to benchmark any real world system, that actually does something useful (communicates to other services through network for example), then slowdown is very very small.</p>
+
+<p>And you have ability to disable contracts in production with <code>NO_CONTRACTS=1</code> environment variable. But beware, you lose extremely important benefit of blowing up on logical error immediately before letting error propagate. This benefit itself outweights these 5-10%, at least for me.</p>
+
+<h2>Useful links</h2>
+
+<ul>
+<li><a href="https://github.com/egonSchiele/contracts.ruby">Github</a></li>
+<li><a href="http://egonschiele.github.io/contracts.ruby">Nice tutorial</a></li>
+<li><a href="https://github.com/egonSchiele">Creator</a></li>
+<li><a href="https://github.com/waterlink">Me, co-maintainer</a></li>
+</ul>
+
+
+<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues with using <code>contracts.ruby</code>, you can always create an <a href="https://github.com/egonSchiele/contracts.ruby/issues">issue on github</a> and Pull Requests are welcome.</p>
+]]></content>
+  </entry>
+  
+</feed>
