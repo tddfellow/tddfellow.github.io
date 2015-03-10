@@ -4,6 +4,9 @@ title: "How can contracts.ruby be used in the community with duck typing culture
 date: 2015-03-10 11:11:23 +0100
 comments: true
 categories:
+- ruby
+- contracts.ruby
+- design-by-contract
 ---
 
 So, given simple example:
