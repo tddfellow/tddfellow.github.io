@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rspec | waterlink blog]]></title>
   <link href="http://waterlink.github.io/blog/categories/rspec/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2015-03-13T02:33:55+02:00</updated>
+  <updated>2015-04-09T23:43:46+03:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Alexey Fedorov (waterlink)]]></name>
@@ -12,6 +12,115 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using contracts.ruby With RSpec]]></title>
+    <link href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
+    <updated>2015-04-09T22:51:53+03:00</updated>
+    <id>http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
+    <content type="html"><![CDATA[<h2>Issues with RSpec mocks</h2>
+
+<p>Lets start from example:</p>
+
+<pre><code class="ruby">class Example
+  include Contracts
+
+  Contract Something =&gt; Any
+  def do_something(something)
+    something.call
+  end
+end
+</code></pre>
+
+<p>And its corresponding spec:</p>
+
+<pre><code class="ruby">require "rspec"
+
+RSpec.describe Example do
+  let(:example) { Example.new }
+  let(:something) { instance_double(Something, call: :hello) }
+
+  it "works" do
+    expect(example.do_something(something))
+      .to eq(:hello)
+  end
+end
+</code></pre>
+
+<p>Pretty straightforward unit test for <code>Example#do_something</code>. But if you run <code>rspec</code> you will get:</p>
+
+<pre><code>ContractError: Contract violation for argument 1 of 1:
+    Expected: Something,
+    Actual: #&lt;RSpec::Mocks::InstanceVerifyingDouble:0xa401a0 @name="Something (instance)"&gt;
+    Value guarded in: Example::do_something
+    With Contract: Something =&gt; Any
+</code></pre>
+
+<p>It happens because class contracts use <code>#is_a?</code> to determine if contract matches or not. Simply: <code>something.is_a?(Something)</code> is required to be <code>true</code>.</p>
+
+<p>But if we try to do it with <code>instance_double</code>, that is what we get:</p>
+
+<pre><code class="ruby">require "rspec/mocks/standalone"
+something = instance_double(Something)
+something.is_a?(Something)                              #=&gt; false
+something.is_a?(RSpec::Mocks::InstanceVerifyingDouble)  #=&gt; true
+</code></pre>
+
+<h2>Solution to problem</h2>
+
+<p>Pretty straightforward one:</p>
+
+<pre><code class="ruby">let(:something) { instance_double(Something, call: :hello) }
+
+before do
+  allow(something)
+    .to receive(:is_a?)
+    .with(Something)
+    .and_return(true)
+end
+</code></pre>
+
+<p>But this can be boring to type it each time you need an <code>instance_double</code> while working with <code>contracts</code>. So here you go:</p>
+
+<pre><code class="ruby"># Gemfile
+group :test do
+  gem "contracts-rspec"
+end
+</code></pre>
+
+<p>Run <code>bundle</code> to install <code>contracts-rspec</code> gem.</p>
+
+<pre><code class="ruby"># your spec file
+require "contracts/rspec"
+
+RSpec.describe Example do
+  include Contracts::RSpec::Mocks
+
+  # .. write code as in first example ..
+end
+</code></pre>
+
+<p>Now you are covered. Inclusion of <code>Contracts::RSpec::Mocks</code> slightly alters behavior of <code>instance_double</code>. Now it automatically stubs out <code>#is_a?(Klass)</code> to return <code>true</code> on the class it was created from. In our case <code>Something</code>. This happens here: <a href="https://github.com/waterlink/contracts-rspec/blob/master/lib/contracts/rspec/mocks.rb#L4-L8">https://github.com/waterlink/contracts-rspec/blob/master/lib/contracts/rspec/mocks.rb#L4-L8</a></p>
+
+<p>You can include it only in contexts you need, or you can do it globally from <code>spec_helper</code> like you do usually include spec helpers.</p>
+
+<h2>Links</h2>
+
+<ul>
+<li>Gem: <a href="https://github.com/waterlink/contracts-rspec">https://github.com/waterlink/contracts-rspec</a></li>
+<li>contracts.ruby: <a href="https://github.com/egonSchiele/contracts.ruby">https://github.com/egonSchiele/contracts.ruby</a></li>
+<li>contracts.ruby chat: <a href="https://gitter.im/egonSchiele/contracts.ruby">https://gitter.im/egonSchiele/contracts.ruby</a></li>
+<li>Born from here: <a href="https://github.com/egonSchiele/contracts.ruby/issues/14">egonSchiele/contracts.ruby#14</a></li>
+<li><a href="http://waterlink.github.io/blog/2015/03/06/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></li>
+<li><a href="https://egonschiele.github.io/contracts.ruby/">Great contracts.ruby tutorial</a></li>
+</ul>
+
+
+<h2>Thanks!</h2>
+
+<p>If you have any questions, suggestions or just want to chat about how contracts.ruby is awesome, you can ping me on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues using <a href="https://github.com/egonSchiele/contracts.ruby">contracts.ruby</a> or <a href="https://github.com/waterlink/contracts-rspec">contracts-rspec</a> you can create issues on corresponding github project. Pull requests are welcome!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro]]></title>

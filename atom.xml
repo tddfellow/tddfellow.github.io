@@ -4,7 +4,7 @@
   <title><![CDATA[waterlink blog]]></title>
   <link href="http://waterlink.github.io/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2015-03-13T02:33:55+02:00</updated>
+  <updated>2015-04-09T23:43:46+03:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Alexey Fedorov (waterlink)]]></name>
@@ -12,6 +12,170 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using contracts.ruby With RSpec]]></title>
+    <link href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
+    <updated>2015-04-09T22:51:53+03:00</updated>
+    <id>http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
+    <content type="html"><![CDATA[<h2>Issues with RSpec mocks</h2>
+
+<p>Lets start from example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Example</span>
+</span><span class='line'>  <span class="kp">include</span> <span class="no">Contracts</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">Contract</span> <span class="no">Something</span> <span class="o">=&gt;</span> <span class="no">Any</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">do_something</span><span class="p">(</span><span class="n">something</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">something</span><span class="o">.</span><span class="n">call</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And its corresponding spec:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;rspec&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">RSpec</span><span class="o">.</span><span class="n">describe</span> <span class="no">Example</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">let</span><span class="p">(</span><span class="ss">:example</span><span class="p">)</span> <span class="p">{</span> <span class="no">Example</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span>
+</span><span class='line'>  <span class="n">let</span><span class="p">(</span><span class="ss">:something</span><span class="p">)</span> <span class="p">{</span> <span class="n">instance_double</span><span class="p">(</span><span class="no">Something</span><span class="p">,</span> <span class="ss">call</span><span class="p">:</span> <span class="ss">:hello</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">it</span> <span class="s2">&quot;works&quot;</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">expect</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">do_something</span><span class="p">(</span><span class="n">something</span><span class="p">))</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="ss">:hello</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Pretty straightforward unit test for <code>Example#do_something</code>. But if you run <code>rspec</code> you will get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="ss">ContractError</span><span class="p">:</span> <span class="no">Contract</span> <span class="n">violation</span> <span class="k">for</span> <span class="n">argument</span> <span class="mi">1</span> <span class="n">of</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>    <span class="ss">Expected</span><span class="p">:</span> <span class="no">Something</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">Actual</span><span class="p">:</span> <span class="c1">#&lt;RSpec::Mocks::InstanceVerifyingDouble:0xa401a0 @name=&quot;Something (instance)&quot;&gt;</span>
+</span><span class='line'>    <span class="no">Value</span> <span class="n">guarded</span> <span class="k">in</span><span class="p">:</span> <span class="no">Example</span><span class="o">::</span><span class="n">do_something</span>
+</span><span class='line'>    <span class="no">With</span> <span class="ss">Contract</span><span class="p">:</span> <span class="no">Something</span> <span class="o">=&gt;</span> <span class="no">Any</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It happens because class contracts use <code>#is_a?</code> to determine if contract matches or not. Simply: <code>something.is_a?(Something)</code> is required to be <code>true</code>.</p>
+
+<p>But if we try to do it with <code>instance_double</code>, that is what we get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;rspec/mocks/standalone&quot;</span>
+</span><span class='line'><span class="n">something</span> <span class="o">=</span> <span class="n">instance_double</span><span class="p">(</span><span class="no">Something</span><span class="p">)</span>
+</span><span class='line'><span class="n">something</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Something</span><span class="p">)</span>                              <span class="c1">#=&gt; false</span>
+</span><span class='line'><span class="n">something</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">RSpec</span><span class="o">::</span><span class="no">Mocks</span><span class="o">::</span><span class="no">InstanceVerifyingDouble</span><span class="p">)</span>  <span class="c1">#=&gt; true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Solution to problem</h2>
+
+<p>Pretty straightforward one:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">let</span><span class="p">(</span><span class="ss">:something</span><span class="p">)</span> <span class="p">{</span> <span class="n">instance_double</span><span class="p">(</span><span class="no">Something</span><span class="p">,</span> <span class="ss">call</span><span class="p">:</span> <span class="ss">:hello</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">before</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">allow</span><span class="p">(</span><span class="n">something</span><span class="p">)</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">to</span> <span class="n">receive</span><span class="p">(</span><span class="ss">:is_a?</span><span class="p">)</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="no">Something</span><span class="p">)</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">and_return</span><span class="p">(</span><span class="kp">true</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>But this can be boring to type it each time you need an <code>instance_double</code> while working with <code>contracts</code>. So here you go:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Gemfile</span>
+</span><span class='line'><span class="n">group</span> <span class="ss">:test</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">gem</span> <span class="s2">&quot;contracts-rspec&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Run <code>bundle</code> to install <code>contracts-rspec</code> gem.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># your spec file</span>
+</span><span class='line'><span class="nb">require</span> <span class="s2">&quot;contracts/rspec&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">RSpec</span><span class="o">.</span><span class="n">describe</span> <span class="no">Example</span> <span class="k">do</span>
+</span><span class='line'>  <span class="kp">include</span> <span class="no">Contracts</span><span class="o">::</span><span class="no">RSpec</span><span class="o">::</span><span class="no">Mocks</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># .. write code as in first example ..</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you are covered. Inclusion of <code>Contracts::RSpec::Mocks</code> slightly alters behavior of <code>instance_double</code>. Now it automatically stubs out <code>#is_a?(Klass)</code> to return <code>true</code> on the class it was created from. In our case <code>Something</code>. This happens here: <a href="https://github.com/waterlink/contracts-rspec/blob/master/lib/contracts/rspec/mocks.rb#L4-L8">https://github.com/waterlink/contracts-rspec/blob/master/lib/contracts/rspec/mocks.rb#L4-L8</a></p>
+
+<p>You can include it only in contexts you need, or you can do it globally from <code>spec_helper</code> like you do usually include spec helpers.</p>
+
+<h2>Links</h2>
+
+<ul>
+<li>Gem: <a href="https://github.com/waterlink/contracts-rspec">https://github.com/waterlink/contracts-rspec</a></li>
+<li>contracts.ruby: <a href="https://github.com/egonSchiele/contracts.ruby">https://github.com/egonSchiele/contracts.ruby</a></li>
+<li>contracts.ruby chat: <a href="https://gitter.im/egonSchiele/contracts.ruby">https://gitter.im/egonSchiele/contracts.ruby</a></li>
+<li>Born from here: <a href="https://github.com/egonSchiele/contracts.ruby/issues/14">egonSchiele/contracts.ruby#14</a></li>
+<li><a href="http://waterlink.github.io/blog/2015/03/06/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></li>
+<li><a href="https://egonschiele.github.io/contracts.ruby/">Great contracts.ruby tutorial</a></li>
+</ul>
+
+
+<h2>Thanks!</h2>
+
+<p>If you have any questions, suggestions or just want to chat about how contracts.ruby is awesome, you can ping me on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues using <a href="https://github.com/egonSchiele/contracts.ruby">contracts.ruby</a> or <a href="https://github.com/waterlink/contracts-rspec">contracts-rspec</a> you can create issues on corresponding github project. Pull requests are welcome!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Design. Important Things]]></title>
