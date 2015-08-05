@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Upstart | waterlink blog]]></title>
+  <link href="http://waterlink.github.io/blog/categories/upstart/atom.xml" rel="self"/>
+  <link href="http://waterlink.github.io/"/>
+  <updated>2015-08-05T19:24:03+02:00</updated>
+  <id>http://waterlink.github.io/</id>
+  <author>
+    <name><![CDATA[Alexey Fedorov (waterlink)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Running Kitchen-docker Tests With Upstart]]></title>
+    <link href="http://waterlink.github.io/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/"/>
+    <updated>2015-08-05T19:10:36+02:00</updated>
+    <id>http://waterlink.github.io/blog/2015/08/05/running-kitchen-docker-tests-with-upstart</id>
+    <content type="html"><![CDATA[<p>TL;DR:</p>
+
+<pre><code class="yml .kitchen.yml"># .kitchen.yml
+---
+driver:
+  name: docker
+  use_sudo: false              # this depends if you need to do `sudo` to run `docker` command or not
+  disable_upstart: false
+  image: ubuntu-upstart:14.04
+  run_command: /sbin/init
+
+platforms:
+  - name: ubuntu-14.04
+</code></pre>
+
+<p>It is possible because there is this official base image specifically for upstart: <a href="https://registry.hub.docker.com/_/ubuntu-upstart/.">https://registry.hub.docker.com/_/ubuntu-upstart/.</a></p>
+
+<p>After making your <code>.kitchen.yml</code> look like this, just use <code>kitchen</code> as you would normally would.</p>
+
+<p>Happy coding! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -76,4 +76,22 @@
   <url>
     <loc>http://waterlink.github.io/blog/categories/dependency-injection/</loc>
   </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/chef/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/test-kitchen/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/kitchen-docker/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/docker/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/ubuntu/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/upstart/</loc>
+  </url>
 </urlset>
