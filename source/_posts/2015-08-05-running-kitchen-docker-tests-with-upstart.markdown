@@ -3,7 +3,14 @@ layout: post
 title: "Running kitchen-docker tests with upstart"
 date: 2015-08-05 19:10:36 +0200
 comments: true
-categories: 
+categories:
+  - chef
+  - ruby
+  - test-kitchen
+  - kitchen-docker
+  - docker
+  - ubuntu
+  - upstart
 ---
 
 TL;DR:
