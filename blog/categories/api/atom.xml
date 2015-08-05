@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Api | waterlink blog]]></title>
   <link href="http://waterlink.github.io/blog/categories/api/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2015-04-09T23:43:46+03:00</updated>
+  <updated>2015-08-05T19:19:52+02:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Alexey Fedorov (waterlink)]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro]]></title>
     <link href="http://waterlink.github.io/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/"/>
-    <updated>2015-01-23T02:56:19+02:00</updated>
+    <updated>2015-01-23T01:56:19+01:00</updated>
     <id>http://waterlink.github.io/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro</id>
     <content type="html"><![CDATA[<p><a href="https://github.com/waterlink/rspec-json_expectations">rspec-json_expectations</a> library provides powerful <code>include_json</code> matcher for your RSpec suites. It allows to match string with JSON or already parsed ruby <code>Hash</code> against other ruby <code>Hash</code>, which is very convenient and creates very readable spec code. Lets jump to some examples.</p>
 

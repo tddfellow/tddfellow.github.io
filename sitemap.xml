@@ -1,45 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/</loc>
-    <lastmod>2015-04-09T22:51:53+03:00</lastmod>
-    <priority>0.8</priority>
+    <loc>http://waterlink.github.io/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/</loc>
+    <lastmod>2015-08-05T19:10:36+02:00</lastmod>
   </url>
   <url>
-    <loc>http://waterlink.github.io/blog/2015/03/13/object-oriented-design-important-things/</loc>
-    <lastmod>2015-03-13T00:23:45+02:00</lastmod>
-    <priority>0.8</priority>
+    <loc>http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/</loc>
+    <lastmod>2015-04-09T21:51:53+02:00</lastmod>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/2015/03/12/object-oriented-design-important-things/</loc>
+    <lastmod>2015-03-12T23:23:45+01:00</lastmod>
   </url>
   <url>
     <loc>http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/</loc>
-    <lastmod>2015-03-10T12:11:23+02:00</lastmod>
-    <priority>0.8</priority>
+    <lastmod>2015-03-10T11:11:23+01:00</lastmod>
   </url>
   <url>
-    <loc>http://waterlink.github.io/blog/2015/03/06/introduction-to-contracts-dot-ruby/</loc>
-    <lastmod>2015-03-06T00:55:40+02:00</lastmod>
-    <priority>0.8</priority>
+    <loc>http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/</loc>
+    <lastmod>2015-03-05T23:55:40+01:00</lastmod>
   </url>
   <url>
     <loc>http://waterlink.github.io/blog/2015/01/30/dismantling-effective-go-article/</loc>
-    <lastmod>2015-01-30T23:39:11+02:00</lastmod>
-    <priority>0.8</priority>
+    <lastmod>2015-01-30T22:39:11+01:00</lastmod>
   </url>
   <url>
     <loc>http://waterlink.github.io/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/</loc>
-    <lastmod>2015-01-23T02:56:19+02:00</lastmod>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>http://waterlink.github.io/</loc>
-    <lastmod>2015-04-09T23:43:46+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2015-01-23T01:56:19+01:00</lastmod>
   </url>
   <url>
     <loc>http://waterlink.github.io/blog/archives/</loc>
-    <lastmod>2015-04-09T23:43:46+03:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/ruby/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/rspec/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/json/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/api/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/go/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/design-by-contract/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/contracts-dot-ruby/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/design-by-contract/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/oop/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/design/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/tdd/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/actor-model/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/dependency-inversion/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/dependency-injection/</loc>
   </url>
 </urlset>

@@ -4,7 +4,7 @@
   <title><![CDATA[waterlink blog]]></title>
   <link href="http://waterlink.github.io/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2015-04-09T23:43:46+03:00</updated>
+  <updated>2015-08-05T19:19:52+02:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Alexey Fedorov (waterlink)]]></name>
@@ -14,9 +14,49 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Running Kitchen-docker Tests With Upstart]]></title>
+    <link href="http://waterlink.github.io/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/"/>
+    <updated>2015-08-05T19:10:36+02:00</updated>
+    <id>http://waterlink.github.io/blog/2015/08/05/running-kitchen-docker-tests-with-upstart</id>
+    <content type="html"><![CDATA[<p>TL;DR:</p>
+
+<figure class='code'><figcaption><span>.kitchen.yml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="c1"># .kitchen.yml</span>
+</span><span class='line'><span class="nn">---</span>
+</span><span class='line'><span class="l-Scalar-Plain">driver</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">docker</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">use_sudo</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>              <span class="c1"># this depends if you need to do `sudo` to run `docker` command or not</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">disable_upstart</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">image</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu-upstart:14.04</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">run_command</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/sbin/init</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">platforms</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu-14.04</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It is possible because there is this official base image specifically for upstart: <a href="https://registry.hub.docker.com/_/ubuntu-upstart/.">https://registry.hub.docker.com/_/ubuntu-upstart/.</a></p>
+
+<p>After making your <code>.kitchen.yml</code> look like this, just use <code>kitchen</code> as you would normally would.</p>
+
+<p>Happy coding! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Using contracts.ruby With RSpec]]></title>
     <link href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
-    <updated>2015-04-09T22:51:53+03:00</updated>
+    <updated>2015-04-09T21:51:53+02:00</updated>
     <id>http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
     <content type="html"><![CDATA[<h2>Issues with RSpec mocks</h2>
 
@@ -179,9 +219,9 @@
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Design. Important Things]]></title>
-    <link href="http://waterlink.github.io/blog/2015/03/13/object-oriented-design-important-things/"/>
-    <updated>2015-03-13T00:23:45+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/03/13/object-oriented-design-important-things</id>
+    <link href="http://waterlink.github.io/blog/2015/03/12/object-oriented-design-important-things/"/>
+    <updated>2015-03-12T23:23:45+01:00</updated>
+    <id>http://waterlink.github.io/blog/2015/03/12/object-oriented-design-important-things</id>
     <content type="html"><![CDATA[<h2>Slides from my talk <a href="https://twitter.com/BrainlyGroup">@brainly</a> 12 Mar 2015</h2>
 
 <p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>, I would love to hear from you.</em></p>
@@ -523,7 +563,7 @@
   <entry>
     <title type="html"><![CDATA[How Can contracts.ruby Be Used in the Community With Duck Typing Culture?]]></title>
     <link href="http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/"/>
-    <updated>2015-03-10T12:11:23+02:00</updated>
+    <updated>2015-03-10T11:11:23+01:00</updated>
     <id>http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture</id>
     <content type="html"><![CDATA[<p>So, given simple example:</p>
 
@@ -563,9 +603,9 @@
   
   <entry>
     <title type="html"><![CDATA[Introduction to contracts.ruby]]></title>
-    <link href="http://waterlink.github.io/blog/2015/03/06/introduction-to-contracts-dot-ruby/"/>
-    <updated>2015-03-06T00:55:40+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/03/06/introduction-to-contracts-dot-ruby</id>
+    <link href="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/"/>
+    <updated>2015-03-05T23:55:40+01:00</updated>
+    <id>http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby</id>
     <content type="html"><![CDATA[<h2>Slides from my talk on RUG-B Mar 2015</h2>
 
 <p>A short introduction to a powerful Design by Contract technique and its implementation in ruby contracts.ruby.</p>
@@ -881,7 +921,7 @@
   <entry>
     <title type="html"><![CDATA[Dismantling Effective Go Article]]></title>
     <link href="http://waterlink.github.io/blog/2015/01/30/dismantling-effective-go-article/"/>
-    <updated>2015-01-30T23:39:11+02:00</updated>
+    <updated>2015-01-30T22:39:11+01:00</updated>
     <id>http://waterlink.github.io/blog/2015/01/30/dismantling-effective-go-article</id>
     <content type="html"><![CDATA[<p>Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome.</p>
 
@@ -1083,7 +1123,7 @@ codeUsing(f, d)
   <entry>
     <title type="html"><![CDATA[RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro]]></title>
     <link href="http://waterlink.github.io/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/"/>
-    <updated>2015-01-23T02:56:19+02:00</updated>
+    <updated>2015-01-23T01:56:19+01:00</updated>
     <id>http://waterlink.github.io/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro</id>
     <content type="html"><![CDATA[<p><a href="https://github.com/waterlink/rspec-json_expectations">rspec-json_expectations</a> library provides powerful <code>include_json</code> matcher for your RSpec suites. It allows to match string with JSON or already parsed ruby <code>Hash</code> against other ruby <code>Hash</code>, which is very convenient and creates very readable spec code. Lets jump to some examples.</p>
 

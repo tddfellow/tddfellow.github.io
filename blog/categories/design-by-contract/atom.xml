@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Design-by-contract | waterlink blog]]></title>
   <link href="http://waterlink.github.io/blog/categories/design-by-contract/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2015-04-09T23:43:46+03:00</updated>
+  <updated>2015-08-05T19:19:52+02:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Alexey Fedorov (waterlink)]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Using contracts.ruby With RSpec]]></title>
     <link href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
-    <updated>2015-04-09T22:51:53+03:00</updated>
+    <updated>2015-04-09T21:51:53+02:00</updated>
     <id>http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
     <content type="html"><![CDATA[<h2>Issues with RSpec mocks</h2>
 
@@ -125,7 +125,7 @@ end
   <entry>
     <title type="html"><![CDATA[How Can contracts.ruby Be Used in the Community With Duck Typing Culture?]]></title>
     <link href="http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/"/>
-    <updated>2015-03-10T12:11:23+02:00</updated>
+    <updated>2015-03-10T11:11:23+01:00</updated>
     <id>http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture</id>
     <content type="html"><![CDATA[<p>So, given simple example:</p>
 
