@@ -59,4 +59,6 @@ contracts.ruby is awesome, you can ping me on twitter
 [contracts.ruby](https://github.com/egonSchiele/contracts.ruby) you can create
 issues on corresponding github project. Pull requests are welcome!
 
+Comments on [hackernews](https://news.ycombinator.com/item?id=10147783).
+
 Happy coding! [@waterlink000 on twitter](https://twitter.com/waterlink000).
