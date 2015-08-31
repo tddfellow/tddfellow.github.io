@@ -109,7 +109,7 @@ You can include it only in contexts you need, or you can do it globally from `sp
 - contracts.ruby: https://github.com/egonSchiele/contracts.ruby
 - contracts.ruby chat: https://gitter.im/egonSchiele/contracts.ruby
 - Born from here: [egonSchiele/contracts.ruby#14](https://github.com/egonSchiele/contracts.ruby/issues/14)
-- [Introduction to contracts.ruby](http://waterlink.github.io/blog/2015/03/06/introduction-to-contracts-dot-ruby/)
+- [Introduction to contracts.ruby](http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/)
 - [Great contracts.ruby tutorial](https://egonschiele.github.io/contracts.ruby/)
 
 ## Thanks!
