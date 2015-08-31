@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rspec | waterlink blog]]></title>
   <link href="http://waterlink.github.io/blog/categories/rspec/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2015-08-31T11:44:37+02:00</updated>
+  <updated>2015-08-31T18:56:32+02:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,69 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using contracts.ruby With RSpec. Part 2]]></title>
+    <link href="http://waterlink.github.io/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/"/>
+    <updated>2015-08-31T18:36:30+02:00</updated>
+    <id>http://waterlink.github.io/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2</id>
+    <content type="html"><![CDATA[<p>Remember <a href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Using contracts.ruby With RSpec</a> ?</p>
+
+<p>RSpec mocks violate all <code>:class</code> contracts because <code>is_a?(ClassName)</code> returns
+<code>false</code> for mock. That post describes 2 possible solutions:</p>
+
+<ul>
+<li>stub <code>:is_a?</code>: <code>allow(my_double).to receive(:is_a?).with(MyClass).and_return(true)</code>, or</li>
+<li>use <code>contracts-rspec</code> gem, that patches <code>instance_double</code> RSpec helper.</li>
+</ul>
+
+
+<h2>Custom validators</h2>
+
+<p>Since custom validators have finally landed here:
+<a href="https://github.com/egonSchiele/contracts.ruby/pull/159">egonShiele/contracts.ruby#159</a>,
+now you can just override <code>:class</code> validator to accept all RSpec mocks:</p>
+
+<pre><code class="ruby"># Make contracts accept all RSpec doubles
+Contract.override_validator(:class) do |contract|
+  lambda do |arg|
+    arg.is_a?(RSpec::Mocks::Double) ||
+      arg.is_a?(contract)
+  end
+end
+</code></pre>
+
+<p>Now, RSpec mocks will not violate all the <code>:class</code> contracts.</p>
+
+<p>More information can be found here: <a href="https://github.com/egonSchiele/contracts.ruby/blob/v0.11.0/TUTORIAL.md#providing-your-own-custom-validators">Providing your own custom validators</a>.</p>
+
+<p>Additionally this refactoring enabled valuable speed optimization for complex
+contracts - validators for them will be evaluated only once and memoized.</p>
+
+<h2>Links</h2>
+
+<ul>
+<li><a href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Previous part</a></li>
+<li>contracts.ruby: <a href="https://github.com/egonSchiele/contracts.ruby">https://github.com/egonSchiele/contracts.ruby</a></li>
+<li>contracts.ruby chat: <a href="https://gitter.im/egonSchiele/contracts.ruby">https://gitter.im/egonSchiele/contracts.ruby</a></li>
+<li>Mentioned PR: <a href="https://github.com/egonSchiele/contracts.ruby/pull/159">https://github.com/egonSchiele/contracts.ruby/pull/159</a></li>
+<li><a href="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></li>
+<li><a href="https://egonschiele.github.io/contracts.ruby/">Great contracts.ruby tutorial</a></li>
+<li><a href="https://github.com/egonSchiele/contracts.ruby/pull/195">Full fledged documentation PR</a>: see here staging docs: <a href="https://relishapp.com/contracts-staging/contracts-ruby/docs">https://relishapp.com/contracts-staging/contracts-ruby/docs</a></li>
+</ul>
+
+
+<h2>Thanks!</h2>
+
+<p>If you have any questions, suggestions or just want to chat about how
+contracts.ruby is awesome, you can ping me on twitter
+<a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues using
+<a href="https://github.com/egonSchiele/contracts.ruby">contracts.ruby</a> you can create
+issues on corresponding github project. Pull requests are welcome!</p>
+
+<p>Happy coding! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Using contracts.ruby With RSpec]]></title>
@@ -111,7 +174,7 @@ end
 <li>contracts.ruby: <a href="https://github.com/egonSchiele/contracts.ruby">https://github.com/egonSchiele/contracts.ruby</a></li>
 <li>contracts.ruby chat: <a href="https://gitter.im/egonSchiele/contracts.ruby">https://gitter.im/egonSchiele/contracts.ruby</a></li>
 <li>Born from here: <a href="https://github.com/egonSchiele/contracts.ruby/issues/14">egonSchiele/contracts.ruby#14</a></li>
-<li><a href="http://waterlink.github.io/blog/2015/03/06/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></li>
+<li><a href="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></li>
 <li><a href="https://egonschiele.github.io/contracts.ruby/">Great contracts.ruby tutorial</a></li>
 </ul>
 
