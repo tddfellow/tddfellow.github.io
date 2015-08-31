@@ -200,4 +200,6 @@ docker-machine create -d virtualbox dev --virtualbox-memory "5120"
 - [Overview of Docker Machine](https://docs.docker.com/machine/)
 - [Get started with Docker Machine and a local VM](https://docs.docker.com/machine/get-started/)
 
+Comments on [hackernews](https://news.ycombinator.com/item?id=10146082).
+
 Happy hacking! [@waterlink000 on twitter](https://twitter.com/waterlink000).
