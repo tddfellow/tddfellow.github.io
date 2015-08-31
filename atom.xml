@@ -4,7 +4,7 @@
   <title><![CDATA[waterlink blog]]></title>
   <link href="http://waterlink.github.io/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2015-08-31T11:29:59+02:00</updated>
+  <updated>2015-08-31T11:44:37+02:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -244,6 +244,8 @@ image.</p>
 <li><a href="https://docs.docker.com/machine/get-started/">Get started with Docker Machine and a local VM</a></li>
 </ul>
 
+
+<p>Comments on <a href="https://news.ycombinator.com/item?id=10146082">hackernews</a>.</p>
 
 <p>Happy hacking! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
 ]]></content>
