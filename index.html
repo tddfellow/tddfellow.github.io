@@ -9,8 +9,14 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Remember Using contracts.ruby With RSpec ? RSpec mocks violate all :class contracts because is_a?(ClassName) returns
-false for mock. That post &hellip;">
+  <meta name="description" content="Lets start off with very simple code: 1
+2
+3
+4
+5
+6
+7
+func toJSON(post Post) string { return fmt.Sprintf( `{&quot;post_title&quot;: &quot;%s&quot;, & &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -57,6 +63,120 @@ false for mock. That post &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/09/08/intention-revealing-code/">Intention-revealing Code</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-09-08T21:24:52+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>9:24 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Lets start off with very simple code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kd">func</span> <span class="nx">toJSON</span><span class="p">(</span><span class="nx">post</span> <span class="nx">Post</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span>
+</span><span class='line'>                <span class="s">`{&quot;post_title&quot;: &quot;%s&quot;, &quot;post_content&quot;: &quot;%s&quot;}`</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">post</span><span class="p">.</span><span class="nx">Title</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">post</span><span class="p">.</span><span class="nx">Content</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is very simple code and it is easy to understand what it is doing and what
+it is doing wrong:</p>
+
+<ul>
+<li>It tries to marshal <code>post</code> struct to custom <code>JSON</code> representation.</li>
+<li>It fails when there are special characters in these strings.</li>
+<li>It does not use standard <code>MarshalJSON</code> interface.</li>
+</ul>
+
+
+<p>It can be fixed in a pretty simple way:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kd">func</span> <span class="p">(</span><span class="nx">post</span> <span class="nx">Post</span><span class="p">)</span> <span class="nx">MarshalJSON</span><span class="p">()</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}{</span>
+</span><span class='line'>                <span class="s">&quot;post_title&quot;</span><span class="p">:</span>   <span class="nx">post</span><span class="p">.</span><span class="nx">Title</span><span class="p">,</span>
+</span><span class='line'>                <span class="s">&quot;post_content&quot;</span><span class="p">:</span> <span class="nx">post</span><span class="p">.</span><span class="nx">Content</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">})</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And at the usage site, you can now just use standard <code>encoding/json</code> package
+capabilities:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">rawPost</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="nx">post</span><span class="p">)</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">err</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// do stuff with rawPost</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And now you can notice that tests do not pass. And the place that failed is
+totally unrelevant.  Long story short. Name of the original method was not
+revealing any real intent: it was actually specific json representation for
+usage with external API, but normal <code>json.Marshal</code> is used by this same
+application for providing responses to its own HTTP clients.</p>
+
+<p>Were the name a bit more intention-revealing, nobody would waste their time
+on finding this out by trial and mistake:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// should probably even sit in different package</span>
+</span><span class='line'><span class="kd">func</span> <span class="nx">marshalToExternalAPIFormat</span><span class="p">(</span><span class="nx">post</span> <span class="nx">Post</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And this is only a tip of the iceberg of how non-intention-revealing code can
+trip you over.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1771,6 +1891,10 @@ codeUsing(f, d)
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/09/08/intention-revealing-code/">Intention-revealing Code</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/">Using contracts.ruby With RSpec. Part 2</a>
       </li>
     
@@ -1784,10 +1908,6 @@ codeUsing(f, d)
     
       <li class="post">
         <a href="/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Using contracts.ruby With RSpec</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/03/12/object-oriented-design-important-things/">Object Oriented Design. Important Things</a>
       </li>
     
   </ul>

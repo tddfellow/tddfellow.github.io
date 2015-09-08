@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Computers | waterlink blog]]></title>
+  <link href="http://waterlink.github.io/blog/categories/computers/atom.xml" rel="self"/>
+  <link href="http://waterlink.github.io/"/>
+  <updated>2015-09-08T21:44:05+02:00</updated>
+  <id>http://waterlink.github.io/</id>
+  <author>
+    <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Intention-revealing Code]]></title>
+    <link href="http://waterlink.github.io/blog/2015/09/08/intention-revealing-code/"/>
+    <updated>2015-09-08T21:24:52+02:00</updated>
+    <id>http://waterlink.github.io/blog/2015/09/08/intention-revealing-code</id>
+    <content type="html"><![CDATA[<p>Lets start off with very simple code:</p>
+
+<pre><code class="go">func toJSON(post Post) string {
+        return fmt.Sprintf(
+                `{"post_title": "%s", "post_content": "%s"}`,
+                post.Title,
+                post.Content,
+        )
+}
+</code></pre>
+
+<p>This is very simple code and it is easy to understand what it is doing and what
+it is doing wrong:</p>
+
+<ul>
+<li>It tries to marshal <code>post</code> struct to custom <code>JSON</code> representation.</li>
+<li>It fails when there are special characters in these strings.</li>
+<li>It does not use standard <code>MarshalJSON</code> interface.</li>
+</ul>
+
+
+<p>It can be fixed in a pretty simple way:</p>
+
+<pre><code class="go">func (post Post) MarshalJSON() ([]byte, error) {
+        return json.Marshal(map[string]interface{}{
+                "post_title":   post.Title,
+                "post_content": post.Content,
+        })
+}
+</code></pre>
+
+<p>And at the usage site, you can now just use standard <code>encoding/json</code> package
+capabilities:</p>
+
+<pre><code class="go">rawPost, err := json.Marshal(post)
+if err != nil {
+  return err
+}
+
+// do stuff with rawPost
+</code></pre>
+
+<p>And now you can notice that tests do not pass. And the place that failed is
+totally unrelevant.  Long story short. Name of the original method was not
+revealing any real intent: it was actually specific json representation for
+usage with external API, but normal <code>json.Marshal</code> is used by this same
+application for providing responses to its own HTTP clients.</p>
+
+<p>Were the name a bit more intention-revealing, nobody would waste their time
+on finding this out by trial and mistake:</p>
+
+<pre><code class="go">// should probably even sit in different package
+func marshalToExternalAPIFormat(post Post) ([]byte, err) {
+        // ...
+}
+</code></pre>
+
+<p>And this is only a tip of the iceberg of how non-intention-revealing code can
+trip you over.</p>
+]]></content>
+  </entry>
+  
+</feed>
