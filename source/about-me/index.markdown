@@ -25,7 +25,7 @@ Strong teaching and leadership skills. Active open-source contributor.
 
 Specialities: Microservices, Agile, XP and Open-Source
 
-## What I am looking for?
+## What am I looking for?
 
 * Exciting challenges
 * Working with microservices (building microservices platform)
