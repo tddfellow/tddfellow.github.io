@@ -6,7 +6,7 @@ layout: minimal
 <article role="article">
   {% if page.title %}
   <header>
-    {% if page.photo %}<img src="{{ page.photo }}" class="img-small img-left img-rounded" />{% endif %}
+    {% if page.photo %}<img src="{{ page.photo }}" class="img-small img-left img-rounded" width="256" height="256" />{% endif %}
     <h1 class="entry-title">{% if site.titlecase %}{{ page.title | titlecase }}{% else %}{{ page.title }}{% endif %}</h1>
     {% if page.date %}<p class="meta">{% include post/date.html %}{{ time }}</p>{% endif %}
   </header>
