@@ -1,7 +1,7 @@
 ---
 layout: minimalpage
 title: "Oleksii Fedorov"
-date: 2015-11-13 18:33
+date: 2015-11-14 10:19
 photo: "https://en.gravatar.com/userimage/26702135/afa84af9503d1f768ed43820a0674e73.jpg?size=1000"
 comments: false
 sharing: true
