@@ -1,7 +1,7 @@
 ---
 layout: minimalpage
 title: "Oleksii Fedorov"
-date: 2015-11-14 10:19
+date: 2015-12-09 22:06
 photo: "https://en.gravatar.com/userimage/26702135/afa84af9503d1f768ed43820a0674e73.jpg?size=1000"
 comments: false
 sharing: true
@@ -29,6 +29,7 @@ Specialities: Microservices, Agile, XP and Open-Source
 
 * Exciting challenges
 * Working with microservices (building microservices platform)
+* Distributed systems, immutable infrastructure and big data
 * Functional programming (Scala, Haskell, Clojure, Elm)
 * Tech Lead position
 * Team Lead position
@@ -68,6 +69,7 @@ knowledge and to share their own knowledge with others.
 * Cassandra, PostgreSQL
 * Zookeeper, Kafka
 * AWS SQS, S3, EC2, RDS
+* Immutable infrastructure
 
 #### Achievements
 
