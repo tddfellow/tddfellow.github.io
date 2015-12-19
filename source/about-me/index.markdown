@@ -1,7 +1,7 @@
 ---
 layout: minimalpage
 title: "Oleksii Fedorov"
-date: 2015-12-09 22:06
+date: 2015-12-19 11:11
 photo: "https://en.gravatar.com/userimage/26702135/afa84af9503d1f768ed43820a0674e73.jpg?size=1000"
 comments: false
 sharing: true
@@ -24,6 +24,18 @@ stops learning. Always transfers his knowledge around to whoever needs it.
 Strong teaching and leadership skills. Active open-source contributor.
 
 Specialities: Microservices, Agile, XP and Open-Source
+
+## Skills summary
+
+* Python - 2 years
+* Ruby - 3 years
+* Golang - 1 year
+* Clojure - 1.5 year
+* Microservices - 1.5 year
+* Agile + XP - 2.5 years
+* Team Lead - 1.5 year
+* DevOps - 2.5 years
+* Open Source - 2 years
 
 ## What am I looking for?
 
