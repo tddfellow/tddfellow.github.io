@@ -1,7 +1,7 @@
 ---
 layout: minimalpage
 title: "Oleksii Fedorov"
-date: 2015-12-19 11:11
+date: 2015-12-22 08:55
 photo: "https://en.gravatar.com/userimage/26702135/afa84af9503d1f768ed43820a0674e73.jpg?size=1000"
 comments: false
 sharing: true
@@ -65,7 +65,7 @@ should hire me.
 Brainly is an educational social learning platform for teens to gain new
 knowledge and to share their own knowledge with others.
 
-#### Core reponsibilities:
+#### Core responsibilities:
 
 * Contribution to microservices platform
 * Migration of legacy application to microservices platform bit-by-bit
@@ -88,7 +88,7 @@ knowledge and to share their own knowledge with others.
 * Made big contribution into code-review culture and knowledge sharing. As a
   result overall code quality and quality of knowledge sharing increased
   greatly
-* Re-writen broken in-house tools (that bring big value to the business) and
+* Re-written broken in-house tools (that bring big value to the business) and
   moved them to microservices platform. Made them more stable, implemented
   additional features, that increased productivity of employees who use these
   tools
@@ -217,7 +217,7 @@ Smart Cloud Solutions is a Ukrainian accounting startup.
 #### Achievements
 
 * Brought up 3 interns to the junior and later to middle level
-* Teached 2 middle developers skills required to be a team lead
+* Taught 2 middle developers skills required to be a team lead
 * Implemented Kanban in my team
 * Delivered Knowledge Base system for main product
 * Implemented TDD in my team and spread this idea to all other teams
