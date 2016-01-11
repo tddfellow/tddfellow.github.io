@@ -25,9 +25,9 @@ for message := range inbox {
 ```
 
 Looks quite legit. In practice it will often cause race conditions. Because
-`message` variable is defined once and then mutated in each loop iteration. And
-we are giving pointer to this variable away to some concurrent collaborator.
-This causes race condition and very confusing bugs.
+`message` variable is defined once and then mutated in each loop iteration. The
+variable is passed pointer to some concurrent collaborators, which causes race
+conditions and very confusing bugs.
 
 Above code can be re-written as:
 
