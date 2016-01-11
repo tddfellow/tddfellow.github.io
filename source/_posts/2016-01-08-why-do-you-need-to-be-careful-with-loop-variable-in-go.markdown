@@ -11,7 +11,54 @@ categories:
 - pitfalls
 ---
 
-## Taking reference of loop variable
+## TL;DR
+
+This post describes two different issues:
+
+### Race conditions when taking reference of loop variable and passing it to another goroutine:
+
+```go
+// WRONG: pass message by reference
+for message := range inbox {
+        outbox <- EnhancedMessage{
+                // .. more fields here ..
+                Original: &message,
+        }
+}
+
+// CORRECT: pass message by value
+for message := range inbox {
+        outbox <- EnhancedMessage{
+                // .. more fields here ..
+                // Pass message by value here
+                Original: message,
+        }
+}
+```
+
+See explanation [here](#taking_reference_of_loop_variable).
+
+### Race conditions when using loop variable inside of goroutine inside of loop:
+
+```go
+// WRONG: use loop variable directly from goroutine
+for message := range inbox {
+        go func() {
+                // .. do something important with message ..
+        }()
+}
+
+// CORRECT: pass loop variable by value as an argument for goroutine's function
+for message := range inbox {
+        go func(message Message) {
+                // .. do something important with message ..
+        }(message)
+}
+```
+
+See explanation [here](#running_goroutine_that_uses_loop_variable).
+
+## <a href="#taking_reference_of_loop_variable" id="taking_reference_of_loop_variable">Taking reference of loop variable</a>
 
 Lets start off with simple code example:
 
@@ -105,7 +152,7 @@ Personally, I prefer latter. If you know of any drawbacks of this approach
 comparing to other 2, or if you know of entirely better way of doing that,
 please let me know.
 
-## Running goroutine, that uses loop variable
+## <a href="#running_goroutine_that_uses_loop_variable" id="running_goroutine_that_uses_loop_variable">Running goroutine, that uses loop variable</a>
 
 Example code:
 
@@ -121,9 +168,10 @@ This code might look legit too. You might think it will process whole inbox
 concurrently, but most probably it will process only a couple of last elements
 multiple times.
 
-If you rewrite the loop in a similar fashion as in previous section, you would
-notice that `message` would be mutated while these goroutines are still
-processing it. This will cause confusing race conditions.
+If you rewrite the loop in a similar fashion as in
+[previous section](#taking_reference_of_loop_variable), you would notice that
+`message` would be mutated while these goroutines are still processing it. This
+will cause confusing race conditions.
 
 Correct way of doing that is:
 
