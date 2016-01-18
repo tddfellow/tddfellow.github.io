@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Upstart | waterlink blog]]></title>
+  <title><![CDATA[Category: Upstart | Oleksii Fedorov's (waterlink) tech blog]]></title>
   <link href="http://waterlink.github.io/blog/categories/upstart/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2016-01-08T14:15:40+01:00</updated>
+  <updated>2016-01-18T04:50:18+01:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
