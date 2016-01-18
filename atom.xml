@@ -4,7 +4,7 @@
   <title><![CDATA[Oleksii Fedorov's (waterlink) tech blog]]></title>
   <link href="http://waterlink.github.io/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2016-01-18T05:17:22+01:00</updated>
+  <updated>2016-01-18T05:43:08+01:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -1525,8 +1525,6 @@ image.</p>
 
 
 <p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues with using <code>contracts.ruby</code>, you can always create an <a href="https://github.com/egonSchiele/contracts.ruby/issues">issue on github</a> and Pull Requests are welcome.</p>
-
-<p><a href="http://www.codeproject.com" rel="tag" style="display:none;">CodeProject</a></p>
 ]]></content>
   </entry>
   
