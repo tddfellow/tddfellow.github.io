@@ -210,3 +210,5 @@ And you have ability to disable contracts in production with `NO_CONTRACTS=1` en
 - [Me, co-maintainer](https://github.com/waterlink)
 
 If you have any questions or suggestions, you can always reach me out on twitter [@waterlink000](https://twitter.com/waterlink000). If you have any issues with using `contracts.ruby`, you can always create an [issue on github](https://github.com/egonSchiele/contracts.ruby/issues) and Pull Requests are welcome.
+
+<a href="http://www.codeproject.com" rel="tag" style="display:none;">CodeProject</a>
