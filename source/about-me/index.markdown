@@ -233,6 +233,21 @@ Smart Cloud Solutions is a Ukrainian accounting startup.
 * Learned Python and Ruby languages
 * Learned how to do DevOps
 
+## Algorithmic experience
+
+### ACM-ICPC (team based) | Donetsk National University | KKT Team | 2009-2014
+
+- Skills: C/C++, Graph theory, Dynamic programming, NP-problems, Teamwork,
+  Leadership, Mentorship
+- Achievements: 3rd place winner in World Semi Finals (2012-2013)
+
+### Solo competitions | Donetsk Lyceum "Intellect" | 2005-2009
+
+- Skills: C/C++, General algorithms, Sorting algorithms, Dynamic programming,
+  Graph theory
+- Achievements: 3rd place winner in Ukrainian Republican Programming
+  Competition (2007, 2008, 2009)
+
 ## Language proficiency
 
 * English -- full professional proficiency
