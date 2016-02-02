@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-1/</loc>
+    <lastmod>2016-02-02T07:59:25+01:00</lastmod>
+  </url>
+  <url>
     <loc>http://waterlink.github.io/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/</loc>
     <lastmod>2016-01-08T02:28:45+01:00</lastmod>
   </url>
@@ -145,5 +149,14 @@
   </url>
   <url>
     <loc>http://waterlink.github.io/blog/categories/pitfalls/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/screencast/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/test-driven-development/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/tdd-screencasts/</loc>
   </url>
 </urlset>
