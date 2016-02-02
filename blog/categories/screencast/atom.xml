@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Screencast | Oleksii Fedorov's (waterlink) tech blog]]></title>
   <link href="http://waterlink.github.io/blog/categories/screencast/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2016-02-02T08:22:12+01:00</updated>
+  <updated>2016-02-02T08:31:12+01:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,65 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Test-Driven-Development Screencast #2]]></title>
+    <link href="http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-2/"/>
+    <updated>2016-02-02T08:28:14+01:00</updated>
+    <id>http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-2</id>
+    <content type="html"><![CDATA[<iframe width="560" height="315" src="https://www.youtube.com/embed/6XMoZ7snuKo?list=PLbNxoJawcer22UE8lT93-fX8ZYFNtoXFu" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<h2>Script</h2>
+
+<p>Hello, hello! I am Oleksii Fedorov, and this is the second episode of
+Test-Driven-Development Screencast.</p>
+
+<p>Now that I think about it, first episode was more of an audio podcast (with two
+and half visual slides), rather than a screencast. Don&rsquo;t worry - this episode
+will be full of code and actual action time on the screen.</p>
+
+<p>Today we are going to implement a sorting algorithm. We will not come up with
+algorithm beforehand and we will simply let it emerge by itself, while we are
+doing TDD.</p>
+
+<p>Lets jump in!</p>
+
+<pre><code>./watch.sh  # So I have here small script, that will watch changes in my code
+            # and will run all my tests. Additionally, it will show me the
+            # result in the notification bar (you will see, shortly).
+
+vim         # 1) Create test file
+            # 2) Follow TDD rules to the letter
+</code></pre>
+
+<p>I think we are done here. And notice, that this is a bubble sort algorithm. Now
+lets ask a question, why the worst possible algorithm have emerged, while we
+were using TDD. That is an interesting question.</p>
+
+<p>But first, lets ask ourselves a question: Are we kind to the user of our
+function? The answer is - NO. We are mutating the argument, that user passed to
+us. And this mutation might be unexpected. At least our test suite doesn&rsquo;t even
+mention such behavior.</p>
+
+<p>The root of the problem is this little swap operation that we have here:</p>
+
+<pre><code># show swap operation on the screen
+a[0], a[1] = {a[1], a[0]}
+</code></pre>
+
+<p>I wonder, what will happen if we were to ban swap operation (and any kind of
+mutation of the argument of the function), and implement sorting algorithm
+again?</p>
+
+<p>Find out next time, on the next episode of Test-Driven-Development! Have a good
+day.</p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Test-Driven-Development Screencast #1]]></title>
@@ -175,7 +234,7 @@ statements every time you add a failing test.</p>
   Mess.</p>
 
 <p>Now we can finally move on to the example. Next time, on the next episode of
-Test-Driven-Development Screencast!</p>
+Test-Driven-Development Screencast! Have a good day.</p>
 
 <p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 ]]></content>
