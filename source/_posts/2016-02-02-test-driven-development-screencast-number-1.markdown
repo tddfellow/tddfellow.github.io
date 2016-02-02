@@ -161,6 +161,6 @@ And lets sum up now:
   Mess.
 
 Now we can finally move on to the example. Next time, on the next episode of
-Test-Driven-Development Screencast!
+Test-Driven-Development Screencast! Have a good day.
 
 List of all TDD Screencasts can be [found here](/blog/categories/tdd-screencasts/).
