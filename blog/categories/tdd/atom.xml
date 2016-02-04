@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tdd | Oleksii Fedorov's (waterlink) tech blog]]></title>
   <link href="http://waterlink.github.io/blog/categories/tdd/atom.xml" rel="self"/>
   <link href="http://waterlink.github.io/"/>
-  <updated>2016-02-02T22:37:34+01:00</updated>
+  <updated>2016-02-04T01:19:23+01:00</updated>
   <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,55 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TDD #3: Kind Sort]]></title>
+    <link href="http://waterlink.github.io/blog/2016/02/04/tdd-number-3-kind-sort/"/>
+    <updated>2016-02-04T01:16:18+01:00</updated>
+    <id>http://waterlink.github.io/blog/2016/02/04/tdd-number-3-kind-sort</id>
+    <content type="html"><![CDATA[<iframe width="560" height="315" src="https://www.youtube.com/embed/TR2hKaR4zg8" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<h2>Script</h2>
+
+<p>Hello, hello! I am Oleksii Fedorov, and this is the third
+episode of TDD Screencast.</p>
+
+<p>In last episode we have implemented a sorting algorithm
+using TDD, without thinking about algorithm beforehand. As a
+result, bubble sort have emerged.</p>
+
+<p>We have noticed, that there is a small weird thing about
+this implementation: it has unspecified behavior - mutation
+of the original array.</p>
+
+<p>So we asked, which algorithm would emerge, if we were to ban
+such side-effects from our algorithm. Let&rsquo;s find out!</p>
+
+<pre><code>./watch.sh
+vim           # implement sorting algorithm
+</code></pre>
+
+<p>I think we are done here. If you look closely, it is a
+quicksort. It is not the most memory-efficient
+implementation, but that is something that is simple to
+optimize (instead of passing recursively arrays, pass
+original array and indexes). That optimization will involve
+actual mutation of the array in place, so if we want to stay
+true to our specification /show test for no-side-effects/.
+We will have to copy the array once, using some sort of
+wrapper function.</p>
+
+<p>Applying this optimization I leave as an exercise to you my
+users.</p>
+
+<p>In the next episode we will look into path-finding problem,
+and we will see, how these techniques apply there. See you
+next time! Have a nice day.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Test-Driven-Development Screencast #2]]></title>
@@ -22,6 +71,8 @@
 
 
 <p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 
 <h2>Script</h2>
 
@@ -67,8 +118,6 @@ again?</p>
 
 <p>Find out next time, on the next episode of Test-Driven-Development! Have a good
 day.</p>
-
-<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 ]]></content>
   </entry>
   
@@ -81,6 +130,8 @@ day.</p>
 
 
 <p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 
 <h2>Script</h2>
 
@@ -235,8 +286,6 @@ statements every time you add a failing test.</p>
 
 <p>Now we can finally move on to the example. Next time, on the next episode of
 Test-Driven-Development Screencast! Have a good day.</p>
-
-<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 ]]></content>
   </entry>
   
