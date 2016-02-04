@@ -14,6 +14,8 @@ categories:
 
 Recommended to watch in a full-screen and on 720p or higher quality.
 
+List of all TDD Screencasts can be [found here](/blog/categories/tdd-screencasts/).
+
 ## Script
 
 Hello, hello! I am Oleksii Fedorov, and this is the second episode of
@@ -60,5 +62,3 @@ again?
 
 Find out next time, on the next episode of Test-Driven-Development! Have a good
 day.
-
-List of all TDD Screencasts can be [found here](/blog/categories/tdd-screencasts/).

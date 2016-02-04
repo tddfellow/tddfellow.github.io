@@ -14,6 +14,8 @@ categories:
 
 Recommended to watch in a full-screen and on 720p or higher quality.
 
+List of all TDD Screencasts can be [found here](/blog/categories/tdd-screencasts/).
+
 ## Script
 
 Hello! I am Oleksii Fedorov, and this is the first episode of
@@ -162,5 +164,3 @@ And lets sum up now:
 
 Now we can finally move on to the example. Next time, on the next episode of
 Test-Driven-Development Screencast! Have a good day.
-
-List of all TDD Screencasts can be [found here](/blog/categories/tdd-screencasts/).
