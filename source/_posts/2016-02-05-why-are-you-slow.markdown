@@ -123,7 +123,7 @@ correct answer from your experience and expertise point of view.
 
 Do you know that surgeon, before any surgery, washes his hands. You not just
 know, it is your expectation! In some countries if he doesn't, he can easily
-can be put in jail.
+end up in jail.
 
 ### Do you know, how surgeon washes his hands?
 
