@@ -2,12 +2,12 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://waterlink.github.io
-title: Oleksii Fedorov's (waterlink) tech blog
-subtitle: A technical blog from me.
+url: http://www.tddfellow.com
+title: That TDD Fellow | Tech Blog | Screencasts
+subtitle: Test Driven Development | Software Industry
 author: Oleksii Fedorov (waterlink)
 simple_search:
-description: Oleksii Fedorov (waterlink) featuring awesome techincal articles about Ruby, Golang, Docker, Clojure, etc.
+description: That TDD Fellow (waterlink) featuring awesome techincal articles about TDD, Software Industry, Ruby, Golang, Docker, Clojure, etc.
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
 # You can customize the format as defined in
