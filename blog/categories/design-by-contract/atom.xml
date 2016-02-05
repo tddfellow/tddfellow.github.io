@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Design-by-contract | That TDD Fellow | Tech Blog | Screencasts]]></title>
-  <link href="http://www.tddfellow.com/blog/categories/design-by-contract/atom.xml" rel="self"/>
-  <link href="http://www.tddfellow.com/"/>
-  <updated>2016-02-05T01:55:44+01:00</updated>
-  <id>http://www.tddfellow.com/</id>
+  <title><![CDATA[Category: Design-by-contract | Oleksii Fedorov's (waterlink) tech blog]]></title>
+  <link href="http://waterlink.github.io/blog/categories/design-by-contract/atom.xml" rel="self"/>
+  <link href="http://waterlink.github.io/"/>
+  <updated>2016-02-05T20:17:36+01:00</updated>
+  <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Using contracts.ruby With RSpec. Part 2]]></title>
-    <link href="http://www.tddfellow.com/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/"/>
+    <link href="http://waterlink.github.io/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/"/>
     <updated>2015-08-31T18:36:30+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2</id>
+    <id>http://waterlink.github.io/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2</id>
     <content type="html"><![CDATA[<p>Remember <a href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Using contracts.ruby With RSpec</a> ?</p>
 
 <p>RSpec mocks violate all <code>:class</code> contracts because <code>is_a?(ClassName)</code> returns
@@ -80,9 +80,9 @@ issues on corresponding github project. Pull requests are welcome!</p>
   
   <entry>
     <title type="html"><![CDATA[Using contracts.ruby With RSpec]]></title>
-    <link href="http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
+    <link href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
     <updated>2015-04-09T21:51:53+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
+    <id>http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
     <content type="html"><![CDATA[<h2>Issues with RSpec mocks</h2>
 
 <p>Lets start from example:</p>
@@ -189,9 +189,9 @@ end
   
   <entry>
     <title type="html"><![CDATA[How Can contracts.ruby Be Used in the Community With Duck Typing Culture?]]></title>
-    <link href="http://www.tddfellow.com/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/"/>
+    <link href="http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/"/>
     <updated>2015-03-10T11:11:23+01:00</updated>
-    <id>http://www.tddfellow.com/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture</id>
+    <id>http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture</id>
     <content type="html"><![CDATA[<p>So, given simple example:</p>
 
 <pre><code class="ruby">Contract Num, Num =&gt; Num

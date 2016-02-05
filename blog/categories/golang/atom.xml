@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Golang | That TDD Fellow | Tech Blog | Screencasts]]></title>
-  <link href="http://www.tddfellow.com/blog/categories/golang/atom.xml" rel="self"/>
-  <link href="http://www.tddfellow.com/"/>
-  <updated>2016-02-05T01:55:44+01:00</updated>
-  <id>http://www.tddfellow.com/</id>
+  <title><![CDATA[Category: Golang | Oleksii Fedorov's (waterlink) tech blog]]></title>
+  <link href="http://waterlink.github.io/blog/categories/golang/atom.xml" rel="self"/>
+  <link href="http://waterlink.github.io/"/>
+  <updated>2016-02-05T20:17:36+01:00</updated>
+  <id>http://waterlink.github.io/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Why Do You Need to Be Careful With Loop Variable in Go]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/"/>
+    <link href="http://waterlink.github.io/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/"/>
     <updated>2016-01-08T02:28:45+01:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go</id>
+    <id>http://waterlink.github.io/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go</id>
     <content type="html"><![CDATA[<h2>Taking reference of loop variable</h2>
 
 <p>Lets start off with simple code example:</p>
@@ -153,9 +153,9 @@ I will only be happy to learn and iterate over this article to improve it.</p>
   
   <entry>
     <title type="html"><![CDATA[Intention-revealing Code]]></title>
-    <link href="http://www.tddfellow.com/blog/2015/09/08/intention-revealing-code/"/>
+    <link href="http://waterlink.github.io/blog/2015/09/08/intention-revealing-code/"/>
     <updated>2015-09-08T21:24:52+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2015/09/08/intention-revealing-code</id>
+    <id>http://waterlink.github.io/blog/2015/09/08/intention-revealing-code</id>
     <content type="html"><![CDATA[<p>Lets start off with very simple code:</p>
 
 <pre><code class="go">func toJSON(post Post) string {

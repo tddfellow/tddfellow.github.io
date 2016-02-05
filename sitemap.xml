@@ -1,170 +1,188 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://www.tddfellow.com/blog/2016/02/04/tdd-number-3-kind-sort/</loc>
-    <lastmod>2016-02-04T01:16:18+01:00</lastmod>
+    <loc>http://waterlink.github.io/blog/2016/02/05/why-are-you-slow/</loc>
+    <lastmod>2016-02-05T17:09:47+01:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2016/02/02/test-driven-development-screencast-number-2/</loc>
+    <loc>http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-2/</loc>
     <lastmod>2016-02-02T08:28:14+01:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2016/02/02/test-driven-development-screencast-number-1/</loc>
+    <loc>http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-1/</loc>
     <lastmod>2016-02-02T07:59:25+01:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/</loc>
+    <loc>http://waterlink.github.io/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/</loc>
     <lastmod>2016-01-08T02:28:45+01:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2015/09/08/intention-revealing-code/</loc>
+    <loc>http://waterlink.github.io/blog/2015/09/08/intention-revealing-code/</loc>
     <lastmod>2015-09-08T21:24:52+02:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/</loc>
+    <loc>http://waterlink.github.io/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/</loc>
     <lastmod>2015-08-31T18:36:30+02:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x/</loc>
+    <loc>http://waterlink.github.io/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x/</loc>
     <lastmod>2015-08-31T10:21:06+02:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/</loc>
+    <loc>http://waterlink.github.io/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/</loc>
     <lastmod>2015-08-05T19:10:36+02:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/</loc>
+    <loc>http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/</loc>
     <lastmod>2015-04-09T21:51:53+02:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things/</loc>
+    <loc>http://waterlink.github.io/blog/2015/03/12/object-oriented-design-important-things/</loc>
     <lastmod>2015-03-12T23:23:45+01:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/</loc>
+    <loc>http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/</loc>
     <lastmod>2015-03-10T11:11:23+01:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2015/03/05/introduction-to-contracts-dot-ruby/</loc>
+    <loc>http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/</loc>
     <lastmod>2015-03-05T23:55:40+01:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2015/01/30/dismantling-effective-go-article/</loc>
+    <loc>http://waterlink.github.io/blog/2015/01/30/dismantling-effective-go-article/</loc>
     <lastmod>2015-01-30T22:39:11+01:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/</loc>
+    <loc>http://waterlink.github.io/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/</loc>
     <lastmod>2015-01-23T01:56:19+01:00</lastmod>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/archives/</loc>
+    <loc>http://waterlink.github.io/blog/archives/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/</loc>
+    <loc>http://waterlink.github.io/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/about-me/</loc>
+    <loc>http://waterlink.github.io/about-me/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/ruby/</loc>
+    <loc>http://waterlink.github.io/blog/categories/ruby/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/rspec/</loc>
+    <loc>http://waterlink.github.io/blog/categories/rspec/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/json/</loc>
+    <loc>http://waterlink.github.io/blog/categories/json/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/api/</loc>
+    <loc>http://waterlink.github.io/blog/categories/api/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/go/</loc>
+    <loc>http://waterlink.github.io/blog/categories/go/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/design-by-contract/</loc>
+    <loc>http://waterlink.github.io/blog/categories/design-by-contract/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/contracts-dot-ruby/</loc>
+    <loc>http://waterlink.github.io/blog/categories/contracts-dot-ruby/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/design-by-contract/</loc>
+    <loc>http://waterlink.github.io/blog/categories/design-by-contract/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/oop/</loc>
+    <loc>http://waterlink.github.io/blog/categories/oop/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/design/</loc>
+    <loc>http://waterlink.github.io/blog/categories/design/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/tdd/</loc>
+    <loc>http://waterlink.github.io/blog/categories/tdd/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/actor-model/</loc>
+    <loc>http://waterlink.github.io/blog/categories/actor-model/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/dependency-inversion/</loc>
+    <loc>http://waterlink.github.io/blog/categories/dependency-inversion/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/dependency-injection/</loc>
+    <loc>http://waterlink.github.io/blog/categories/dependency-injection/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/chef/</loc>
+    <loc>http://waterlink.github.io/blog/categories/chef/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/test-kitchen/</loc>
+    <loc>http://waterlink.github.io/blog/categories/test-kitchen/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/kitchen-docker/</loc>
+    <loc>http://waterlink.github.io/blog/categories/kitchen-docker/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/docker/</loc>
+    <loc>http://waterlink.github.io/blog/categories/docker/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/ubuntu/</loc>
+    <loc>http://waterlink.github.io/blog/categories/ubuntu/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/upstart/</loc>
+    <loc>http://waterlink.github.io/blog/categories/upstart/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/docker-machine/</loc>
+    <loc>http://waterlink.github.io/blog/categories/docker-machine/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/guide/</loc>
+    <loc>http://waterlink.github.io/blog/categories/guide/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/virtualbox/</loc>
+    <loc>http://waterlink.github.io/blog/categories/virtualbox/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/macosx/</loc>
+    <loc>http://waterlink.github.io/blog/categories/macosx/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/programming/</loc>
+    <loc>http://waterlink.github.io/blog/categories/programming/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/pragmatic/</loc>
+    <loc>http://waterlink.github.io/blog/categories/pragmatic/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/rant/</loc>
+    <loc>http://waterlink.github.io/blog/categories/rant/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/golang/</loc>
+    <loc>http://waterlink.github.io/blog/categories/golang/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/computers/</loc>
+    <loc>http://waterlink.github.io/blog/categories/computers/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/concurrency/</loc>
+    <loc>http://waterlink.github.io/blog/categories/concurrency/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/pitfalls/</loc>
+    <loc>http://waterlink.github.io/blog/categories/pitfalls/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/screencast/</loc>
+    <loc>http://waterlink.github.io/blog/categories/screencast/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/test-driven-development/</loc>
+    <loc>http://waterlink.github.io/blog/categories/test-driven-development/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/tdd-screencasts/</loc>
+    <loc>http://waterlink.github.io/blog/categories/tdd-screencasts/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/preaching/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/cleancode/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/craftsmanship/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/professionalism/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/blog/categories/software-industry/</loc>
+  </url>
+  <url>
+    <loc>http://waterlink.github.io/posts/2/</loc>
   </url>
 </urlset>

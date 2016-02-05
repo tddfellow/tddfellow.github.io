@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>That TDD Fellow | Tech Blog | Screencasts</title>
+  <title>Oleksii Fedorov&#8217;s (waterlink) tech blog</title>
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Recommended to watch in a full-screen and on 720p or higher quality. Script Hello, hello! I am Oleksii Fedorov, and this is the third
-episode of TDD &hellip;">
+  <meta name="description" content="We are slow because we have the worst codebase! So why don&rsquo;t you clean it? Because we have to go fast! I will let you figure out logical &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,9 +18,9 @@ episode of TDD &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://www.tddfellow.com/">
+  <link rel="canonical" href="http://waterlink.github.io/">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="That TDD Fellow | Tech Blog | Screencasts" type="application/atom+xml">
+  <link href="/atom.xml" rel="alternate" title="Oleksii Fedorov's (waterlink) tech blog" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
@@ -30,25 +29,14 @@ episode of TDD &hellip;">
 <link href='http://fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
 
   
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-73226470-1', 'auto');
-    ga('send', 'pageview');
-
-  </script>
-
 
 </head>
 
 <body   >
   <header role="banner"><hgroup>
-  <h1><a href="/">That TDD Fellow | Tech Blog | Screencasts</a></h1>
+  <h1><a href="/">Oleksii Fedorov&#8217;s (waterlink) tech blog</a></h1>
   
-    <h2>Test Driven Development | Software Industry</h2>
+    <h2>A technical blog from me.</h2>
   
 </hgroup>
 
@@ -75,7 +63,7 @@ episode of TDD &hellip;">
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2016/02/04/tdd-number-3-kind-sort/">TDD #3: Kind Sort</a></h1>
+      <h1 class="entry-title"><a href="/blog/2016/02/05/why-are-you-slow/">Why Are You Slow?</a></h1>
     
     
       <p class="meta">
@@ -84,56 +72,171 @@ episode of TDD &hellip;">
 
 
 
-<time class='entry-date' datetime='2016-02-04T01:16:18+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>1:16 am</span></time>
+<time class='entry-date' datetime='2016-02-05T17:09:47+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>5:09 pm</span></time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><iframe width="560" height="315" src="https://www.youtube.com/embed/TR2hKaR4zg8" frameborder="0" allowfullscreen></iframe>
+  <div class="entry-content"><blockquote><p>We are slow because we have the worst codebase!</p></blockquote>
 
+<h2>So why don&rsquo;t you clean it?</h2>
 
-<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+<blockquote><p>Because we have to go fast!</p></blockquote>
 
-<h2>Script</h2>
+<p>I will let you figure out logical inconsistency there.</p>
 
-<p>Hello, hello! I am Oleksii Fedorov, and this is the third
-episode of TDD Screencast.</p>
+<p>Ask yourself a question: how much times in your career you were slowed down by
+a horrible, dirty, untested code? It doesn&rsquo;t matter who have written it,
+usually, it is already there and already a fact you have to deal with.</p>
 
-<p>In last episode we have implemented a sorting algorithm
-using TDD, without thinking about algorithm beforehand. As a
-result, bubble sort have emerged.</p>
+<p>If your answer was: &ldquo;Once.. or twice..&rdquo; (and your career is sufficiently long)
+- you can freely stop reading this post and simply be a happy developer.</p>
 
-<p>We have noticed, that there is a small weird thing about
-this implementation: it has unspecified behavior - mutation
-of the original array.</p>
+<p>I was slowed down by bad code horrible amount of times. I come to be sick of
+it. I don&rsquo;t want to be slow, because I am trying to go fast. I want my tool to
+be clean, I want my creations to be manageable, and I don&rsquo;t want to fear the
+code, I have created, or anyone else have created. And I want to go fast and
+while enjoying it!</p>
 
-<p>So we asked, which algorithm would emerge, if we were to ban
-such side-effects from our algorithm. Let&rsquo;s find out!</p>
+<p>Trust me, I met lots of developers during my career. Not as much as heroes of
+our industry have met, but <strong>enough</strong> to be able to tell you, that <strong>every
+single</strong> one of them, who has any reasonable length of the career, had same
+problems.</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>./watch.sh
-</span><span class='line'>vim           # implement sorting algorithm</span></code></pre></td></tr></table></div></figure>
+<p>And that is totally not normal. Do you understand, that from the outside world,
+we, as an industry, are perceived as very non-professional, because of that?
+Business even came to a conclusion, that they can&rsquo;t trust us to deliver working
+software - and that is how QA role was born.</p>
 
+<p>I will ask again.</p>
 
-<p>I think we are done here. If you look closely, it is a
-quicksort. It is not the most memory-efficient
-implementation, but that is something that is simple to
-optimize (instead of passing recursively arrays, pass
-original array and indexes). That optimization will involve
-actual mutation of the array in place, so if we want to stay
-true to our specification /show test for no-side-effects/.
-We will have to copy the array once, using some sort of
-wrapper function.</p>
+<h2>So why don&rsquo;t you clean it?</h2>
 
-<p>Applying this optimization I leave as an exercise to you my
-users.</p>
+<blockquote><p>My company pays me for features, not for &lt;<em>insert your statement here</em>></p></blockquote>
 
-<p>In the next episode we will look into path-finding problem,
-and we will see, how these techniques apply there. See you
-next time! Have a nice day.</p>
+<p>That is very common response. And, in essence, it is the truth.</p>
+
+<p>OK, now, let&rsquo;s think. As time passes by, after certain threshold on every
+codebase, that is not clean, adding next feature costs more time, even if the
+features are of roughly the same size. After 1 year of such development,
+features can literally become 2-4 times more expensive. Couple of years in, and
+it, practically, becomes impossible to develop anything except &ldquo;Change the
+color of this button&rdquo; (or provide your own example).</p>
+
+<h2>What does that mean?</h2>
+
+<p>One would say: &ldquo;Features become more expensive over time&rdquo;. Business usually
+sees it as: &ldquo;Arrgh, our programmers slower and slower with each month&rdquo;. So from
+the business perspective, after <strong>perceived</strong> effectiveness of developers drops
+by 2-4 times, why would business be willing to pay these developers the same
+salary? You should be afraid of this question.</p>
+
+<h2>Now imagine land of unicorns!</h2>
+
+<p>Now imagine, that you started a bit slower in the beginning (like 8% slower),
+but you have kept your effectiveness over time either at roughly same level, or
+even have increased it over time. How hard do you think it would be to ask for
+a raise, after 2 years of loyal work?</p>
+
+<p>Not hard at all. And probably business will be doing just great (if the
+business idea itself was sustainable to begin with, of course), and will be
+capable of satisfying the request.</p>
+
+<h2>Why such a thing happens?</h2>
+
+<p>Because at the moment we are not perceived as professionals, nor as experts of
+our field. We are perceived as just some coding monkeys, who you always need to
+ask: &ldquo;Can this be delivered on Friday&rdquo; with intimidating tone. And we gladly
+reply through our teeth: &ldquo;I will try&rdquo;, meaning &ldquo;Just go already&rdquo;; ending up on
+Friday evening with: &ldquo;I tried&rdquo; - &ldquo;You have tried not enough!&rdquo;.</p>
+
+<h2>Clean your code already!</h2>
+
+<p>Believe me, investing 15-45 minutes every single day into increasing test code
+coverage and some little refactorings will not make you any slower (you
+probably already very slow, so that it will not make any perceivable
+difference). Rather, over time, you (and your fellow programmers) will start to
+actually being bit-by-bit faster, as long as your application (or applications)
+get cleaner and cleaner.</p>
+
+<p>It goes without saying, that you should be using proper XP (pair-programming
+and TDD) techniques, while writing any new piece of code (read: new class,
+module, library, package, etc.). Because it will be extremely easy to unit-test
+it with near-100% test coverage. Believe me, that is easy and fun.</p>
+
+<p>Refactoring and covering old and messy parts of an application is not fun,
+though. You have to face the truth. Consider it as a chore, like the one you do
+to your apartment, when you clean it on a regular basis. And as we all know,
+the more you wait to clean an apartment, the harder it would be to do it. And
+the function is not linear..</p>
+
+<p>If you have a really big legacy application, you are probably in doing that
+sort of thing for 2-3 years, before you can proudly call this application clean
+again.</p>
+
+<p>There is one important trick though: prioritize cleaning of parts of
+application, that change often. If some part changes once half a year, you
+should probably clean it once half a year too.</p>
+
+<h2>You are hired for your expertise!</h2>
+
+<p>Believe me, you do have all the knowledge, required to make it.</p>
+
+<p>The only thing that stops you is your inability to say &ldquo;No&rdquo;, when &ldquo;No&rdquo; is the
+correct answer from your experience and expertise point of view.</p>
+
+<h2>Parallel example</h2>
+
+<p>Do you know that surgeon, before any surgery, washes his hands. You not just
+know, it is your expectation! In some countries if he doesn&rsquo;t, he can easily
+can be put in jail.</p>
+
+<h3>Do you know, how surgeon washes his hands?</h3>
+
+<p>He rubs each finger from 4 different sides 10 times. That is stated in Doctors&#8217;
+code of ethics. And they have to follow it, since it has power of law.</p>
+
+<p>Why 10 times? Wouldn&rsquo;t 7 be enough, or maybe 14 should be a minimum? It doesn&rsquo;t
+matter. It is a discipline, that is to be followed to the letter, and there is
+no exceptions.</p>
+
+<p>Well, he probably can rub 11 times, without getting in jail..</p>
+
+<p>Nobody will ever ask surgeon, why he does it. Everyone expects him to do it.</p>
+
+<h2>Back to our universe</h2>
+
+<p>You are surgeons!</p>
+
+<p>You are surgeons, that operate on a heart of the business.</p>
+
+<p>With your wrong move, with your mistake, the whole business can go out of
+business overnight.</p>
+
+<p>With your wrong move, with your mistake, thousands of people can die (if you
+are in certain domains).</p>
+
+<p>So why increasing a chance of your own mistakes (and everybody else on a team)
+by not cleaning the code?</p>
+
+<p>Even if you are not in such critical domain, you are part of industry, and you
+should be a great professional, just to be an example for others, who might end
+up working in such crucial business domain in the future.</p>
+
+<p>And I know, you can pull it off. And you do know it yourself.</p>
+
+<p>So now go, and be professional, be professional for everyone around you.</p>
+
+<h2>Thanks!</h2>
+
+<p>This article might be a bit too rough - I believe that is the truth we face
+now, as an industry. And let us be the ones fixing it!</p>
+
+<p>I recommend reading this: <a href="http://acm.org/about/se-code">Software Engineering Code of Ethics</a>
+by ACM organization (originally, created in 1999, why are we all still not
+using it?!).</p>
 </div>
   
   
@@ -166,8 +269,6 @@ next time! Have a nice day.</p>
 
 
 <p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
-
-<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 
 <h2>Script</h2>
 
@@ -221,6 +322,8 @@ again?</p>
 
 <p>Find out next time, on the next episode of Test-Driven-Development! Have a good
 day.</p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 </div>
   
   
@@ -253,8 +356,6 @@ day.</p>
 
 
 <p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
-
-<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 
 <h2>Script</h2>
 
@@ -411,6 +512,8 @@ statements every time you add a failing test.</p>
 
 <p>Now we can finally move on to the example. Next time, on the next episode of
 Test-Driven-Development Screencast! Have a good day.</p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 </div>
   
   
@@ -1730,7 +1833,7 @@ image.</p>
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2016/02/04/tdd-number-3-kind-sort/">TDD #3: Kind Sort</a>
+        <a href="/blog/2016/02/05/why-are-you-slow/">Why Are You Slow?</a>
       </li>
     
       <li class="post">
