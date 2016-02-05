@@ -29,8 +29,8 @@ If your answer was: "Once.. or twice.." (and your career is sufficiently long)
 I was slowed down by bad code horrible amount of times. I come to be sick of
 it. I don't want to be slow, because I am trying to go fast. I want my tool to
 be clean, I want my creations to be manageable, and I don't want to fear the
-code, I have created, or anyone else have created. And I want to go fast and
-while enjoying it!
+code, I have created, or anyone else have created. And I want to go fast while
+enjoying it!
 
 Trust me, I met lots of developers during my career. Not as much as heroes of
 our industry have met, but **enough** to be able to tell you, that **every
