@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Chef | Oleksii Fedorov's (waterlink) tech blog]]></title>
-  <link href="http://waterlink.github.io/blog/categories/chef/atom.xml" rel="self"/>
-  <link href="http://waterlink.github.io/"/>
-  <updated>2016-02-05T01:32:59+01:00</updated>
-  <id>http://waterlink.github.io/</id>
+  <title><![CDATA[Category: Chef | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/chef/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-02-05T01:55:44+01:00</updated>
+  <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Running Kitchen-docker Tests With Upstart]]></title>
-    <link href="http://waterlink.github.io/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/"/>
+    <link href="http://www.tddfellow.com/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/"/>
     <updated>2015-08-05T19:10:36+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/08/05/running-kitchen-docker-tests-with-upstart</id>
+    <id>http://www.tddfellow.com/blog/2015/08/05/running-kitchen-docker-tests-with-upstart</id>
     <content type="html"><![CDATA[<p>TL;DR:</p>
 
 <pre><code class="yml .kitchen.yml"># .kitchen.yml

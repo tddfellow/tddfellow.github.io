@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Ruby | Oleksii Fedorov's (waterlink) tech blog]]></title>
-  <link href="http://waterlink.github.io/blog/categories/ruby/atom.xml" rel="self"/>
-  <link href="http://waterlink.github.io/"/>
-  <updated>2016-02-05T01:32:59+01:00</updated>
-  <id>http://waterlink.github.io/</id>
+  <title><![CDATA[Category: Ruby | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-02-05T01:55:44+01:00</updated>
+  <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Using contracts.ruby With RSpec. Part 2]]></title>
-    <link href="http://waterlink.github.io/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/"/>
+    <link href="http://www.tddfellow.com/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/"/>
     <updated>2015-08-31T18:36:30+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2</id>
+    <id>http://www.tddfellow.com/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2</id>
     <content type="html"><![CDATA[<p>Remember <a href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Using contracts.ruby With RSpec</a> ?</p>
 
 <p>RSpec mocks violate all <code>:class</code> contracts because <code>is_a?(ClassName)</code> returns
@@ -80,9 +80,9 @@ issues on corresponding github project. Pull requests are welcome!</p>
   
   <entry>
     <title type="html"><![CDATA[Running Kitchen-docker Tests With Upstart]]></title>
-    <link href="http://waterlink.github.io/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/"/>
+    <link href="http://www.tddfellow.com/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/"/>
     <updated>2015-08-05T19:10:36+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/08/05/running-kitchen-docker-tests-with-upstart</id>
+    <id>http://www.tddfellow.com/blog/2015/08/05/running-kitchen-docker-tests-with-upstart</id>
     <content type="html"><![CDATA[<p>TL;DR:</p>
 
 <pre><code class="yml .kitchen.yml"># .kitchen.yml
@@ -108,9 +108,9 @@ platforms:
   
   <entry>
     <title type="html"><![CDATA[Using contracts.ruby With RSpec]]></title>
-    <link href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
+    <link href="http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
     <updated>2015-04-09T21:51:53+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
+    <id>http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
     <content type="html"><![CDATA[<h2>Issues with RSpec mocks</h2>
 
 <p>Lets start from example:</p>
@@ -217,9 +217,9 @@ end
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Design. Important Things]]></title>
-    <link href="http://waterlink.github.io/blog/2015/03/12/object-oriented-design-important-things/"/>
+    <link href="http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things/"/>
     <updated>2015-03-12T23:23:45+01:00</updated>
-    <id>http://waterlink.github.io/blog/2015/03/12/object-oriented-design-important-things</id>
+    <id>http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things</id>
     <content type="html"><![CDATA[<h2>Slides from my talk <a href="https://twitter.com/BrainlyGroup">@brainly</a> 12 Mar 2015</h2>
 
 <p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>, I would love to hear from you.</em></p>
@@ -503,9 +503,9 @@ if activity_service.user_is_active?(user)
   
   <entry>
     <title type="html"><![CDATA[How Can contracts.ruby Be Used in the Community With Duck Typing Culture?]]></title>
-    <link href="http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/"/>
+    <link href="http://www.tddfellow.com/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/"/>
     <updated>2015-03-10T11:11:23+01:00</updated>
-    <id>http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture</id>
+    <id>http://www.tddfellow.com/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture</id>
     <content type="html"><![CDATA[<p>So, given simple example:</p>
 
 <pre><code class="ruby">Contract Num, Num =&gt; Num
