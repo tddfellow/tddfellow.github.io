@@ -131,7 +131,7 @@ He rubs each finger from 4 different sides 10 times. That is stated in Doctors'
 code of ethics. And they have to follow it, since it has power of law.
 
 Why 10 times? Wouldn't 7 be enough, or maybe 14 should be a minimum? It doesn't
-matter. It is a discipline, that is to be followed to the letter, and there is
+matter. It is a discipline, that is to be followed to the letter, and there are
 no exceptions.
 
 Well, he probably can rub 11 times, without getting in jail..
