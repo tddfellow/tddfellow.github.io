@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Craftsmanship | Oleksii Fedorov's (waterlink) tech blog]]></title>
-  <link href="http://waterlink.github.io/blog/categories/craftsmanship/atom.xml" rel="self"/>
-  <link href="http://waterlink.github.io/"/>
-  <updated>2016-02-05T20:17:36+01:00</updated>
-  <id>http://waterlink.github.io/</id>
+  <title><![CDATA[Category: Craftsmanship | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/craftsmanship/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-02-06T00:36:54+01:00</updated>
+  <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Why Are You Slow?]]></title>
-    <link href="http://waterlink.github.io/blog/2016/02/05/why-are-you-slow/"/>
+    <link href="http://www.tddfellow.com/blog/2016/02/05/why-are-you-slow/"/>
     <updated>2016-02-05T17:09:47+01:00</updated>
-    <id>http://waterlink.github.io/blog/2016/02/05/why-are-you-slow</id>
+    <id>http://www.tddfellow.com/blog/2016/02/05/why-are-you-slow</id>
     <content type="html"><![CDATA[<blockquote><p>We are slow because we have the worst codebase!</p></blockquote>
 
 <h2>So why don&rsquo;t you clean it?</h2>

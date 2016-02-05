@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Test-driven-development | Oleksii Fedorov's (waterlink) tech blog]]></title>
-  <link href="http://waterlink.github.io/blog/categories/test-driven-development/atom.xml" rel="self"/>
-  <link href="http://waterlink.github.io/"/>
-  <updated>2016-02-05T20:17:36+01:00</updated>
-  <id>http://waterlink.github.io/</id>
+  <title><![CDATA[Category: Test-driven-development | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/test-driven-development/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-02-06T00:36:54+01:00</updated>
+  <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
     
@@ -14,14 +14,65 @@
 
   
   <entry>
+    <title type="html"><![CDATA[TDD #3: Kind Sort]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/02/04/tdd-number-3-kind-sort/"/>
+    <updated>2016-02-04T01:16:18+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/02/04/tdd-number-3-kind-sort</id>
+    <content type="html"><![CDATA[<iframe width="560" height="315" src="https://www.youtube.com/embed/TR2hKaR4zg8" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<h2>Script</h2>
+
+<p>Hello, hello! I am Oleksii Fedorov, and this is the third
+episode of TDD Screencast.</p>
+
+<p>In last episode we have implemented a sorting algorithm
+using TDD, without thinking about algorithm beforehand. As a
+result, bubble sort have emerged.</p>
+
+<p>We have noticed, that there is a small weird thing about
+this implementation: it has unspecified behavior - mutation
+of the original array.</p>
+
+<p>So we asked, which algorithm would emerge, if we were to ban
+such side-effects from our algorithm. Let&rsquo;s find out!</p>
+
+<pre><code>./watch.sh
+vim           # implement sorting algorithm
+</code></pre>
+
+<p>I think we are done here. If you look closely, it is a
+quicksort. It is not the most memory-efficient
+implementation, but that is something that is simple to
+optimize (instead of passing recursively arrays, pass
+original array and indexes). That optimization will involve
+actual mutation of the array in place, so if we want to stay
+true to our specification /show test for no-side-effects/.
+We will have to copy the array once, using some sort of
+wrapper function.</p>
+
+<p>Applying this optimization I leave as an exercise to you my
+users.</p>
+
+<p>In the next episode we will look into path-finding problem,
+and we will see, how these techniques apply there. See you
+next time! Have a nice day.</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Test-Driven-Development Screencast #2]]></title>
-    <link href="http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-2/"/>
+    <link href="http://www.tddfellow.com/blog/2016/02/02/test-driven-development-screencast-number-2/"/>
     <updated>2016-02-02T08:28:14+01:00</updated>
-    <id>http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-2</id>
+    <id>http://www.tddfellow.com/blog/2016/02/02/test-driven-development-screencast-number-2</id>
     <content type="html"><![CDATA[<iframe width="560" height="315" src="https://www.youtube.com/embed/6XMoZ7snuKo?list=PLbNxoJawcer22UE8lT93-fX8ZYFNtoXFu" frameborder="0" allowfullscreen></iframe>
 
 
 <p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 
 <h2>Script</h2>
 
@@ -67,20 +118,20 @@ again?</p>
 
 <p>Find out next time, on the next episode of Test-Driven-Development! Have a good
 day.</p>
-
-<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Test-Driven-Development Screencast #1]]></title>
-    <link href="http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-1/"/>
+    <link href="http://www.tddfellow.com/blog/2016/02/02/test-driven-development-screencast-number-1/"/>
     <updated>2016-02-02T07:59:25+01:00</updated>
-    <id>http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-1</id>
+    <id>http://www.tddfellow.com/blog/2016/02/02/test-driven-development-screencast-number-1</id>
     <content type="html"><![CDATA[<iframe width="560" height="315" src="https://www.youtube.com/embed/QnEvjrszst4?list=PLbNxoJawcer22UE8lT93-fX8ZYFNtoXFu" frameborder="0" allowfullscreen></iframe>
 
 
 <p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 
 <h2>Script</h2>
 
@@ -235,8 +286,6 @@ statements every time you add a failing test.</p>
 
 <p>Now we can finally move on to the example. Next time, on the next episode of
 Test-Driven-Development Screencast! Have a good day.</p>
-
-<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 ]]></content>
   </entry>
   

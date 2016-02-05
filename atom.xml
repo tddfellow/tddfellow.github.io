@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Oleksii Fedorov's (waterlink) tech blog]]></title>
-  <link href="http://waterlink.github.io/atom.xml" rel="self"/>
-  <link href="http://waterlink.github.io/"/>
-  <updated>2016-02-05T20:17:36+01:00</updated>
-  <id>http://waterlink.github.io/</id>
+  <title><![CDATA[That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-02-06T00:36:54+01:00</updated>
+  <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Why Are You Slow?]]></title>
-    <link href="http://waterlink.github.io/blog/2016/02/05/why-are-you-slow/"/>
+    <link href="http://www.tddfellow.com/blog/2016/02/05/why-are-you-slow/"/>
     <updated>2016-02-05T17:09:47+01:00</updated>
-    <id>http://waterlink.github.io/blog/2016/02/05/why-are-you-slow</id>
+    <id>http://www.tddfellow.com/blog/2016/02/05/why-are-you-slow</id>
     <content type="html"><![CDATA[<blockquote><p>We are slow because we have the worst codebase!</p></blockquote>
 
 <h2>So why don&rsquo;t you clean it?</h2>
@@ -180,14 +180,67 @@ using it?!).</p>
   </entry>
   
   <entry>
+    <title type="html"><![CDATA[TDD #3: Kind Sort]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/02/04/tdd-number-3-kind-sort/"/>
+    <updated>2016-02-04T01:16:18+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/02/04/tdd-number-3-kind-sort</id>
+    <content type="html"><![CDATA[<iframe width="560" height="315" src="https://www.youtube.com/embed/TR2hKaR4zg8" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<h2>Script</h2>
+
+<p>Hello, hello! I am Oleksii Fedorov, and this is the third
+episode of TDD Screencast.</p>
+
+<p>In last episode we have implemented a sorting algorithm
+using TDD, without thinking about algorithm beforehand. As a
+result, bubble sort have emerged.</p>
+
+<p>We have noticed, that there is a small weird thing about
+this implementation: it has unspecified behavior - mutation
+of the original array.</p>
+
+<p>So we asked, which algorithm would emerge, if we were to ban
+such side-effects from our algorithm. Let&rsquo;s find out!</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>./watch.sh
+</span><span class='line'>vim           # implement sorting algorithm</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I think we are done here. If you look closely, it is a
+quicksort. It is not the most memory-efficient
+implementation, but that is something that is simple to
+optimize (instead of passing recursively arrays, pass
+original array and indexes). That optimization will involve
+actual mutation of the array in place, so if we want to stay
+true to our specification /show test for no-side-effects/.
+We will have to copy the array once, using some sort of
+wrapper function.</p>
+
+<p>Applying this optimization I leave as an exercise to you my
+users.</p>
+
+<p>In the next episode we will look into path-finding problem,
+and we will see, how these techniques apply there. See you
+next time! Have a nice day.</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Test-Driven-Development Screencast #2]]></title>
-    <link href="http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-2/"/>
+    <link href="http://www.tddfellow.com/blog/2016/02/02/test-driven-development-screencast-number-2/"/>
     <updated>2016-02-02T08:28:14+01:00</updated>
-    <id>http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-2</id>
+    <id>http://www.tddfellow.com/blog/2016/02/02/test-driven-development-screencast-number-2</id>
     <content type="html"><![CDATA[<iframe width="560" height="315" src="https://www.youtube.com/embed/6XMoZ7snuKo?list=PLbNxoJawcer22UE8lT93-fX8ZYFNtoXFu" frameborder="0" allowfullscreen></iframe>
 
 
 <p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<p>List of all TDD Screencasts can be <a href="http://www.tddfellow.com/blog/categories/tdd-screencasts/">found here</a>.</p>
 
 <h2>Script</h2>
 
@@ -241,20 +294,20 @@ again?</p>
 
 <p>Find out next time, on the next episode of Test-Driven-Development! Have a good
 day.</p>
-
-<p>List of all TDD Screencasts can be <a href="http://waterlink.github.io/blog/categories/tdd-screencasts/">found here</a>.</p>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Test-Driven-Development Screencast #1]]></title>
-    <link href="http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-1/"/>
+    <link href="http://www.tddfellow.com/blog/2016/02/02/test-driven-development-screencast-number-1/"/>
     <updated>2016-02-02T07:59:25+01:00</updated>
-    <id>http://waterlink.github.io/blog/2016/02/02/test-driven-development-screencast-number-1</id>
+    <id>http://www.tddfellow.com/blog/2016/02/02/test-driven-development-screencast-number-1</id>
     <content type="html"><![CDATA[<iframe width="560" height="315" src="https://www.youtube.com/embed/QnEvjrszst4?list=PLbNxoJawcer22UE8lT93-fX8ZYFNtoXFu" frameborder="0" allowfullscreen></iframe>
 
 
 <p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<p>List of all TDD Screencasts can be <a href="http://www.tddfellow.com/blog/categories/tdd-screencasts/">found here</a>.</p>
 
 <h2>Script</h2>
 
@@ -411,16 +464,14 @@ statements every time you add a failing test.</p>
 
 <p>Now we can finally move on to the example. Next time, on the next episode of
 Test-Driven-Development Screencast! Have a good day.</p>
-
-<p>List of all TDD Screencasts can be <a href="http://waterlink.github.io/blog/categories/tdd-screencasts/">found here</a>.</p>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Why Do You Need to Be Careful With Loop Variable in Go]]></title>
-    <link href="http://waterlink.github.io/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/"/>
+    <link href="http://www.tddfellow.com/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/"/>
     <updated>2016-01-08T02:28:45+01:00</updated>
-    <id>http://waterlink.github.io/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go</id>
+    <id>http://www.tddfellow.com/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go</id>
     <content type="html"><![CDATA[<h2>Taking reference of loop variable</h2>
 
 <p>Lets start off with simple code example:</p>
@@ -623,9 +674,9 @@ I will only be happy to learn and iterate over this article to improve it.</p>
   
   <entry>
     <title type="html"><![CDATA[Intention-revealing Code]]></title>
-    <link href="http://waterlink.github.io/blog/2015/09/08/intention-revealing-code/"/>
+    <link href="http://www.tddfellow.com/blog/2015/09/08/intention-revealing-code/"/>
     <updated>2015-09-08T21:24:52+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/09/08/intention-revealing-code</id>
+    <id>http://www.tddfellow.com/blog/2015/09/08/intention-revealing-code</id>
     <content type="html"><![CDATA[<p>Lets start off with very simple code:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -717,9 +768,9 @@ trip you over.</p>
   
   <entry>
     <title type="html"><![CDATA[Using contracts.ruby With RSpec. Part 2]]></title>
-    <link href="http://waterlink.github.io/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/"/>
+    <link href="http://www.tddfellow.com/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/"/>
     <updated>2015-08-31T18:36:30+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2</id>
+    <id>http://www.tddfellow.com/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2</id>
     <content type="html"><![CDATA[<p>Remember <a href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Using contracts.ruby With RSpec</a> ?</p>
 
 <p>RSpec mocks violate all <code>:class</code> contracts because <code>is_a?(ClassName)</code> returns
@@ -790,9 +841,9 @@ issues on corresponding github project. Pull requests are welcome!</p>
   
   <entry>
     <title type="html"><![CDATA[Docker Machine Guide (VirtualBox on Mac OS X)]]></title>
-    <link href="http://waterlink.github.io/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x/"/>
+    <link href="http://www.tddfellow.com/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x/"/>
     <updated>2015-08-31T10:21:06+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x</id>
+    <id>http://www.tddfellow.com/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x</id>
     <content type="html"><![CDATA[<p><em>(VirtualBox on Mac OS X)</em></p>
 
 <p>This guide is a combination of official docs and usage experience.</p>
@@ -1028,9 +1079,9 @@ image.</p>
   
   <entry>
     <title type="html"><![CDATA[Running Kitchen-docker Tests With Upstart]]></title>
-    <link href="http://waterlink.github.io/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/"/>
+    <link href="http://www.tddfellow.com/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/"/>
     <updated>2015-08-05T19:10:36+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/08/05/running-kitchen-docker-tests-with-upstart</id>
+    <id>http://www.tddfellow.com/blog/2015/08/05/running-kitchen-docker-tests-with-upstart</id>
     <content type="html"><![CDATA[<p>TL;DR:</p>
 
 <figure class='code'><figcaption><span>.kitchen.yml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -1068,9 +1119,9 @@ image.</p>
   
   <entry>
     <title type="html"><![CDATA[Using contracts.ruby With RSpec]]></title>
-    <link href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
+    <link href="http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
     <updated>2015-04-09T21:51:53+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
+    <id>http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
     <content type="html"><![CDATA[<h2>Issues with RSpec mocks</h2>
 
 <p>Lets start from example:</p>
@@ -1232,9 +1283,9 @@ image.</p>
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Design. Important Things]]></title>
-    <link href="http://waterlink.github.io/blog/2015/03/12/object-oriented-design-important-things/"/>
+    <link href="http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things/"/>
     <updated>2015-03-12T23:23:45+01:00</updated>
-    <id>http://waterlink.github.io/blog/2015/03/12/object-oriented-design-important-things</id>
+    <id>http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things</id>
     <content type="html"><![CDATA[<h2>Slides from my talk <a href="https://twitter.com/BrainlyGroup">@brainly</a> 12 Mar 2015</h2>
 
 <p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>, I would love to hear from you.</em></p>
@@ -1575,9 +1626,9 @@ image.</p>
   
   <entry>
     <title type="html"><![CDATA[How Can contracts.ruby Be Used in the Community With Duck Typing Culture?]]></title>
-    <link href="http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/"/>
+    <link href="http://www.tddfellow.com/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/"/>
     <updated>2015-03-10T11:11:23+01:00</updated>
-    <id>http://waterlink.github.io/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture</id>
+    <id>http://www.tddfellow.com/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture</id>
     <content type="html"><![CDATA[<p>So, given simple example:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -1616,9 +1667,9 @@ image.</p>
   
   <entry>
     <title type="html"><![CDATA[Introduction to contracts.ruby]]></title>
-    <link href="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/"/>
+    <link href="http://www.tddfellow.com/blog/2015/03/05/introduction-to-contracts-dot-ruby/"/>
     <updated>2015-03-05T23:55:40+01:00</updated>
-    <id>http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby</id>
+    <id>http://www.tddfellow.com/blog/2015/03/05/introduction-to-contracts-dot-ruby</id>
     <content type="html"><![CDATA[<h2>Slides from my talk on RUG-B Mar 2015</h2>
 
 <p>A short introduction to a powerful Design by Contract technique and its implementation in ruby contracts.ruby.</p>
@@ -1933,9 +1984,9 @@ image.</p>
   
   <entry>
     <title type="html"><![CDATA[Dismantling Effective Go Article]]></title>
-    <link href="http://waterlink.github.io/blog/2015/01/30/dismantling-effective-go-article/"/>
+    <link href="http://www.tddfellow.com/blog/2015/01/30/dismantling-effective-go-article/"/>
     <updated>2015-01-30T22:39:11+01:00</updated>
-    <id>http://waterlink.github.io/blog/2015/01/30/dismantling-effective-go-article</id>
+    <id>http://www.tddfellow.com/blog/2015/01/30/dismantling-effective-go-article</id>
     <content type="html"><![CDATA[<p>Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome.</p>
 
 <p>Article itself: <a href="https://golang.org/doc/effective_go.html">https://golang.org/doc/effective_go.html</a></p>
@@ -2135,9 +2186,9 @@ codeUsing(f, d)
   
   <entry>
     <title type="html"><![CDATA[RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro]]></title>
-    <link href="http://waterlink.github.io/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/"/>
+    <link href="http://www.tddfellow.com/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/"/>
     <updated>2015-01-23T01:56:19+01:00</updated>
-    <id>http://waterlink.github.io/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro</id>
+    <id>http://www.tddfellow.com/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro</id>
     <content type="html"><![CDATA[<p><a href="https://github.com/waterlink/rspec-json_expectations">rspec-json_expectations</a> library provides powerful <code>include_json</code> matcher for your RSpec suites. It allows to match string with JSON or already parsed ruby <code>Hash</code> against other ruby <code>Hash</code>, which is very convenient and creates very readable spec code. Lets jump to some examples.</p>
 
 <p>It can handle some plain json:</p>

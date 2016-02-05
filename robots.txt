@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://waterlink.github.io/sitemap.xml 
+Sitemap: http://www.tddfellow.com/sitemap.xml 

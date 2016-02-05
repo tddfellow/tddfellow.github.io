@@ -5,17 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Oleksii Fedorov&#8217;s (waterlink) tech blog</title>
+  <title>That TDD Fellow | Tech Blog | Screencasts</title>
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="So, given simple example: 1
-2
-3
-4
-Contract Num, Num =&gt; Num
-def add(a, b) a + b
-end One can ask: &ldquo;But it is ruby, what about duck typing, I &hellip;">
+  <meta name="description" content="Slides from my talk @brainly 12 Mar 2015 Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -24,9 +18,9 @@ end One can ask: &ldquo;But it is ruby, what about duck typing, I &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://waterlink.github.io/posts/2/">
+  <link rel="canonical" href="http://www.tddfellow.com/posts/2/">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="Oleksii Fedorov's (waterlink) tech blog" type="application/atom+xml">
+  <link href="/atom.xml" rel="alternate" title="That TDD Fellow | Tech Blog | Screencasts" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
@@ -35,14 +29,25 @@ end One can ask: &ldquo;But it is ruby, what about duck typing, I &hellip;">
 <link href='http://fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
 
   
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-73226470-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
 
 </head>
 
 <body   >
   <header role="banner"><hgroup>
-  <h1><a href="/">Oleksii Fedorov&#8217;s (waterlink) tech blog</a></h1>
+  <h1><a href="/">That TDD Fellow | Tech Blog | Screencasts</a></h1>
   
-    <h2>A technical blog from me.</h2>
+    <h2>Test Driven Development | Software Industry</h2>
   
 </hgroup>
 
@@ -63,6 +68,369 @@ end One can ask: &ldquo;But it is ruby, what about duck typing, I &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/03/12/object-oriented-design-important-things/">Object Oriented Design. Important Things</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-03-12T23:23:45+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>12</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:23 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Slides from my talk <a href="https://twitter.com/BrainlyGroup">@brainly</a> 12 Mar 2015</h2>
+
+<p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>, I would love to hear from you.</em></p>
+
+<p>Code examples are in ruby/pseudo-code.</p>
+
+<iframe src="//www.slideshare.net/slideshow/embed_code/45775223" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+
+
+<h2>Object Oriented Programming</h2>
+
+<p>Most notable features of OOP:</p>
+
+<ul>
+<li>Encapsulation - keep data together with behavior that needs that data, effectively hiding this data from everything else.</li>
+<li>Inheritance - usually a subclassing, inheriting all behavior and data, in some language even all private details.</li>
+<li>Polymorphism - ability to substitute instances of one class with instances of others.</li>
+</ul>
+
+
+<h3>How important these features are for OO design?</h3>
+
+<p>Imagine, that given 100 points you want to distribute them between these 3 features, and each number will represent an importance of corresponding feature.</p>
+
+<p>This would be my answer (and my personal opinion):</p>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:center;">Encapsulation</th>
+<th style="text-align:center;">Polymorphism</th>
+<th style="text-align:center;">Inheritance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">80</td>
+<td style="text-align:center;">40</td>
+<td style="text-align:center;">-20</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>And 100 = 80 + 40 + (-20) :)</p>
+
+<h3>Why inheritance is so bad?</h3>
+
+<p>Because it increases coupling (usually): subclass (usually) depends on some data and/or behavior of its superclass. Even worse: (usually) it is not public data/behavior. I.e.: it violates principle of encapsulation badly. (Usually).</p>
+
+<p>There are actually cases, when you do want your classes to be in inheritance hierarchy, it is the case, when your domain has the same hierarchy naturally in real world. And type inheritance doesn&rsquo;t really mean behavior inheritance.</p>
+
+<h3>So how to avoid violation of encapsulation using inheritance?</h3>
+
+<ul>
+<li>Be careful, use only public interfaces of your superclass.</li>
+<li>Replace inheritance with composition and delegation, because when you use only public interfaces of superclass, then you don&rsquo;t really need inheritance.</li>
+</ul>
+
+
+<h2>Coupling</h2>
+
+<h3>Why coupling is bad?</h3>
+
+<p>Imagine you need to change behavior of class X.</p>
+
+<p>You will have to change any other piece of code base, that directly depends on this behavior of class X.</p>
+
+<p>More coupling you have, more changes will have to take place, and probably, in totally unrelated parts of codebase.</p>
+
+<p>As a result it:</p>
+
+<ul>
+<li>Exponentially increases time required for change</li>
+<li>Invites bugs (lots of)</li>
+</ul>
+
+
+<h3>Dependency</h3>
+
+<p>Dependency, is basically what coupling is, - is not really your friend, so you need to watch out for them.</p>
+
+<h3>How to deal with dependencies?</h3>
+
+<ul>
+<li>Dependency inversion principle - Instead of referring foreign system/package/class/module/whatever, refer an abstract interface.</li>
+<li>Dependency injection - Technique, that allows to provision all dependencies to parts of your system and basically fulfill all required interfaces.</li>
+</ul>
+
+
+<h3>An example</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Answer</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">rating</span>
+</span><span class='line'>    <span class="no">RatingService</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">rating_for</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What is the problem with this code? - It is a dependency <code>Answer -&gt; RatingService</code>. What if you wanted to A/B test different rating models? You will definitely have troubles with that approach, especially if it is not the only place, that reference <code>RatingService</code>.</p>
+
+<h3>Use dependency injection!</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Answer</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">rating_service</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@rating_service</span> <span class="o">=</span> <span class="n">rating_service</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">rating</span>
+</span><span class='line'>    <span class="vi">@rating_service</span><span class="o">.</span><span class="n">rating_for</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you can easily have multiple rating services and A/B test them, or do whatever you want, it is really flexible.</p>
+
+<h3>It is still coupling</h3>
+
+<p>But coupling to abstract interface, instead of real implementation, which means, you can exchange different implementations without changing users of this interface. Which basically improves polymorphism features of your code. It is very loose coupling.</p>
+
+<h2>Test Driven Development</h2>
+
+<h3>How is it related to OO design?</h3>
+
+<p>It provides very short feedback on your OO design:</p>
+
+<ul>
+<li>If you have troubles writing test - your design is wrong and you need to step back</li>
+<li>If you don&rsquo;t like how your test look like - your design is wrong and you need to step back</li>
+<li>If you have troubles making test green - your design is wrong and you need to step back</li>
+</ul>
+
+
+<p>It is really almost like pairing partner if used right! Of course pairing still provides even better feedback loop - real-time continuous feedback loop!</p>
+
+<h3>Unit tests vs integration tests</h3>
+
+<p>Integration tests are scam!:</p>
+
+<ul>
+<li>Very slow => bad feedback loop</li>
+<li>Exponential count of paths to test</li>
+</ul>
+
+
+<h3>Unit tests just don&rsquo;t work. Are they?</h3>
+
+<p>Everything works in isolation != the whole system works as expected.</p>
+
+<p>Testing in isolation = providing fake objects and/or mocks for all your dependencies</p>
+
+<p>Mocks and fake objects can make your unit test green, but in fact the code is broken, because one of the dependencies has changed its behavior or even public interface in unexpected fashion.</p>
+
+<h3>Answer: Cut your system at value boundaries!</h3>
+
+<p>Instead of method call boundaries. And we arrive at Actor Model.</p>
+
+<h2>Actor Model</h2>
+
+<p>Given this example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">RatingService</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">rating_for</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">)</span>
+</span><span class='line'>    <span class="c1"># .. calculate rating somehow ..</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Problems with this class:</p>
+
+<ul>
+<li>Any user of this class will have to stub out its <code>#rating_for</code> in unit tests.</li>
+<li>It invites additional behavior to be added (since it is as simple as adding additional public method), which will kill single responsibility feature of this class.</li>
+</ul>
+
+
+<h3>Actor Model solves this</h3>
+
+<p>Warning, it is ruby pseudo-code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">actor</span> <span class="no">RatingService</span>
+</span><span class='line'>  <span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">,</span> <span class="n">outbox</span> <span class="o">=</span> <span class="n">inbox</span><span class="o">.</span><span class="n">fetch</span>
+</span><span class='line'>  <span class="c1"># .. calculate rating somehow ..</span>
+</span><span class='line'>  <span class="n">outbox</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">rating</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">rating_service</span> <span class="o">=</span> <span class="no">RatingService</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'><span class="n">rating_service</span><span class="o">.</span><span class="n">start</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Way better now:</h3>
+
+<ul>
+<li>Allows unit testing easily without mocks and fake objects: by peeking inside its inbox in unit tests instead, and checking that it received right message.</li>
+<li>It is really hard to pack more responsibility to this, since it has no methods, it has just one body, that is responsible for processing exactly one message.</li>
+</ul>
+
+
+<p><em>You of course can encode something strange in message, and organize your own method dispatch mechanism through actors inbox, but that is just silly (usually).</em></p>
+
+<h3>Easy to unit test:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># creating actor, but not starting it</span>
+</span><span class='line'><span class="n">rating_actor</span> <span class="o">=</span> <span class="no">RatingCalculator</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># dependency injection of rating actor</span>
+</span><span class='line'><span class="n">answer_actor</span> <span class="o">=</span> <span class="no">Answer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">answer_id</span><span class="p">,</span> <span class="n">rating_actor</span><span class="p">)</span>
+</span><span class='line'><span class="n">answer_actor</span><span class="o">.</span><span class="n">start</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">render_actor</span> <span class="o">=</span> <span class="no">Render</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">answer_actor</span><span class="p">)</span>
+</span><span class='line'><span class="n">render_actor</span><span class="o">.</span><span class="n">run</span>
+</span><span class='line'><span class="n">expect</span><span class="p">(</span><span class="n">rating_actor</span><span class="o">.</span><span class="n">inbox</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">to</span> <span class="kp">include</span><span class="p">(</span><span class="o">[</span><span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">,</span> <span class="n">outbox</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># fake response from rating actor</span>
+</span><span class='line'><span class="n">outbox</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span>
+</span><span class='line'><span class="n">expect</span><span class="p">(</span><span class="n">render_actor</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">render_rating</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In unit tests you start only one actor - actor under test, and all other actors just get instantiated correctly and passed in as a dependencies where needed. Since they are not started, they will not consume any messages from their inbox, which means that you can consume these inboxes from your unit test, and check that the messages that arrived at inboxes are expected.</p>
+
+<h2>When the code is done</h2>
+
+<ul>
+<li>It works!</li>
+<li>It is readable (future me will not curse me for writing this code)</li>
+<li>It has no duplication</li>
+<li>And it is as short as possible (while maintaining all of the above)</li>
+</ul>
+
+
+<h3>Code comments</h3>
+
+<p>Basically a code smell (I&rsquo;m not talking about documentation comments)</p>
+
+<p>Example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># when user is active</span>
+</span><span class='line'><span class="k">if</span> <span class="n">activity_service</span><span class="o">.</span><span class="n">has_events</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="ss">min_date</span><span class="p">:</span> <span class="mi">2</span><span class="o">.</span><span class="n">weeks</span><span class="o">.</span><span class="n">ago</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">user</span><span class="o">.</span><span class="n">fraud?</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Which is bad from more than one point of view, it literally should have been:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">active?</span>
+</span><span class='line'><span class="c1"># or</span>
+</span><span class='line'><span class="k">if</span> <span class="n">activity_service</span><span class="o">.</span><span class="n">user_is_active?</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># .. more variations can be here ..</span>
+</span><span class='line'><span class="c1"># .. but all of them will be better ..</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>If code needs comment:</h3>
+
+<ul>
+<li>it is not readable</li>
+<li>it fails to communicate its intent</li>
+</ul>
+
+
+<p>You should be able to read the code and understand it. In that order: read -> understand.</p>
+
+<p>You shouldn&rsquo;t interpret it in your head. You shouldn&rsquo;t have Ruby (or your favorite language here) instance running in your head.</p>
+
+<h2>To sum it up</h2>
+
+<ul>
+<li>Inheritance is good only in very rare cases</li>
+<li>Coupling and dependencies are not your friends, take them under control with dependency inversion &amp; injection</li>
+<li>TDD as a shortest feedback cycle for your OO design</li>
+<li>Write code in such way, that you would thank yourself for that in the future</li>
+</ul>
+
+
+<p>Recommended reading: &ldquo;Pragmatic Programmer: From Journeyman to Master&rdquo; by Andrew Hunt and David Thomas. It is insanely good, concise book with lots of awesome references to other resources.</p>
+
+<h2>Thanks!</h2>
+
+<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -825,6 +1193,10 @@ codeUsing(f, d)
       </li>
     
       <li class="post">
+        <a href="/blog/2016/02/04/tdd-number-3-kind-sort/">TDD #3: Kind Sort</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/02/02/test-driven-development-screencast-number-2/">Test-Driven-Development Screencast #2</a>
       </li>
     
@@ -834,10 +1206,6 @@ codeUsing(f, d)
     
       <li class="post">
         <a href="/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/">Why Do You Need to Be Careful With Loop Variable in Go</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/09/08/intention-revealing-code/">Intention-revealing Code</a>
       </li>
     
   </ul>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Guide | Oleksii Fedorov's (waterlink) tech blog]]></title>
-  <link href="http://waterlink.github.io/blog/categories/guide/atom.xml" rel="self"/>
-  <link href="http://waterlink.github.io/"/>
-  <updated>2016-02-05T20:17:36+01:00</updated>
-  <id>http://waterlink.github.io/</id>
+  <title><![CDATA[Category: Guide | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/guide/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-02-06T00:36:54+01:00</updated>
+  <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Docker Machine Guide (VirtualBox on Mac OS X)]]></title>
-    <link href="http://waterlink.github.io/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x/"/>
+    <link href="http://www.tddfellow.com/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x/"/>
     <updated>2015-08-31T10:21:06+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x</id>
+    <id>http://www.tddfellow.com/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x</id>
     <content type="html"><![CDATA[<p><em>(VirtualBox on Mac OS X)</em></p>
 
 <p>This guide is a combination of official docs and usage experience.</p>

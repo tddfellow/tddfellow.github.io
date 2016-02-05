@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Rspec | Oleksii Fedorov's (waterlink) tech blog]]></title>
-  <link href="http://waterlink.github.io/blog/categories/rspec/atom.xml" rel="self"/>
-  <link href="http://waterlink.github.io/"/>
-  <updated>2016-02-05T20:17:36+01:00</updated>
-  <id>http://waterlink.github.io/</id>
+  <title><![CDATA[Category: Rspec | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/rspec/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-02-06T00:36:54+01:00</updated>
+  <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Using contracts.ruby With RSpec. Part 2]]></title>
-    <link href="http://waterlink.github.io/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/"/>
+    <link href="http://www.tddfellow.com/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/"/>
     <updated>2015-08-31T18:36:30+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2</id>
+    <id>http://www.tddfellow.com/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2</id>
     <content type="html"><![CDATA[<p>Remember <a href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Using contracts.ruby With RSpec</a> ?</p>
 
 <p>RSpec mocks violate all <code>:class</code> contracts because <code>is_a?(ClassName)</code> returns
@@ -80,9 +80,9 @@ issues on corresponding github project. Pull requests are welcome!</p>
   
   <entry>
     <title type="html"><![CDATA[Using contracts.ruby With RSpec]]></title>
-    <link href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
+    <link href="http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
     <updated>2015-04-09T21:51:53+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
+    <id>http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
     <content type="html"><![CDATA[<h2>Issues with RSpec mocks</h2>
 
 <p>Lets start from example:</p>
@@ -189,9 +189,9 @@ end
   
   <entry>
     <title type="html"><![CDATA[RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro]]></title>
-    <link href="http://waterlink.github.io/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/"/>
+    <link href="http://www.tddfellow.com/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/"/>
     <updated>2015-01-23T01:56:19+01:00</updated>
-    <id>http://waterlink.github.io/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro</id>
+    <id>http://www.tddfellow.com/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro</id>
     <content type="html"><![CDATA[<p><a href="https://github.com/waterlink/rspec-json_expectations">rspec-json_expectations</a> library provides powerful <code>include_json</code> matcher for your RSpec suites. It allows to match string with JSON or already parsed ruby <code>Hash</code> against other ruby <code>Hash</code>, which is very convenient and creates very readable spec code. Lets jump to some examples.</p>
 
 <p>It can handle some plain json:</p>

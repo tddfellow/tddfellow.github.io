@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Design | Oleksii Fedorov's (waterlink) tech blog]]></title>
-  <link href="http://waterlink.github.io/blog/categories/design/atom.xml" rel="self"/>
-  <link href="http://waterlink.github.io/"/>
-  <updated>2016-02-05T20:17:36+01:00</updated>
-  <id>http://waterlink.github.io/</id>
+  <title><![CDATA[Category: Design | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/design/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-02-06T00:36:54+01:00</updated>
+  <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Intention-revealing Code]]></title>
-    <link href="http://waterlink.github.io/blog/2015/09/08/intention-revealing-code/"/>
+    <link href="http://www.tddfellow.com/blog/2015/09/08/intention-revealing-code/"/>
     <updated>2015-09-08T21:24:52+02:00</updated>
-    <id>http://waterlink.github.io/blog/2015/09/08/intention-revealing-code</id>
+    <id>http://www.tddfellow.com/blog/2015/09/08/intention-revealing-code</id>
     <content type="html"><![CDATA[<p>Lets start off with very simple code:</p>
 
 <pre><code class="go">func toJSON(post Post) string {
@@ -82,9 +82,9 @@ trip you over.</p>
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Design. Important Things]]></title>
-    <link href="http://waterlink.github.io/blog/2015/03/12/object-oriented-design-important-things/"/>
+    <link href="http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things/"/>
     <updated>2015-03-12T23:23:45+01:00</updated>
-    <id>http://waterlink.github.io/blog/2015/03/12/object-oriented-design-important-things</id>
+    <id>http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things</id>
     <content type="html"><![CDATA[<h2>Slides from my talk <a href="https://twitter.com/BrainlyGroup">@brainly</a> 12 Mar 2015</h2>
 
 <p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>, I would love to hear from you.</em></p>
