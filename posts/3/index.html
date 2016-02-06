@@ -5,11 +5,24 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Object Oriented Design. Important Things - That TDD Fellow | Tech Blog | Screencasts</title>
+  <title>That TDD Fellow | Tech Blog | Screencasts</title>
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Slides from my talk @brainly 12 Mar 2015 Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, &hellip;">
+  <meta name="description" content="TL;DR: .kitchen.yml1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+# .kitchen.yml
+---
+driver: name: docker use_sudo: false # this depends if you need to do `sudo` to run ` &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +31,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things/">
+  <link rel="canonical" href="http://www.tddfellow.com/posts/3/">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="That TDD Fellow | Tech Blog | Screencasts" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -66,12 +79,259 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div>
-<article class="hentry" role="article">
+      <div class="blog-index">
   
+  
+  
+    <article>
+      
   <header>
     
-      <h1 class="entry-title">Object Oriented Design. Important Things</h1>
+      <h1 class="entry-title"><a href="/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/">Running Kitchen-docker Tests With Upstart</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-08-05T19:10:36+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>7:10 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>TL;DR:</p>
+
+<figure class='code'><figcaption><span>.kitchen.yml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="c1"># .kitchen.yml</span>
+</span><span class='line'><span class="nn">---</span>
+</span><span class='line'><span class="l-Scalar-Plain">driver</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">docker</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">use_sudo</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>              <span class="c1"># this depends if you need to do `sudo` to run `docker` command or not</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">disable_upstart</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">image</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu-upstart:14.04</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">run_command</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/sbin/init</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">platforms</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu-14.04</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It is possible because there is this official base image specifically for upstart: <a href="https://registry.hub.docker.com/_/ubuntu-upstart/.">https://registry.hub.docker.com/_/ubuntu-upstart/.</a></p>
+
+<p>After making your <code>.kitchen.yml</code> look like this, just use <code>kitchen</code> as you would normally would.</p>
+
+<p>Happy coding! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Using contracts.ruby With RSpec</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-04-09T21:51:53+02:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>9:51 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Issues with RSpec mocks</h2>
+
+<p>Lets start from example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Example</span>
+</span><span class='line'>  <span class="kp">include</span> <span class="no">Contracts</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">Contract</span> <span class="no">Something</span> <span class="o">=&gt;</span> <span class="no">Any</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">do_something</span><span class="p">(</span><span class="n">something</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">something</span><span class="o">.</span><span class="n">call</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And its corresponding spec:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;rspec&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">RSpec</span><span class="o">.</span><span class="n">describe</span> <span class="no">Example</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">let</span><span class="p">(</span><span class="ss">:example</span><span class="p">)</span> <span class="p">{</span> <span class="no">Example</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span>
+</span><span class='line'>  <span class="n">let</span><span class="p">(</span><span class="ss">:something</span><span class="p">)</span> <span class="p">{</span> <span class="n">instance_double</span><span class="p">(</span><span class="no">Something</span><span class="p">,</span> <span class="ss">call</span><span class="p">:</span> <span class="ss">:hello</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">it</span> <span class="s2">&quot;works&quot;</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">expect</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">do_something</span><span class="p">(</span><span class="n">something</span><span class="p">))</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="ss">:hello</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Pretty straightforward unit test for <code>Example#do_something</code>. But if you run <code>rspec</code> you will get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="ss">ContractError</span><span class="p">:</span> <span class="no">Contract</span> <span class="n">violation</span> <span class="k">for</span> <span class="n">argument</span> <span class="mi">1</span> <span class="n">of</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>    <span class="ss">Expected</span><span class="p">:</span> <span class="no">Something</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">Actual</span><span class="p">:</span> <span class="c1">#&lt;RSpec::Mocks::InstanceVerifyingDouble:0xa401a0 @name=&quot;Something (instance)&quot;&gt;</span>
+</span><span class='line'>    <span class="no">Value</span> <span class="n">guarded</span> <span class="k">in</span><span class="p">:</span> <span class="no">Example</span><span class="o">::</span><span class="n">do_something</span>
+</span><span class='line'>    <span class="no">With</span> <span class="ss">Contract</span><span class="p">:</span> <span class="no">Something</span> <span class="o">=&gt;</span> <span class="no">Any</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It happens because class contracts use <code>#is_a?</code> to determine if contract matches or not. Simply: <code>something.is_a?(Something)</code> is required to be <code>true</code>.</p>
+
+<p>But if we try to do it with <code>instance_double</code>, that is what we get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;rspec/mocks/standalone&quot;</span>
+</span><span class='line'><span class="n">something</span> <span class="o">=</span> <span class="n">instance_double</span><span class="p">(</span><span class="no">Something</span><span class="p">)</span>
+</span><span class='line'><span class="n">something</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Something</span><span class="p">)</span>                              <span class="c1">#=&gt; false</span>
+</span><span class='line'><span class="n">something</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">RSpec</span><span class="o">::</span><span class="no">Mocks</span><span class="o">::</span><span class="no">InstanceVerifyingDouble</span><span class="p">)</span>  <span class="c1">#=&gt; true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Solution to problem</h2>
+
+<p>Pretty straightforward one:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">let</span><span class="p">(</span><span class="ss">:something</span><span class="p">)</span> <span class="p">{</span> <span class="n">instance_double</span><span class="p">(</span><span class="no">Something</span><span class="p">,</span> <span class="ss">call</span><span class="p">:</span> <span class="ss">:hello</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">before</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">allow</span><span class="p">(</span><span class="n">something</span><span class="p">)</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">to</span> <span class="n">receive</span><span class="p">(</span><span class="ss">:is_a?</span><span class="p">)</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="no">Something</span><span class="p">)</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">and_return</span><span class="p">(</span><span class="kp">true</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>But this can be boring to type it each time you need an <code>instance_double</code> while working with <code>contracts</code>. So here you go:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Gemfile</span>
+</span><span class='line'><span class="n">group</span> <span class="ss">:test</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">gem</span> <span class="s2">&quot;contracts-rspec&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Run <code>bundle</code> to install <code>contracts-rspec</code> gem.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># your spec file</span>
+</span><span class='line'><span class="nb">require</span> <span class="s2">&quot;contracts/rspec&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">RSpec</span><span class="o">.</span><span class="n">describe</span> <span class="no">Example</span> <span class="k">do</span>
+</span><span class='line'>  <span class="kp">include</span> <span class="no">Contracts</span><span class="o">::</span><span class="no">RSpec</span><span class="o">::</span><span class="no">Mocks</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># .. write code as in first example ..</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you are covered. Inclusion of <code>Contracts::RSpec::Mocks</code> slightly alters behavior of <code>instance_double</code>. Now it automatically stubs out <code>#is_a?(Klass)</code> to return <code>true</code> on the class it was created from. In our case <code>Something</code>. This happens here: <a href="https://github.com/waterlink/contracts-rspec/blob/master/lib/contracts/rspec/mocks.rb#L4-L8">https://github.com/waterlink/contracts-rspec/blob/master/lib/contracts/rspec/mocks.rb#L4-L8</a></p>
+
+<p>You can include it only in contexts you need, or you can do it globally from <code>spec_helper</code> like you do usually include spec helpers.</p>
+
+<h2>Links</h2>
+
+<ul>
+<li>Gem: <a href="https://github.com/waterlink/contracts-rspec">https://github.com/waterlink/contracts-rspec</a></li>
+<li>contracts.ruby: <a href="https://github.com/egonSchiele/contracts.ruby">https://github.com/egonSchiele/contracts.ruby</a></li>
+<li>contracts.ruby chat: <a href="https://gitter.im/egonSchiele/contracts.ruby">https://gitter.im/egonSchiele/contracts.ruby</a></li>
+<li>Born from here: <a href="https://github.com/egonSchiele/contracts.ruby/issues/14">egonSchiele/contracts.ruby#14</a></li>
+<li><a href="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></li>
+<li><a href="https://egonschiele.github.io/contracts.ruby/">Great contracts.ruby tutorial</a></li>
+</ul>
+
+
+<h2>Thanks!</h2>
+
+<p>If you have any questions, suggestions or just want to chat about how contracts.ruby is awesome, you can ping me on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues using <a href="https://github.com/egonSchiele/contracts.ruby">contracts.ruby</a> or <a href="https://github.com/waterlink/contracts-rspec">contracts-rspec</a> you can create issues on corresponding github project. Pull requests are welcome!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/03/12/object-oriented-design-important-things/">Object Oriented Design. Important Things</a></h1>
     
     
       <p class="meta">
@@ -87,7 +347,7 @@
   </header>
 
 
-<div class="entry-content"><h2>Slides from my talk <a href="https://twitter.com/BrainlyGroup">@brainly</a> 12 Mar 2015</h2>
+  <div class="entry-content"><h2>Slides from my talk <a href="https://twitter.com/BrainlyGroup">@brainly</a> 12 Mar 2015</h2>
 
 <p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>, I would love to hear from you.</em></p>
 
@@ -423,56 +683,83 @@
 
 <p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
 </div>
-
-
-  <footer>
-    <p class="meta">
-      
+  
   
 
-<span class="byline author vcard">Posted by <span class="fn">Oleksii Fedorov (waterlink)</span></span>
 
-      
-
-
-
-
-<time class='entry-date' datetime='2015-03-12T23:23:45+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>12</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:23 pm</span></time>
-      
-
-<span class="categories">
+    </article>
   
-    <a class='category' href='/blog/categories/actor-model/'>actor-model</a>, <a class='category' href='/blog/categories/dependency-injection/'>dependency-injection</a>, <a class='category' href='/blog/categories/dependency-inversion/'>dependency-inversion</a>, <a class='category' href='/blog/categories/design/'>design</a>, <a class='category' href='/blog/categories/oop/'>oop</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>
   
-</span>
-
-
-    </p>
+    <article>
+      
+  <header>
     
-      <div class="sharing">
-  
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things/" data-via="waterlink000" data-counturl="http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things/" >Tweet</a>
-  
-  
-  <div class="g-plusone" data-size="medium"></div>
-  
-  
-</div>
-
+      <h1 class="entry-title"><a href="/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/">How Can contracts.ruby Be Used in the Community With Duck Typing Culture?</a></h1>
     
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/" title="Previous Post: How can contracts.ruby be used in the community with duck typing culture?">&laquo; How can contracts.ruby be used in the community with duck typing culture?</a>
-      
-      
-        <a class="basic-alignment right" href="/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/" title="Next Post: Using contracts.ruby with RSpec">Using contracts.ruby with RSpec &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
+    
+      <p class="meta">
+        
 
+
+
+
+<time class='entry-date' datetime='2015-03-10T11:11:23+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:11 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>So, given simple example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">Num</span><span class="p">,</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One can ask: &ldquo;But it is ruby, what about duck typing, I want just pass two things that have certain methods defined on them&rdquo;</p>
+
+<p>And my answer, you can easily do that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:save</span><span class="p">,</span> <span class="ss">:has_valid?</span><span class="o">]</span><span class="p">,</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:to_s</span><span class="o">]</span> <span class="o">=&gt;</span> <span class="no">Any</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">assign_user_a_default_email</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">default_email</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">default_email</span> <span class="k">unless</span> <span class="n">user</span><span class="o">.</span><span class="n">has_valid?</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">save</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is a built-in <code>RespondTo</code> contract. You can get a list of all of them here: <a href="http://egonschiele.github.io/contracts.ruby/#built-in-contracts">http://egonschiele.github.io/contracts.ruby/#built-in-contracts</a></p>
+
+<p>If you have any questions, you can always ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a></p>
 </div>
+  
+  
 
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/posts/4">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/posts/2">Newer &rarr;</a>
+    
+  </div>
+</div>
 <aside class="sidebar">
   
     <section>
@@ -549,7 +836,6 @@
 
   
 </aside>
-
 
     </div>
   </div>

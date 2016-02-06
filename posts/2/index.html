@@ -9,7 +9,13 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Slides from my talk @brainly 12 Mar 2015 Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, &hellip;">
+  <meta name="description" content="Taking reference of loop variable Lets start off with simple code example: 1
+2
+3
+4
+5
+6
+for message := range inbox { outbox &lt;- EnhancedMessage &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,7 +80,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/03/12/object-oriented-design-important-things/">Object Oriented Design. Important Things</a></h1>
+      <h1 class="entry-title"><a href="/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/">Why Do You Need to Be Careful With Loop Variable in Go</a></h1>
     
     
       <p class="meta">
@@ -83,121 +89,16 @@
 
 
 
-<time class='entry-date' datetime='2015-03-12T23:23:45+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>12</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:23 pm</span></time>
+<time class='entry-date' datetime='2016-01-08T02:28:45+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>2:28 am</span></time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h2>Slides from my talk <a href="https://twitter.com/BrainlyGroup">@brainly</a> 12 Mar 2015</h2>
+  <div class="entry-content"><h2>Taking reference of loop variable</h2>
 
-<p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>, I would love to hear from you.</em></p>
-
-<p>Code examples are in ruby/pseudo-code.</p>
-
-<iframe src="//www.slideshare.net/slideshow/embed_code/45775223" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-
-
-<h2>Object Oriented Programming</h2>
-
-<p>Most notable features of OOP:</p>
-
-<ul>
-<li>Encapsulation - keep data together with behavior that needs that data, effectively hiding this data from everything else.</li>
-<li>Inheritance - usually a subclassing, inheriting all behavior and data, in some language even all private details.</li>
-<li>Polymorphism - ability to substitute instances of one class with instances of others.</li>
-</ul>
-
-
-<h3>How important these features are for OO design?</h3>
-
-<p>Imagine, that given 100 points you want to distribute them between these 3 features, and each number will represent an importance of corresponding feature.</p>
-
-<p>This would be my answer (and my personal opinion):</p>
-
-<table>
-<thead>
-<tr>
-<th style="text-align:center;">Encapsulation</th>
-<th style="text-align:center;">Polymorphism</th>
-<th style="text-align:center;">Inheritance</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center;">80</td>
-<td style="text-align:center;">40</td>
-<td style="text-align:center;">-20</td>
-</tr>
-</tbody>
-</table>
-
-
-<p>And 100 = 80 + 40 + (-20) :)</p>
-
-<h3>Why inheritance is so bad?</h3>
-
-<p>Because it increases coupling (usually): subclass (usually) depends on some data and/or behavior of its superclass. Even worse: (usually) it is not public data/behavior. I.e.: it violates principle of encapsulation badly. (Usually).</p>
-
-<p>There are actually cases, when you do want your classes to be in inheritance hierarchy, it is the case, when your domain has the same hierarchy naturally in real world. And type inheritance doesn&rsquo;t really mean behavior inheritance.</p>
-
-<h3>So how to avoid violation of encapsulation using inheritance?</h3>
-
-<ul>
-<li>Be careful, use only public interfaces of your superclass.</li>
-<li>Replace inheritance with composition and delegation, because when you use only public interfaces of superclass, then you don&rsquo;t really need inheritance.</li>
-</ul>
-
-
-<h2>Coupling</h2>
-
-<h3>Why coupling is bad?</h3>
-
-<p>Imagine you need to change behavior of class X.</p>
-
-<p>You will have to change any other piece of code base, that directly depends on this behavior of class X.</p>
-
-<p>More coupling you have, more changes will have to take place, and probably, in totally unrelated parts of codebase.</p>
-
-<p>As a result it:</p>
-
-<ul>
-<li>Exponentially increases time required for change</li>
-<li>Invites bugs (lots of)</li>
-</ul>
-
-
-<h3>Dependency</h3>
-
-<p>Dependency, is basically what coupling is, - is not really your friend, so you need to watch out for them.</p>
-
-<h3>How to deal with dependencies?</h3>
-
-<ul>
-<li>Dependency inversion principle - Instead of referring foreign system/package/class/module/whatever, refer an abstract interface.</li>
-<li>Dependency injection - Technique, that allows to provision all dependencies to parts of your system and basically fulfill all required interfaces.</li>
-</ul>
-
-
-<h3>An example</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Answer</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">rating</span>
-</span><span class='line'>    <span class="no">RatingService</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">rating_for</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>What is the problem with this code? - It is a dependency <code>Answer -&gt; RatingService</code>. What if you wanted to A/B test different rating models? You will definitely have troubles with that approach, especially if it is not the only place, that reference <code>RatingService</code>.</p>
-
-<h3>Use dependency injection!</h3>
+<p>Lets start off with simple code example:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -205,123 +106,21 @@
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Answer</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">rating_service</span><span class="p">)</span>
-</span><span class='line'>    <span class="vi">@rating_service</span> <span class="o">=</span> <span class="n">rating_service</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">rating</span>
-</span><span class='line'>    <span class="vi">@rating_service</span><span class="o">.</span><span class="n">rating_for</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. more fields here ..</span>
+</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">message</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Now you can easily have multiple rating services and A/B test them, or do whatever you want, it is really flexible.</p>
+<p>Looks quite legit. In practice it will often cause race conditions. Because
+<code>message</code> variable is defined once and then mutated in each loop iteration. And
+we are giving pointer to this variable away to some concurrent collaborator.
+This causes race condition and very confusing bugs.</p>
 
-<h3>It is still coupling</h3>
-
-<p>But coupling to abstract interface, instead of real implementation, which means, you can exchange different implementations without changing users of this interface. Which basically improves polymorphism features of your code. It is very loose coupling.</p>
-
-<h2>Test Driven Development</h2>
-
-<h3>How is it related to OO design?</h3>
-
-<p>It provides very short feedback on your OO design:</p>
-
-<ul>
-<li>If you have troubles writing test - your design is wrong and you need to step back</li>
-<li>If you don&rsquo;t like how your test look like - your design is wrong and you need to step back</li>
-<li>If you have troubles making test green - your design is wrong and you need to step back</li>
-</ul>
-
-
-<p>It is really almost like pairing partner if used right! Of course pairing still provides even better feedback loop - real-time continuous feedback loop!</p>
-
-<h3>Unit tests vs integration tests</h3>
-
-<p>Integration tests are scam!:</p>
-
-<ul>
-<li>Very slow => bad feedback loop</li>
-<li>Exponential count of paths to test</li>
-</ul>
-
-
-<h3>Unit tests just don&rsquo;t work. Are they?</h3>
-
-<p>Everything works in isolation != the whole system works as expected.</p>
-
-<p>Testing in isolation = providing fake objects and/or mocks for all your dependencies</p>
-
-<p>Mocks and fake objects can make your unit test green, but in fact the code is broken, because one of the dependencies has changed its behavior or even public interface in unexpected fashion.</p>
-
-<h3>Answer: Cut your system at value boundaries!</h3>
-
-<p>Instead of method call boundaries. And we arrive at Actor Model.</p>
-
-<h2>Actor Model</h2>
-
-<p>Given this example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">RatingService</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">rating_for</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">)</span>
-</span><span class='line'>    <span class="c1"># .. calculate rating somehow ..</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Problems with this class:</p>
-
-<ul>
-<li>Any user of this class will have to stub out its <code>#rating_for</code> in unit tests.</li>
-<li>It invites additional behavior to be added (since it is as simple as adding additional public method), which will kill single responsibility feature of this class.</li>
-</ul>
-
-
-<h3>Actor Model solves this</h3>
-
-<p>Warning, it is ruby pseudo-code:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">actor</span> <span class="no">RatingService</span>
-</span><span class='line'>  <span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">,</span> <span class="n">outbox</span> <span class="o">=</span> <span class="n">inbox</span><span class="o">.</span><span class="n">fetch</span>
-</span><span class='line'>  <span class="c1"># .. calculate rating somehow ..</span>
-</span><span class='line'>  <span class="n">outbox</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">rating</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">rating_service</span> <span class="o">=</span> <span class="no">RatingService</span><span class="o">.</span><span class="n">new</span>
-</span><span class='line'><span class="n">rating_service</span><span class="o">.</span><span class="n">start</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Way better now:</h3>
-
-<ul>
-<li>Allows unit testing easily without mocks and fake objects: by peeking inside its inbox in unit tests instead, and checking that it received right message.</li>
-<li>It is really hard to pack more responsibility to this, since it has no methods, it has just one body, that is responsible for processing exactly one message.</li>
-</ul>
-
-
-<p><em>You of course can encode something strange in message, and organize your own method dispatch mechanism through actors inbox, but that is just silly (usually).</em></p>
-
-<h3>Easy to unit test:</h3>
+<p>Above code can be re-written as:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -338,93 +137,162 @@
 <span class='line-number'>13</span>
 <span class='line-number'>14</span>
 <span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># creating actor, but not starting it</span>
-</span><span class='line'><span class="n">rating_actor</span> <span class="o">=</span> <span class="no">RatingCalculator</span><span class="o">.</span><span class="n">new</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// local scope begins here</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="p">(</span>
+</span><span class='line'>                <span class="nx">message</span> <span class="nx">Message</span>
+</span><span class='line'>                <span class="nx">ok</span> <span class="kt">bool</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'>        <span class="k">for</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">message</span><span class="p">,</span> <span class="nx">ok</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">inbox</span>
+</span><span class='line'>                <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="k">break</span>
+</span><span class='line'>                <span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'><span class="c1"># dependency injection of rating actor</span>
-</span><span class='line'><span class="n">answer_actor</span> <span class="o">=</span> <span class="no">Answer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">answer_id</span><span class="p">,</span> <span class="n">rating_actor</span><span class="p">)</span>
-</span><span class='line'><span class="n">answer_actor</span><span class="o">.</span><span class="n">start</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">render_actor</span> <span class="o">=</span> <span class="no">Render</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">answer_actor</span><span class="p">)</span>
-</span><span class='line'><span class="n">render_actor</span><span class="o">.</span><span class="n">run</span>
-</span><span class='line'><span class="n">expect</span><span class="p">(</span><span class="n">rating_actor</span><span class="o">.</span><span class="n">inbox</span><span class="p">)</span>
-</span><span class='line'>  <span class="o">.</span><span class="n">to</span> <span class="kp">include</span><span class="p">(</span><span class="o">[</span><span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">,</span> <span class="n">outbox</span><span class="o">]</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># fake response from rating actor</span>
-</span><span class='line'><span class="n">outbox</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span>
-</span><span class='line'><span class="n">expect</span><span class="p">(</span><span class="n">render_actor</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">render_rating</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span>
+</span><span class='line'>                <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                        <span class="c1">// .. more fields here ..</span>
+</span><span class='line'>                        <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">message</span><span class="p">,</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="c1">// local scope ends here</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>In unit tests you start only one actor - actor under test, and all other actors just get instantiated correctly and passed in as a dependencies where needed. Since they are not started, they will not consume any messages from their inbox, which means that you can consume these inboxes from your unit test, and check that the messages that arrived at inboxes are expected.</p>
+<p>Looking at this code, it is quite obvious why it would have race conditions.</p>
 
-<h2>When the code is done</h2>
-
-<ul>
-<li>It works!</li>
-<li>It is readable (future me will not curse me for writing this code)</li>
-<li>It has no duplication</li>
-<li>And it is as short as possible (while maintaining all of the above)</li>
-</ul>
-
-
-<h3>Code comments</h3>
-
-<p>Basically a code smell (I&rsquo;m not talking about documentation comments)</p>
-
-<p>Example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># when user is active</span>
-</span><span class='line'><span class="k">if</span> <span class="n">activity_service</span><span class="o">.</span><span class="n">has_events</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="ss">min_date</span><span class="p">:</span> <span class="mi">2</span><span class="o">.</span><span class="n">weeks</span><span class="o">.</span><span class="n">ago</span><span class="p">)</span>
-</span><span class='line'>  <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">user</span><span class="o">.</span><span class="n">fraud?</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Which is bad from more than one point of view, it literally should have been:</p>
+<p>Correct way of doing that would be to either define a new variable manually
+each iteration and copy <code>message</code>&rsquo;s value into it:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">active?</span>
-</span><span class='line'><span class="c1"># or</span>
-</span><span class='line'><span class="k">if</span> <span class="n">activity_service</span><span class="o">.</span><span class="n">user_is_active?</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-</span><span class='line'><span class="c1"># .. more variations can be here ..</span>
-</span><span class='line'><span class="c1"># .. but all of them will be better ..</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">m</span> <span class="o">:=</span> <span class="nx">message</span>
+</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                <span class="c1">// ...</span>
+</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">m</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h3>If code needs comment:</h3>
+<p>Another way of doing that would be to take control of how loop variable works
+yourself:</p>
 
-<ul>
-<li>it is not readable</li>
-<li>it fails to communicate its intent</li>
-</ul>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">message</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">inbox</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">break</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                <span class="c1">// ...</span>
+</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">message</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>You should be able to read the code and understand it. In that order: read -> understand.</p>
+<p>Taking into account, that until the <code>EnhancedMessage</code> is processed by
+concurrent collaborator and garbage collected, variables, created during each
+iteration, i.e.: <code>m</code> and <code>message</code> for both examples, will stay in memory.
+Therefore it is possible to just use pass-by-value instead of
+pass-by-reference to achieve the same result. It is simpler too:</p>
 
-<p>You shouldn&rsquo;t interpret it in your head. You shouldn&rsquo;t have Ruby (or your favorite language here) instance running in your head.</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                <span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="c1">// Given the fact that `EnhancedMessage.Original` definition</span>
+</span><span class='line'>                <span class="c1">// changed to be of value type `Message`</span>
+</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="nx">message</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<h2>To sum it up</h2>
 
-<ul>
-<li>Inheritance is good only in very rare cases</li>
-<li>Coupling and dependencies are not your friends, take them under control with dependency inversion &amp; injection</li>
-<li>TDD as a shortest feedback cycle for your OO design</li>
-<li>Write code in such way, that you would thank yourself for that in the future</li>
-</ul>
+<p>Personally, I prefer latter. If you know of any drawbacks of this approach
+comparing to other 2, or if you know of entirely better way of doing that,
+please let me know.</p>
+
+<h2>Running goroutine, that uses loop variable</h2>
+
+<p>Example code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. do something important with message ..</span>
+</span><span class='line'>        <span class="p">}()</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Recommended reading: &ldquo;Pragmatic Programmer: From Journeyman to Master&rdquo; by Andrew Hunt and David Thomas. It is insanely good, concise book with lots of awesome references to other resources.</p>
+<p>This code might look legit too. You might think it will process whole inbox
+concurrently, but most probably it will process only a couple of last elements
+multiple times.</p>
+
+<p>If you rewrite the loop in a similar fashion as in previous section, you would
+notice that <code>message</code> would be mutated while these goroutines are still
+processing it. This will cause confusing race conditions.</p>
+
+<p>Correct way of doing that is:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">message</span> <span class="nx">Message</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. do something important with message ..</span>
+</span><span class='line'>        <span class="p">}(</span><span class="nx">message</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In this case, it is basically the same as copying the value to the new defined
+variable at each iteration of the loop. It just looks nicer.</p>
 
 <h2>Thanks!</h2>
 
-<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>If you have any questions, suggestions or just want to chat about the topic,
+you can ping me on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a> or
+drop a comment on <a href="https://news.ycombinator.com/item?id=10864593">hackernews</a>.</p>
+
+<p>Especially, if you think I am wrong somewhere in this article, please tell me,
+I will only be happy to learn and iterate over this article to improve it.</p>
+
+<p>Happy coding!</p>
 </div>
   
   
@@ -437,7 +305,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/">How Can contracts.ruby Be Used in the Community With Duck Typing Culture?</a></h1>
+      <h1 class="entry-title"><a href="/blog/2015/09/08/intention-revealing-code/">Intention-revealing Code</a></h1>
     
     
       <p class="meta">
@@ -446,97 +314,14 @@
 
 
 
-<time class='entry-date' datetime='2015-03-10T11:11:23+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:11 am</span></time>
+<time class='entry-date' datetime='2015-09-08T21:24:52+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>9:24 pm</span></time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>So, given simple example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">Num</span><span class="p">,</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>One can ask: &ldquo;But it is ruby, what about duck typing, I want just pass two things that have certain methods defined on them&rdquo;</p>
-
-<p>And my answer, you can easily do that:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:save</span><span class="p">,</span> <span class="ss">:has_valid?</span><span class="o">]</span><span class="p">,</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:to_s</span><span class="o">]</span> <span class="o">=&gt;</span> <span class="no">Any</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">assign_user_a_default_email</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">default_email</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">default_email</span> <span class="k">unless</span> <span class="n">user</span><span class="o">.</span><span class="n">has_valid?</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">save</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This is a built-in <code>RespondTo</code> contract. You can get a list of all of them here: <a href="http://egonschiele.github.io/contracts.ruby/#built-in-contracts">http://egonschiele.github.io/contracts.ruby/#built-in-contracts</a></p>
-
-<p>If you have any questions, you can always ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/03/05/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-03-05T23:55:40+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:55 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>Slides from my talk on RUG-B Mar 2015</h2>
-
-<p>A short introduction to a powerful Design by Contract technique and its implementation in ruby contracts.ruby.</p>
-
-<p>Design by Contract allows one to do defensive programming in very elegant fashion, allows to set contracts on methods (expectations on input - arguments; and on output - return result) and invariants on classes. This allows to reason about code much much better.</p>
-
-<iframe src="//www.slideshare.net/slideshow/embed_code/45498085" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-
-
-<h2>Classical defensive programming</h2>
-
-<p>Lets start from simple code example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you want to be really confident in implementation and usage of this method, you would probably use something like that:</p>
+  <div class="entry-content"><p>Lets start off with very simple code:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -545,81 +330,27 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">raise</span> <span class="s2">&quot;a should be Fixnum or Float&quot;</span> <span class="k">unless</span> <span class="n">a</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Fixnum</span><span class="p">)</span> <span class="o">||</span>
-</span><span class='line'>    <span class="n">a</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">Float</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">raise</span> <span class="s2">&quot;b should be Fixnum or Float&quot;</span> <span class="k">unless</span> <span class="n">b</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Fixnum</span><span class="p">)</span> <span class="o">||</span>
-</span><span class='line'>    <span class="n">b</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">Float</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">result</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-</span><span class='line'>  <span class="k">raise</span> <span class="s2">&quot;result should be Fixnum or Float&quot;</span> <span class="k">unless</span> <span class="n">result</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Fixnum</span><span class="p">)</span> <span class="o">||</span>
-</span><span class='line'>    <span class="n">result</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">Float</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">result</span>
-</span><span class='line'><span class="k">end</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kd">func</span> <span class="nx">toJSON</span><span class="p">(</span><span class="nx">post</span> <span class="nx">Post</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span>
+</span><span class='line'>                <span class="s">`{&quot;post_title&quot;: &quot;%s&quot;, &quot;post_content&quot;: &quot;%s&quot;}`</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">post</span><span class="p">.</span><span class="nx">Title</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">post</span><span class="p">.</span><span class="nx">Content</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Which definitely provides guarantees for input and output values.</p>
-
-<p>But this code is extremely ugly, unmaintainable and unreadable. You can always extract <code>assert</code>-like helper methods, but it will not improve readability too much, you want to have just this simple <code>a + b</code> in the body of this method.</p>
-
-<h2><code>gem "contracts"</code></h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">Num</span><span class="p">,</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This code does the same thing, but readability at a totally different level. Developers who know haskell may find this notation quite familiar.</p>
-
-<h2>Design by contract</h2>
-
-<p>When applying design by contract technique to development of any system or service, it allows you to answer the following questions:</p>
+<p>This is very simple code and it is easy to understand what it is doing and what
+it is doing wrong:</p>
 
 <ul>
-<li>What does it expect? - Restrictions on input data for the system.</li>
-<li>What does it guarantee? - Restrictions on output data (return value) of the system.</li>
-<li>What does it maintain? - Restrictions on the inner state of the system (if your system is stateful, of course).</li>
+<li>It tries to marshal <code>post</code> struct to custom <code>JSON</code> representation.</li>
+<li>It fails when there are special characters in these strings.</li>
+<li>It does not use standard <code>MarshalJSON</code> interface.</li>
 </ul>
 
 
-<h2>Benefits</h2>
-
-<p>Benefits of being able to answer this questions and enforce them on a runtime level are:</p>
-
-<ul>
-<li>Clients of your system can be confident using its public APIs. They can be sure, that if they provide something wrong, then they will get a convenient error immediately. And they can be sure, that system returns the right value as a result.</li>
-<li>System or service itself can be confident in its own operations. Implementation of system, that is covered with contracts, can assume that all the data flowing through the system is right and expected, and don&rsquo;t waste time (and lines of code, and sanity of the developer/maintainer) on different checks, conversions and so on (ie on defensive programming), it can just do what it needs to do, in confident, concise and convenient way, right up to the point.</li>
-</ul>
-
-
-<h2><code>assert</code> on steroids. And it is not only about types</h2>
-
-<p>Up until now it may seem like some kind of runtime type-checking system. But it is not, it is way more powerful.</p>
-
-<p>You can check for exact value:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="mi">200</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="ss">:get</span> <span class="o">=&gt;</span> <span class="s2">&quot;ok&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You can check for types:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">User</span><span class="p">,</span> <span class="no">Time</span> <span class="o">=&gt;</span> <span class="no">Or</span><span class="o">[</span><span class="no">TrueClass</span><span class="p">,</span> <span class="no">FalseClass</span><span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You can check for anything that is available to you at runtime:</p>
+<p>It can be fixed in a pretty simple way:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -627,202 +358,148 @@
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">ActiveUser</span> <span class="o">=&gt;</span> <span class="no">Rating</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">rating_for</span><span class="p">(</span><span class="n">active_user</span><span class="p">)</span>
-</span><span class='line'>  <span class="c1"># .. calculate rating for active user ..</span>
-</span><span class='line'><span class="k">end</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kd">func</span> <span class="p">(</span><span class="nx">post</span> <span class="nx">Post</span><span class="p">)</span> <span class="nx">MarshalJSON</span><span class="p">()</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}{</span>
+</span><span class='line'>                <span class="s">&quot;post_title&quot;</span><span class="p">:</span>   <span class="nx">post</span><span class="p">.</span><span class="nx">Title</span><span class="p">,</span>
+</span><span class='line'>                <span class="s">&quot;post_content&quot;</span><span class="p">:</span> <span class="nx">post</span><span class="p">.</span><span class="nx">Content</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">})</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And at the usage site, you can now just use standard <code>encoding/json</code> package
+capabilities:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">rawPost</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="nx">post</span><span class="p">)</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">err</span>
+</span><span class='line'><span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">ActiveUser</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">valid?</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">user</span><span class="o">.</span><span class="n">last_activity</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">.</span><span class="n">weeks</span><span class="o">.</span><span class="n">ago</span>
+</span><span class='line'><span class="c1">// do stuff with rawPost</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And now you can notice that tests do not pass. And the place that failed is
+totally unrelevant.  Long story short. Name of the original method was not
+revealing any real intent: it was actually specific json representation for
+usage with external API, but normal <code>json.Marshal</code> is used by this same
+application for providing responses to its own HTTP clients.</p>
+
+<p>Were the name a bit more intention-revealing, nobody would waste their time
+on finding this out by trial and mistake:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// should probably even sit in different package</span>
+</span><span class='line'><span class="kd">func</span> <span class="nx">marshalToExternalAPIFormat</span><span class="p">(</span><span class="nx">post</span> <span class="nx">Post</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And this is only a tip of the iceberg of how non-intention-revealing code can
+trip you over.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/">Using contracts.ruby With RSpec. Part 2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-08-31T18:36:30+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>6:36 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Remember <a href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Using contracts.ruby With RSpec</a> ?</p>
+
+<p>RSpec mocks violate all <code>:class</code> contracts because <code>is_a?(ClassName)</code> returns
+<code>false</code> for mock. That post describes 2 possible solutions:</p>
+
+<ul>
+<li>stub <code>:is_a?</code>: <code>allow(my_double).to receive(:is_a?).with(MyClass).and_return(true)</code>, or</li>
+<li>use <code>contracts-rspec</code> gem, that patches <code>instance_double</code> RSpec helper.</li>
+</ul>
+
+
+<h2>Custom validators</h2>
+
+<p>Since custom validators have finally landed here:
+<a href="https://github.com/egonSchiele/contracts.ruby/pull/159">egonShiele/contracts.ruby#159</a>,
+now you can just override <code>:class</code> validator to accept all RSpec mocks:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Make contracts accept all RSpec doubles</span>
+</span><span class='line'><span class="no">Contract</span><span class="o">.</span><span class="n">override_validator</span><span class="p">(</span><span class="ss">:class</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">contract</span><span class="o">|</span>
+</span><span class='line'>  <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">arg</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">arg</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">RSpec</span><span class="o">::</span><span class="no">Mocks</span><span class="o">::</span><span class="no">Double</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">arg</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="n">contract</span><span class="p">)</span>
 </span><span class='line'>  <span class="k">end</span>
 </span><span class='line'><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>As you expect when contract check on <code>active_user</code> argument happens, it will just call <code>ActiveUser.valid?(active_user)</code> and in case of falsy result will raise contract violation error.</p>
+<p>Now, RSpec mocks will not violate all the <code>:class</code> contracts.</p>
 
-<h2>Very useful contract violation errors</h2>
+<p>More information can be found here: <a href="https://github.com/egonSchiele/contracts.ruby/blob/v0.11.0/TUTORIAL.md#providing-your-own-custom-validators">Providing your own custom validators</a>.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="ss">ContractError</span><span class="p">:</span> <span class="no">Contract</span> <span class="n">violation</span> <span class="k">for</span> <span class="n">argument</span> <span class="mi">1</span> <span class="n">of</span> <span class="mi">1</span><span class="p">:</span>
-</span><span class='line'>    <span class="ss">Expected</span><span class="p">:</span> <span class="no">ActiveUser</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">Actual</span><span class="p">:</span> <span class="c1">#&lt;User:0x00000101059540&gt; {last_activity=27.11.2014}</span>
-</span><span class='line'>    <span class="no">Value</span> <span class="n">guarded</span> <span class="k">in</span><span class="p">:</span> <span class="no">Object</span><span class="o">::</span><span class="n">rating_for</span>
-</span><span class='line'>    <span class="no">With</span> <span class="ss">Contract</span><span class="p">:</span> <span class="no">ActiveUser</span> <span class="o">=&gt;</span> <span class="no">Rating</span>
-</span><span class='line'>    <span class="ss">At</span><span class="p">:</span> <span class="p">(</span><span class="n">irb</span><span class="p">):</span><span class="mi">10</span>
-</span><span class='line'>    <span class="o">.</span><span class="n">.</span><span class="o">.</span> <span class="n">backtrace</span> <span class="o">.</span><span class="n">.</span><span class="o">.</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>Additionally this refactoring enabled valuable speed optimization for complex
+contracts - validators for them will be evaluated only once and memoized.</p>
 
-
-<p>This kind of errors tell you, what exactly you did wrong and where exactly you did it wrong. It is totally different from usual <code>NoMethodError :something for nil:NilClass</code>, because usually these kind of no-method errors can occur in totally different part of codebase comparing to where these errors actually were introduced. Contract violation will be issued exactly at the place where you passed invalid data into or out from your system. So that when you see a contract violation error, there is a high chance that you already know how to fix it.</p>
-
-<h2>Pattern matching, sorta..</h2>
-
-<p>You can say even method overloading. Very simple example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># factorial in classic way</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span>
-</span><span class='line'>    <span class="mi">1</span>
-</span><span class='line'>  <span class="k">else</span>
-</span><span class='line'>    <span class="n">n</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># factorial using pattern matching</span>
-</span><span class='line'><span class="no">Contract</span> <span class="mi">1</span> <span class="o">=&gt;</span> <span class="mi">1</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
-</span><span class='line'>  <span class="mi">1</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="no">Contract</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">number</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>When I saw this example, my first reaction was: &ldquo;Wow!&rdquo;. I was very excited about this feature.</p>
-
-<h2>Something useful with pattern matching</h2>
-
-<p>Last example was not particularly useful for our everyday development, but here you go.</p>
-
-<p>Imagine you have a concurrent evented system, that needs to make asynchronous requests to some external http service(s). You may eventually end up with handler functions like these:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Classical way</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">handle_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">200</span>
-</span><span class='line'>    <span class="n">transform_response</span><span class="p">(</span><span class="no">JSON</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
-</span><span class='line'>  <span class="k">else</span>
-</span><span class='line'>    <span class="n">wrap_in_error</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># And using pattern matching:</span>
-</span><span class='line'><span class="no">Contract</span> <span class="mi">200</span><span class="p">,</span> <span class="no">JsonString</span> <span class="o">=&gt;</span> <span class="no">JsonString</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">handle_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">transform_response</span><span class="p">(</span><span class="no">JSON</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="no">Contract</span> <span class="no">Fixnum</span><span class="p">,</span> <span class="nb">String</span> <span class="o">=&gt;</span> <span class="no">JsonString</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">handle_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">wrap_in_error</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Limitless benefits</h2>
+<h2>Links</h2>
 
 <ul>
-<li>All your input data is consistent</li>
-<li>All data flows inside of your system are consistent</li>
-<li>State of your system is consistent</li>
-<li>Output of your system is consistent (or it is a contract violation error)</li>
-<li>Blows up loudly on any logical error in your system</li>
+<li><a href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Previous part</a></li>
+<li>contracts.ruby: <a href="https://github.com/egonSchiele/contracts.ruby">https://github.com/egonSchiele/contracts.ruby</a></li>
+<li>contracts.ruby chat: <a href="https://gitter.im/egonSchiele/contracts.ruby">https://gitter.im/egonSchiele/contracts.ruby</a></li>
+<li>Mentioned PR: <a href="https://github.com/egonSchiele/contracts.ruby/pull/159">https://github.com/egonSchiele/contracts.ruby/pull/159</a></li>
+<li><a href="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></li>
+<li><a href="https://egonschiele.github.io/contracts.ruby/">Great contracts.ruby tutorial</a></li>
+<li><a href="https://github.com/egonSchiele/contracts.ruby/pull/195">Full fledged documentation PR</a>: see here staging docs: <a href="https://relishapp.com/contracts-staging/contracts-ruby/docs">https://relishapp.com/contracts-staging/contracts-ruby/docs</a></li>
 </ul>
 
 
-<p>Last point is extremely important, because sometimes logical errors in classical programs will not lead to any failure at all, they will just do the wrong thing. For example, transfer money to wrong bank account. In such mission critical systems it is really important to fail fast to not allow error to propagate throughout your system.</p>
+<h2>Thanks!</h2>
 
-<h2>Caveats: Performance</h2>
+<p>If you have any questions, suggestions or just want to chat about how
+contracts.ruby is awesome, you can ping me on twitter
+<a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues using
+<a href="https://github.com/egonSchiele/contracts.ruby">contracts.ruby</a> you can create
+issues on corresponding github project. Pull requests are welcome!</p>
 
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">Benchmark</th>
-<th style="text-align:left;">Slowdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;"><code>a+b</code></td>
-<td style="text-align:left;">900% slowdown</td>
-</tr>
-<tr>
-<td style="text-align:left;">production system with network IO</td>
-<td style="text-align:left;">5-10% slowdown</td>
-</tr>
-<tr>
-<td style="text-align:left;"><code>NO_CONTRACTS=1</code></td>
-<td style="text-align:left;">0% slowdown</td>
-</tr>
-</tbody>
-</table>
+<p>Comments on <a href="https://news.ycombinator.com/item?id=10147783">hackernews</a>.</p>
 
-
-<p><p/></p>
-
-<p>First benchmark is simple comparision of <code>a + b</code> with and without contract. Since <code>a + b</code> itself is very fast, then the slowdown is huge. But if you try to benchmark any real world system, that actually does something useful (communicates to other services through network for example), then slowdown is very very small.</p>
-
-<p>And you have ability to disable contracts in production with <code>NO_CONTRACTS=1</code> environment variable. But beware, you lose extremely important benefit of blowing up on logical error immediately before letting error propagate. This benefit itself outweights these 5-10%, at least for me.</p>
-
-<h2>Useful links</h2>
-
-<ul>
-<li><a href="https://github.com/egonSchiele/contracts.ruby">Github</a></li>
-<li><a href="http://egonschiele.github.io/contracts.ruby">Nice tutorial</a></li>
-<li><a href="https://github.com/egonSchiele">Creator</a></li>
-<li><a href="https://github.com/waterlink">Me, co-maintainer</a></li>
-</ul>
-
-
-<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues with using <code>contracts.ruby</code>, you can always create an <a href="https://github.com/egonSchiele/contracts.ruby/issues">issue on github</a> and Pull Requests are welcome.</p>
+<p>Happy coding! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
 </div>
   
   
@@ -835,7 +512,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2015/01/30/dismantling-effective-go-article/">Dismantling Effective Go Article</a></h1>
+      <h1 class="entry-title"><a href="/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x/">Docker Machine Guide (VirtualBox on Mac OS X)</a></h1>
     
     
       <p class="meta">
@@ -844,329 +521,243 @@
 
 
 
-<time class='entry-date' datetime='2015-01-30T22:39:11+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:39 pm</span></time>
+<time class='entry-date' datetime='2015-08-31T10:21:06+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>10:21 am</span></time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome.</p>
+  <div class="entry-content"><p><em>(VirtualBox on Mac OS X)</em></p>
 
-<p>Article itself: <a href="https://golang.org/doc/effective_go.html">https://golang.org/doc/effective_go.html</a></p>
+<p>This guide is a combination of official docs and usage experience.</p>
 
-<p>And here is a list of my thoughts.</p>
+<h2>Installation</h2>
 
-<h2>Formatting</h2>
+<p><em>Install virtualbox first
+<a href="https://www.virtualbox.org/wiki/Downloads">virtualbox downloads</a>.</em></p>
 
-<p>I generally like this approach, it is nice to have such feature in your language tools available right there and with already existing integrations to popular editors.</p>
+<p>Look at this page: <a href="https://github.com/docker/machine/releases/">https://github.com/docker/machine/releases/</a> and pick latest
+release. At the time of writing this is <code>v0.4.1</code>.</p>
 
-<p>Except one thing:</p>
-
-<blockquote><p>Parentheses</p>
-
-<p>Go needs fewer parentheses than C and Java: control structures (if, for, switch) do not have parentheses in their syntax. Also, the operator precedence hierarchy is shorter and clearer, so</p>
-
-<pre><code>x&lt;&lt;8 + y&lt;&lt;16
-</code></pre></blockquote>
-
-<p>So we kill parentheses and replace them with whitespace. I am not entirely sure it is better. How will this work then?</p>
+<p>Now, assign version number to an environment variable, together with your
+architecture:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">x</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span> <span class="o">+</span> <span class="nx">y</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">DOCKER_MACHINE_VERSION</span><span class="o">=</span>v0.4.1
+</span><span class='line'><span class="nv">DOCKER_MACHINE_ARCH</span><span class="o">=</span>darwin-amd64
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>And what about this?</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">x</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span>    <span class="o">+</span>    <span class="nx">y</span>  <span class="o">&lt;&lt;</span>  <span class="mi">16</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Probably nobody will write it like that, but one space miss, and lots of minutes lost in debugging.</p>
-
-<h2>Semicolons</h2>
-
-<p>Oh, lexer inserting semicolons where it pleases? What can go wrong. Reminds me about javascript and its problems when you omit semicolons.</p>
-
-<p>And this example looked strange to me:</p>
-
-<blockquote><p>One consequence of the semicolon insertion rules is that you cannot put the opening brace of a control structure (if, for, switch, or select) on the next line. If you do, a semicolon will be inserted before the brace, which <strong>could cause unwanted effects</strong>. Write them like this</p>
-
-<pre><code> if i &lt; f() {
-     g()
- }
-</code></pre>
-
-<p>not like this</p>
-
-<pre><code> if i &lt; f()  // wrong!
- {           // wrong!
-      g()
- }
-</code></pre></blockquote>
-
-<p>First I thought that it will accept this input, put a semicolon after if, compile successfully and always execute statement inside of block, especially because it said &ldquo;could cause unwanted effects&rdquo;. But turned out this code results in compilation error - so no problem here, but probably this should have been clarified in the article.</p>
-
-<h2>Control Structure</h2>
-
-<p>Mandatory block - looks good to me.</p>
-
-<p>But the last example worries me:</p>
-
-<blockquote><p>This is an example of a common situation where code must guard against a sequence of error conditions. The code reads well if the successful flow of control runs down the page, eliminating error cases as they arise. Since error cases tend to end in return statements, the resulting code needs no else statements.</p>
-
-<pre><code>f, err := os.Open(name)
-if err != nil {
-     return err
-}
-d, err := f.Stat()
-if err != nil {
-     f.Close()
-     return err
-}
-codeUsing(f, d)
-</code></pre></blockquote>
-
-<p>That code is definitely not narrative, I will put some comments with kind of operation that is done:</p>
+<p>Now download <code>docker-machine</code> binary and put it onto your <code>PATH</code> (recommended
+is <code>~/bin/</code>):</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>   <span class="c1">// get input</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>           <span class="c1">// check errors, guard</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">err</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="nx">d</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>        <span class="c1">// get additional input</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>           <span class="c1">// check for errors, again, guard</span>
-</span><span class='line'>    <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>             <span class="c1">// cleanups</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">err</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>           <span class="c1">// do something</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir -p ~/bin
+</span><span class='line'><span class="nv">URL</span><span class="o">=</span>https://github.com/docker/machine/releases/download/<span class="k">${</span><span class="nv">DOCKER_MACHINE_VERSION</span><span class="k">}</span>/docker-machine_<span class="k">${</span><span class="nv">DOCKER_MACHINE_ARCH</span><span class="k">}</span>
+</span><span class='line'><span class="nv">OUTPUT</span><span class="o">=</span>~/bin/docker-machine
+</span><span class='line'>curl -L <span class="k">${</span><span class="nv">URL</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
+</span><span class='line'>chmod +x <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>This way it is hard to understand and reason about.</p>
+<p>If you still haven&rsquo;t yet, put <code>~/bin/</code> on your <code>PATH</code> with <code>export
+PATH=$PATH:$HOME/bin</code> into your <code>.bashrc</code> or <code>.zshrc</code> (or whatever shell you
+use).</p>
 
-<p>Why not just:</p>
+<h2>Installing docker client</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>         <span class="c1">// get input</span>
-</span><span class='line'><span class="nx">d</span> <span class="p">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>              <span class="c1">// get input</span>
-</span><span class='line'><span class="nx">result</span> <span class="p">=</span> <span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>  <span class="c1">// do something</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">IsErorr</span><span class="p">()</span> <span class="p">{</span>     <span class="c1">// handle errors</span>
-</span><span class='line'>    <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>             <span class="c1">// cleanup</span>
-</span><span class='line'><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">URL</span><span class="o">=</span>https://get.docker.com/builds/Darwin/x86_64/docker-latest
+</span><span class='line'><span class="nv">OUTPUT</span><span class="o">=</span>~/bin/docker
+</span><span class='line'>curl -L <span class="k">${</span><span class="nv">URL</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
+</span><span class='line'>chmod +x <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Of course <code>f</code>, <code>d</code> and <code>result</code> are just <code>Result</code>/<code>Either</code> monads, they can be either in normal or faulty state. Whenever you try to do anything on <code>Result</code> in faulty state, it will just return itself. But <code>Result</code> in normal state will proxy call to its contents and wrap it in another <code>Result</code> monad (normal or faulty - depends on if call was successful or not). Probably I am too critical about that, because here I used some patterns that are not part of the language itself, but yeah, I can&rsquo;t look at code that mixes guards and actions.</p>
+<h2>Creating your first docker machine</h2>
 
-<p>Probably, somebody out there in go-lang world can tell me, is it common to use patterns like <code>Maybe</code>, <code>Result</code>, <code>NullObject</code> and so on in go-lang? Or everybody just go with simple code without any magic behind the scenes, and just do it like in the article&rsquo;s example? Feel free to ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine create -d virtualbox dev
+</span></code></pre></td></tr></table></div></figure>
 
-<h2>For</h2>
 
-<p>Lets move on..</p>
+<p>This is how you create docker machine with name <code>dev</code> having virtualbox as a
+backend.</p>
 
-<blockquote><p>For strings, the range does more work for you, breaking out individual Unicode code points by parsing the UTF-8. Erroneous encodings consume one byte and produce the replacement rune U+FFFD. (The name (with associated builtin type) rune is Go terminology for a single Unicode code point. See the language specification for details.)</p></blockquote>
+<p>But after some time you will encounter a problem of running out of memory. So
+my recommended command to create your primary development docker machine is
+this:</p>
 
-<p>I really like that a term for this &ldquo;unicode minimal entity&rdquo; was invented. And after some while the name actually makes a lot of sense. And it sounds good.</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine create -d virtualbox dev --virtualbox-memory <span class="s2">&quot;5120&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<h2>Switch</h2>
 
-<p>That surprised me. Feels like assembler:</p>
+<p>This will create virtualbox VM with enough memory to run low-to-moderate size
+clusters with <code>docker-compose</code>. Which should be enough for development.</p>
 
-<blockquote><p>Although they are not nearly as common in Go as some other C-like languages, break statements can be used to terminate a switch early. Sometimes, though, it&rsquo;s necessary to break out of a surrounding loop, not the switch, and in Go that can be accomplished by putting a label on the loop and &ldquo;breaking&rdquo; to that label. This example shows both uses.</p>
+<p>This should be your primary docker machine that is always activated and used.
+There is no need to destroy and re-create this <code>dev</code> machine unless you are
+testing some edge-cases. And better to use additional docker machine with
+different name for this.</p>
 
-<pre><code>Loop:
-    for n := 0; n &lt; len(src); n += size {
-        switch {
-            case src[n] &lt; sizeOne:
-                if validateOnly {
-                    break
-                }
-                size = 1
-                update(src[n])
+<h2>Connecting to your <code>dev</code> docker machine</h2>
 
-            case src[n] &lt; sizeTwo:
-                if n+1 &gt;= len(src) {
-                    err = errShortInput
-                    break Loop
-                }
-                if validateOnly {
-                    break
-                }
-                size = 2
-                update(src[n] + src[n+1]&lt;&lt;shift)
-            }
-        }
-</code></pre></blockquote>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">eval</span> <span class="k">$(</span>docker-machine env dev<span class="k">)</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>Not exactly the original assembler label, one only use it to mark (aka tag) the loop itself and use it to break out of it. Interesting concept, but something clicks in my head when I look at this.</p>
 
-<h2>Type switch</h2>
+<p>After this command, you will have everything you need to run <code>docker</code> in the same terminal:</p>
 
-<p>Good one, &ldquo;Switching on Type&rdquo;, (usually) a code smell, builtin into language. But still it has its own uses when used carefully.</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Using alpine image here because it is only ~5 MB</span>
+</span><span class='line'>docker run -it --rm alpine <span class="nb">echo</span> <span class="s1">&#39;hello world&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<h2>Multiple return values</h2>
 
-<p>Why not tuples? If you just introduce tuples and destructuring, then you don&rsquo;t need multiple return values, only one return value - tuple itself.</p>
+<p>You should see:</p>
 
-<h2>Defer</h2>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># .. pulling alpine image here .. and:</span>
+</span><span class='line'>hello world
+</span></code></pre></td></tr></table></div></figure>
 
-<p>This is a nice one. Allows to simplify previous example with files even more:</p>
+
+<p>It might be annoying to run <code>eval $(docker-machine env dev)</code> each time you open
+new terminal. So feel free to put this line into your <code>.bashrc</code> or <code>.zshrc</code> or
+whatever shell you use:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># in .bashrc:</span>
+</span><span class='line'><span class="nb">eval</span> <span class="k">$(</span>docker-machine env dev<span class="k">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you have just powered on your Mac (or just stopped your docker machine) you
+will experience this error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Error: Host does not exist: dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In that case just start it with:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine start dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And re-open your terminal.</p>
+
+<h2>Dealing with docker machine&rsquo;s IP address</h2>
+
+<p>Fact: docker machine&rsquo;s IP address stays the same, usually 192.168.99.100,
+unless:</p>
+
+<ul>
+<li>you destroy your docker machine <code>dev</code>, create another VirtualBox VM and
+create docker machine <code>dev</code> afterwards, or</li>
+<li>you have custom VirtualBox configuration.</li>
+</ul>
+
+
+<p>Given that docker machine&rsquo;s IP address stays the same or changes very rarely,
+you can simply put its IP address in your <code>/etc/hosts</code>.</p>
+
+<p>First, figure out current docker machine&rsquo;s IP address:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine ip dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And put it in <code>/etc/hosts</code>:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>         <span class="c1">// get input</span>
-</span><span class='line'><span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>           <span class="c1">// deferred cleanup right after acquiring of `f`</span>
-</span><span class='line'><span class="nx">d</span> <span class="p">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>              <span class="c1">// get input</span>
-</span><span class='line'><span class="nx">result</span> <span class="p">=</span> <span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>  <span class="c1">// do something</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Particularly interesting example with trace/untrace follows in the article.</p>
-
-<hr />
-
-<p>To be continued&hellip;</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/">RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-01-23T01:56:19+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>1:56 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="https://github.com/waterlink/rspec-json_expectations">rspec-json_expectations</a> library provides powerful <code>include_json</code> matcher for your RSpec suites. It allows to match string with JSON or already parsed ruby <code>Hash</code> against other ruby <code>Hash</code>, which is very convenient and creates very readable spec code. Lets jump to some examples.</p>
-
-<p>It can handle some plain json:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has basic info about user&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
-</span><span class='line'>    <span class="nb">id</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">email</span><span class="p">:</span> <span class="s2">&quot;john.smith@example.com&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And nested json:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has gamification info for user&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
-</span><span class='line'>    <span class="ss">code</span><span class="p">:</span> <span class="s2">&quot;7wxMw32&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">gamification</span><span class="p">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="ss">rating</span><span class="p">:</span> <span class="mi">93</span><span class="p">,</span>
-</span><span class='line'>      <span class="ss">score</span><span class="p">:</span> <span class="mi">355</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You can even do some regex matching:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has basic info about user&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
-</span><span class='line'>    <span class="ss">code</span><span class="p">:</span> <span class="sr">/^[a-z0-9]{10}$/</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">url</span><span class="p">:</span> <span class="sr">%r{api/v5/users/[a-z0-9]{10}.json}</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Most can agree, that this method of specifying JSON responses in ruby is very readable, but what about failure messages? How helpful they are?</p>
-
-<p>For example with failure in nested JSON things can become tricky, but this gem solves them quite nice:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>             json atom at path "gamification/score" is not equal to expected value:
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># in /etc/hosts</span>
 </span><span class='line'>
-</span><span class='line'>               expected: 355
-</span><span class='line'>                    got: 397</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="c"># Put IP address previous command has returned here:</span>
+</span><span class='line'>192.168.99.100 docker-dev
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>If you match with nested Arrays you will get numbers in your JSON path within failure message, for example:</p>
+<p>To test that it works correclty try to run:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker run -it --rm -p 80:80 nginx
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And now reach <code>http://docker-dev</code> in your browser - you should see default
+Nginx page.</p>
+
+<p>If you want to refer docker machine <code>dev</code> in your scripts, it is better to use
+<code>$(docker-machine ip dev)</code> capabilities for that. For example, <code>curl</code>-ing the
+page we have seen in browser just now:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>curl <span class="k">$(</span>docker-machine ip dev<span class="k">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For teams it would make sense to agree on the same name for primary development
+docker machine. <code>dev</code> works just great!</p>
+
+<p><em>NOTE: personally, I use both <code>docker-dev</code> and just <code>dev</code> as a hostname to type
+less, but that might clash with something else, so <code>docker-dev</code> it is.</em></p>
+
+<h2>Upgrading</h2>
+
+<p>To upgrade <code>docker-machine</code> or <code>docker</code> binaries, just follow <code>Installation</code>
+instructions again.</p>
+
+<p>To upgrade <code>docker</code> server inside of already running docker machine, use:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine upgrade dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will update to the latest version of <code>docker</code> server and <code>boot2docker</code>
+image.</p>
+
+<h2>Re-creating a fresh <code>dev</code> docker machine</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>             json atom at path "results/2/badges/0" is not equal to expected value:
-</span><span class='line'>
-</span><span class='line'>               expected: "first flight"
-</span><span class='line'>                    got: "day & night"
-</span><span class='line'>
-</span><span class='line'>             json atom at path "results/3" is missing</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine rm dev
+</span><span class='line'>docker-machine create -d virtualbox dev --virtualbox-memory <span class="s2">&quot;5120&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>For further reading and instructions: <a href="https://github.com/waterlink/rspec-json_expectations">github</a> and <a href="http://www.relishapp.com/waterlink/rspec-json-expectations/docs/json-expectations">cucumber generated documentation</a>.</p>
+<h2>Further reading</h2>
 
-<p>Feedback is highly appreciated, contact me on twitter (<a href="https://twitter.com/waterlink000">@waterlink000</a>) or on <a href="https://github.com/waterlink/rspec-json_expectations/issues">github issues</a>.</p>
+<ul>
+<li><a href="https://docs.docker.com/machine/">Overview of Docker Machine</a></li>
+<li><a href="https://docs.docker.com/machine/get-started/">Get started with Docker Machine and a local VM</a></li>
+</ul>
+
+
+<p>Comments on <a href="https://news.ycombinator.com/item?id=10146082">hackernews</a>.</p>
+
+<p>Happy hacking! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
 </div>
   
   
@@ -1175,6 +766,8 @@ codeUsing(f, d)
     </article>
   
   <div class="pagination">
+    
+      <a class="prev" href="/posts/3">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -1206,6 +799,18 @@ codeUsing(f, d)
     
       <li class="post">
         <a href="/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/">Why Do You Need to Be Careful With Loop Variable in Go</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/09/08/intention-revealing-code/">Intention-revealing Code</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/">Using contracts.ruby With RSpec. Part 2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x/">Docker Machine Guide (VirtualBox on Mac OS X)</a>
       </li>
     
   </ul>
