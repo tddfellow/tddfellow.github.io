@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Screencast | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/screencast/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-02-06T01:42:28+01:00</updated>
+  <updated>2016-02-13T09:56:52+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,58 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TDD #4: Path Finding]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/02/13/tdd-number-4-path-finding/"/>
+    <updated>2016-02-13T09:56:15+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/02/13/tdd-number-4-path-finding</id>
+    <content type="html"><![CDATA[<iframe width="560" height="315" src="https://www.youtube.com/embed/DTzhlNIjWRY" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
+
+<h2>Script</h2>
+
+<p>Hello. I am Oleksii Fedorov and I am wearing a hat of That TDD Fellow. That
+means you are watching TDD Screencast episode #4.</p>
+
+<p>As mentioned in the previous episode, today we are going to implement a path
+finding algorithm.</p>
+
+<p>Specifically, our first problem in a path finding theme will be the following:</p>
+
+<ul>
+<li>We are given a directional graph, that consists of nodes and edges between
+them.</li>
+<li>We are given two nodes: start and finish.</li>
+<li>We need to answer such questions:
+
+<ul>
+<li>Is there a path from start to finish?</li>
+<li>If there is, What this path is?</li>
+</ul>
+</li>
+</ul>
+
+
+<p>I need to make a remark, that we clearly dont have to return the shortest path,
+just any path, that we can find. We will tackle shortest path problem in later
+episodes.</p>
+
+<p>Now, I think we can start.</p>
+
+<pre><code>./watch.sh
+vim         # coding session
+</code></pre>
+
+<p>This was pretty easy to make a DFS algorithm to emerge on its own, by driving
+it with the specification. Lets see if it is possible to do the same with
+shortest path problem.. Next time, on the TDD Screencast. Have a nice day.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TDD #3: Kind Sort]]></title>

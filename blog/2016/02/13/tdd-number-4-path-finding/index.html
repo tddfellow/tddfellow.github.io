@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: Json - That TDD Fellow | Tech Blog | Screencasts</title>
+  <title>TDD #4: Path Finding - That TDD Fellow | Tech Blog | Screencasts</title>
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Category: json">
+  <meta name="description" content="Recommended to watch in a full-screen and on 720p or higher quality. List of all TDD Screencasts can be found here. Script Hello. I am Oleksii &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://www.tddfellow.com/blog/categories/json/">
+  <link rel="canonical" href="http://www.tddfellow.com/blog/2016/02/13/tdd-number-4-path-finding/">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="That TDD Fellow | Tech Blog | Screencasts" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -67,35 +67,117 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: Json</h1>
+    
+      <h1 class="entry-title">TDD #4: Path Finding</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-02-13T09:56:15+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>13</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>9:56 am</span></time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
-
-  
-  <h2>2015</h2>
-
-<article>
-  
-<h1><a href="/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/">RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro</a></h1>
-<time datetime="2015-01-23T01:56:19+01:00" pubdate><span class='month'>Jan</span> <span class='day'>23</span> <span class='year'>2015</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/api/'>api</a>, <a class='category' href='/blog/categories/json/'>json</a>, <a class='category' href='/blog/categories/rspec/'>rspec</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a></span>
-</footer>
+<div class="entry-content"><iframe width="560" height="315" src="https://www.youtube.com/embed/DTzhlNIjWRY" frameborder="0" allowfullscreen></iframe>
 
 
-</article>
+<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
 
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
+
+<h2>Script</h2>
+
+<p>Hello. I am Oleksii Fedorov and I am wearing a hat of That TDD Fellow. That
+means you are watching TDD Screencast episode #4.</p>
+
+<p>As mentioned in the previous episode, today we are going to implement a path
+finding algorithm.</p>
+
+<p>Specifically, our first problem in a path finding theme will be the following:</p>
+
+<ul>
+<li>We are given a directional graph, that consists of nodes and edges between
+them.</li>
+<li>We are given two nodes: start and finish.</li>
+<li>We need to answer such questions:
+
+<ul>
+<li>Is there a path from start to finish?</li>
+<li>If there is, What this path is?</li>
+</ul>
+</li>
+</ul>
+
+
+<p>I need to make a remark, that we clearly dont have to return the shortest path,
+just any path, that we can find. We will tackle shortest path problem in later
+episodes.</p>
+
+<p>Now, I think we can start.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>./watch.sh
+</span><span class='line'>vim         # coding session</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This was pretty easy to make a DFS algorithm to emerge on its own, by driving
+it with the specification. Lets see if it is possible to do the same with
+shortest path problem.. Next time, on the TDD Screencast. Have a nice day.</p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Oleksii Fedorov (waterlink)</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-02-13T09:56:15+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>13</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>9:56 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/graph-theory/'>graph-theory</a>, <a class='category' href='/blog/categories/screencast/'>screencast</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/tdd-screencasts/'>tdd-screencasts</a>, <a class='category' href='/blog/categories/test-driven-development/'>test-driven-development</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.tddfellow.com/blog/2016/02/13/tdd-number-4-path-finding/" data-via="waterlink000" data-counturl="http://www.tddfellow.com/blog/2016/02/13/tdd-number-4-path-finding/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/02/05/why-are-you-slow/" title="Previous Post: Why are you slow?">&laquo; Why are you slow?</a>
+      
+      
+    </p>
+  </footer>
 </article>
 
 </div>

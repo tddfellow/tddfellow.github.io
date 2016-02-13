@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://www.tddfellow.com/blog/2016/02/13/tdd-number-4-path-finding/</loc>
+    <lastmod>2016-02-13T09:56:15+01:00</lastmod>
+  </url>
+  <url>
     <loc>http://www.tddfellow.com/blog/2016/02/05/why-are-you-slow/</loc>
     <lastmod>2016-02-05T17:09:47+01:00</lastmod>
   </url>
@@ -187,12 +191,6 @@
     <loc>http://www.tddfellow.com/blog/categories/software-industry/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/posts/2/</loc>
-  </url>
-  <url>
-    <loc>http://www.tddfellow.com/posts/3/</loc>
-  </url>
-  <url>
-    <loc>http://www.tddfellow.com/posts/4/</loc>
+    <loc>http://www.tddfellow.com/blog/categories/graph-theory/</loc>
   </url>
 </urlset>
