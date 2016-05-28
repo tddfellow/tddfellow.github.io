@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Problem-solving | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/problem-solving/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-05-28T16:18:59+02:00</updated>
+  <id>http://www.tddfellow.com/</id>
+  <author>
+    <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Iterative Divide &amp; Conquer or How to Solve Problems]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/"/>
+    <updated>2016-05-27T07:48:18+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems</id>
+    <content type="html"><![CDATA[<p><em>Let&rsquo;s imagine a beginner programmer, who have learned a programming language basics, can write programs and can read someone else&rsquo;s programs. Now, for any somewhat non-trivial problem, they have trouble coming up with a solution. And if they read one of the possible solutions, they will understand it and conclude: &ldquo;I understand how this program works, but I don&rsquo;t know how to get there.&rdquo;. If that sounds like you, my dear reader, or someone you would like to coach or teach, then come and learn Iterative Divide &amp; Conquer problem-solving technique.</em></p>
+
+<h2>English Numbers Kata</h2>
+
+<p>Given an integer number in the range of <code>-999 999 999</code> to <code>999 999 999</code>, write a program, that will output that number in English words.</p>
+
+<p>Example:</p>
+
+<p>Given number <code>37545</code>, the program outputs <code>thirty-seven thousands five hundred forty-five</code>.</p>
+
+<h3>I can solve that!</h3>
+
+<p>If you are confident, that you are able to solve that problem, my congratulations, you have problem-solving skill at a necessary level!</p>
+
+<p>If you still feel, that you can solve this Kata easily, although there are more complex problems that give you troubles, then, probably, your problem-solving strategy is not scalable. The technique described in this article is scalable.</p>
+
+<h3>Let&rsquo;s dive in</h3>
+
+<p><em>NOTE: this article uses pseudo-code, that doesn&rsquo;t belong to any programming language, so it makes sense for you, my reader, to implement this step-by-step in the programming language you know.</em></p>
+
+<p>OK. Let&rsquo;s imagine, that you don&rsquo;t know how to solve the whole English Numbers Kata and you don&rsquo;t even know where to start.</p>
+
+<p>Now, let&rsquo;s try to solve much simpler problem:</p>
+
+<p>Given an integer number in the range of <code>0</code> to <code>9</code>, write a program that will output that number in English words.</p>
+
+<p>Can you solve that? I am pretty sure you can. And easily at that.</p>
+
+<p>Let&rsquo;s write down some of our possible inputs and corresponding outputs:</p>
+
+<pre><code class="ruby">print english_number(0)   # zero
+print english_number(1)   # one
+print english_number(7)   # seven
+print english_number(9)   # nine
+</code></pre>
+
+<p>If we run that program, we will get an error, that <code>english_number</code> function is not defined yet. Let&rsquo;s define it:</p>
+
+<pre><code class="javascript">function english_number(number) {
+  return ""
+}
+</code></pre>
+
+<p>Now if we run our program, we will get four empty lines on the screen as expected. Easiest implementation of <code>english_number</code> function would probably look like that:</p>
+
+<pre><code class="javascript">if (number == 0) {
+  return "zero"
+} else if (number == 1) {
+  return "one"
+} else if (number == 2) {
+  return "two"
+} else if (number == 3) {
+  return "three"
+} else if (number == 4) {
+  return "four"
+} else if (number == 5) {
+  return "five"
+} else if (number == 6) {
+  return "six"
+} else if (number == 7) {
+  return "seven"
+} else if (number == 8) {
+  return "eight"
+} else if (number == 9) {
+  return "nine"
+}
+</code></pre>
+
+<p>If we run our program, then we will get our expected output:</p>
+
+<pre><code>zero
+one
+seven
+nine
+</code></pre>
+
+<p>If you already know arrays and access array by index, <code>english_number</code> can be simplified greatly:</p>
+
+<pre><code class="javascript">NUMBERS = ["zero", "one", "two", "three", "four",
+           "five", "six", "seven", "eight", "nine"]
+
+function english_number(number) {
+  return NUMBERS[number]
+}
+</code></pre>
+
+<p>After making this change, let&rsquo;s run the program, we should see the same output:</p>
+
+<pre><code>zero
+one
+seven
+nine
+</code></pre>
+
+<p>OK. Seems like we have solved our current problem at hand. What about the initial problem? How do we get there?</p>
+
+<h3>Increase size of the problem slightly</h3>
+
+<p>Or as you would say in real-world programming: Add a new requirement.</p>
+
+<p>Our initial problem has only two axes, where we can add requirements to our current solution to move it towards final solution:</p>
+
+<ul>
+<li>increase the supported range</li>
+<li>allow negative integers</li>
+</ul>
+
+
+<p>Let&rsquo;s go with latter, it seems easier. First we write down our possible inputs and outputs:</p>
+
+<pre><code class="ruby">print english_integer(0)     # zero
+print english_integer(4)     # four
+print english_integer(-3)    # minus three
+print english_integer(9)     # nine
+print english_integer(-9)    # minus nine
+</code></pre>
+
+<p>Now, implement <code>english_integer</code> as a simple call to <code>english_number</code> (that will make half of our inputs produce correct output):</p>
+
+<pre><code class="javascript">function english_integer(number) {
+  return english_number(number)
+}
+</code></pre>
+
+<p>Depending on what your programming language this can:</p>
+
+<ul>
+<li>output partly incorrect data (for negative values)</li>
+<li>fail at run time</li>
+<li>fail at compile time</li>
+</ul>
+
+
+<p>We can fix that by handling the case of negative numbers:</p>
+
+<pre><code class="javascript">if (number &lt; 0) {
+  return "minus " + english_integer(-number)
+} else {
+  return english_number(number)
+}
+</code></pre>
+
+<p>That might be confusing at first. Especially, part, where we call <code>english_integer</code> from the body of the same function. Let&rsquo;s draw a diagram on how that function works:</p>
+
+<p><img src="https://camo.githubusercontent.com/134fbbce495dc2d9bb3f137077cdde57dc28668e/687474703a2f2f672e67726176697a6f2e636f6d2f673f2530412532302532306469677261706825323047253230253742253041253230253230253230253230666f7263656c6162656c733d747275653b253041253230253230253230253230253232656e676c6973685f696e7465676572286e756d6265722925323225323025354273686170653d626f782535443b2530412532302532302532302532302532326966253230286e756d626572253230253343253230302925323225323025354273686170653d6469616d6f6e642535443b25304125323025323025323025323025323263616c6c253230656e676c6973685f696e7465676572282d6e756d626572292532323b25304125323025323025323025323025323263616c6c253230656e676c6973685f6e756d626572286e756d626572292532323b25304125323025323025323025323025323270726570656e64253230726573756c7425323077697468253230276d696e7573253230272532323b253041253230253230253230253230253232616e6425323072657475726e25323069742532323b2530412532302532302532302532302532327468656e25323072657475726e253230726573756c742532306f662532307468697325323063616c6c2532323b253041253230253230253230253230253232656e676c6973685f696e7465676572286e756d626572292532322532302d2533452532302532326966253230286e756d62657225323025334325323030292532323b2530412532302532302532302532302532326966253230286e756d62657225323025334325323030292532323a652532302d25334525323025323263616c6c253230656e676c6973685f696e7465676572282d6e756d626572292532322532302535426c6162656c3d2532325945532532322535443b2530412532302532302532302532302532326966253230286e756d62657225323025334325323030292532323a772532302d25334525323025323263616c6c253230656e676c6973685f6e756d626572286e756d626572292532322532302535426c6162656c3d2532324e4f2535436e696e76617269616e743a2535436e6e756d6265722532302533453d253230302532322535443b25304125323025323025323025323025323263616c6c253230656e676c6973685f696e7465676572282d6e756d626572292532323a6e652532302d253345253230253232656e676c6973685f696e7465676572286e756d626572292532323a6e652532302535426c6162656c3d253232696e76617269616e743a2535436e6e756d6265722532302533453d253230302532322535443b25304125323025323025323025323025323263616c6c253230656e676c6973685f696e7465676572282d6e756d626572292532322532302d25334525323025323270726570656e64253230726573756c7425323077697468253230276d696e7573253230272532322532302d253345253230253232616e6425323072657475726e25323069742532323b25304125323025323025323025323025323263616c6c253230656e676c6973685f6e756d626572286e756d626572292532322532302d2533452532302532327468656e25323072657475726e253230726573756c742532306f662532307468697325323063616c6c2532323b253041253230253230253744" alt="Diagram for english_integer after adding negative integers" /></p>
+
+<p>If we were to unwind this diagram into possible paths, we would end up with two possible cases:</p>
+
+<ol>
+<li>When <code>number &lt; 0</code>:
+
+<ul>
+<li><code>english_integer(number)</code></li>
+<li><code>if (number &lt; 0)</code> - YES</li>
+<li><code>english_integer(-number)</code></li>
+<li><code>if (number &lt; 0)</code> - NO</li>
+<li><code>english_number(number)</code></li>
+<li>prepend result of last call with <code>minus</code></li>
+<li>and return it</li>
+</ul>
+</li>
+<li>When <code>number &gt;= 0</code>:
+
+<ul>
+<li><code>english_integer(number)</code></li>
+<li><code>if (number &lt; 0)</code> - NO</li>
+<li><code>english_number(number)</code></li>
+<li>return result of last call</li>
+</ul>
+</li>
+</ol>
+
+
+<p>Running this program results in expected output:</p>
+
+<pre><code>zero
+four
+minus three
+nine
+minus nine
+</code></pre>
+
+<p>Implementation of <code>english_integer(number)</code> function can be simplified by eliminating <code>else</code> clause and treating <code>number &lt; 0</code> as an edge case and using &ldquo;guard clause&rdquo; to handle it:</p>
+
+<pre><code class="javascript">function english_integer(number) {
+  if (number &lt; 0) return "minus " + english_integer(-number)
+
+  return english_number(number)
+}
+</code></pre>
+
+<p>If we run our program, the output should be the same as before.</p>
+
+<h3>Add more requirements!</h3>
+
+<p>Now, that we are done with handling a negative case, we have only one requirement axis left: range of integers. Currently, we support integers from <code>-9</code> to <code>9</code>. Now let&rsquo;s extend support for integers from <code>10</code> to <code>19</code>. This problem should be as trivial as the problem for the range of <code>0...9</code>.</p>
+
+<p>Our inputs with corresponding outputs:</p>
+
+<pre><code class="ruby">print english_teen_number(10)    # ten
+print english_teen_number(11)    # eleven
+print english_teen_number(13)    # thirteen
+print english_teen_number(18)    # eighteen
+print english_teen_number(19)    # nineteen
+</code></pre>
+
+<p>And the implementation to make the output of the program correct (very similar to <code>english_number</code> function):</p>
+
+<pre><code class="javascript">TEEN_NUMBERS = ["ten", "eleven", "twelve", "thirteen", "fourteen",
+                "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"]
+
+function english_teen_number(number) {
+  // "number - 10" comes from the fact, that range 10..19
+  // maps to a range of 0..9 of our array, so we need to
+  // shift 10..19 by -10 to get 0..9
+  return TEEN_NUMBERS[number - 10]
+}
+</code></pre>
+
+<p>Now we want to glue our current solution with <code>english_teen_number</code> to add support for range <code>10..19</code>. This sounds like another <code>if .. else</code> case handling:</p>
+
+<ul>
+<li>when <code>number &lt; 10</code>, use <code>english_number</code></li>
+<li>when <code>number &gt;= 10</code>, use <code>english_teen_number</code></li>
+</ul>
+
+
+<p>Let&rsquo;s change our input/output pairs for <code>english_integer</code> function:</p>
+
+<pre><code class="ruby">print english_integer(0)     # zero
+print english_integer(4)     # four
+print english_integer(-3)    # minus three
+print english_integer(9)     # nine
+print english_integer(-9)    # minus nine
+print english_integer(10)    # ten
+print english_integer(15)    # fifteen
+print english_integer(19)    # nineteen
+</code></pre>
+
+<p>That should fail in some way (compile error, runtime error or incorrect output). Now it is time to implement missing functionality for last 3 examples in our <code>english_integer</code> function. Replace the last call to <code>english_number</code> with:</p>
+
+<pre><code class="javascript">if (number &lt; 10) {
+  return english_number(number)
+} else {
+  return english_teen_number(number)
+}
+</code></pre>
+
+<p>If we run the program, we should see correct output:</p>
+
+<pre><code>zero
+four
+minus three
+nine
+minus nine
+ten
+fifteen
+nineteen
+</code></pre>
+
+<p>What about negative numbers in the range of <code>-19...-10</code>? Let&rsquo;s add input/output examples and see what happens if we run the program:</p>
+
+<pre><code class="ruby">print english_integer(-12)    # minus twelve
+print english_integer(-16)    # minus sixteen
+print english_integer(-19)    # minus nineteen
+</code></pre>
+
+<p>And the output if we run the program:</p>
+
+<pre><code>minus twelve
+minus sixteen
+minus nineteen
+</code></pre>
+
+<p>Yes, it works already thanks to the guard statement that we have at the top of <code>english_integer</code> function. And the whole function body:</p>
+
+<pre><code class="javascript">function english_integer(number) {
+  if (number &lt; 0) return "minus " + english_integer(-number)
+
+  if (number &lt; 10) {
+    return english_number(number)
+  } else {
+    return english_teen_number(number)
+  }
+}
+</code></pre>
+
+<h3>Going further!</h3>
+
+<p>Next smallest requirement seems to be an addition of the range <code>20...99</code>. Let&rsquo;s write down our example inputs and outputs:</p>
+
+<pre><code class="ruby">print english_integer_in_tens(20)    # twenty
+print english_integer_in_tens(27)    # twenty-seven
+print english_integer_in_tens(42)    # forty-two
+print english_integer_in_tens(70)    # seventy
+print english_integer_in_tens(99)    # ninety-nine
+</code></pre>
+
+<p>So how do we solve this problem? Can we follow the same pattern as before, for ranges <code>0...9</code> and <code>10...19</code>?</p>
+
+<p>We certainly do. We create a constant <code>INTEGERS_IN_TENS = [...]</code>, where <code>[...]</code> will contain 79 (mostly two-word) strings. It seems like an excess effort to me. So can we do better?</p>
+
+<p>Yes! We can apply the same problem-solving technique here. What is the smallest problem, that we can solve here easily and independently from other problems?</p>
+
+<p>What about solving the problem only for numbers <code>20</code>, <code>30</code>, <code>40</code>, &hellip;, <code>90</code>? Sounds simple enough! Let&rsquo;s write our example input/outputs:</p>
+
+<pre><code class="ruby">print english_ten(20)    # twenty
+print english_ten(30)    # thirty
+print english_ten(60)    # sixty
+print english_ten(90)    # ninety
+</code></pre>
+
+<p>This is no longer different from ranges <code>0...9</code> and <code>10...19</code>. The only detail is that we need to find a way to convert range <code>20...90</code> to <code>0...7</code> to be able to access the array by that index. This can be done in 2 steps:</p>
+
+<ol>
+<li>obtain the first digit of the number: <code>number / 10</code>, which results in the range <code>2...9</code>,</li>
+<li>and shift resulting digit by <code>-2</code>: <code>number / 10 - 2</code>, which results in the range <code>0...7</code>,</li>
+</ol>
+
+
+<p>exactly, what we expect. Now, we can implement <code>english_ten</code> similarly to <code>english_number</code> and <code>english_teen_number</code>:</p>
+
+<pre><code class="javascript">TENS = ["twenty", "thirty", "forty", "fifty",
+        "sixty", "seventy", "eighty", "ninety"]
+
+function english_ten(number) {
+  return TENS[number / 10 - 2]
+}
+</code></pre>
+
+<p>Now it is time to return to the original requirement: support range <code>20...99</code>. Looking at our example input/outputs for a function <code>english_integer_in_tens</code>, we can conclude, that we have 2 different cases:</p>
+
+<ul>
+<li>When second digit is 0 (<code>number % 10 == 0</code>):
+
+<ul>
+<li>we output only <code>twenty</code>, <code>thirty</code>, &hellip;, <code>ninety</code>, depending on the first digit of the <code>number</code>;</li>
+<li>by the way, this is exactly, what <code>english_ten</code> function is doing. Great!</li>
+</ul>
+</li>
+<li>When the second digit is not 0:
+
+<ul>
+<li>we output <code>twenty</code>, <code>thirty</code>, &hellip;, <code>ninety</code>, depending on the first digit of the <code>number</code>;</li>
+<li>and we output a hyphen character: <code>-</code>;</li>
+<li>and we output <code>one</code>, <code>two</code>, &hellip;, <code>nine</code>, depending on the second digit;</li>
+<li>by the way, latter is exactly, what <code>english_number</code> function is doing. Great!</li>
+</ul>
+</li>
+</ul>
+
+
+<p>So, let&rsquo;s implement that in <code>english_integer_in_tens</code>:</p>
+
+<pre><code class="javascript">function english_integer_in_tens(number) {
+  second_digit = number % 10
+
+  if (second_digit == 0) {
+    return english_ten(number)
+  } else {
+    return english_ten(number) + " " + english_number(second_digit)
+  }
+}
+</code></pre>
+
+<p>Running the program will produce the expected output:</p>
+
+<pre><code>twenty
+twenty-seven
+forty-two
+seventy
+ninety-nine
+</code></pre>
+
+<p>Now we should glue the solution for range <code>20...99</code> with our main solution, that currently supports only <code>-19...19</code>. As always, start with example input/outputs:</p>
+
+<pre><code class="ruby">print english_integer(60)   # sixty
+print english_integer(43)   # forty-three
+print english_integer(-97)  # minus ninety-seven
+</code></pre>
+
+<p>This results in incorrect output or failure. How can we merge two solutions together now? Let&rsquo;s remember our current main solution&rsquo;s different cases:</p>
+
+<ul>
+<li>Guard <code>number &lt; 0</code>, that prepends &ldquo;minus &rdquo; and makes number non-negative.</li>
+<li>When <code>number &lt; 10</code>, use <code>english_number</code>.</li>
+<li>Otherwise, use <code>english_teen_number</code>.</li>
+</ul>
+
+
+<p>Seems, like first two cases should not be touched and we are interested in the last one. We should split it in two:</p>
+
+<ul>
+<li>Otherwise:
+
+<ul>
+<li>When <code>number &lt; 20</code>, use <code>english_teen_number</code>.</li>
+<li>Otherwise, use <code>english_integer_in_tens</code>.</li>
+</ul>
+</li>
+</ul>
+
+
+<p>I believe, we are done and can implement merged version:</p>
+
+<pre><code class="javascript">function english_integer(number) {
+  if (number &lt; 0) return "minus " + english_integer(-number)
+
+  if (number &lt; 10) {
+    return english_number(number)
+  } else if (number &lt; 20) {
+    return english_teen_number(number)
+  } else {
+    return english_integer_in_tens(number)
+  }
+}
+</code></pre>
+
+<p>Running the program confirms that our new solution now supports integers in the range <code>-99...99</code>.</p>
+
+<h3>Final solution</h3>
+
+<p>I&rsquo;m leaving the final solution as an exercise for you, my dear reader. There is nothing more to this technique. Careful application of this technique and careful choice of smallest baby-steps as new requirements to your current solution will get you there - to the final solution, that supports the range of <code>-999 999 999...999 999 999</code>.</p>
+
+<p>If you have any troubles, don&rsquo;t hesitate to share your questions, ideas and code with me. I will try my best to help you, my dear reader. I am reachable via Twitter by handle <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<h2>Challenge</h2>
+
+<p>Extend solution to support floating-point numbers to a precision level of 6 digits after the dot.</p>
+
+<h2>Thank you for reading!</h2>
+
+<p>Final note: did you notice, how tedious it is to check, that output of all these <code>print</code>-s is correct, each time you run the program? This can and should be automated! Stay tuned, I am going to publish an article on how to easily automate these checks really soon!</p>
+]]></content>
+  </entry>
+  
+</feed>

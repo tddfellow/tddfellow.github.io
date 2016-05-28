@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://www.tddfellow.com/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/</loc>
+    <lastmod>2016-05-27T07:48:18+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://www.tddfellow.com/blog/2016/02/13/tdd-number-4-path-finding/</loc>
     <lastmod>2016-02-13T09:56:15+01:00</lastmod>
   </url>
@@ -192,5 +196,20 @@
   </url>
   <url>
     <loc>http://www.tddfellow.com/blog/categories/graph-theory/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/problem-solving/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/kata/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/pseudo-code/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/teaching/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/coaching/</loc>
   </url>
 </urlset>

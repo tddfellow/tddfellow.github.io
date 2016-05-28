@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Recommended to watch in a full-screen and on 720p or higher quality. List of all TDD Screencasts can be found here. Script Hello! I am Oleksii &hellip;">
+  <meta name="description" content="Recommended to watch in a full-screen and on 720p or higher quality. List of all TDD Screencasts can be found here. Script Hello, hello! I am &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +68,93 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/02/02/test-driven-development-screencast-number-2/">Test-Driven-Development Screencast #2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-02-02T08:28:14+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2016</span></span> <span class='time'>8:28 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><iframe width="560" height="315" src="https://www.youtube.com/embed/6XMoZ7snuKo?list=PLbNxoJawcer22UE8lT93-fX8ZYFNtoXFu" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
+
+<h2>Script</h2>
+
+<p>Hello, hello! I am Oleksii Fedorov, and this is the second episode of
+Test-Driven-Development Screencast.</p>
+
+<p>Now that I think about it, first episode was more of an audio podcast (with two
+and half visual slides), rather than a screencast. Don&rsquo;t worry - this episode
+will be full of code and actual action time on the screen.</p>
+
+<p>Today we are going to implement a sorting algorithm. We will not come up with
+algorithm beforehand and we will simply let it emerge by itself, while we are
+doing TDD.</p>
+
+<p>Lets jump in!</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>./watch.sh  # So I have here small script, that will watch changes in my code
+</span><span class='line'>            # and will run all my tests. Additionally, it will show me the
+</span><span class='line'>            # result in the notification bar (you will see, shortly).
+</span><span class='line'>
+</span><span class='line'>vim         # 1) Create test file
+</span><span class='line'>            # 2) Follow TDD rules to the letter</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I think we are done here. And notice, that this is a bubble sort algorithm. Now
+lets ask a question, why the worst possible algorithm have emerged, while we
+were using TDD. That is an interesting question.</p>
+
+<p>But first, lets ask ourselves a question: Are we kind to the user of our
+function? The answer is - NO. We are mutating the argument, that user passed to
+us. And this mutation might be unexpected. At least our test suite doesn&rsquo;t even
+mention such behavior.</p>
+
+<p>The root of the problem is this little swap operation that we have here:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># show swap operation on the screen
+</span><span class='line'>a[0], a[1] = {a[1], a[0]}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I wonder, what will happen if we were to ban swap operation (and any kind of
+mutation of the argument of the function), and implement sorting algorithm
+again?</p>
+
+<p>Find out next time, on the next episode of Test-Driven-Development! Have a good
+day.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -598,99 +685,6 @@ trip you over.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/">Using contracts.ruby With RSpec. Part 2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-08-31T18:36:30+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>6:36 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Remember <a href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Using contracts.ruby With RSpec</a> ?</p>
-
-<p>RSpec mocks violate all <code>:class</code> contracts because <code>is_a?(ClassName)</code> returns
-<code>false</code> for mock. That post describes 2 possible solutions:</p>
-
-<ul>
-<li>stub <code>:is_a?</code>: <code>allow(my_double).to receive(:is_a?).with(MyClass).and_return(true)</code>, or</li>
-<li>use <code>contracts-rspec</code> gem, that patches <code>instance_double</code> RSpec helper.</li>
-</ul>
-
-
-<h2>Custom validators</h2>
-
-<p>Since custom validators have finally landed here:
-<a href="https://github.com/egonSchiele/contracts.ruby/pull/159">egonShiele/contracts.ruby#159</a>,
-now you can just override <code>:class</code> validator to accept all RSpec mocks:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Make contracts accept all RSpec doubles</span>
-</span><span class='line'><span class="no">Contract</span><span class="o">.</span><span class="n">override_validator</span><span class="p">(</span><span class="ss">:class</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">contract</span><span class="o">|</span>
-</span><span class='line'>  <span class="nb">lambda</span> <span class="k">do</span> <span class="o">|</span><span class="n">arg</span><span class="o">|</span>
-</span><span class='line'>    <span class="n">arg</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">RSpec</span><span class="o">::</span><span class="no">Mocks</span><span class="o">::</span><span class="no">Double</span><span class="p">)</span> <span class="o">||</span>
-</span><span class='line'>      <span class="n">arg</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="n">contract</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now, RSpec mocks will not violate all the <code>:class</code> contracts.</p>
-
-<p>More information can be found here: <a href="https://github.com/egonSchiele/contracts.ruby/blob/v0.11.0/TUTORIAL.md#providing-your-own-custom-validators">Providing your own custom validators</a>.</p>
-
-<p>Additionally this refactoring enabled valuable speed optimization for complex
-contracts - validators for them will be evaluated only once and memoized.</p>
-
-<h2>Links</h2>
-
-<ul>
-<li><a href="http://waterlink.github.io/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Previous part</a></li>
-<li>contracts.ruby: <a href="https://github.com/egonSchiele/contracts.ruby">https://github.com/egonSchiele/contracts.ruby</a></li>
-<li>contracts.ruby chat: <a href="https://gitter.im/egonSchiele/contracts.ruby">https://gitter.im/egonSchiele/contracts.ruby</a></li>
-<li>Mentioned PR: <a href="https://github.com/egonSchiele/contracts.ruby/pull/159">https://github.com/egonSchiele/contracts.ruby/pull/159</a></li>
-<li><a href="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></li>
-<li><a href="https://egonschiele.github.io/contracts.ruby/">Great contracts.ruby tutorial</a></li>
-<li><a href="https://github.com/egonSchiele/contracts.ruby/pull/195">Full fledged documentation PR</a>: see here staging docs: <a href="https://relishapp.com/contracts-staging/contracts-ruby/docs">https://relishapp.com/contracts-staging/contracts-ruby/docs</a></li>
-</ul>
-
-
-<h2>Thanks!</h2>
-
-<p>If you have any questions, suggestions or just want to chat about how
-contracts.ruby is awesome, you can ping me on twitter
-<a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues using
-<a href="https://github.com/egonSchiele/contracts.ruby">contracts.ruby</a> you can create
-issues on corresponding github project. Pull requests are welcome!</p>
-
-<p>Comments on <a href="https://news.ycombinator.com/item?id=10147783">hackernews</a>.</p>
-
-<p>Happy coding! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/3">&larr; Older</a>
@@ -706,6 +700,10 @@ issues on corresponding github project. Pull requests are welcome!</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">Iterative Divide &amp; Conquer or How to Solve Problems</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/02/13/tdd-number-4-path-finding/">TDD #4: Path Finding</a>
@@ -733,10 +731,6 @@ issues on corresponding github project. Pull requests are welcome!</p>
     
       <li class="post">
         <a href="/blog/2015/09/08/intention-revealing-code/">Intention-revealing Code</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/08/31/using-contracts-dot-ruby-with-rspec-part-2/">Using contracts.ruby With RSpec. Part 2</a>
       </li>
     
   </ul>
