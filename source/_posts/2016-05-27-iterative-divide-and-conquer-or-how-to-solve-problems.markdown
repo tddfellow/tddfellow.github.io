@@ -414,13 +414,9 @@ I'm leaving the final solution as an exercise for you, my dear reader. There is 
 
 If you have any troubles, don't hesitate to share your questions, ideas and code with me. I will try my best to help you, my dear reader. I am reachable via Twitter by handle [@waterlink000](https://twitter.com/waterlink000).
 
-## Challenge #1
+## Challenge
 
 Extend solution to support floating-point numbers to a precision level of 6 digits after the dot.
-
-## Challenge #2
-
-Come up with a completely generic solution, that is capable of working with any number, that can be represented on a computer. Including `Big Integer` or `Big Decimal` if your programming language supports these concepts.
 
 ## Thank you for reading!
 
