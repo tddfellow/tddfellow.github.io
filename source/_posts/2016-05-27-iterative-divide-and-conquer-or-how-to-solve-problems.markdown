@@ -4,6 +4,12 @@ title: "Iterative Divide &amp; Conquer or How to solve problems"
 date: 2016-05-27 07:48:18 +0200
 comments: true
 categories:
+- programming
+- problem-solving
+- kata
+- pseudo-code
+- teaching
+- coaching
 ---
 
 *Let's imagine a beginner programmer, who have learned a programming language basics, can write programs and can read someone else's programs. Now, for any somewhat non-trivial problem, they have trouble coming up with a solution. And if they read one of the possible solutions, they will understand it and conclude: "I understand how this program works, but I don't know how to get there.". If that sounds like you, my dear reader, or someone you would like to coach or teach, then come and learn Iterative Divide & Conquer problem-solving technique.*
