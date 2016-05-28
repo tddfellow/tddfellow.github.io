@@ -6,7 +6,7 @@ comments: true
 categories:
 ---
 
-*Lets imagine a beginner programmer, who have learned a programming language basics, can write programs and can read someone else's programs. Now, for any somewhat non-trivial problem, they have trouble coming up with solution. And if they read one of the possible solutions, they will understand it and conclude: "I understand how this program works, but I don't know how to get there.". If that sounds like you, my dear reader, or someone you would like to coach or teach, then come and learn Iterative Divide & Conquer problem solving technique.*
+*Let's imagine a beginner programmer, who have learned a programming language basics, can write programs and can read someone else's programs. Now, for any somewhat non-trivial problem, they have trouble coming up with a solution. And if they read one of the possible solutions, they will understand it and conclude: "I understand how this program works, but I don't know how to get there.". If that sounds like you, my dear reader, or someone you would like to coach or teach, then come and learn Iterative Divide & Conquer problem-solving technique.*
 
 ## English Numbers Kata
 
@@ -51,7 +51,7 @@ function english_number(number) {
 }
 ```
 
-Now if we run our program, we will get four empty lines on the screen, as expected. Easiest implementation of `english_number` function would probably look like that:
+Now if we run our program, we will get four empty lines on the screen as expected. Easiest implementation of `english_number` function would probably look like that:
 
 ```javascript
 if (number == 0) {
@@ -112,9 +112,9 @@ OK. Seems like we have solved our current problem at hand. What about the initia
 
 Or as you would say in real-world programming: Add a new requirement.
 
-Our initial problem has only two axis, where we can add requirements to our current solution to move it towards final solution:
+Our initial problem has only two axes, where we can add requirements to our current solution to move it towards final solution:
 
-- increase supported range
+- increase the supported range
 - allow negative integers
 
 Let's go with latter, it seems easier. First we write down our possible inputs and outputs:
@@ -191,11 +191,11 @@ function english_integer(number) {
 }
 ```
 
-If we run our program, output should be the same as before.
+If we run our program, the output should be the same as before.
 
 ### Add more requirements!
 
-Now, that we are done with handling negative case, we have only one requirement axis left: range of integers. Currently we support integers from `-9` to `9`. Now let's extend support for integers from `10` to `19`. This should be as trivial as solving problem for range of `0...9`.
+Now, that we are done with handling a negative case, we have only one requirement axis left: range of integers. Currently, we support integers from `-9` to `9`. Now let's extend support for integers from `10` to `19`. This problem should be as trivial as the problem for the range of `0...9`.
 
 Our inputs with corresponding outputs:
 
@@ -239,7 +239,7 @@ print english_integer(15)    # fifteen
 print english_integer(19)    # nineteen
 ```
 
-That should fail in some way (compile error, run time error or incorrect output). Now it is time to implement missing functionality for last 3 examples in our `english_integer` function. Replace last call to `english_number` with:
+That should fail in some way (compile error, runtime error or incorrect output). Now it is time to implement missing functionality for last 3 examples in our `english_integer` function. Replace the last call to `english_number` with:
 
 ```javascript
 if (number < 10) {
@@ -262,7 +262,7 @@ fifteen
 nineteen
 ```
 
-What about negative numbers in range of `-19...-10`? Let's add input/output examples and see what happens if we run the program:
+What about negative numbers in the range of `-19...-10`? Let's add input/output examples and see what happens if we run the program:
 
 ```ruby
 print english_integer(-12)    # minus twelve
@@ -319,9 +319,9 @@ print english_ten(60)    # sixty
 print english_ten(90)    # ninety
 ```
 
-This is no longer different from ranges `0...9` and `10...19`. The only detail, is that we need to find a way to convert range `20...90` to `0...7` to be able to access the array by that index. This can be done in 2 steps:
+This is no longer different from ranges `0...9` and `10...19`. The only detail is that we need to find a way to convert range `20...90` to `0...7` to be able to access the array by that index. This can be done in 2 steps:
 
-1. obtain first digit of the number: `number / 10`, which results in the range `2...9`,
+1. obtain the first digit of the number: `number / 10`, which results in the range `2...9`,
 2. and shift resulting digit by `-2`: `number / 10 - 2`, which results in the range `0...7`,
 
 exactly, what we expect. Now, we can implement `english_ten` similarly to `english_number` and `english_teen_number`:
@@ -338,13 +338,13 @@ function english_ten(number) {
 Now it is time to return to the original requirement: support range `20...99`. Looking at our example input/outputs for a function `english_integer_in_tens`, we can conclude, that we have 2 different cases:
 
 - When second digit is 0 (`number % 10 == 0`):
-  - we output only `twenty`, `thirty`, ..., `ninety`, depending on first digit of the `number`;
+  - we output only `twenty`, `thirty`, ..., `ninety`, depending on the first digit of the `number`;
   - by the way, this is exactly, what `english_ten` function is doing. Great!
-- When second digit is not 0:
-  - we output `twenty`, `thirty`, ..., `ninety`, depending on first digit of the `number`;
+- When the second digit is not 0:
+  - we output `twenty`, `thirty`, ..., `ninety`, depending on the first digit of the `number`;
   - and we output a hyphen character: `-`;
-  - and we output `one`, `two`, ..., `nine`, depending on second digit;
-  - by the way latter is exactly, what `english_number` function is doing. Great!
+  - and we output `one`, `two`, ..., `nine`, depending on the second digit;
+  - by the way, latter is exactly, what `english_number` function is doing. Great!
 
 So, let's implement that in `english_integer_in_tens`:
 
@@ -410,7 +410,7 @@ Running the program confirms that our new solution now supports integers in the 
 
 ### Final solution
 
-I'm leaving the final solution as an exercise to you, my dear reader. There is nothing more to this technique. Careful application of this technique and careful choice of smallest baby-steps as new requirements to your current solution will get you there - to the final solution, that supports the range of `-999 999 999...999 999 999`.
+I'm leaving the final solution as an exercise for you, my dear reader. There is nothing more to this technique. Careful application of this technique and careful choice of smallest baby-steps as new requirements to your current solution will get you there - to the final solution, that supports the range of `-999 999 999...999 999 999`.
 
 If you have any troubles, don't hesitate to share your questions, ideas and code with me. I will try my best to help you, my dear reader. I am reachable via Twitter by handle [@waterlink000](https://twitter.com/waterlink000).
 
@@ -420,8 +420,8 @@ Extend solution to support floating-point numbers to a precision level of 6 digi
 
 ## Challenge #2
 
-Come up with completely generic solution, that is capable of working with any number, that can be represented on a computer. Including `Big Integer` or `Big Decimal` if your programming language supports these concepts.
+Come up with a completely generic solution, that is capable of working with any number, that can be represented on a computer. Including `Big Integer` or `Big Decimal` if your programming language supports these concepts.
 
 ## Thank you for reading!
 
-Final note: did you notice, how tedious it is to check, that output of all these `print`-s is correct, each time you run the program? This can and should be automated! Stay tuned, I am going to publish article on how to easily automate these checks really soon!
+Final note: did you notice, how tedious it is to check, that output of all these `print`-s is correct, each time you run the program? This can and should be automated! Stay tuned, I am going to publish an article on how to easily automate these checks really soon!
