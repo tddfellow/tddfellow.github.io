@@ -27,40 +27,36 @@ Specialities: Microservices, Agile, XP and Open-Source
 
 ## Skills summary
 
+* Swift/iOS - 3 months
+* Kotlin - 3 months
 * Python - 2 years
 * Ruby - 3 years
 * Golang - 1 year
 * Clojure - 1.5 year
 * Microservices - 1.5 year
-* Agile + XP - 2.5 years
+* Agile + XP - 3 years
 * Team Lead - 1.5 year
 * DevOps - 2.5 years
 * Open Source - 2 years
 
-## What am I looking for?
-
-* Exciting challenges
-* Working with microservices (building microservices platform)
-* Distributed systems, immutable infrastructure and big data
-* Functional programming (Scala, Haskell, Clojure, Elm)
-* Tech Lead position
-* Team Lead position
-* Awesome culture
-* Agile, XP and Open-Source
-* Improve my English skills to the point, where I am able to write books about
-  programming, people and processes -- because I have so much to share already
-  and more to come
-
-## Why would you hire me?
-
-If you want to level up your development team skills and improve processes, you
-should hire me.
-
 ## Experience
+
+### Software Engineer
+
+#### Pivotal Labs -- April 2016 -- Present | Berlin, Germany
+
+Agile to the core and lean in practice.
+
+http://pivotal.io/labs
+
+* A-B-T: Always Be Testing
+* Red. Green. Refactor.
+* Two Heads are Better Than One
+* Doing the Best Work
 
 ### Senior Backend Developer (Microservices focus)
 
-#### Brainly GmbH -- June 2015 -- Present | Berlin, Germany
+#### Brainly GmbH -- June 2015 -- March 2016 | Berlin, Germany
 
 Brainly is an educational social learning platform for teens to gain new
 knowledge and to share their own knowledge with others.
