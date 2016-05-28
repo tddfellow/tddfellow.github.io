@@ -14,7 +14,7 @@ Given an integer number in the range of `-999 999 999` to `999 999 999`, write a
 
 Example:
 
-Given number `37545`, the program outputs `thirty seven thousands five hundred forty five`.
+Given number `37545`, the program outputs `thirty-seven thousands five hundred forty-five`.
 
 ### I can solve that!
 
@@ -298,10 +298,10 @@ Next smallest requirement seems to be an addition of the range `20...99`. Let's 
 
 ```ruby
 print english_integer_in_tens(20)    # twenty
-print english_integer_in_tens(27)    # twenty seven
-print english_integer_in_tens(42)    # forty two
+print english_integer_in_tens(27)    # twenty-seven
+print english_integer_in_tens(42)    # forty-two
 print english_integer_in_tens(70)    # seventy
-print english_integer_in_tens(99)    # ninety nine
+print english_integer_in_tens(99)    # ninety-nine
 ```
 
 So how do we solve this problem? Can we follow the same pattern as before, for ranges `0...9` and `10...19`?
@@ -342,7 +342,7 @@ Now it is time to return to the original requirement: support range `20...99`. L
   - by the way, this is exactly, what `english_ten` function is doing. Great!
 - When second digit is not 0:
   - we output `twenty`, `thirty`, ..., `ninety`, depending on first digit of the `number`;
-  - and we output one space character: `" "`;
+  - and we output a hyphen character: `-`;
   - and we output `one`, `two`, ..., `nine`, depending on second digit;
   - by the way latter is exactly, what `english_number` function is doing. Great!
 
@@ -364,18 +364,18 @@ Running the program will produce the expected output:
 
 ```
 twenty
-twenty seven
-forty two
+twenty-seven
+forty-two
 seventy
-ninety nine
+ninety-nine
 ```
 
 Now we should glue the solution for range `20...99` with our main solution, that currently supports only `-19...19`. As always, start with example input/outputs:
 
 ```ruby
 print english_integer(60)   # sixty
-print english_integer(43)   # forty three
-print english_integer(-97)  # minus ninety seven
+print english_integer(43)   # forty-three
+print english_integer(-97)  # minus ninety-seven
 ```
 
 This results in incorrect output or failure. How can we merge two solutions together now? Let's remember our current main solution's different cases:
@@ -422,4 +422,6 @@ Extend solution to support floating-point numbers to a precision level of 6 digi
 
 Come up with completely generic solution, that is capable of working with any number, that can be represented on a computer. Including `Big Integer` or `Big Decimal` if your programming language supports these concepts.
 
-## Thanks you for reading!
+## Thank you for reading!
+
+Final note: did you notice, how tedious it is to check, that output of all these `print`-s is correct, each time you run the program? This can and should be automated! Stay tuned, I am going to publish article on how to easily automate these checks really soon!
