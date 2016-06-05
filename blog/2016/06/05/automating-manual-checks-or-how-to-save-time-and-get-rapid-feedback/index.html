@@ -1,0 +1,394 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Automating Manual Checks or How to Save Time and Get Rapid Feedback - That TDD Fellow | Tech Blog | Screencasts</title>
+  <meta name="author" content="Oleksii Fedorov (waterlink)">
+
+  
+  <meta name="description" content="It is tedious, slow and error-prone to test correctness of program manually. This article is an introduction, how to make this process as simple as a &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.tddfellow.com/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="That TDD Fellow | Tech Blog | Screencasts" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-73226470-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">That TDD Fellow | Tech Blog | Screencasts</a></h1>
+  
+    <h2>Let&#8217;s stop fearing our own creations and start being in control of them. Let&#8217;s be professional.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me">About me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Automating Manual Checks or How to Save Time and Get Rapid Feedback</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-06-05T12:37:22+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>12:37 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><em>It is tedious, slow and error-prone to test correctness of program manually. This article is an introduction, how to make this process as simple as a hit of one button, very fast and precise.</em></p>
+
+<p>In the last issue <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">about Iterative Divide &amp; Conquer</a> we have found out, how it is tedious to manually check that our program works correctly.</p>
+
+<p>We have concluded, that it is tedious and slow to manually check that the output of our <code>print</code> statements is correct. Additionally, it is really easy to make a mistake and to oversee incorrect lines of the output, especially, when we have tons of them. As well, this applies to any other form of manual testing, including testing the application as an End User (via clicking/tapping for UI applications, via executing tons of commands for CLI applications).</p>
+
+<h2>Mitigating human error-proneness via automation</h2>
+
+<p>Let&rsquo;s get back to our example from the previous issue:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>    <span class="c1"># twenty</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span>    <span class="c1"># twenty-seven</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>    <span class="c1"># forty-two</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">70</span><span class="p">)</span>    <span class="c1"># seventy</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">99</span><span class="p">)</span>    <span class="c1"># ninety-nine</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What if we could ask our computer to run <code>english_integer_in_tens</code> function with provided arguments and check that the output is exactly what we provided in a comment?</p>
+
+<p>Let&rsquo;s try to put it in pseudo-code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer_in_tens</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="s2">&quot;twenty&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer_in_tens</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="s2">&quot;forty-two&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run that code, of course, we will get some sort of compilation error, or runtime error (depending on the programming language), because function <code>equal</code> is not defined yet. Let&rsquo;s define it! Presumably, it should be comparing left argument with right argument and printing something useful on the screen.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">equal</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">left</span> <span class="o">!=</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">print</span><span class="p">(</span><span class="s2">&quot;Failure: &quot;</span> <span class="o">+</span> <span class="nx">left</span> <span class="o">+</span> <span class="s2">&quot; should be equal to &quot;</span> <span class="o">+</span> <span class="nx">right</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">print</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run the program after defining this function we will get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="nx">OK</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we were to break the function <code>english_integer_in_tens</code>&rsquo;s implementation, we might get something like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="nx">Failure</span><span class="o">:</span> <span class="nx">twenty</span> <span class="nx">should</span> <span class="nx">be</span> <span class="nx">equal</span> <span class="nx">to</span> <span class="nx">forty</span><span class="o">-</span><span class="nx">two</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Making automation nicer</h2>
+
+<p>Having all this output every time we import our small library in any application going to the standard output would be annoying to say the least. How about separating the test automation from the library?</p>
+
+<p>Let&rsquo;s extract all our testing <code>print</code>-s into the separate file, import original file from it and replace all <code>print</code>-s with <code>equal</code>-s:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">import</span> <span class="nx">english_integer</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">equal</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_number</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;zero&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_number</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;one&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="p">...</span>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer</span><span class="p">(</span><span class="mi">43</span><span class="p">),</span> <span class="s2">&quot;forty-three&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">97</span><span class="p">),</span> <span class="s2">&quot;minus ninety-seven&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Running only this separate file will produce expected output:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="p">...</span>
+</span><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="nx">OK</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Importing or running directly our original library will not produce any output. This is much nicer.</p>
+
+<h2>Thank you for reading!</h2>
+
+<p>Today we have made our testing:</p>
+
+<ul>
+<li>easier: hit of one button, or one command on the terminal;</li>
+<li>faster: from minutes of manual verification to milliseconds of automated checks;</li>
+<li>preciser: automated checks can&rsquo;t make a mistake, if we have something except <code>OK</code> - we have an error, if everything is <code>OK</code> - the program is working correctly;</li>
+<li>better feedback cycle: we can see if our change is correct in the matter of 1-2 seconds after making this change.</li>
+</ul>
+
+
+<p>Next time we will build a fully-functional mini testing framework. Stay tuned!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Oleksii Fedorov (waterlink)</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-06-05T12:37:22+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>12:37 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/automation/'>automation</a>, <a class='category' href='/blog/categories/programming/'>programming</a>, <a class='category' href='/blog/categories/pseudo-code/'>pseudo-code</a>, <a class='category' href='/blog/categories/tests/'>tests</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.tddfellow.com/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/" data-via="waterlink000" data-counturl="http://www.tddfellow.com/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/" title="Previous Post: Iterative Divide &amp; Conquer or How to solve problems">&laquo; Iterative Divide &amp; Conquer or How to solve problems</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/">Automating Manual Checks or How to Save Time and Get Rapid Feedback</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">Iterative Divide &amp; Conquer or How to Solve Problems</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/02/13/tdd-number-4-path-finding/">TDD #4: Path Finding</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/02/05/why-are-you-slow/">Why Are You Slow?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/02/04/tdd-number-3-kind-sort/">TDD #3: Kind Sort</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/02/02/test-driven-development-screencast-number-2/">Test-Driven-Development Screencast #2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/02/02/test-driven-development-screencast-number-1/">Test-Driven-Development Screencast #1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/">Why Do You Need to Be Careful With Loop Variable in Go</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/waterlink">@waterlink</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'waterlink',
+            count: 7,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+    <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+  </a>
+  <br />
+  Except where otherwise noted, content on this site is licensed under a
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+  <br/>
+
+  Copyright &copy; 2016 - Oleksii Fedorov (waterlink) -
+  <br/>
+
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
