@@ -427,3 +427,5 @@ Extend solution to support floating-point numbers to a precision level of 6 digi
 ## Thank you for reading!
 
 Final note: did you notice, how tedious it is to check, that output of all these `print`-s is correct, each time you run the program? This can and should be automated! Stay tuned, I am going to publish an article on how to easily automate these checks really soon!
+
+Next issue is out: [Automating Manual Checks or How to Save Time and Get Rapid Feedback](/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/)!
