@@ -439,7 +439,83 @@ Test-Driven-Development Screencast! Have a good day.</p>
   </header>
 
 
-  <div class="entry-content"><h2>Taking reference of loop variable</h2>
+  <div class="entry-content"><h2>TL;DR</h2>
+
+<p>This post describes two different issues:</p>
+
+<h3>Race conditions when taking reference of loop variable and passing it to another goroutine:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// WRONG: pass message by reference</span>
+</span><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. more fields here ..</span>
+</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">message</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// CORRECT: pass message by value</span>
+</span><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. more fields here ..</span>
+</span><span class='line'>                <span class="c1">// Pass message by value here</span>
+</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="nx">message</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>See explanation <a href="#taking_reference_of_loop_variable">here</a>.</p>
+
+<h3>Race conditions when using loop variable inside of goroutine inside of loop:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// WRONG: use loop variable directly from goroutine</span>
+</span><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. do something important with message ..</span>
+</span><span class='line'>        <span class="p">}()</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// CORRECT: pass loop variable by value as an argument for goroutine&#39;s function</span>
+</span><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">message</span> <span class="nx">Message</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. do something important with message ..</span>
+</span><span class='line'>        <span class="p">}(</span><span class="nx">message</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>See explanation <a href="#running_goroutine_that_uses_loop_variable">here</a>.</p>
+
+<h2><a href="#taking_reference_of_loop_variable" id="taking_reference_of_loop_variable">Taking reference of loop variable</a></h2>
 
 <p>Lets start off with simple code example:</p>
 
@@ -459,9 +535,9 @@ Test-Driven-Development Screencast! Have a good day.</p>
 
 
 <p>Looks quite legit. In practice it will often cause race conditions. Because
-<code>message</code> variable is defined once and then mutated in each loop iteration. And
-we are giving pointer to this variable away to some concurrent collaborator.
-This causes race condition and very confusing bugs.</p>
+<code>message</code> variable is defined once and then mutated in each loop iteration. The
+variable is passed pointer to some concurrent collaborators, which causes race
+conditions and very confusing bugs.</p>
 
 <p>Above code can be re-written as:</p>
 
@@ -583,7 +659,7 @@ pass-by-reference to achieve the same result. It is simpler too:</p>
 comparing to other 2, or if you know of entirely better way of doing that,
 please let me know.</p>
 
-<h2>Running goroutine, that uses loop variable</h2>
+<h2><a href="#running_goroutine_that_uses_loop_variable" id="running_goroutine_that_uses_loop_variable">Running goroutine, that uses loop variable</a></h2>
 
 <p>Example code:</p>
 
@@ -604,9 +680,10 @@ please let me know.</p>
 concurrently, but most probably it will process only a couple of last elements
 multiple times.</p>
 
-<p>If you rewrite the loop in a similar fashion as in previous section, you would
-notice that <code>message</code> would be mutated while these goroutines are still
-processing it. This will cause confusing race conditions.</p>
+<p>If you rewrite the loop in a similar fashion as in
+<a href="#taking_reference_of_loop_variable">previous section</a>, you would notice that
+<code>message</code> would be mutated while these goroutines are still processing it. This
+will cause confusing race conditions.</p>
 
 <p>Correct way of doing that is:</p>
 
@@ -636,6 +713,14 @@ drop a comment on <a href="https://news.ycombinator.com/item?id=10864593">hacker
 I will only be happy to learn and iterate over this article to improve it.</p>
 
 <p>Happy coding!</p>
+
+<h2>Credits</h2>
+
+<ul>
+<li>Benjamin Lewis - proofreading. <a href="https://github.com/23inhouse/">Github</a>,
+<a href="https://twitter.com/23inhouse">Twitter</a>.</li>
+</ul>
+
 </div>
   
   

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Golang | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/golang/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-06-05T19:56:43+02:00</updated>
+  <updated>2016-06-05T19:58:53+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -18,7 +18,52 @@
     <link href="http://www.tddfellow.com/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/"/>
     <updated>2016-01-08T02:28:45+01:00</updated>
     <id>http://www.tddfellow.com/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go</id>
-    <content type="html"><![CDATA[<h2>Taking reference of loop variable</h2>
+    <content type="html"><![CDATA[<h2>TL;DR</h2>
+
+<p>This post describes two different issues:</p>
+
+<h3>Race conditions when taking reference of loop variable and passing it to another goroutine:</h3>
+
+<pre><code class="go">// WRONG: pass message by reference
+for message := range inbox {
+        outbox &lt;- EnhancedMessage{
+                // .. more fields here ..
+                Original: &amp;message,
+        }
+}
+
+// CORRECT: pass message by value
+for message := range inbox {
+        outbox &lt;- EnhancedMessage{
+                // .. more fields here ..
+                // Pass message by value here
+                Original: message,
+        }
+}
+</code></pre>
+
+<p>See explanation <a href="#taking_reference_of_loop_variable">here</a>.</p>
+
+<h3>Race conditions when using loop variable inside of goroutine inside of loop:</h3>
+
+<pre><code class="go">// WRONG: use loop variable directly from goroutine
+for message := range inbox {
+        go func() {
+                // .. do something important with message ..
+        }()
+}
+
+// CORRECT: pass loop variable by value as an argument for goroutine's function
+for message := range inbox {
+        go func(message Message) {
+                // .. do something important with message ..
+        }(message)
+}
+</code></pre>
+
+<p>See explanation <a href="#running_goroutine_that_uses_loop_variable">here</a>.</p>
+
+<h2><a href="#taking_reference_of_loop_variable" id="taking_reference_of_loop_variable">Taking reference of loop variable</a></h2>
 
 <p>Lets start off with simple code example:</p>
 
@@ -31,9 +76,9 @@
 </code></pre>
 
 <p>Looks quite legit. In practice it will often cause race conditions. Because
-<code>message</code> variable is defined once and then mutated in each loop iteration. And
-we are giving pointer to this variable away to some concurrent collaborator.
-This causes race condition and very confusing bugs.</p>
+<code>message</code> variable is defined once and then mutated in each loop iteration. The
+variable is passed pointer to some concurrent collaborators, which causes race
+conditions and very confusing bugs.</p>
 
 <p>Above code can be re-written as:</p>
 
@@ -107,7 +152,7 @@ pass-by-reference to achieve the same result. It is simpler too:</p>
 comparing to other 2, or if you know of entirely better way of doing that,
 please let me know.</p>
 
-<h2>Running goroutine, that uses loop variable</h2>
+<h2><a href="#running_goroutine_that_uses_loop_variable" id="running_goroutine_that_uses_loop_variable">Running goroutine, that uses loop variable</a></h2>
 
 <p>Example code:</p>
 
@@ -122,9 +167,10 @@ please let me know.</p>
 concurrently, but most probably it will process only a couple of last elements
 multiple times.</p>
 
-<p>If you rewrite the loop in a similar fashion as in previous section, you would
-notice that <code>message</code> would be mutated while these goroutines are still
-processing it. This will cause confusing race conditions.</p>
+<p>If you rewrite the loop in a similar fashion as in
+<a href="#taking_reference_of_loop_variable">previous section</a>, you would notice that
+<code>message</code> would be mutated while these goroutines are still processing it. This
+will cause confusing race conditions.</p>
 
 <p>Correct way of doing that is:</p>
 
@@ -148,6 +194,14 @@ drop a comment on <a href="https://news.ycombinator.com/item?id=10864593">hacker
 I will only be happy to learn and iterate over this article to improve it.</p>
 
 <p>Happy coding!</p>
+
+<h2>Credits</h2>
+
+<ul>
+<li>Benjamin Lewis - proofreading. <a href="https://github.com/23inhouse/">Github</a>,
+<a href="https://twitter.com/23inhouse">Twitter</a>.</li>
+</ul>
+
 ]]></content>
   </entry>
   
