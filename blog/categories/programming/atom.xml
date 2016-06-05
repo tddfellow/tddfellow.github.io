@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Programming | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/programming/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-06-05T18:59:25+02:00</updated>
+  <updated>2016-06-05T19:39:50+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -548,6 +548,8 @@ print english_integer(-97)  # minus ninety-seven
 <h2>Thank you for reading!</h2>
 
 <p>Final note: did you notice, how tedious it is to check, that output of all these <code>print</code>-s is correct, each time you run the program? This can and should be automated! Stay tuned, I am going to publish an article on how to easily automate these checks really soon!</p>
+
+<p>Next issue is out: <a href="/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/">Automating Manual Checks or How to Save Time and Get Rapid Feedback</a>!</p>
 ]]></content>
   </entry>
   
