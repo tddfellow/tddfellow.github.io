@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Skills | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/skills/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-06-13T20:47:14+02:00</updated>
+  <updated>2016-06-13T21:09:52+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -40,7 +40,7 @@
 
 <p>Enabling practice is required for certain other exploitative practice(s) to work.</p>
 
-<p>A good example of exploitative practice is Continuous Delivery. It requires Continuous Integration, Pair-Programming, and Testing to be in place. These 3 are exploitative practices.</p>
+<p>A good example of exploitative practice is Continuous Delivery. It requires Continuous Integration, Pair-Programming, and Testing to be in place. These 3 are enabling practices.</p>
 
 <h2>Removing slow practices</h2>
 
