@@ -22,8 +22,39 @@ Most of the time, though, the context is somewhat looking like this:
 
 Now, let us dive into the development practices of Agile Software Development: development practices are usually coming from Extreme Programming (XP). In XP there are 2 terms: `EnablingPractice` and `ExploitativePractice`.
 
-Exploitative practice is the practice, that gives direct benefit to the team, such as a speed boost, or quicker feedback from users.
+Exploitative practice gives direct benefit to the team, e.g.: speed boost and quicker feedback from users and stakeholders.
 
-Enabling practice is the practice, that is required for some other exploitative practice(s) to work.
+Enabling practice is required for certain other exploitative practice(s) to work.
 
 Good example of exploitative practice is Continuous Delivery. It requires Continuous Integration, Pair-Programming and Testing to be in place. These 3 are exploitative practices.
+
+## Removing slow practices
+
+Additionally to allowing usage of practices, that make a team go faster and deliver at higher quality level, enabling practices allow removal of practices, that make a team go slower. For example, Pair-Programming together with TDD allow removal of code review. On most of the teams (especially, of bigger size), this makes for instant productivity boost.
+
+Pair-Programming, TDD and Continuous Integration, additionally to enabling the team to do Continuous Delivery, also allows to replace feature-branch VCS flow with trunk-based flow. This allows for smaller iterations and faster user feedback.
+
+## Pair-Programming Done Right
+
+It is worth noting, that removal of code review and introducing of Continuous Delivery is only possible, if Pair-Programming is done right:
+
+- in no case two beginners should be working in pair;
+- beginners should work together with advanced beginners/competent and proficients/experts;
+- advanced beginners/competent should split their time in half between working with beginners and working with proficient/experts.
+
+Terminology `Beginner`, `AdvancedBeginner`, `Competent`, `Proficient` and `Expert` is from Dreyfus Skill Acquisition Model.
+
+That allows for a good trust and mentorship models in your team(s). It enables quick growth and knowledge sharing for every member of the team.
+
+There is another enabling practice which speeds up the knowledge sharing, it is Pair Rotation, that should be done from 1 to 2 times per day, so that for small and middle-sized teams, the bigger the feature is, the higher chance, that everyone on the team have participated in its development, and therefore have enough knowledge about it.
+
+Additionally, Pair Rotation allows for Code Detachment and removal of Code Silos. This in turn, together with TDD, enables Ruthless Refactoring, because you are not afraid to:
+
+- break the code, thanks to TDD,
+- upset owner of the Code Silo, because there is no owner, thanks to Pair Rotation.
+
+## Bottomline
+
+I think I can go on like this forever, but I believe majority should get the idea. I will be following up with more articles in details on each technique in the future. Stay tuned!
+
+## Thanks!
