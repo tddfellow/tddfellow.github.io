@@ -37,7 +37,7 @@ Exploitative practice gives direct benefit to the team, e.g.: speed boost and qu
 
 Enabling practice is required for certain other exploitative practice(s) to work.
 
-A good example of exploitative practice is Continuous Delivery. It requires Continuous Integration, Pair-Programming, and Testing to be in place. These 3 are exploitative practices.
+A good example of exploitative practice is Continuous Delivery. It requires Continuous Integration, Pair-Programming, and Testing to be in place. These 3 are enabling practices.
 
 ## Removing slow practices
 
