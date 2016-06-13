@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Practices | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/practices/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-06-13T20:47:14+02:00</updated>
+  <id>http://www.tddfellow.com/</id>
+  <author>
+    <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[TDD as an Enabling Practice or How to Be Faster With TDD]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/06/13/tdd-as-an-enabling-practice-or-how-to-be-faster-with-tdd/"/>
+    <updated>2016-06-13T07:52:56+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/06/13/tdd-as-an-enabling-practice-or-how-to-be-faster-with-tdd</id>
+    <content type="html"><![CDATA[<p>Recently I had a lot of conversations with so many different programmers, with different backgrounds, contexts of work and opinions. What stroke me the most, is that majority feel that TDD is slower than simple automated testing, i.e., <code>TestFirst</code> is slower than <code>TestAfter</code>.</p>
+
+<p>While digging deeper in their context of work, I could only agree with them: &ldquo;True, in that context it will be about 50% slower&rdquo;.</p>
+
+<p>Most of the time, though, the context is somewhat looking like this:</p>
+
+<ul>
+<li>We have some company <code>ACME</code>, that does some sort of Agile Software Development (probably Scrum);</li>
+<li>The company <code>ACME</code> focuses only on the business parts of Agile Software Development;</li>
+<li>The company <code>ACME</code> tried to introduce TDD as a development practice;</li>
+<li>Everything took much longer to be done.</li>
+</ul>
+
+
+<h2>Enabling practice</h2>
+
+<p>Now, let us dive into the development practices of Agile Software Development: development practices are usually coming from Extreme Programming (XP). In XP there are 2 terms: <code>EnablingPractice</code> and <code>ExploitativePractice</code>.</p>
+
+<p>Exploitative practice gives direct benefit to the team, e.g.: speed boost and quicker feedback from users and stakeholders.</p>
+
+<p>Enabling practice is required for certain other exploitative practice(s) to work.</p>
+
+<p>A good example of exploitative practice is Continuous Delivery. It requires Continuous Integration, Pair-Programming, and Testing to be in place. These 3 are exploitative practices.</p>
+
+<h2>Removing slow practices</h2>
+
+<p>Additionally to allowing usage of practices, that make a team go faster and deliver at the higher quality level, enabling practices allow removal of practices, that make a team go slower. For example, Pair-Programming together with TDD allows removal of code review. On most of the teams (especially, of bigger size), this makes for an instant productivity boost.</p>
+
+<p>Pair-Programming, TDD and Continuous Integration, additionally to enabling the team to do Continuous Delivery, also allows replacing feature-branch VCS flow with a trunk-based flow. This allows for smaller iterations and faster user feedback.</p>
+
+<h2>Pair-Programming Done Right</h2>
+
+<p>It is worth noting, that removal of code review and introducing of Continuous Delivery is only possible, if Pair-Programming is done right:</p>
+
+<ul>
+<li>in no case, two beginners should be working in the pair;</li>
+<li>beginners should work together with advanced beginners/competents and proficients/experts;</li>
+<li>advanced beginners/competents should split their time in half between working with beginners and working with proficient/experts.</li>
+</ul>
+
+
+<p>Terminology <code>Beginner</code>, <code>AdvancedBeginner</code>, <code>Competent</code>, <code>Proficient</code> and <code>Expert</code> is from Dreyfus Skill Acquisition Model.</p>
+
+<p>That allows for a good trust and mentorship models in your team(s). It enables quick growth and knowledge sharing for every member of the team.</p>
+
+<p>There is another enabling practice which speeds up the knowledge sharing, it is Pair Rotation, that should be done from 1 to 2 times per day, so that for small and middle-sized teams, the bigger the feature is, the higher chance, that everyone on the team have participated in its development, and therefore have enough knowledge about it.</p>
+
+<p>Additionally, Pair Rotation allows for Code Detachment and removal of Code Silos. This in turn, together with TDD, enables Ruthless Refactoring, because you are not afraid:</p>
+
+<ul>
+<li>to break the code, thanks to TDD,</li>
+<li>to upset an owner of the Code Silo, because there is no owner, thanks to Pair Rotation.</li>
+</ul>
+
+
+<h2>Bottomline</h2>
+
+<p>I think I can go on like this forever, but I believe the idea should be clear. I will be following up with more articles in details on each technique in the future. Stay tuned!</p>
+
+<h2>Thank you for reading!</h2>
+
+<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
+]]></content>
+  </entry>
+  
+</feed>

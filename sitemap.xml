@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://www.tddfellow.com/blog/2016/06/13/tdd-as-an-enabling-practice-or-how-to-be-faster-with-tdd/</loc>
+    <lastmod>2016-06-13T07:52:56+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://www.tddfellow.com/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/</loc>
     <lastmod>2016-06-05T12:37:22+02:00</lastmod>
   </url>
@@ -223,15 +227,33 @@
     <loc>http://www.tddfellow.com/blog/categories/automation/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/posts/2/</loc>
+    <loc>http://www.tddfellow.com/blog/categories/skills/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/posts/3/</loc>
+    <loc>http://www.tddfellow.com/blog/categories/practices/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/posts/4/</loc>
+    <loc>http://www.tddfellow.com/blog/categories/agile/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/posts/5/</loc>
+    <loc>http://www.tddfellow.com/blog/categories/xp/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/pair-programming/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/continuous-integration/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/continuous-delivery/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/enabling-practices/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/exploitative-practices/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/dreyfus-model/</loc>
   </url>
 </urlset>
