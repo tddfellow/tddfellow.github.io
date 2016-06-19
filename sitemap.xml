@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://www.tddfellow.com/blog/2016/06/19/tdd-number-5-english-numbers-kata/</loc>
+    <lastmod>2016-06-19T18:41:39+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://www.tddfellow.com/blog/2016/06/13/tdd-as-an-enabling-practice-or-how-to-be-faster-with-tdd/</loc>
     <lastmod>2016-06-13T07:52:56+02:00</lastmod>
   </url>
@@ -255,5 +259,17 @@
   </url>
   <url>
     <loc>http://www.tddfellow.com/blog/categories/dreyfus-model/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/tdd-as-if-you-meant-it/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/divide-and-conquer/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/iterative/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/baby-steps/</loc>
   </url>
 </urlset>

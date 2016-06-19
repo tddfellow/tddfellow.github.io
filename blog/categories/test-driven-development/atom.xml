@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Test-driven-development | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/test-driven-development/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-06-13T21:09:52+02:00</updated>
+  <updated>2016-06-19T19:54:16+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,24 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TDD #5: English Numbers Kata]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/06/19/tdd-number-5-english-numbers-kata/"/>
+    <updated>2016-06-19T18:41:39+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/06/19/tdd-number-5-english-numbers-kata</id>
+    <content type="html"><![CDATA[<iframe src="https://player.vimeo.com/video/171307899?color=c9ff23" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+
+<p><a href="https://vimeo.com/171307899">Test-Driven Development Screencast #5: English Numbers Kata</a></p>
+
+<p><em>(Recommended to watch full-screen and HD: 720p or more)</em></p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
+
+<p>This screencast was born from my previous blog post: <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">Iterative Divide &amp; Conquer or How to solve problems</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TDD #4: Path Finding]]></title>
