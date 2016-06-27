@@ -150,7 +150,7 @@
 <p>They use a language, that is not relevant to the domain, therefore, they make the test less readable.</p>
 
 <p>Additionally, they have knowledge of which exactly method <code>PasswordRevealer#toggle()</code> should call on <code>passwordController</code>. If we were to rename <code>reveal</code> method, all tests for <code>PasswordRevealer</code> would fail.
-The same thing would happen, if we were to extract methods/functions/objects out of the <code>PasswordRevealer</code>.</p>
+The same thing would happen if we were to extract methods/functions/objects out of the <code>PasswordRevealer</code>.</p>
 
 <p>Of course, creating such test doubles yourself will involve some boilerplate code - this is a trade-off. Example:</p>
 
@@ -187,7 +187,7 @@ The same thing would happen, if we were to extract methods/functions/objects out
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Making this trade-off, will simplify the case, when we were to change the name: we would change the name at 3 places:</p>
+<p>Making this trade-off, will simplify the case when we were to change the name: we would change the name at 3 places:</p>
 
 <ul>
 <li>in test double class,</li>
@@ -196,7 +196,7 @@ The same thing would happen, if we were to extract methods/functions/objects out
 </ul>
 
 
-<p>Whereas, with mocking framework, we would have to hunt for all failing tests, and usually, it means hundreds of failing tests.</p>
+<p>Whereas with a mocking framework, we would have to hunt for all failing tests, and usually, it means hundreds of failing tests.</p>
 
 <h2>Thank you!</h2>
 
