@@ -50,7 +50,7 @@ expect(spy.haveBeenCalled()).toBeTrue()
 They use a language, that is not relevant to the domain, therefore, they make the test less readable.
 
 Additionally, they have knowledge of which exactly method `PasswordRevealer#toggle()` should call on `passwordController`. If we were to rename `reveal` method, all tests for `PasswordRevealer` would fail.
-The same thing would happen, if we were to extract methods/functions/objects out of the `PasswordRevealer`.
+The same thing would happen if we were to extract methods/functions/objects out of the `PasswordRevealer`.
 
 Of course, creating such test doubles yourself will involve some boilerplate code - this is a trade-off. Example:
 
@@ -72,13 +72,13 @@ class MockPasswordController() {
 }
 ```
 
-Making this trade-off, will simplify the case, when we were to change the name: we would change the name at 3 places:
+Making this trade-off, will simplify the case when we were to change the name: we would change the name at 3 places:
 
 - in test double class,
 - in caller class,
 - in "real" implementation class.
 
-Whereas, with mocking framework, we would have to hunt for all failing tests, and usually, it means hundreds of failing tests.
+Whereas with a mocking framework, we would have to hunt for all failing tests, and usually, it means hundreds of failing tests.
 
 ## Thank you!
 
