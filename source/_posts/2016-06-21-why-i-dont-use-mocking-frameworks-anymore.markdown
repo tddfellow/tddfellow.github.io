@@ -11,7 +11,7 @@ categories:
 - pseudo-code
 ---
 
-Some time ago, I have discovered, that using your own custom test double classes, instead of a test framework makes my test code more readable and maintainable. Here is an example:
+Some time ago, I have discovered, that using your own custom test double classes, instead of a test framework makes my test code more readable and maintainable. Here is an example (pseudo-code):
 
 ```javascript
 function test_password_revealer_when_toggled_reveals_password() {
@@ -50,6 +50,7 @@ expect(spy.haveBeenCalled()).toBeTrue()
 They use a language, that is not relevant to the domain, therefore, they make the test less readable.
 
 Additionally, they have knowledge of which exactly method `PasswordRevealer#toggle()` should call on `passwordController`. If we were to rename `reveal` method, all tests for `PasswordRevealer` would fail.
+The same thing would happen, if we were to extract methods/functions/objects out of the `PasswordRevealer`.
 
 Of course, creating such test doubles yourself will involve some boilerplate code - this is a trade-off. Example:
 
