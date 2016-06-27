@@ -4,7 +4,7 @@
   <title><![CDATA[That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-06-19T19:54:16+02:00</updated>
+  <updated>2016-06-28T01:29:16+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,127 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Why I Don't Use Mocking Frameworks Anymore]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/"/>
+    <updated>2016-06-21T08:04:10+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore</id>
+    <content type="html"><![CDATA[<p>Some time ago, I have discovered, that using your own custom test double classes, instead of a test framework makes my test code more readable and maintainable. Here is an example (pseudo-code):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">test_password_revealer_when_toggled_reveals_password</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">passwordController</span> <span class="o">=</span> <span class="nx">MockPasswordController</span><span class="p">.</span><span class="k">new</span><span class="p">()</span>
+</span><span class='line'>  <span class="nx">passwordRevealer</span> <span class="o">=</span> <span class="nx">PasswordRevealer</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">passwordRevealer</span><span class="p">.</span><span class="nx">toggle</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">expect</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">isRevealed</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The same test with mocking framework would look this way:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">test_password_revealer_when_toggled_reveals_password</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">passwordController</span> <span class="o">=</span> <span class="nx">MockFramework</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="s2">&quot;PasswordController&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">passwordRevealer</span> <span class="o">=</span> <span class="nx">PasswordRevealer</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">spy</span> <span class="o">=</span> <span class="nx">spyOn</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">reveal</span><span class="p">())</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">passwordRevealer</span><span class="p">.</span><span class="nx">toggle</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">expect</span><span class="p">(</span><span class="nx">spy</span><span class="p">.</span><span class="nx">haveBeenCalled</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you take a closer look at the last example, and, specifically at these 2 lines:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">spy</span> <span class="o">=</span> <span class="nx">spyOn</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">reveal</span><span class="p">())</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">expect</span><span class="p">(</span><span class="nx">spy</span><span class="p">.</span><span class="nx">haveBeenCalled</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>They use a language, that is not relevant to the domain, therefore, they make the test less readable.</p>
+
+<p>Additionally, they have knowledge of which exactly method <code>PasswordRevealer#toggle()</code> should call on <code>passwordController</code>. If we were to rename <code>reveal</code> method, all tests for <code>PasswordRevealer</code> would fail.
+The same thing would happen, if we were to extract methods/functions/objects out of the <code>PasswordRevealer</code>.</p>
+
+<p>Of course, creating such test doubles yourself will involve some boilerplate code - this is a trade-off. Example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">MockPasswordController</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">reveal</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;revealed&quot;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">hide</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">isRevealed</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">==</span> <span class="s2">&quot;revealed&quot;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Making this trade-off, will simplify the case, when we were to change the name: we would change the name at 3 places:</p>
+
+<ul>
+<li>in test double class,</li>
+<li>in caller class,</li>
+<li>in &ldquo;real&rdquo; implementation class.</li>
+</ul>
+
+
+<p>Whereas, with mocking framework, we would have to hunt for all failing tests, and usually, it means hundreds of failing tests.</p>
+
+<h2>Thank you!</h2>
+
+<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TDD #5: English Numbers Kata]]></title>
@@ -3173,108 +3294,6 @@ codeUsing(f, d)
 <hr />
 
 <p>To be continued&hellip;</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro]]></title>
-    <link href="http://www.tddfellow.com/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/"/>
-    <updated>2015-01-23T01:56:19+01:00</updated>
-    <id>http://www.tddfellow.com/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro</id>
-    <content type="html"><![CDATA[<p><a href="https://github.com/waterlink/rspec-json_expectations">rspec-json_expectations</a> library provides powerful <code>include_json</code> matcher for your RSpec suites. It allows to match string with JSON or already parsed ruby <code>Hash</code> against other ruby <code>Hash</code>, which is very convenient and creates very readable spec code. Lets jump to some examples.</p>
-
-<p>It can handle some plain json:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has basic info about user&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
-</span><span class='line'>    <span class="nb">id</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">email</span><span class="p">:</span> <span class="s2">&quot;john.smith@example.com&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And nested json:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has gamification info for user&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
-</span><span class='line'>    <span class="ss">code</span><span class="p">:</span> <span class="s2">&quot;7wxMw32&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">gamification</span><span class="p">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="ss">rating</span><span class="p">:</span> <span class="mi">93</span><span class="p">,</span>
-</span><span class='line'>      <span class="ss">score</span><span class="p">:</span> <span class="mi">355</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You can even do some regex matching:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has basic info about user&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
-</span><span class='line'>    <span class="ss">code</span><span class="p">:</span> <span class="sr">/^[a-z0-9]{10}$/</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">url</span><span class="p">:</span> <span class="sr">%r{api/v5/users/[a-z0-9]{10}.json}</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Most can agree, that this method of specifying JSON responses in ruby is very readable, but what about failure messages? How helpful they are?</p>
-
-<p>For example with failure in nested JSON things can become tricky, but this gem solves them quite nice:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>             json atom at path "gamification/score" is not equal to expected value:
-</span><span class='line'>
-</span><span class='line'>               expected: 355
-</span><span class='line'>                    got: 397</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you match with nested Arrays you will get numbers in your JSON path within failure message, for example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>             json atom at path "results/2/badges/0" is not equal to expected value:
-</span><span class='line'>
-</span><span class='line'>               expected: "first flight"
-</span><span class='line'>                    got: "day & night"
-</span><span class='line'>
-</span><span class='line'>             json atom at path "results/3" is missing</span></code></pre></td></tr></table></div></figure>
-
-
-<p>For further reading and instructions: <a href="https://github.com/waterlink/rspec-json_expectations">github</a> and <a href="http://www.relishapp.com/waterlink/rspec-json-expectations/docs/json-expectations">cucumber generated documentation</a>.</p>
-
-<p>Feedback is highly appreciated, contact me on twitter (<a href="https://twitter.com/waterlink000">@waterlink000</a>) or on <a href="https://github.com/waterlink/rspec-json_expectations/issues">github issues</a>.</p>
 ]]></content>
   </entry>
   

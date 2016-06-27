@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Testing | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/testing/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-06-28T01:29:16+02:00</updated>
+  <id>http://www.tddfellow.com/</id>
+  <author>
+    <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Why I Don't Use Mocking Frameworks Anymore]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/"/>
+    <updated>2016-06-21T08:04:10+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore</id>
+    <content type="html"><![CDATA[<p>Some time ago, I have discovered, that using your own custom test double classes, instead of a test framework makes my test code more readable and maintainable. Here is an example (pseudo-code):</p>
+
+<pre><code class="javascript">function test_password_revealer_when_toggled_reveals_password() {
+  passwordController = MockPasswordController.new()
+  passwordRevealer = PasswordRevealer.new(passwordController)
+
+  passwordRevealer.toggle()
+
+  expect(passwordController.isRevealed()).toBeTrue()
+}
+</code></pre>
+
+<p>The same test with mocking framework would look this way:</p>
+
+<pre><code class="javascript">function test_password_revealer_when_toggled_reveals_password() {
+  passwordController = MockFramework.Mock.new("PasswordController")
+  passwordRevealer = PasswordRevealer.new(passwordController)
+
+  spy = spyOn(passwordController.reveal())
+
+  passwordRevealer.toggle()
+
+  expect(spy.haveBeenCalled()).toBeTrue()
+}
+</code></pre>
+
+<p>If you take a closer look at the last example, and, specifically at these 2 lines:</p>
+
+<pre><code class="javascript">spy = spyOn(passwordController.reveal())
+
+expect(spy.haveBeenCalled()).toBeTrue()
+</code></pre>
+
+<p>They use a language, that is not relevant to the domain, therefore, they make the test less readable.</p>
+
+<p>Additionally, they have knowledge of which exactly method <code>PasswordRevealer#toggle()</code> should call on <code>passwordController</code>. If we were to rename <code>reveal</code> method, all tests for <code>PasswordRevealer</code> would fail.
+The same thing would happen, if we were to extract methods/functions/objects out of the <code>PasswordRevealer</code>.</p>
+
+<p>Of course, creating such test doubles yourself will involve some boilerplate code - this is a trade-off. Example:</p>
+
+<pre><code class="javascript">class MockPasswordController() {
+  this.state = "hidden"
+
+  this.reveal() {
+    this.state = "revealed"
+  }
+
+  this.hide() {
+    this.state = "hidden"
+  }
+
+  this.isRevealed() {
+    return this.state == "revealed"
+  }
+}
+</code></pre>
+
+<p>Making this trade-off, will simplify the case, when we were to change the name: we would change the name at 3 places:</p>
+
+<ul>
+<li>in test double class,</li>
+<li>in caller class,</li>
+<li>in &ldquo;real&rdquo; implementation class.</li>
+</ul>
+
+
+<p>Whereas, with mocking framework, we would have to hunt for all failing tests, and usually, it means hundreds of failing tests.</p>
+
+<h2>Thank you!</h2>
+
+<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
+]]></content>
+  </entry>
+  
+</feed>

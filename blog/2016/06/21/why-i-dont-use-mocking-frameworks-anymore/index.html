@@ -1,0 +1,383 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Why I Don&#8217;t Use Mocking Frameworks Anymore - That TDD Fellow | Tech Blog | Screencasts</title>
+  <meta name="author" content="Oleksii Fedorov (waterlink)">
+
+  
+  <meta name="description" content="Some time ago, I have discovered, that using your own custom test double classes, instead of a test framework makes my test code more readable and &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.tddfellow.com/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="That TDD Fellow | Tech Blog | Screencasts" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-73226470-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">That TDD Fellow | Tech Blog | Screencasts</a></h1>
+  
+    <h2>Let&#8217;s stop fearing our own creations and start being in control of them. Let&#8217;s be professional.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me">About me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Why I Don&#8217;t Use Mocking Frameworks Anymore</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-06-21T08:04:10+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>21</span><span class='date-suffix'>st</span>, <span class='date-year'>2016</span></span> <span class='time'>8:04 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Some time ago, I have discovered, that using your own custom test double classes, instead of a test framework makes my test code more readable and maintainable. Here is an example (pseudo-code):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">test_password_revealer_when_toggled_reveals_password</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">passwordController</span> <span class="o">=</span> <span class="nx">MockPasswordController</span><span class="p">.</span><span class="k">new</span><span class="p">()</span>
+</span><span class='line'>  <span class="nx">passwordRevealer</span> <span class="o">=</span> <span class="nx">PasswordRevealer</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">passwordRevealer</span><span class="p">.</span><span class="nx">toggle</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">expect</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">isRevealed</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The same test with mocking framework would look this way:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">test_password_revealer_when_toggled_reveals_password</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">passwordController</span> <span class="o">=</span> <span class="nx">MockFramework</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="s2">&quot;PasswordController&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">passwordRevealer</span> <span class="o">=</span> <span class="nx">PasswordRevealer</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">spy</span> <span class="o">=</span> <span class="nx">spyOn</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">reveal</span><span class="p">())</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">passwordRevealer</span><span class="p">.</span><span class="nx">toggle</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">expect</span><span class="p">(</span><span class="nx">spy</span><span class="p">.</span><span class="nx">haveBeenCalled</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you take a closer look at the last example, and, specifically at these 2 lines:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">spy</span> <span class="o">=</span> <span class="nx">spyOn</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">reveal</span><span class="p">())</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">expect</span><span class="p">(</span><span class="nx">spy</span><span class="p">.</span><span class="nx">haveBeenCalled</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>They use a language, that is not relevant to the domain, therefore, they make the test less readable.</p>
+
+<p>Additionally, they have knowledge of which exactly method <code>PasswordRevealer#toggle()</code> should call on <code>passwordController</code>. If we were to rename <code>reveal</code> method, all tests for <code>PasswordRevealer</code> would fail.
+The same thing would happen, if we were to extract methods/functions/objects out of the <code>PasswordRevealer</code>.</p>
+
+<p>Of course, creating such test doubles yourself will involve some boilerplate code - this is a trade-off. Example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">MockPasswordController</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">reveal</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;revealed&quot;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">hide</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">isRevealed</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">==</span> <span class="s2">&quot;revealed&quot;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Making this trade-off, will simplify the case, when we were to change the name: we would change the name at 3 places:</p>
+
+<ul>
+<li>in test double class,</li>
+<li>in caller class,</li>
+<li>in &ldquo;real&rdquo; implementation class.</li>
+</ul>
+
+
+<p>Whereas, with mocking framework, we would have to hunt for all failing tests, and usually, it means hundreds of failing tests.</p>
+
+<h2>Thank you!</h2>
+
+<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Oleksii Fedorov (waterlink)</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-06-21T08:04:10+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>21</span><span class='date-suffix'>st</span>, <span class='date-year'>2016</span></span> <span class='time'>8:04 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/architecture/'>architecture</a>, <a class='category' href='/blog/categories/clean-code/'>clean-code</a>, <a class='category' href='/blog/categories/mocking/'>mocking</a>, <a class='category' href='/blog/categories/pseudo-code/'>pseudo-code</a>, <a class='category' href='/blog/categories/testing/'>testing</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.tddfellow.com/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/" data-via="waterlink000" data-counturl="http://www.tddfellow.com/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/06/19/tdd-number-5-english-numbers-kata/" title="Previous Post: TDD #5: English Numbers Kata">&laquo; TDD #5: English Numbers Kata</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/">Why I Don&#8217;t Use Mocking Frameworks Anymore</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/06/19/tdd-number-5-english-numbers-kata/">TDD #5: English Numbers Kata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/06/13/tdd-as-an-enabling-practice-or-how-to-be-faster-with-tdd/">TDD as an Enabling Practice or How to Be Faster With TDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/">Automating Manual Checks or How to Save Time and Get Rapid Feedback</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">Iterative Divide &amp; Conquer or How to Solve Problems</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/02/13/tdd-number-4-path-finding/">TDD #4: Path Finding</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/02/05/why-are-you-slow/">Why Are You Slow?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/02/04/tdd-number-3-kind-sort/">TDD #3: Kind Sort</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/waterlink">@waterlink</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'waterlink',
+            count: 7,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+    <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+  </a>
+  <br />
+  Except where otherwise noted, content on this site is licensed under a
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+  <br/>
+
+  Except where otherwise noted, code examples on this site are licensed under a
+  <a rel="license" href="https://github.com/waterlink/waterlink.github.io/tree/source/LICENSE">MIT License</a>.
+  <br/>
+
+  Copyright &copy; 2016 - Oleksii Fedorov (waterlink) -
+  <br/>
+
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Recommended to watch in a full-screen and on 720p or higher quality. List of all TDD Screencasts can be found here. Script Hello. I am Oleksii &hellip;">
+  <meta name="description" content="Let&rsquo;s imagine a beginner programmer, who have learned a programming language basics, can write programs and can read someone else&rsquo;s &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +68,653 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">Iterative Divide &amp; Conquer or How to Solve Problems</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-05-27T07:48:18+02:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>27</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>7:48 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><em>Let&rsquo;s imagine a beginner programmer, who have learned a programming language basics, can write programs and can read someone else&rsquo;s programs. Now, for any somewhat non-trivial problem, they have trouble coming up with a solution. And if they read one of the possible solutions, they will understand it and conclude: &ldquo;I understand how this program works, but I don&rsquo;t know how to get there.&rdquo;. If that sounds like you, my dear reader, or someone you would like to coach or teach, then come and learn Iterative Divide &amp; Conquer problem-solving technique.</em></p>
+
+<h2>English Numbers Kata</h2>
+
+<p>Given an integer number in the range of <code>-999 999 999</code> to <code>999 999 999</code>, write a program, that will output that number in English words.</p>
+
+<p>Example:</p>
+
+<p>Given number <code>37545</code>, the program outputs <code>thirty-seven thousands five hundred forty-five</code>.</p>
+
+<h3>I can solve that!</h3>
+
+<p>If you are confident, that you are able to solve that problem, my congratulations, you have problem-solving skill at a necessary level!</p>
+
+<p>If you still feel, that you can solve this Kata easily, although there are more complex problems that give you troubles, then, probably, your problem-solving strategy is not scalable. The technique described in this article is scalable.</p>
+
+<h3>Let&rsquo;s dive in</h3>
+
+<p><em>NOTE: this article uses pseudo-code, that doesn&rsquo;t belong to any programming language, so it makes sense for you, my reader, to implement this step-by-step in the programming language you know.</em></p>
+
+<p>OK. Let&rsquo;s imagine, that you don&rsquo;t know how to solve the whole English Numbers Kata and you don&rsquo;t even know where to start.</p>
+
+<p>Now, let&rsquo;s try to solve much simpler problem:</p>
+
+<p>Given an integer number in the range of <code>0</code> to <code>9</code>, write a program that will output that number in English words.</p>
+
+<p>Can you solve that? I am pretty sure you can. And easily at that.</p>
+
+<p>Let&rsquo;s write down some of our possible inputs and corresponding outputs:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_number</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>   <span class="c1"># zero</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_number</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># one</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_number</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>   <span class="c1"># seven</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_number</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>   <span class="c1"># nine</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run that program, we will get an error, that <code>english_number</code> function is not defined yet. Let&rsquo;s define it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">english_number</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now if we run our program, we will get four empty lines on the screen as expected. Easiest implementation of <code>english_number</code> function would probably look like that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s2">&quot;zero&quot;</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s2">&quot;one&quot;</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s2">&quot;two&quot;</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s2">&quot;three&quot;</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s2">&quot;four&quot;</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">==</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s2">&quot;five&quot;</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">==</span> <span class="mi">6</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s2">&quot;six&quot;</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">==</span> <span class="mi">7</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s2">&quot;seven&quot;</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">==</span> <span class="mi">8</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s2">&quot;eight&quot;</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">==</span> <span class="mi">9</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s2">&quot;nine&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run our program, then we will get our expected output:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">zero</span>
+</span><span class='line'><span class="nx">one</span>
+</span><span class='line'><span class="nx">seven</span>
+</span><span class='line'><span class="nx">nine</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you already know arrays and access array by index, <code>english_number</code> can be simplified greatly:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">NUMBERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;zero&quot;</span><span class="p">,</span> <span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="s2">&quot;three&quot;</span><span class="p">,</span> <span class="s2">&quot;four&quot;</span><span class="p">,</span>
+</span><span class='line'>           <span class="s2">&quot;five&quot;</span><span class="p">,</span> <span class="s2">&quot;six&quot;</span><span class="p">,</span> <span class="s2">&quot;seven&quot;</span><span class="p">,</span> <span class="s2">&quot;eight&quot;</span><span class="p">,</span> <span class="s2">&quot;nine&quot;</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">english_number</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">NUMBERS</span><span class="p">[</span><span class="nx">number</span><span class="p">]</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After making this change, let&rsquo;s run the program, we should see the same output:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">zero</span>
+</span><span class='line'><span class="nx">one</span>
+</span><span class='line'><span class="nx">seven</span>
+</span><span class='line'><span class="nx">nine</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>OK. Seems like we have solved our current problem at hand. What about the initial problem? How do we get there?</p>
+
+<h3>Increase size of the problem slightly</h3>
+
+<p>Or as you would say in real-world programming: Add a new requirement.</p>
+
+<p>Our initial problem has only two axes, where we can add requirements to our current solution to move it towards final solution:</p>
+
+<ul>
+<li>increase the supported range</li>
+<li>allow negative integers</li>
+</ul>
+
+
+<p>Let&rsquo;s go with latter, it seems easier. First we write down our possible inputs and outputs:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>     <span class="c1"># zero</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>     <span class="c1"># four</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>    <span class="c1"># minus three</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>     <span class="c1"># nine</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">9</span><span class="p">)</span>    <span class="c1"># minus nine</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, implement <code>english_integer</code> as a simple call to <code>english_number</code> (that will make half of our inputs produce correct output):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">english_integer</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">english_number</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Depending on what your programming language this can:</p>
+
+<ul>
+<li>output partly incorrect data (for negative values)</li>
+<li>fail at run time</li>
+<li>fail at compile time</li>
+</ul>
+
+
+<p>We can fix that by handling the case of negative numbers:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s2">&quot;minus &quot;</span> <span class="o">+</span> <span class="nx">english_integer</span><span class="p">(</span><span class="o">-</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">english_number</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That might be confusing at first. Especially, part, where we call <code>english_integer</code> from the body of the same function. Let&rsquo;s draw a diagram on how that function works:</p>
+
+<p><img src="https://camo.githubusercontent.com/134fbbce495dc2d9bb3f137077cdde57dc28668e/687474703a2f2f672e67726176697a6f2e636f6d2f673f2530412532302532306469677261706825323047253230253742253041253230253230253230253230666f7263656c6162656c733d747275653b253041253230253230253230253230253232656e676c6973685f696e7465676572286e756d6265722925323225323025354273686170653d626f782535443b2530412532302532302532302532302532326966253230286e756d626572253230253343253230302925323225323025354273686170653d6469616d6f6e642535443b25304125323025323025323025323025323263616c6c253230656e676c6973685f696e7465676572282d6e756d626572292532323b25304125323025323025323025323025323263616c6c253230656e676c6973685f6e756d626572286e756d626572292532323b25304125323025323025323025323025323270726570656e64253230726573756c7425323077697468253230276d696e7573253230272532323b253041253230253230253230253230253232616e6425323072657475726e25323069742532323b2530412532302532302532302532302532327468656e25323072657475726e253230726573756c742532306f662532307468697325323063616c6c2532323b253041253230253230253230253230253232656e676c6973685f696e7465676572286e756d626572292532322532302d2533452532302532326966253230286e756d62657225323025334325323030292532323b2530412532302532302532302532302532326966253230286e756d62657225323025334325323030292532323a652532302d25334525323025323263616c6c253230656e676c6973685f696e7465676572282d6e756d626572292532322532302535426c6162656c3d2532325945532532322535443b2530412532302532302532302532302532326966253230286e756d62657225323025334325323030292532323a772532302d25334525323025323263616c6c253230656e676c6973685f6e756d626572286e756d626572292532322532302535426c6162656c3d2532324e4f2535436e696e76617269616e743a2535436e6e756d6265722532302533453d253230302532322535443b25304125323025323025323025323025323263616c6c253230656e676c6973685f696e7465676572282d6e756d626572292532323a6e652532302d253345253230253232656e676c6973685f696e7465676572286e756d626572292532323a6e652532302535426c6162656c3d253232696e76617269616e743a2535436e6e756d6265722532302533453d253230302532322535443b25304125323025323025323025323025323263616c6c253230656e676c6973685f696e7465676572282d6e756d626572292532322532302d25334525323025323270726570656e64253230726573756c7425323077697468253230276d696e7573253230272532322532302d253345253230253232616e6425323072657475726e25323069742532323b25304125323025323025323025323025323263616c6c253230656e676c6973685f6e756d626572286e756d626572292532322532302d2533452532302532327468656e25323072657475726e253230726573756c742532306f662532307468697325323063616c6c2532323b253041253230253230253744" alt="Diagram for english_integer after adding negative integers" /></p>
+
+<p>If we were to unwind this diagram into possible paths, we would end up with two possible cases:</p>
+
+<ol>
+<li>When <code>number &lt; 0</code>:
+
+<ul>
+<li><code>english_integer(number)</code></li>
+<li><code>if (number &lt; 0)</code> - YES</li>
+<li><code>english_integer(-number)</code></li>
+<li><code>if (number &lt; 0)</code> - NO</li>
+<li><code>english_number(number)</code></li>
+<li>prepend result of last call with <code>minus</code></li>
+<li>and return it</li>
+</ul>
+</li>
+<li>When <code>number &gt;= 0</code>:
+
+<ul>
+<li><code>english_integer(number)</code></li>
+<li><code>if (number &lt; 0)</code> - NO</li>
+<li><code>english_number(number)</code></li>
+<li>return result of last call</li>
+</ul>
+</li>
+</ol>
+
+
+<p>Running this program results in expected output:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">zero</span>
+</span><span class='line'><span class="nx">four</span>
+</span><span class='line'><span class="nx">minus</span> <span class="nx">three</span>
+</span><span class='line'><span class="nx">nine</span>
+</span><span class='line'><span class="nx">minus</span> <span class="nx">nine</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Implementation of <code>english_integer(number)</code> function can be simplified by eliminating <code>else</code> clause and treating <code>number &lt; 0</code> as an edge case and using &ldquo;guard clause&rdquo; to handle it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">english_integer</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;minus &quot;</span> <span class="o">+</span> <span class="nx">english_integer</span><span class="p">(</span><span class="o">-</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">english_number</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run our program, the output should be the same as before.</p>
+
+<h3>Add more requirements!</h3>
+
+<p>Now, that we are done with handling a negative case, we have only one requirement axis left: range of integers. Currently, we support integers from <code>-9</code> to <code>9</code>. Now let&rsquo;s extend support for integers from <code>10</code> to <code>19</code>. This problem should be as trivial as the problem for the range of <code>0...9</code>.</p>
+
+<p>Our inputs with corresponding outputs:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_teen_number</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>    <span class="c1"># ten</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_teen_number</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>    <span class="c1"># eleven</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_teen_number</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>    <span class="c1"># thirteen</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_teen_number</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>    <span class="c1"># eighteen</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_teen_number</span><span class="p">(</span><span class="mi">19</span><span class="p">)</span>    <span class="c1"># nineteen</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And the implementation to make the output of the program correct (very similar to <code>english_number</code> function):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">TEEN_NUMBERS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ten&quot;</span><span class="p">,</span> <span class="s2">&quot;eleven&quot;</span><span class="p">,</span> <span class="s2">&quot;twelve&quot;</span><span class="p">,</span> <span class="s2">&quot;thirteen&quot;</span><span class="p">,</span> <span class="s2">&quot;fourteen&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s2">&quot;fifteen&quot;</span><span class="p">,</span> <span class="s2">&quot;sixteen&quot;</span><span class="p">,</span> <span class="s2">&quot;seventeen&quot;</span><span class="p">,</span> <span class="s2">&quot;eighteen&quot;</span><span class="p">,</span> <span class="s2">&quot;nineteen&quot;</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">english_teen_number</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// &quot;number - 10&quot; comes from the fact, that range 10..19</span>
+</span><span class='line'>  <span class="c1">// maps to a range of 0..9 of our array, so we need to</span>
+</span><span class='line'>  <span class="c1">// shift 10..19 by -10 to get 0..9</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">TEEN_NUMBERS</span><span class="p">[</span><span class="nx">number</span> <span class="o">-</span> <span class="mi">10</span><span class="p">]</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we want to glue our current solution with <code>english_teen_number</code> to add support for range <code>10..19</code>. This sounds like another <code>if .. else</code> case handling:</p>
+
+<ul>
+<li>when <code>number &lt; 10</code>, use <code>english_number</code></li>
+<li>when <code>number &gt;= 10</code>, use <code>english_teen_number</code></li>
+</ul>
+
+
+<p>Let&rsquo;s change our input/output pairs for <code>english_integer</code> function:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>     <span class="c1"># zero</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>     <span class="c1"># four</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>    <span class="c1"># minus three</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>     <span class="c1"># nine</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">9</span><span class="p">)</span>    <span class="c1"># minus nine</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>    <span class="c1"># ten</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>    <span class="c1"># fifteen</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="mi">19</span><span class="p">)</span>    <span class="c1"># nineteen</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That should fail in some way (compile error, runtime error or incorrect output). Now it is time to implement missing functionality for last 3 examples in our <code>english_integer</code> function. Replace the last call to <code>english_number</code> with:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">english_number</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">english_teen_number</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run the program, we should see correct output:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">zero</span>
+</span><span class='line'><span class="nx">four</span>
+</span><span class='line'><span class="nx">minus</span> <span class="nx">three</span>
+</span><span class='line'><span class="nx">nine</span>
+</span><span class='line'><span class="nx">minus</span> <span class="nx">nine</span>
+</span><span class='line'><span class="nx">ten</span>
+</span><span class='line'><span class="nx">fifteen</span>
+</span><span class='line'><span class="nx">nineteen</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What about negative numbers in the range of <code>-19...-10</code>? Let&rsquo;s add input/output examples and see what happens if we run the program:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">12</span><span class="p">)</span>    <span class="c1"># minus twelve</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">16</span><span class="p">)</span>    <span class="c1"># minus sixteen</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">19</span><span class="p">)</span>    <span class="c1"># minus nineteen</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And the output if we run the program:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">minus</span> <span class="n">twelve</span>
+</span><span class='line'><span class="n">minus</span> <span class="n">sixteen</span>
+</span><span class='line'><span class="n">minus</span> <span class="n">nineteen</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yes, it works already thanks to the guard statement that we have at the top of <code>english_integer</code> function. And the whole function body:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">english_integer</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;minus &quot;</span> <span class="o">+</span> <span class="nx">english_integer</span><span class="p">(</span><span class="o">-</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">english_number</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">english_teen_number</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Going further!</h3>
+
+<p>Next smallest requirement seems to be an addition of the range <code>20...99</code>. Let&rsquo;s write down our example inputs and outputs:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>    <span class="c1"># twenty</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span>    <span class="c1"># twenty-seven</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>    <span class="c1"># forty-two</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">70</span><span class="p">)</span>    <span class="c1"># seventy</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">99</span><span class="p">)</span>    <span class="c1"># ninety-nine</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So how do we solve this problem? Can we follow the same pattern as before, for ranges <code>0...9</code> and <code>10...19</code>?</p>
+
+<p>We certainly do. We create a constant <code>INTEGERS_IN_TENS = [...]</code>, where <code>[...]</code> will contain 79 (mostly two-word) strings. It seems like an excess effort to me. So can we do better?</p>
+
+<p>Yes! We can apply the same problem-solving technique here. What is the smallest problem, that we can solve here easily and independently from other problems?</p>
+
+<p>What about solving the problem only for numbers <code>20</code>, <code>30</code>, <code>40</code>, &hellip;, <code>90</code>? Sounds simple enough! Let&rsquo;s write our example input/outputs:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_ten</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>    <span class="c1"># twenty</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_ten</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>    <span class="c1"># thirty</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_ten</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>    <span class="c1"># sixty</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_ten</span><span class="p">(</span><span class="mi">90</span><span class="p">)</span>    <span class="c1"># ninety</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is no longer different from ranges <code>0...9</code> and <code>10...19</code>. The only detail is that we need to find a way to convert range <code>20...90</code> to <code>0...7</code> to be able to access the array by that index. This can be done in 2 steps:</p>
+
+<ol>
+<li>obtain the first digit of the number: <code>number / 10</code>, which results in the range <code>2...9</code>,</li>
+<li>and shift resulting digit by <code>-2</code>: <code>number / 10 - 2</code>, which results in the range <code>0...7</code>,</li>
+</ol>
+
+
+<p>exactly, what we expect. Now, we can implement <code>english_ten</code> similarly to <code>english_number</code> and <code>english_teen_number</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">TENS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;twenty&quot;</span><span class="p">,</span> <span class="s2">&quot;thirty&quot;</span><span class="p">,</span> <span class="s2">&quot;forty&quot;</span><span class="p">,</span> <span class="s2">&quot;fifty&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;sixty&quot;</span><span class="p">,</span> <span class="s2">&quot;seventy&quot;</span><span class="p">,</span> <span class="s2">&quot;eighty&quot;</span><span class="p">,</span> <span class="s2">&quot;ninety&quot;</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">english_ten</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">TENS</span><span class="p">[</span><span class="nx">number</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now it is time to return to the original requirement: support range <code>20...99</code>. Looking at our example input/outputs for a function <code>english_integer_in_tens</code>, we can conclude, that we have 2 different cases:</p>
+
+<ul>
+<li>When second digit is 0 (<code>number % 10 == 0</code>):
+
+<ul>
+<li>we output only <code>twenty</code>, <code>thirty</code>, &hellip;, <code>ninety</code>, depending on the first digit of the <code>number</code>;</li>
+<li>by the way, this is exactly, what <code>english_ten</code> function is doing. Great!</li>
+</ul>
+</li>
+<li>When the second digit is not 0:
+
+<ul>
+<li>we output <code>twenty</code>, <code>thirty</code>, &hellip;, <code>ninety</code>, depending on the first digit of the <code>number</code>;</li>
+<li>and we output a hyphen character: <code>-</code>;</li>
+<li>and we output <code>one</code>, <code>two</code>, &hellip;, <code>nine</code>, depending on the second digit;</li>
+<li>by the way, latter is exactly, what <code>english_number</code> function is doing. Great!</li>
+</ul>
+</li>
+</ul>
+
+
+<p>So, let&rsquo;s implement that in <code>english_integer_in_tens</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">english_integer_in_tens</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">second_digit</span> <span class="o">=</span> <span class="nx">number</span> <span class="o">%</span> <span class="mi">10</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">second_digit</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">english_ten</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">english_ten</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">english_number</span><span class="p">(</span><span class="nx">second_digit</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Running the program will produce the expected output:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">twenty</span>
+</span><span class='line'><span class="nx">twenty</span><span class="o">-</span><span class="nx">seven</span>
+</span><span class='line'><span class="nx">forty</span><span class="o">-</span><span class="nx">two</span>
+</span><span class='line'><span class="nx">seventy</span>
+</span><span class='line'><span class="nx">ninety</span><span class="o">-</span><span class="nx">nine</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we should glue the solution for range <code>20...99</code> with our main solution, that currently supports only <code>-19...19</code>. As always, start with example input/outputs:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>   <span class="c1"># sixty</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="mi">43</span><span class="p">)</span>   <span class="c1"># forty-three</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">97</span><span class="p">)</span>  <span class="c1"># minus ninety-seven</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This results in incorrect output or failure. How can we merge two solutions together now? Let&rsquo;s remember our current main solution&rsquo;s different cases:</p>
+
+<ul>
+<li>Guard <code>number &lt; 0</code>, that prepends &ldquo;minus &rdquo; and makes number non-negative.</li>
+<li>When <code>number &lt; 10</code>, use <code>english_number</code>.</li>
+<li>Otherwise, use <code>english_teen_number</code>.</li>
+</ul>
+
+
+<p>Seems, like first two cases should not be touched and we are interested in the last one. We should split it in two:</p>
+
+<ul>
+<li>Otherwise:
+
+<ul>
+<li>When <code>number &lt; 20</code>, use <code>english_teen_number</code>.</li>
+<li>Otherwise, use <code>english_integer_in_tens</code>.</li>
+</ul>
+</li>
+</ul>
+
+
+<p>I believe, we are done and can implement merged version:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">english_integer</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;minus &quot;</span> <span class="o">+</span> <span class="nx">english_integer</span><span class="p">(</span><span class="o">-</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">english_number</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">english_teen_number</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">english_integer_in_tens</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Running the program confirms that our new solution now supports integers in the range <code>-99...99</code>.</p>
+
+<h3>Final solution</h3>
+
+<p>I&rsquo;m leaving the final solution as an exercise for you, my dear reader. There is nothing more to this technique. Careful application of this technique and careful choice of smallest baby-steps as new requirements to your current solution will get you there - to the final solution, that supports the range of <code>-999 999 999...999 999 999</code>.</p>
+
+<p>If you have any troubles, don&rsquo;t hesitate to share your questions, ideas and code with me. I will try my best to help you, my dear reader. I am reachable via Twitter by handle <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<h2>Challenge</h2>
+
+<p>Extend solution to support floating-point numbers to a precision level of 6 digits after the dot.</p>
+
+<h2>Thank you for reading!</h2>
+
+<p>Final note: did you notice, how tedious it is to check, that output of all these <code>print</code>-s is correct, each time you run the program? This can and should be automated! Stay tuned, I am going to publish an article on how to easily automate these checks really soon!</p>
+
+<p>Next issue is out: <a href="/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/">Automating Manual Checks or How to Save Time and Get Rapid Feedback</a>!</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -400,93 +1047,6 @@ next time! Have a nice day.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/02/02/test-driven-development-screencast-number-2/">Test-Driven-Development Screencast #2</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2016-02-02T08:28:14+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2016</span></span> <span class='time'>8:28 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><iframe width="560" height="315" src="https://www.youtube.com/embed/6XMoZ7snuKo?list=PLbNxoJawcer22UE8lT93-fX8ZYFNtoXFu" frameborder="0" allowfullscreen></iframe>
-
-
-<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
-
-<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
-
-<h2>Script</h2>
-
-<p>Hello, hello! I am Oleksii Fedorov, and this is the second episode of
-Test-Driven-Development Screencast.</p>
-
-<p>Now that I think about it, first episode was more of an audio podcast (with two
-and half visual slides), rather than a screencast. Don&rsquo;t worry - this episode
-will be full of code and actual action time on the screen.</p>
-
-<p>Today we are going to implement a sorting algorithm. We will not come up with
-algorithm beforehand and we will simply let it emerge by itself, while we are
-doing TDD.</p>
-
-<p>Lets jump in!</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>./watch.sh  # So I have here small script, that will watch changes in my code
-</span><span class='line'>            # and will run all my tests. Additionally, it will show me the
-</span><span class='line'>            # result in the notification bar (you will see, shortly).
-</span><span class='line'>
-</span><span class='line'>vim         # 1) Create test file
-</span><span class='line'>            # 2) Follow TDD rules to the letter</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I think we are done here. And notice, that this is a bubble sort algorithm. Now
-lets ask a question, why the worst possible algorithm have emerged, while we
-were using TDD. That is an interesting question.</p>
-
-<p>But first, lets ask ourselves a question: Are we kind to the user of our
-function? The answer is - NO. We are mutating the argument, that user passed to
-us. And this mutation might be unexpected. At least our test suite doesn&rsquo;t even
-mention such behavior.</p>
-
-<p>The root of the problem is this little swap operation that we have here:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'># show swap operation on the screen
-</span><span class='line'>a[0], a[1] = {a[1], a[0]}</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I wonder, what will happen if we were to ban swap operation (and any kind of
-mutation of the argument of the function), and implement sorting algorithm
-again?</p>
-
-<p>Find out next time, on the next episode of Test-Driven-Development! Have a good
-day.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/3">&larr; Older</a>
@@ -502,6 +1062,10 @@ day.</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/">Why I Don&#8217;t Use Mocking Frameworks Anymore</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/06/19/tdd-number-5-english-numbers-kata/">TDD #5: English Numbers Kata</a>
@@ -529,10 +1093,6 @@ day.</p>
     
       <li class="post">
         <a href="/blog/2016/02/04/tdd-number-3-kind-sort/">TDD #3: Kind Sort</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/02/02/test-driven-development-screencast-number-2/">Test-Driven-Development Screencast #2</a>
       </li>
     
   </ul>
