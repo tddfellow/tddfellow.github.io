@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Code-ownership | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/code-ownership/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-06-28T03:56:28+02:00</updated>
+  <id>http://www.tddfellow.com/</id>
+  <author>
+    <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[TL;DR on Sustainable Software Development Paper]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper/"/>
+    <updated>2016-06-28T02:22:07+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper</id>
+    <content type="html"><![CDATA[<p>This is a TL;DR of a white paper <a href="https://www.researchgate.net/publication/304014117_Sustainable_Software_Development_through_Overlapping_Pair_Rotation">Sustainable Software Development through Overlapping Pair Rotation</a> that is created by Todd Sedano, Paul Ralph, and Cécile Péraire.</p>
+
+<p><em>NOTE: this TL;DR includes a lot of compressed awesome information.</em></p>
+
+<h2>Theory of Sustainable Software Development</h2>
+
+<p>The paper introduces us to principles, policies, and practices, that are the results of applying of <a href="https://en.wikipedia.org/wiki/Grounded_theory#Constructivist_grounded_theory">Constructivist Grounded Theory</a> research method to the five projects at Pivotal Labs.</p>
+
+<h3>Principles</h3>
+
+<ol>
+<li>By <strong>Engendering Positive Attitudes Toward Disruption</strong> teams can transform a challenge of team disruption into a business opportunity:
+
+<ul>
+<li>team members rolling off from the project are replaced with new members,</li>
+<li>new members are viewed as a source of fresh perspective and as an opportunity,</li>
+<li>new members often questioned team&rsquo;s assumptions (challenging &ldquo;cargo culting&rdquo;).</li>
+</ul>
+</li>
+<li>Policies &amp; practices that <strong>Encourage Knowledge Sharing and Continuity</strong> mitigate the risk of significant knowledge loss for the project when the team is disrupted. Policies are:
+
+<ul>
+<li><strong>Team Code Ownership</strong>, and <strong>Shared Team Schedule</strong>. While practices are:</li>
+<li><strong>Continuous Pair Programming</strong>, <strong>Overlapping Pair Rotation</strong> and <strong>Knowledge Pollination</strong>.</li>
+</ul>
+</li>
+<li>Sustainable development is not possible if the team is incurring the technical debt. <strong>Caring about Code Quality</strong> is a way to mitigate this risk. Policy here is:
+
+<ul>
+<li><strong>Avoid Technical Debt</strong>, and practices are:</li>
+<li><strong>Test-Driven Development</strong> / <strong>Behavior-Driven Development</strong> and <strong>Continuous Refactoring</strong>.</li>
+</ul>
+</li>
+</ol>
+
+
+<h3>Policies</h3>
+
+<ol>
+<li><strong>Team Code Ownership</strong>: every developer is empowered to work on and to refactor any part of the team&rsquo;s code.</li>
+<li><strong>Shared Schedule</strong>: every team member has agreed to a fixed schedule to achieve the benefits of Sustainable Software Development. Teams are, preferably, co-located.</li>
+<li><strong>Avoid Technical Debt</strong>: a pair creates well-crafted code without shortcuts and short-term fixes. Solutions are best and simplest for <strong>current present</strong> without over-engineering. When inherited a legacy code base, a team is actively paying down technical debt while delivering new features.</li>
+</ol>
+
+
+<h3>Removing Knowledge Silos Practices</h3>
+
+<ol>
+<li><strong>Continuous Pair Programming</strong>: two developers are collaborating to write software together as their normal mode of software development. It enables knowledge transfer, reduces knowledge silos and improves code quality. Developers always work in pairs, unless exceptional circumstances arise.</li>
+<li><strong>Overlapping Pair Rotation</strong>: one developer rolls off the track of work and another developer rolls on, keeping the continuity of one developer at each rotation. It results in knowledge continuity. There are three strategies for spreading the knowledge via pair rotation when fighting emerging knowledge silos:
+
+<ul>
+<li>Optimizing for people rotation: developers try to pair with the person they &ldquo;least recently paired with&rdquo;;</li>
+<li>Optimizing for personal preferences: developer pick with whom they will pair at each rotation, based on personal preferences;</li>
+<li>Optimizing for context sharing: a developer who has not been working on the track for the longest track is rotating onto the track. The goal each day is for the developer leaving the track next to empower the developer who will remain on the track.</li>
+</ul>
+</li>
+<li><strong>Knowledge Pollination</strong>:
+
+<ul>
+<li>Daily stand-ups create awareness of who is working on what.</li>
+<li>Using backlog to communicate information and status of stories.</li>
+<li>Osmotic communication: a developer overhears a discussion in other pair and offers their help.</li>
+<li>The pair can interrupt another pair, product manager or designer to gain the needed information.</li>
+<li>Calling out updates to the entire team.</li>
+<li>Interruptions are encouraged - it makes the team more efficient as knowledge pollinates across the team.</li>
+</ul>
+</li>
+</ol>
+
+
+<h3>Caretaking the Code Practices</h3>
+
+<ol>
+<li><strong>Test-Driven Development/Behavior-Driven Development</strong>: developers use BDD (to describe interactions between the user and the system) and TDD (at unit test level). Design emerges from the creation and exploration of the test cases. Teams use a variety of TDD strategies, including:
+
+<ul>
+<li>testing the responsibilities and interactions, or</li>
+<li>contract testing using mocks.</li>
+</ul>
+</li>
+<li><strong>Continuous Refactoring</strong>: developers do refactoring as part of implementing feature stories. Developers are encouraged to improve the code&rsquo;s design, make the code easier to read, understand, and increase the discoverability of a component based on its responsibility. The team prefers <strong>pre-refactoring</strong>, where the developer makes a complicated work to make the current story as simple and as easy as possible.</li>
+<li><strong>Live on Master</strong>: every pair merges their code to master many times a day. Developers may use branches to save &ldquo;spikes&rdquo; and to move work-in-progress between pairing stations when rotating.</li>
+</ol>
+
+
+<h2>Thanks!</h2>
+
+<p>This is where this TL;DR ends. If you are interested in the topic, go ahead and read the paper, it has the following:</p>
+
+<ul>
+<li>Detailed description of the research method, data collection, and analysis;</li>
+<li>Research context and one project case study;</li>
+<li>Detailed description of Principles, Policies, and Practices of Sustainable Software Development; also anti-patterns for each policy and practice;</li>
+<li>Theory evaluation and conclusions.</li>
+</ul>
+
+
+<p>Great thanks to the original authors of the paper, researchers, and all participants!</p>
+]]></content>
+  </entry>
+  
+</feed>

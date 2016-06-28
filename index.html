@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Some time ago, I have discovered, that using your own custom test double classes, instead of a test framework makes my test code more readable and &hellip;">
+  <meta name="description" content="This is a TL;DR of a white paper Sustainable Software Development through Overlapping Pair Rotation that is created by Todd Sedano, Paul Ralph, and &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +68,133 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper/">TL;DR on Sustainable Software Development Paper</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-06-28T02:22:07+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>28</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>2:22 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This is a TL;DR of a white paper <a href="https://www.researchgate.net/publication/304014117_Sustainable_Software_Development_through_Overlapping_Pair_Rotation">Sustainable Software Development through Overlapping Pair Rotation</a> that is created by Todd Sedano, Paul Ralph, and Cécile Péraire.</p>
+
+<p><em>NOTE: this TL;DR includes a lot of compressed awesome information.</em></p>
+
+<h2>Theory of Sustainable Software Development</h2>
+
+<p>The paper introduces us to principles, policies, and practices, that are the results of applying of <a href="https://en.wikipedia.org/wiki/Grounded_theory#Constructivist_grounded_theory">Constructivist Grounded Theory</a> research method to the five projects at Pivotal Labs.</p>
+
+<h3>Principles</h3>
+
+<ol>
+<li>By <strong>Engendering Positive Attitudes Toward Disruption</strong> teams can transform a challenge of team disruption into a business opportunity:
+
+<ul>
+<li>team members rolling off from the project are replaced with new members,</li>
+<li>new members are viewed as a source of fresh perspective and as an opportunity,</li>
+<li>new members often questioned team&rsquo;s assumptions (challenging &ldquo;cargo culting&rdquo;).</li>
+</ul>
+</li>
+<li>Policies &amp; practices that <strong>Encourage Knowledge Sharing and Continuity</strong> mitigate the risk of significant knowledge loss for the project when the team is disrupted. Policies are:
+
+<ul>
+<li><strong>Team Code Ownership</strong>, and <strong>Shared Team Schedule</strong>. While practices are:</li>
+<li><strong>Continuous Pair Programming</strong>, <strong>Overlapping Pair Rotation</strong> and <strong>Knowledge Pollination</strong>.</li>
+</ul>
+</li>
+<li>Sustainable development is not possible if the team is incurring the technical debt. <strong>Caring about Code Quality</strong> is a way to mitigate this risk. Policy here is:
+
+<ul>
+<li><strong>Avoid Technical Debt</strong>, and practices are:</li>
+<li><strong>Test-Driven Development</strong> / <strong>Behavior-Driven Development</strong> and <strong>Continuous Refactoring</strong>.</li>
+</ul>
+</li>
+</ol>
+
+
+<h3>Policies</h3>
+
+<ol>
+<li><strong>Team Code Ownership</strong>: every developer is empowered to work on and to refactor any part of the team&rsquo;s code.</li>
+<li><strong>Shared Schedule</strong>: every team member has agreed to a fixed schedule to achieve the benefits of Sustainable Software Development. Teams are, preferably, co-located.</li>
+<li><strong>Avoid Technical Debt</strong>: a pair creates well-crafted code without shortcuts and short-term fixes. Solutions are best and simplest for <strong>current present</strong> without over-engineering. When inherited a legacy code base, a team is actively paying down technical debt while delivering new features.</li>
+</ol>
+
+
+<h3>Removing Knowledge Silos Practices</h3>
+
+<ol>
+<li><strong>Continuous Pair Programming</strong>: two developers are collaborating to write software together as their normal mode of software development. It enables knowledge transfer, reduces knowledge silos and improves code quality. Developers always work in pairs, unless exceptional circumstances arise.</li>
+<li><strong>Overlapping Pair Rotation</strong>: one developer rolls off the track of work and another developer rolls on, keeping the continuity of one developer at each rotation. It results in knowledge continuity. There are three strategies for spreading the knowledge via pair rotation when fighting emerging knowledge silos:
+
+<ul>
+<li>Optimizing for people rotation: developers try to pair with the person they &ldquo;least recently paired with&rdquo;;</li>
+<li>Optimizing for personal preferences: developer pick with whom they will pair at each rotation, based on personal preferences;</li>
+<li>Optimizing for context sharing: a developer who has not been working on the track for the longest track is rotating onto the track. The goal each day is for the developer leaving the track next to empower the developer who will remain on the track.</li>
+</ul>
+</li>
+<li><strong>Knowledge Pollination</strong>:
+
+<ul>
+<li>Daily stand-ups create awareness of who is working on what.</li>
+<li>Using backlog to communicate information and status of stories.</li>
+<li>Osmotic communication: a developer overhears a discussion in other pair and offers their help.</li>
+<li>The pair can interrupt another pair, product manager or designer to gain the needed information.</li>
+<li>Calling out updates to the entire team.</li>
+<li>Interruptions are encouraged - it makes the team more efficient as knowledge pollinates across the team.</li>
+</ul>
+</li>
+</ol>
+
+
+<h3>Caretaking the Code Practices</h3>
+
+<ol>
+<li><strong>Test-Driven Development/Behavior-Driven Development</strong>: developers use BDD (to describe interactions between the user and the system) and TDD (at unit test level). Design emerges from the creation and exploration of the test cases. Teams use a variety of TDD strategies, including:
+
+<ul>
+<li>testing the responsibilities and interactions, or</li>
+<li>contract testing using mocks.</li>
+</ul>
+</li>
+<li><strong>Continuous Refactoring</strong>: developers do refactoring as part of implementing feature stories. Developers are encouraged to improve the code&rsquo;s design, make the code easier to read, understand, and increase the discoverability of a component based on its responsibility. The team prefers <strong>pre-refactoring</strong>, where the developer makes a complicated work to make the current story as simple and as easy as possible.</li>
+<li><strong>Live on Master</strong>: every pair merges their code to master many times a day. Developers may use branches to save &ldquo;spikes&rdquo; and to move work-in-progress between pairing stations when rotating.</li>
+</ol>
+
+
+<h2>Thanks!</h2>
+
+<p>This is where this TL;DR ends. If you are interested in the topic, go ahead and read the paper, it has the following:</p>
+
+<ul>
+<li>Detailed description of the research method, data collection, and analysis;</li>
+<li>Research context and one project case study;</li>
+<li>Detailed description of Principles, Policies, and Practices of Sustainable Software Development; also anti-patterns for each policy and practice;</li>
+<li>Theory evaluation and conclusions.</li>
+</ul>
+
+
+<p>Great thanks to the original authors of the paper, researchers, and all participants!</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -340,162 +467,6 @@ The same thing would happen if we were to extract methods/functions/objects out 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/">Automating Manual Checks or How to Save Time and Get Rapid Feedback</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2016-06-05T12:37:22+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>12:37 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><em>It is tedious, slow and error-prone to test correctness of program manually. This article is an introduction, how to make this process as simple as a hit of one button, very fast and precise.</em></p>
-
-<p>In the last issue <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">about Iterative Divide &amp; Conquer</a> we have found out, how it is tedious to manually check that our program works correctly.</p>
-
-<p>We have concluded, that it is tedious and slow to manually check that the output of our <code>print</code> statements is correct. Additionally, it is really easy to make a mistake and to oversee incorrect lines of the output, especially, when we have tons of them. As well, this applies to any other form of manual testing, including testing the application as an End User (via clicking/tapping for UI applications, via executing tons of commands for CLI applications).</p>
-
-<h2>Mitigating human error-proneness via automation</h2>
-
-<p>Let&rsquo;s get back to our example from the previous issue:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>    <span class="c1"># twenty</span>
-</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span>    <span class="c1"># twenty-seven</span>
-</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>    <span class="c1"># forty-two</span>
-</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">70</span><span class="p">)</span>    <span class="c1"># seventy</span>
-</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">99</span><span class="p">)</span>    <span class="c1"># ninety-nine</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>What if we could ask our computer to run <code>english_integer_in_tens</code> function with provided arguments and check that the output is exactly what we provided in a comment?</p>
-
-<p>Let&rsquo;s try to put it in pseudo-code:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer_in_tens</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="s2">&quot;twenty&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer_in_tens</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="s2">&quot;forty-two&quot;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If we run that code, of course, we will get some sort of compilation error, or runtime error (depending on the programming language), because function <code>equal</code> is not defined yet. Let&rsquo;s define it! Presumably, it should be comparing left argument with right argument and printing something useful on the screen.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">equal</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">left</span> <span class="o">!=</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">print</span><span class="p">(</span><span class="s2">&quot;Failure: &quot;</span> <span class="o">+</span> <span class="nx">left</span> <span class="o">+</span> <span class="s2">&quot; should be equal to &quot;</span> <span class="o">+</span> <span class="nx">right</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">print</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If we run the program after defining this function we will get:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
-</span><span class='line'><span class="nx">OK</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If we were to break the function <code>english_integer_in_tens</code>&rsquo;s implementation, we might get something like:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
-</span><span class='line'><span class="nx">Failure</span><span class="o">:</span> <span class="nx">twenty</span> <span class="nx">should</span> <span class="nx">be</span> <span class="nx">equal</span> <span class="nx">to</span> <span class="nx">forty</span><span class="o">-</span><span class="nx">two</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Making automation nicer</h2>
-
-<p>Having all this output every time we import our small library in any application going to the standard output would be annoying to say the least. How about separating the test automation from the library?</p>
-
-<p>Let&rsquo;s extract all our testing <code>print</code>-s into the separate file, import original file from it and replace all <code>print</code>-s with <code>equal</code>-s:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">import</span> <span class="nx">english_integer</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">function</span> <span class="nx">equal</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_number</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;zero&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_number</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;one&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="p">...</span>
-</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer</span><span class="p">(</span><span class="mi">43</span><span class="p">),</span> <span class="s2">&quot;forty-three&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">97</span><span class="p">),</span> <span class="s2">&quot;minus ninety-seven&quot;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Running only this separate file will produce expected output:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
-</span><span class='line'><span class="nx">OK</span>
-</span><span class='line'><span class="p">...</span>
-</span><span class='line'><span class="nx">OK</span>
-</span><span class='line'><span class="nx">OK</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Importing or running directly our original library will not produce any output. This is much nicer.</p>
-
-<h2>Thank you for reading!</h2>
-
-<p>Today we have made our testing:</p>
-
-<ul>
-<li>easier: hit of one button, or one command on the terminal;</li>
-<li>faster: from minutes of manual verification to milliseconds of automated checks;</li>
-<li>preciser: automated checks can&rsquo;t make a mistake, if we have something except <code>OK</code> - we have an error, if everything is <code>OK</code> - the program is working correctly;</li>
-<li>better feedback cycle: we can see if our change is correct in the matter of 1-2 seconds after making this change.</li>
-</ul>
-
-
-<p>Next time we will build a fully-functional mini testing framework. Stay tuned!</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/2">&larr; Older</a>
@@ -509,6 +480,10 @@ The same thing would happen if we were to extract methods/functions/objects out 
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper/">TL;DR on Sustainable Software Development Paper</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/">Why I Don&#8217;t Use Mocking Frameworks Anymore</a>
@@ -536,10 +511,6 @@ The same thing would happen if we were to extract methods/functions/objects out 
     
       <li class="post">
         <a href="/blog/2016/02/05/why-are-you-slow/">Why Are You Slow?</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/02/04/tdd-number-3-kind-sort/">TDD #3: Kind Sort</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-06-28T01:36:47+02:00</updated>
+  <updated>2016-06-28T03:56:28+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,113 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TL;DR on Sustainable Software Development Paper]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper/"/>
+    <updated>2016-06-28T02:22:07+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper</id>
+    <content type="html"><![CDATA[<p>This is a TL;DR of a white paper <a href="https://www.researchgate.net/publication/304014117_Sustainable_Software_Development_through_Overlapping_Pair_Rotation">Sustainable Software Development through Overlapping Pair Rotation</a> that is created by Todd Sedano, Paul Ralph, and Cécile Péraire.</p>
+
+<p><em>NOTE: this TL;DR includes a lot of compressed awesome information.</em></p>
+
+<h2>Theory of Sustainable Software Development</h2>
+
+<p>The paper introduces us to principles, policies, and practices, that are the results of applying of <a href="https://en.wikipedia.org/wiki/Grounded_theory#Constructivist_grounded_theory">Constructivist Grounded Theory</a> research method to the five projects at Pivotal Labs.</p>
+
+<h3>Principles</h3>
+
+<ol>
+<li>By <strong>Engendering Positive Attitudes Toward Disruption</strong> teams can transform a challenge of team disruption into a business opportunity:
+
+<ul>
+<li>team members rolling off from the project are replaced with new members,</li>
+<li>new members are viewed as a source of fresh perspective and as an opportunity,</li>
+<li>new members often questioned team&rsquo;s assumptions (challenging &ldquo;cargo culting&rdquo;).</li>
+</ul>
+</li>
+<li>Policies &amp; practices that <strong>Encourage Knowledge Sharing and Continuity</strong> mitigate the risk of significant knowledge loss for the project when the team is disrupted. Policies are:
+
+<ul>
+<li><strong>Team Code Ownership</strong>, and <strong>Shared Team Schedule</strong>. While practices are:</li>
+<li><strong>Continuous Pair Programming</strong>, <strong>Overlapping Pair Rotation</strong> and <strong>Knowledge Pollination</strong>.</li>
+</ul>
+</li>
+<li>Sustainable development is not possible if the team is incurring the technical debt. <strong>Caring about Code Quality</strong> is a way to mitigate this risk. Policy here is:
+
+<ul>
+<li><strong>Avoid Technical Debt</strong>, and practices are:</li>
+<li><strong>Test-Driven Development</strong> / <strong>Behavior-Driven Development</strong> and <strong>Continuous Refactoring</strong>.</li>
+</ul>
+</li>
+</ol>
+
+
+<h3>Policies</h3>
+
+<ol>
+<li><strong>Team Code Ownership</strong>: every developer is empowered to work on and to refactor any part of the team&rsquo;s code.</li>
+<li><strong>Shared Schedule</strong>: every team member has agreed to a fixed schedule to achieve the benefits of Sustainable Software Development. Teams are, preferably, co-located.</li>
+<li><strong>Avoid Technical Debt</strong>: a pair creates well-crafted code without shortcuts and short-term fixes. Solutions are best and simplest for <strong>current present</strong> without over-engineering. When inherited a legacy code base, a team is actively paying down technical debt while delivering new features.</li>
+</ol>
+
+
+<h3>Removing Knowledge Silos Practices</h3>
+
+<ol>
+<li><strong>Continuous Pair Programming</strong>: two developers are collaborating to write software together as their normal mode of software development. It enables knowledge transfer, reduces knowledge silos and improves code quality. Developers always work in pairs, unless exceptional circumstances arise.</li>
+<li><strong>Overlapping Pair Rotation</strong>: one developer rolls off the track of work and another developer rolls on, keeping the continuity of one developer at each rotation. It results in knowledge continuity. There are three strategies for spreading the knowledge via pair rotation when fighting emerging knowledge silos:
+
+<ul>
+<li>Optimizing for people rotation: developers try to pair with the person they &ldquo;least recently paired with&rdquo;;</li>
+<li>Optimizing for personal preferences: developer pick with whom they will pair at each rotation, based on personal preferences;</li>
+<li>Optimizing for context sharing: a developer who has not been working on the track for the longest track is rotating onto the track. The goal each day is for the developer leaving the track next to empower the developer who will remain on the track.</li>
+</ul>
+</li>
+<li><strong>Knowledge Pollination</strong>:
+
+<ul>
+<li>Daily stand-ups create awareness of who is working on what.</li>
+<li>Using backlog to communicate information and status of stories.</li>
+<li>Osmotic communication: a developer overhears a discussion in other pair and offers their help.</li>
+<li>The pair can interrupt another pair, product manager or designer to gain the needed information.</li>
+<li>Calling out updates to the entire team.</li>
+<li>Interruptions are encouraged - it makes the team more efficient as knowledge pollinates across the team.</li>
+</ul>
+</li>
+</ol>
+
+
+<h3>Caretaking the Code Practices</h3>
+
+<ol>
+<li><strong>Test-Driven Development/Behavior-Driven Development</strong>: developers use BDD (to describe interactions between the user and the system) and TDD (at unit test level). Design emerges from the creation and exploration of the test cases. Teams use a variety of TDD strategies, including:
+
+<ul>
+<li>testing the responsibilities and interactions, or</li>
+<li>contract testing using mocks.</li>
+</ul>
+</li>
+<li><strong>Continuous Refactoring</strong>: developers do refactoring as part of implementing feature stories. Developers are encouraged to improve the code&rsquo;s design, make the code easier to read, understand, and increase the discoverability of a component based on its responsibility. The team prefers <strong>pre-refactoring</strong>, where the developer makes a complicated work to make the current story as simple and as easy as possible.</li>
+<li><strong>Live on Master</strong>: every pair merges their code to master many times a day. Developers may use branches to save &ldquo;spikes&rdquo; and to move work-in-progress between pairing stations when rotating.</li>
+</ol>
+
+
+<h2>Thanks!</h2>
+
+<p>This is where this TL;DR ends. If you are interested in the topic, go ahead and read the paper, it has the following:</p>
+
+<ul>
+<li>Detailed description of the research method, data collection, and analysis;</li>
+<li>Research context and one project case study;</li>
+<li>Detailed description of Principles, Policies, and Practices of Sustainable Software Development; also anti-patterns for each policy and practice;</li>
+<li>Theory evaluation and conclusions.</li>
+</ul>
+
+
+<p>Great thanks to the original authors of the paper, researchers, and all participants!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Why I Don't Use Mocking Frameworks Anymore]]></title>
@@ -3092,208 +3199,6 @@ image.</p>
 
 
 <p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues with using <code>contracts.ruby</code>, you can always create an <a href="https://github.com/egonSchiele/contracts.ruby/issues">issue on github</a> and Pull Requests are welcome.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Dismantling Effective Go Article]]></title>
-    <link href="http://www.tddfellow.com/blog/2015/01/30/dismantling-effective-go-article/"/>
-    <updated>2015-01-30T22:39:11+01:00</updated>
-    <id>http://www.tddfellow.com/blog/2015/01/30/dismantling-effective-go-article</id>
-    <content type="html"><![CDATA[<p>Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome.</p>
-
-<p>Article itself: <a href="https://golang.org/doc/effective_go.html">https://golang.org/doc/effective_go.html</a></p>
-
-<p>And here is a list of my thoughts.</p>
-
-<h2>Formatting</h2>
-
-<p>I generally like this approach, it is nice to have such feature in your language tools available right there and with already existing integrations to popular editors.</p>
-
-<p>Except one thing:</p>
-
-<blockquote><p>Parentheses</p>
-
-<p>Go needs fewer parentheses than C and Java: control structures (if, for, switch) do not have parentheses in their syntax. Also, the operator precedence hierarchy is shorter and clearer, so</p>
-
-<pre><code>x&lt;&lt;8 + y&lt;&lt;16
-</code></pre></blockquote>
-
-<p>So we kill parentheses and replace them with whitespace. I am not entirely sure it is better. How will this work then?</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">x</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span> <span class="o">+</span> <span class="nx">y</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And what about this?</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">x</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span>    <span class="o">+</span>    <span class="nx">y</span>  <span class="o">&lt;&lt;</span>  <span class="mi">16</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Probably nobody will write it like that, but one space miss, and lots of minutes lost in debugging.</p>
-
-<h2>Semicolons</h2>
-
-<p>Oh, lexer inserting semicolons where it pleases? What can go wrong. Reminds me about javascript and its problems when you omit semicolons.</p>
-
-<p>And this example looked strange to me:</p>
-
-<blockquote><p>One consequence of the semicolon insertion rules is that you cannot put the opening brace of a control structure (if, for, switch, or select) on the next line. If you do, a semicolon will be inserted before the brace, which <strong>could cause unwanted effects</strong>. Write them like this</p>
-
-<pre><code> if i &lt; f() {
-     g()
- }
-</code></pre>
-
-<p>not like this</p>
-
-<pre><code> if i &lt; f()  // wrong!
- {           // wrong!
-      g()
- }
-</code></pre></blockquote>
-
-<p>First I thought that it will accept this input, put a semicolon after if, compile successfully and always execute statement inside of block, especially because it said &ldquo;could cause unwanted effects&rdquo;. But turned out this code results in compilation error - so no problem here, but probably this should have been clarified in the article.</p>
-
-<h2>Control Structure</h2>
-
-<p>Mandatory block - looks good to me.</p>
-
-<p>But the last example worries me:</p>
-
-<blockquote><p>This is an example of a common situation where code must guard against a sequence of error conditions. The code reads well if the successful flow of control runs down the page, eliminating error cases as they arise. Since error cases tend to end in return statements, the resulting code needs no else statements.</p>
-
-<pre><code>f, err := os.Open(name)
-if err != nil {
-     return err
-}
-d, err := f.Stat()
-if err != nil {
-     f.Close()
-     return err
-}
-codeUsing(f, d)
-</code></pre></blockquote>
-
-<p>That code is definitely not narrative, I will put some comments with kind of operation that is done:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>   <span class="c1">// get input</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>           <span class="c1">// check errors, guard</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">err</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="nx">d</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>        <span class="c1">// get additional input</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>           <span class="c1">// check for errors, again, guard</span>
-</span><span class='line'>    <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>             <span class="c1">// cleanups</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">err</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>           <span class="c1">// do something</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This way it is hard to understand and reason about.</p>
-
-<p>Why not just:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>         <span class="c1">// get input</span>
-</span><span class='line'><span class="nx">d</span> <span class="p">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>              <span class="c1">// get input</span>
-</span><span class='line'><span class="nx">result</span> <span class="p">=</span> <span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>  <span class="c1">// do something</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">IsErorr</span><span class="p">()</span> <span class="p">{</span>     <span class="c1">// handle errors</span>
-</span><span class='line'>    <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>             <span class="c1">// cleanup</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Of course <code>f</code>, <code>d</code> and <code>result</code> are just <code>Result</code>/<code>Either</code> monads, they can be either in normal or faulty state. Whenever you try to do anything on <code>Result</code> in faulty state, it will just return itself. But <code>Result</code> in normal state will proxy call to its contents and wrap it in another <code>Result</code> monad (normal or faulty - depends on if call was successful or not). Probably I am too critical about that, because here I used some patterns that are not part of the language itself, but yeah, I can&rsquo;t look at code that mixes guards and actions.</p>
-
-<p>Probably, somebody out there in go-lang world can tell me, is it common to use patterns like <code>Maybe</code>, <code>Result</code>, <code>NullObject</code> and so on in go-lang? Or everybody just go with simple code without any magic behind the scenes, and just do it like in the article&rsquo;s example? Feel free to ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<h2>For</h2>
-
-<p>Lets move on..</p>
-
-<blockquote><p>For strings, the range does more work for you, breaking out individual Unicode code points by parsing the UTF-8. Erroneous encodings consume one byte and produce the replacement rune U+FFFD. (The name (with associated builtin type) rune is Go terminology for a single Unicode code point. See the language specification for details.)</p></blockquote>
-
-<p>I really like that a term for this &ldquo;unicode minimal entity&rdquo; was invented. And after some while the name actually makes a lot of sense. And it sounds good.</p>
-
-<h2>Switch</h2>
-
-<p>That surprised me. Feels like assembler:</p>
-
-<blockquote><p>Although they are not nearly as common in Go as some other C-like languages, break statements can be used to terminate a switch early. Sometimes, though, it&rsquo;s necessary to break out of a surrounding loop, not the switch, and in Go that can be accomplished by putting a label on the loop and &ldquo;breaking&rdquo; to that label. This example shows both uses.</p>
-
-<pre><code>Loop:
-    for n := 0; n &lt; len(src); n += size {
-        switch {
-            case src[n] &lt; sizeOne:
-                if validateOnly {
-                    break
-                }
-                size = 1
-                update(src[n])
-
-            case src[n] &lt; sizeTwo:
-                if n+1 &gt;= len(src) {
-                    err = errShortInput
-                    break Loop
-                }
-                if validateOnly {
-                    break
-                }
-                size = 2
-                update(src[n] + src[n+1]&lt;&lt;shift)
-            }
-        }
-</code></pre></blockquote>
-
-<p>Not exactly the original assembler label, one only use it to mark (aka tag) the loop itself and use it to break out of it. Interesting concept, but something clicks in my head when I look at this.</p>
-
-<h2>Type switch</h2>
-
-<p>Good one, &ldquo;Switching on Type&rdquo;, (usually) a code smell, builtin into language. But still it has its own uses when used carefully.</p>
-
-<h2>Multiple return values</h2>
-
-<p>Why not tuples? If you just introduce tuples and destructuring, then you don&rsquo;t need multiple return values, only one return value - tuple itself.</p>
-
-<h2>Defer</h2>
-
-<p>This is a nice one. Allows to simplify previous example with files even more:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>         <span class="c1">// get input</span>
-</span><span class='line'><span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>           <span class="c1">// deferred cleanup right after acquiring of `f`</span>
-</span><span class='line'><span class="nx">d</span> <span class="p">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>              <span class="c1">// get input</span>
-</span><span class='line'><span class="nx">result</span> <span class="p">=</span> <span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>  <span class="c1">// do something</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Particularly interesting example with trace/untrace follows in the article.</p>
-
-<hr />
-
-<p>To be continued&hellip;</p>
 ]]></content>
   </entry>
   
