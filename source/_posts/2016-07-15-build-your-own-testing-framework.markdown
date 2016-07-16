@@ -19,7 +19,7 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 
 For practical reasons, today we are going to use concrete programming language instead of pseudo-code - javascript. Except for small details, that we will point out, the techniques shown here are language-agnostic.
 
-This article is only first one of the series "Build Your Own Testing Framework", so make sure to stick around for next parts!
+This article is only first one of the series "Build Your Own Testing Framework" == so make sure to stick around for next parts!
 
 Shall we begin?
 
@@ -43,7 +43,7 @@ I personally, would go with xUnit-like design, since it is relatively simple. Gi
 
 function FizzBuzzKataTest() {
     this.testNormalNumberIsReturned = function() {
-        this.assertTrue("1", fizzBuzz(1));
+        this.assertTrue("1" == fizzBuzz(1));
     };
 }
 ```
@@ -71,13 +71,9 @@ We will get the expected error:
 
 ```
 /path/to/project/test/FizzBuzzKataTest.js:3
-        this.assertTrue("1", fizzBuzz(1));
-                             ^
-                             /test/FizzBuzzKataTest.js:3
-                                     this.assertTrue("1", fizzBuzz(1));
-                                          ^
+        this.assertTrue("1" == fizzBuzz(1));
+                               ^
 
-                             TypeError: this.assertTrue is not a function
 ReferenceError: fizzBuzz is not defined
 ```
 
@@ -95,10 +91,67 @@ If we run our test again, we will get the following error:
 
 ```
 /path/to/project/test/FizzBuzzKataTest.js:3
-        this.assertTrue("1", fizzBuzz(1));
+        this.assertTrue("1" == fizzBuzz(1));
              ^
 
 TypeError: this.assertTrue is not a function
 ```
 
 Clearly, to fix it we need to define `assertTrue` on `FizzBuzzKataTest` object. Obviously, we do not want our user to define all their assertion for every test suite. This means, that we want to define it on `FizzBuzzKataTest` object outside of the definition of `FizzBuzzKataTest`.
+
+There are two ways to go about it:
+
+- inheritance: make `FizzBuzzKataTest` inherit from some other object function `assertTrue`, or
+- composition: make `FizzBuzzKataTest` accept special object with function `assertTrue` defined on it.
+
+I would like to go with composition method, since it gives us more flexibility in the long run:
+
+```javascript
+function FizzBuzzKataTest(t) { ... }
+```
+
+and the usage of `assertTrue` has to change appropriately:
+
+```javascript
+    t.assertTrue("1" == fizzBuzz(1));
+```
+
+and `t` has to be created and passed in correctly:
+
+```javascript
+function FizzBuzzKataTest(t) { ... }
+
+function fizzBuzz(number) {}
+
+var assertions = {
+    assertTrue: function(condition) {}
+};
+
+var test = new FizzBuzzKataTest(assertions);
+```
+
+If we run the test suite again, we will not get any failure anymore. But we were expecting `assertTrue` to fail, so let's make it fail:
+
+```javascript
+    assertTrue: function(condition) {
+        throw new Error("Expected to be true, but was false");
+    }
+```
+
+When we run the test suite, we get:
+
+```
+/path/to/project/test/FizzBuzzKataTest.js:11
+        throw new Error("Expected to be true, but got false");
+        ^
+
+Error: Expected to be true, but got false
+```
+
+Now, let's customize the error message a bit:
+
+```javascript
+    this.testNormalNumberIsReturned = function() {
+        t.assertTrue("1" == fizzBuzz(1), "Expected to equal 1, but got: " + fizzBuzz(1));
+    }
+```
