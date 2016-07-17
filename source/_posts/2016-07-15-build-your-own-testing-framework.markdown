@@ -5,17 +5,18 @@ date: 2016-07-15 08:00:06 +0200
 comments: true
 categories:
 - TDD
+- test-driven-development
 - testing
 - xUnit
-- build-testing-framework
+- build-your-own-testing-framework
 - javascript
 ---
 
 Today we are going to test-drive the testing framework without any external testing framework.
 This will be done through test-driving a simple kata (FizzBuzzKata). For example:
 
-- every time we expect test to fail and it doesn't, this is a failing test for our testing framework, that we will be fixing,
-- every time we expect test to pass and it doesn't, this is another failing test for our testing framework, that we will be fixing.
+- every time we expect a test to fail and it doesn't, this is a failing test for our testing framework, that we will be fixing,
+- every time we expect a test to pass and it doesn't, this is another failing test for our testing framework, that we will be fixing.
 
 For practical reasons, today we are going to use concrete programming language instead of pseudo-code - javascript. Except for small details, that we will point out, the techniques shown here are language-agnostic.
 
@@ -27,16 +28,16 @@ Shall we begin?
 
 Given the number,
 
-- return `Fizz` when number is divisible by 3,
-- return `Buzz` when number is divisible by 5,
-- return `FizzBuzz` when number is divisible by 3 and 5,
+- return `Fizz` when the number is divisible by 3,
+- return `Buzz` when the number is divisible by 5,
+- return `FizzBuzz` when the number is divisible by 3 and 5,
 - return string representation of number otherwise.
 
 ## Writing your first test
 
 How do we write our first test, when we don't have a testing framework and we want to create one? - It seems, that we have to design how the test should like in our brand new testing framework.
 
-I personally, would go with xUnit-like design, since it is relatively simple. Given this, we might write our first test and it will look something like that:
+I personally, would go with the xUnit-like design, since it is relatively simple. Given this, we might write our first test and it will look something like that:
 
 ```javascript
 // test/FizzBuzzKataTest.js
@@ -48,7 +49,7 @@ function FizzBuzzKataTest() {
 }
 ```
 
-This test should fail, because function `fizzBuzz` is not defined, but it doesn't fail, since function `testNormalNumberIsReturned` is never called. In fact, object with `FizzBuzzKataTest` is never being created.
+This test should fail, because function `fizzBuzz` is not defined, but it doesn't fail, since function `testNormalNumberIsReturned` is never called. In fact, the object with `FizzBuzzKataTest` is never being created.
 
 Easiest way to solve that:
 
@@ -102,9 +103,9 @@ Clearly, to fix it we need to define `assertTrue` on `FizzBuzzKataTest` object. 
 There are two ways to go about it:
 
 - inheritance: make `FizzBuzzKataTest` inherit from some other object function `assertTrue`, or
-- composition: make `FizzBuzzKataTest` accept special object with function `assertTrue` defined on it.
+- composition: make `FizzBuzzKataTest` accept a special object with function `assertTrue` defined on it.
 
-I would like to go with composition method, since it gives us more flexibility in the long run:
+I would like to go with composition method since it gives us more flexibility in the long run:
 
 ```javascript
 function FizzBuzzKataTest(t) { ... }
@@ -200,9 +201,9 @@ Oh, it should have passed the test. I know why it didn't: we throw this error un
     }
 ```
 
-If we run this code, it does not fail. That was our first green state - it took as awhile to get here. Reason for this is that we are not only test-driving `FizzBuzzKata`, additionally, we are writing a feature test for non-existing testing framework. Now that we are green, we should think about refactoring, i.e.: making the structure of our code right.
+If we run this code, it does not fail. That was our first green state - it took as awhile to get here. The reason for this is that we are not only test-driving `FizzBuzzKata`, additionally, we are writing a feature test for a non-existing testing framework. Now that we are green, we should think about refactoring, i.e.: making the structure of our code right.
 
-Obviously, we should move our testing framework code outside of the test suite file. Probably, somewhere in `src/TestingFramework.js`. For that, we need to first parametrize `FizzBuzzKataTest` and extract it a function to run a test suite.
+Obviously, we should move our testing framework code outside of the test suite file. Probably, somewhere in `src/TestingFramework.js`. For that, we need to first parametrize `FizzBuzzKataTest` and extract the function to run the test suite.
 
 Parametrize:
 
@@ -305,9 +306,9 @@ function fizzBuzz(number) { ... }
 runTestSuite(function (t) { ... });
 ```
 
-And if we run our test suite, it still works. Just to check, that we are still good, let's repeat our Mutation from previous step. It should still fail as expected. And it does. Undo the mutation and the test is still passing. Great.
+And if we run our test suite, it still works. Just to check, that we are still good, let's repeat our Mutation from the previous step. It should still fail as expected. And it does. Undo the mutation and the test is still passing. Great.
 
-I think we are done with Refactoring step for now, let's get back to writing another failing test.
+I think we are done with Refactoring step, for now, let's get back to writing another failing test.
 
 ## Writing the second test
 
@@ -340,7 +341,7 @@ function runTestSuite(testSuiteConstructor) {
 }
 ```
 
-*REMARK: this code is Javascript specific. Other programming languages will have their own way of iterating over the function/method list and calling a function by its name. Usually it is some sort of reflection for compiled languages and meta-programming features for interpreted languages.*
+*REMARK: this code is Javascript specific. Other programming languages will have their own way of iterating over the function/method list and calling a function by its name. Usually, it is some sort of reflection for compiled languages and meta-programming features for interpreted languages.*
 
 If we run tests now, we get the expected failure:
 
@@ -365,7 +366,7 @@ Error: Expected to equal 1, but got: 2
 This is great for couple of reasons:
 
 - It validates, that our change to how `test*` functions are discovered is correct, and
-- We have to have a bit more smarter implementation to pass both tests now:
+- We have to have a bit smarter implementation to pass both tests now:
 
 ```javascript
 function fizzBuzz(number) {
@@ -476,7 +477,7 @@ function fizzBuzz(number) {
 
 This technique is called Triangulation:
 
-- first test is to force us to write some `if` statement with correct body,
+- the first test is to force us to write some `if` statement with a correct body,
 - second is to force us to make the condition right.
 - If we had an `else` clause, we would have had another test to make that part right.
 
@@ -546,7 +547,7 @@ function fizzBuzz(number) {
 }
 ```
 
-I think we are done with the implementation. `FizzBuzzKata` has an extended set of requirements, but they are out of scope of this article. These requirements force us to introduce Strategy pattern and stop using this unmaintainable chain of `if` statements.
+I think we are done with the implementation. `FizzBuzzKata` has an extended set of requirements, but they are out of the scope of this article. These requirements force us to introduce Strategy pattern and stop using this unmaintainable chain of `if` statements.
 
 Refactoring this code to Strategy pattern is left as an exercise for the reader.
 
