@@ -9,7 +9,8 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="This is a TL;DR of a white paper Sustainable Software Development through Overlapping Pair Rotation that is created by Todd Sedano, Paul Ralph, and &hellip;">
+  <meta name="description" content="Today we are going to test-drive the testing framework without any external testing framework.
+This will be done through test-driving a simple kata ( &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +69,875 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/07/15/build-your-own-testing-framework/">Build Your Own Testing Framework</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-07-15T08:00:06+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>8:00 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Today we are going to test-drive the testing framework without any external testing framework.
+This will be done through test-driving a simple kata (FizzBuzzKata). For example:</p>
+
+<ul>
+<li>every time we expect a test to fail and it doesn&rsquo;t, this is a failing test for our testing framework, that we will be fixing,</li>
+<li>every time we expect a test to pass and it doesn&rsquo;t, this is another failing test for our testing framework, that we will be fixing.</li>
+</ul>
+
+
+<p>For practical reasons, today we are going to use concrete programming language instead of pseudo-code - javascript. Except for small details, that we will point out, the techniques shown here are language-agnostic.</p>
+
+<p>This article is only first one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts!</p>
+
+<p>Shall we begin?</p>
+
+<h2>FizzBuzzKata</h2>
+
+<p>Given the number,</p>
+
+<ul>
+<li>return <code>Fizz</code> when the number is divisible by 3,</li>
+<li>return <code>Buzz</code> when the number is divisible by 5,</li>
+<li>return <code>FizzBuzz</code> when the number is divisible by 3 and 5,</li>
+<li>return string representation of number otherwise.</li>
+</ul>
+
+
+<h2>Writing your first test</h2>
+
+<p>How do we write our first test, when we don&rsquo;t have a testing framework and we want to create one? - It seems, that we have to design how the test should like in our brand new testing framework.</p>
+
+<p>I personally, would go with the xUnit-like design, since it is relatively simple. Given this, we might write our first test and it will look something like that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test/FizzBuzzKataTest.js</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">FizzBuzzKataTest</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">testNormalNumberIsReturned</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span><span class="s2">&quot;1&quot;</span> <span class="o">===</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This test should fail, because function <code>fizzBuzz</code> is not defined, but it doesn&rsquo;t fail, since function <code>testNormalNumberIsReturned</code> is never called. In fact, the object with <code>FizzBuzzKataTest</code> is never being created.</p>
+
+<p>Easiest way to solve that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test/FizzBuzzKataTest.js</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">FizzBuzzKataTest</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">test</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FizzBuzzKataTest</span><span class="p">();</span>
+</span><span class='line'><span class="nx">test</span><span class="p">.</span><span class="nx">testNormalNumberIsReturned</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run this code with <code>node</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>node <span class="nb">test</span>/FizzBuzzKataTest.js
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We will get the expected error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>/path/to/project/test/FizzBuzzKataTest.js:3
+</span><span class='line'>        this.assertTrue<span class="o">(</span><span class="s2">&quot;1&quot;</span> <span class="o">===</span> fizzBuzz<span class="o">(</span>1<span class="o">))</span><span class="p">;</span>
+</span><span class='line'>                               ^
+</span><span class='line'>
+</span><span class='line'>ReferenceError: fizzBuzz is not defined
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So, let&rsquo;s define this function:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test/FizzBuzzKataTest.js</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">FizzBuzzKataTest</span><span class="p">()</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">()</span> <span class="p">{}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run our test again, we will get the following error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/path/to/project/test/FizzBuzzKataTest.js:3</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span><span class="s2">&quot;1&quot;</span> <span class="o">===</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span><span class='line'>             <span class="o">^</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">TypeError</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">assertTrue</span> <span class="nx">is</span> <span class="nx">not</span> <span class="nx">a</span> <span class="kd">function</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Clearly, to fix it we need to define <code>assertTrue</code> on <code>FizzBuzzKataTest</code> object. Obviously, we do not want our user to define all their assertion for every test suite. This means, that we want to define it on <code>FizzBuzzKataTest</code> object outside of the definition of <code>FizzBuzzKataTest</code>.</p>
+
+<p>There are two ways to go about it:</p>
+
+<ul>
+<li>inheritance: make <code>FizzBuzzKataTest</code> inherit from some other object function <code>assertTrue</code>, or</li>
+<li>composition: make <code>FizzBuzzKataTest</code> accept a special object with function <code>assertTrue</code> defined on it.</li>
+</ul>
+
+
+<p>I would like to go with composition method since it gives us more flexibility in the long run:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">FizzBuzzKataTest</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and the usage of <code>assertTrue</code> has to change appropriately:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">t</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span><span class="s2">&quot;1&quot;</span> <span class="o">===</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and <code>t</code> has to be created and passed in correctly:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">FizzBuzzKataTest</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">assertions</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">assertTrue</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">condition</span><span class="p">)</span> <span class="p">{}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">test</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FizzBuzzKataTest</span><span class="p">(</span><span class="nx">assertions</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run the test suite again, we will not get any failure anymore. But we were expecting <code>assertTrue</code> to fail, so let&rsquo;s make it fail:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">assertTrue</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">condition</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Expected to be true, but was false&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When we run the test suite, we get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/path/to/project/test/FizzBuzzKataTest.js:11</span>
+</span><span class='line'>        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;Expected to be true, but got false&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="o">^</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">Error</span><span class="o">:</span> <span class="nx">Expected</span> <span class="nx">to</span> <span class="nx">be</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">got</span> <span class="kc">false</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, let&rsquo;s customize the error message a bit:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testNormalNumberIsReturned</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span><span class="s2">&quot;1&quot;</span> <span class="o">===</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;Expected to equal &quot;</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span> <span class="o">+</span> <span class="s2">&quot;, but got: &quot;</span> <span class="o">+</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">assertTrue</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">condition</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When running this, we are getting the expected error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/path/to/project/test/FizzBuzzKataTest.js:11</span>
+</span><span class='line'>        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="o">^</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">Error</span><span class="o">:</span> <span class="nx">Expected</span> <span class="nx">to</span> <span class="nx">equal</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">got</span><span class="o">:</span> <span class="kc">undefined</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This looks better now. Let&rsquo;s fix the error now by implementing the simplest thing that could work:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;1&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And as we run our test suite we get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/path/to/project/test/FizzBuzzKataTest.js:13</span>
+</span><span class='line'>        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="o">^</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">Error</span><span class="o">:</span> <span class="nx">Expected</span> <span class="nx">to</span> <span class="nx">equal</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">got</span><span class="o">:</span> <span class="mi">1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Oh, it should have passed the test. I know why it didn&rsquo;t: we throw this error unconditionally, let&rsquo;s add an appropriate <code>if</code> statement to <code>assertTrue</code> function:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">assertTrue</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">condition</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">condition</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(...);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run this code, it does not fail. That was our first green state - it took as awhile to get here. The reason for this is that we are not only test-driving <code>FizzBuzzKata</code>, additionally, we are writing a feature test for a non-existing testing framework. Now that we are green, we should think about refactoring, i.e.: making the structure of our code right.</p>
+
+<p>Obviously, we should move our testing framework code outside of the test suite file. Probably, somewhere in <code>src/TestingFramework.js</code>. For that, we need to first parametrize <code>FizzBuzzKataTest</code> and extract the function to run the test suite.</p>
+
+<p>Parametrize:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">testSuiteConstructor</span> <span class="o">=</span> <span class="nx">FizzBuzzKataTest</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">testSuite</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">testSuiteConstructor</span><span class="p">(</span><span class="nx">assertions</span><span class="p">);</span>
+</span><span class='line'><span class="nx">testSuite</span><span class="p">.</span><span class="nx">testNormalNumberIsReturned</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and extract method:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">runTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">testSuite</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">testSuiteConstructor</span><span class="p">(</span><span class="nx">assertions</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">testSuite</span><span class="p">.</span><span class="nx">testNormalNumberIsReturned</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">testSuiteConstructor</span> <span class="o">=</span> <span class="nx">FizzBuzzKataTest</span><span class="p">;</span>
+</span><span class='line'><span class="nx">runTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and inline the variable <code>testSuiteConstructor</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">runTestSuite</span><span class="p">(</span><span class="nx">FizzBuzzKataTest</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now it is time to move testing code to <code>src/TestingFramework.js</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/TestingFramework.js</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">assertions</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">assertTrue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">condition</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">condition</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">runTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">testSuite</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">testSuiteConstructor</span><span class="p">(</span><span class="nx">assertions</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">testSuite</span><span class="p">.</span><span class="nx">testNormalNumberIsReturned</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And to be able to require <code>runTestSuite</code> function:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/TestingFramework.js</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">assertions</span> <span class="o">=</span> <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">runTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">runTestSuite</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And, finally, let&rsquo;s use that from our test suite:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test/FizzBuzzKataTest.js</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">runTestSuite</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../src/TestingFramework&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">FizzBuzzKataTest</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">runTestSuite</span><span class="p">(</span><span class="nx">FizzBuzzKataTest</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run the test suite again, everything should pass. Somehow, I don&rsquo;t feel comfortable now, let&rsquo;s try to break the test suite and see if it will fail as expected:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;2&quot;</span><span class="p">;</span>  <span class="c1">// &lt;-- &quot;1&quot; was changed to &quot;2&quot; here</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And run tests:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/path/to/project/src/TestingFramework.js:4</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="o">^</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">Error</span><span class="o">:</span> <span class="nx">Expected</span> <span class="nx">to</span> <span class="nx">equal</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">got</span><span class="o">:</span> <span class="mi">2</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yes, it still works as expected. We have just introduced a Mutation to our code, to see if it is still tested properly. Let&rsquo;s undo the Mutation and see the test still pass. And it does.</p>
+
+<p>If you look closely now, it should be possible to inline <code>FizzBuzzKataTest</code> definition as an argument of <code>runTestSuite</code> call:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">runTestSuite</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(...);</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And if we run our test suite, it still works. Just to check, that we are still good, let&rsquo;s repeat our Mutation from the previous step. It should still fail as expected. And it does. Undo the mutation and the test is still passing. Great.</p>
+
+<p>I think we are done with Refactoring step, for now, let&rsquo;s get back to writing another failing test.</p>
+
+<h2>Writing the second test</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAnotherNormalNumberIsReturned</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span><span class="s2">&quot;2&quot;</span> <span class="o">===</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;Expected to equal &quot;</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span> <span class="o">+</span> <span class="s2">&quot;, but got: &quot;</span> <span class="o">+</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run these tests, they do not fail. This is strange, let&rsquo;s look at <code>runTestSuite</code> function again:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">runTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">testSuite</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">testSuiteConstructor</span><span class="p">(</span><span class="nx">assertions</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">testSuite</span><span class="p">.</span><span class="nx">testNormalNumberIsReturned</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Great, it just runs one specific function, we should probably run all functions starting from <code>test</code> instead:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">runTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">testSuite</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">testSuiteConstructor</span><span class="p">(</span><span class="nx">assertions</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">testName</span> <span class="k">in</span> <span class="nx">testSuite</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">testName</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/^test/</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">testSuite</span><span class="p">[</span><span class="nx">testName</span><span class="p">]();</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>REMARK: this code is Javascript specific. Other programming languages will have their own way of iterating over the function/method list and calling a function by its name. Usually, it is some sort of reflection for compiled languages and meta-programming features for interpreted languages.</em></p>
+
+<p>If we run tests now, we get the expected failure:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/path/to/project/src/TestingFramework.js:4</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="o">^</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">Error</span><span class="o">:</span> <span class="nx">Expected</span> <span class="nx">to</span> <span class="nx">equal</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">got</span><span class="o">:</span> <span class="mi">1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we try to change <code>return "1"</code> to <code>return "2"</code>, of course this test will pass, but the other will fail:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/path/to/project/src/TestingFramework.js:4</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="o">^</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">Error</span><span class="o">:</span> <span class="nx">Expected</span> <span class="nx">to</span> <span class="nx">equal</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">got</span><span class="o">:</span> <span class="mi">2</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is great for couple of reasons:</p>
+
+<ul>
+<li>It validates, that our change to how <code>test*</code> functions are discovered is correct, and</li>
+<li>We have to have a bit smarter implementation to pass both tests now:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And if we run the tests, they pass. Now, that we are in Green state, we should start refactoring. Have you noticed the duplication already?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">t</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span><span class="s2">&quot;1&quot;</span> <span class="o">===</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;Expected to equal &quot;</span> <span class="o">+</span> <span class="s2">&quot;1&quot;</span> <span class="o">+</span> <span class="s2">&quot;, but got: &quot;</span> <span class="o">+</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// and:</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">t</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span><span class="s2">&quot;2&quot;</span> <span class="o">===</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;Expected to equal &quot;</span> <span class="o">+</span> <span class="s2">&quot;2&quot;</span> <span class="o">+</span> <span class="s2">&quot;, but got: &quot;</span> <span class="o">+</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Extracting <code>"1"</code> and <code>"2"</code> as variable <code>expected</code>, and <code>fizzBuzz(1)</code> and <code>fizzBuzz(2)</code> as variable <code>actual</code>, makes these 2 lines identical:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testNormalNumberIsReturned</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">actual</span> <span class="o">=</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span><span class="nx">expected</span> <span class="o">===</span> <span class="nx">actual</span><span class="p">,</span> <span class="s2">&quot;Expected to equal &quot;</span> <span class="o">+</span> <span class="nx">expected</span> <span class="o">+</span> <span class="s2">&quot;, but got: &quot;</span> <span class="o">+</span> <span class="nx">actual</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAnotherNormalNumberIsReturned</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">actual</span> <span class="o">=</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span><span class="nx">expected</span> <span class="o">===</span> <span class="nx">actual</span><span class="p">,</span> <span class="s2">&quot;Expected to equal &quot;</span> <span class="o">+</span> <span class="nx">expected</span> <span class="o">+</span> <span class="s2">&quot;, but got: &quot;</span> <span class="o">+</span> <span class="nx">actual</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Specifically, this is identical:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">t</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span><span class="nx">expected</span> <span class="o">===</span> <span class="nx">actual</span><span class="p">,</span> <span class="s2">&quot;Expected to equal &quot;</span> <span class="o">+</span> <span class="nx">expected</span> <span class="o">+</span> <span class="s2">&quot;, but got: &quot;</span> <span class="o">+</span> <span class="nx">actual</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This sounds like <code>t.assertEqual(expected, actual)</code> to me. So let&rsquo;s extract it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/TestingFramework.js</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">assertions</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">assertTrue</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">condition</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">assertEqual</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="nx">actual</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span>
+</span><span class='line'>          <span class="nx">expected</span> <span class="o">===</span> <span class="nx">actual</span><span class="p">,</span>
+</span><span class='line'>          <span class="s2">&quot;Expected to equal &quot;</span> <span class="o">+</span> <span class="nx">expected</span> <span class="o">+</span> <span class="s2">&quot;, but got: &quot;</span> <span class="o">+</span> <span class="nx">actual</span>
+</span><span class='line'>        <span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, let&rsquo;s use it and inline our <code>expected</code> and <code>actual</code> variables:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testNormalNumberIsReturned</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAnotherNormalNumberIsReturned</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This looks much more readable. If we run tests, they still pass. If we try to break our code by using some Mutation, the tests fail as expected. Great, our refactoring was a success!</p>
+
+<p>Let&rsquo;s finish test-driving our <code>fizzBuzz</code> function.</p>
+
+<h2>Test-Driving Fizz Buzz Kata</h2>
+
+<p>First test for <code>Fizz</code> case:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test:</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testFizzIsReturned</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="s2">&quot;Fizz&quot;</span><span class="p">,</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected to equal Fizz, but got: 3</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// implementation:</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;Fizz&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is pretty stupid implementation, but it works for that one tests, so let&rsquo;s write the test, that will break this implementation and force us to write real <code>if</code> condition:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test:</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testFizzIsReturnedForDifferentNumber</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="s2">&quot;Fizz&quot;</span><span class="p">,</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">6</span><span class="p">));</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected to equal Fizz, but got: 6</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// implementation:</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;Fizz&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This technique is called Triangulation:</p>
+
+<ul>
+<li>the first test is to force us to write some <code>if</code> statement with a correct body,</li>
+<li>second is to force us to make the condition right.</li>
+<li>If we had an <code>else</code> clause, we would have had another test to make that part right.</li>
+</ul>
+
+
+<p>OK, that looks like a right implementation for <code>Fizz</code>, let&rsquo;s write the test for <code>Buzz</code> now:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test:</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testBuzzIsReturned</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="s2">&quot;Buzz&quot;</span><span class="p">,</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected to equal Buzz, but got: 5</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// stupid implementation:</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">5</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;Buzz&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;Fizz&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Triangulation:</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testBuzzIsReturnedForDifferentNumber</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="s2">&quot;Buzz&quot;</span><span class="p">,</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected to equal Buzz, but got: 10</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// correct implementation:</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;Buzz&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;Fizz&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And finally let&rsquo;s implement final requirement <code>FizzBuzz</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test:</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testFizzBuzzIsReturned</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="s2">&quot;FizzBuzz&quot;</span><span class="p">,</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected to equal FizzBuzz, but got: Buzz</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// stupid implementation:</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">15</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;FizzBuzz&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;Buzz&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;Fizz&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Triangulation:</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testFizzBuzzIsReturnedForDifferentNumber</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="s2">&quot;FizzBuzz&quot;</span><span class="p">,</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="mi">30</span><span class="p">));</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected to equal FizzBuzz, but got: Buzz</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// correct implementation:</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">fizzBuzz</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">15</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;FizzBuzz&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;Buzz&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="s2">&quot;Fizz&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">number</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I think we are done with the implementation. <code>FizzBuzzKata</code> has an extended set of requirements, but they are out of the scope of this article. These requirements force us to introduce Strategy pattern and stop using this unmaintainable chain of <code>if</code> statements.</p>
+
+<p>Refactoring this code to Strategy pattern is left as an exercise for the reader.</p>
+
+<h2>Bottom Line</h2>
+
+<p>Congratulations! Using <code>FizzBuzzKata</code> we have test-driven bare-bones testing framework to the point, that we can do Test-Driven Development for a simple Kata. And all that without having any testing framework in place.</p>
+
+<p>The code is available on Github: <a href="https://github.com/waterlink/BuildYourOwnTestingFrameworkPart1">https://github.com/waterlink/BuildYourOwnTestingFrameworkPart1</a></p>
+
+<p>Now, with this minimal framework in place, it should be possible to unit-test the framework itself, so that we can support more use cases. This will be covered in next series of &ldquo;Build Your Own Testing Framework&rdquo;. Stay tuned!</p>
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -375,98 +1245,6 @@ The same thing would happen if we were to extract methods/functions/objects out 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/06/13/tdd-as-an-enabling-practice-or-how-to-be-faster-with-tdd/">TDD as an Enabling Practice or How to Be Faster With TDD</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2016-06-13T07:52:56+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>13</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>7:52 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Recently I had a lot of conversations with so many different programmers, with different backgrounds, contexts of work and opinions. What stroke me the most, is that majority feel that TDD is slower than simple automated testing, i.e., <code>TestFirst</code> is slower than <code>TestAfter</code>.</p>
-
-<p>While digging deeper in their context of work, I could only agree with them: &ldquo;True, in that context it will be about 50% slower&rdquo;.</p>
-
-<p>Most of the time, though, the context is somewhat looking like this:</p>
-
-<ul>
-<li>We have some company <code>ACME</code>, that does some sort of Agile Software Development (probably Scrum);</li>
-<li>The company <code>ACME</code> focuses only on the business parts of Agile Software Development;</li>
-<li>The company <code>ACME</code> tried to introduce TDD as a development practice;</li>
-<li>Everything took much longer to be done.</li>
-</ul>
-
-
-<h2>Enabling practice</h2>
-
-<p>Now, let us dive into the development practices of Agile Software Development: development practices are usually coming from Extreme Programming (XP). In XP there are 2 terms: <code>EnablingPractice</code> and <code>ExploitativePractice</code>.</p>
-
-<p>Exploitative practice gives direct benefit to the team, e.g.: speed boost and quicker feedback from users and stakeholders.</p>
-
-<p>Enabling practice is required for certain other exploitative practice(s) to work.</p>
-
-<p>A good example of exploitative practice is Continuous Delivery. It requires Continuous Integration, Pair-Programming, and Testing to be in place. These 3 are enabling practices.</p>
-
-<h2>Removing slow practices</h2>
-
-<p>Additionally to allowing usage of practices, that make a team go faster and deliver at the higher quality level, enabling practices allow removal of practices, that make a team go slower. For example, Pair-Programming together with TDD allows removal of code review. On most of the teams (especially, of bigger size), this makes for an instant productivity boost.</p>
-
-<p>Pair-Programming, TDD and Continuous Integration, additionally to enabling the team to do Continuous Delivery, also allows replacing feature-branch VCS flow with a trunk-based flow. This allows for smaller iterations and faster user feedback.</p>
-
-<h2>Pair-Programming Done Right</h2>
-
-<p>It is worth noting, that removal of code review and introducing of Continuous Delivery is only possible, if Pair-Programming is done right:</p>
-
-<ul>
-<li>in no case, two beginners should be working in the pair;</li>
-<li>beginners should work together with advanced beginners/competents and proficients/experts;</li>
-<li>advanced beginners/competents should split their time in half between working with beginners and working with proficient/experts.</li>
-</ul>
-
-
-<p>Terminology <code>Beginner</code>, <code>AdvancedBeginner</code>, <code>Competent</code>, <code>Proficient</code> and <code>Expert</code> is from Dreyfus Skill Acquisition Model.</p>
-
-<p>That allows for a good trust and mentorship models in your team(s). It enables quick growth and knowledge sharing for every member of the team.</p>
-
-<p>There is another enabling practice which speeds up the knowledge sharing, it is Pair Rotation, that should be done from 1 to 2 times per day, so that for small and middle-sized teams, the bigger the feature is, the higher chance, that everyone on the team have participated in its development, and therefore have enough knowledge about it.</p>
-
-<p>Additionally, Pair Rotation allows for Code Detachment and removal of Code Silos. This in turn, together with TDD, enables Ruthless Refactoring, because you are not afraid:</p>
-
-<ul>
-<li>to break the code, thanks to TDD,</li>
-<li>to upset an owner of the Code Silo, because there is no owner, thanks to Pair Rotation.</li>
-</ul>
-
-
-<h2>Bottomline</h2>
-
-<p>I think I can go on like this forever, but I believe the idea should be clear. I will be following up with more articles in details on each technique in the future. Stay tuned!</p>
-
-<h2>Thank you for reading!</h2>
-
-<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/2">&larr; Older</a>
@@ -480,6 +1258,10 @@ The same thing would happen if we were to extract methods/functions/objects out 
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/07/15/build-your-own-testing-framework/">Build Your Own Testing Framework</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper/">TL;DR on Sustainable Software Development Paper</a>
@@ -507,10 +1289,6 @@ The same thing would happen if we were to extract methods/functions/objects out 
     
       <li class="post">
         <a href="/blog/2016/02/13/tdd-number-4-path-finding/">TDD #4: Path Finding</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/02/05/why-are-you-slow/">Why Are You Slow?</a>
       </li>
     
   </ul>

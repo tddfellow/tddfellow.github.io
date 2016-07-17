@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-06-28T03:56:28+02:00</updated>
+  <updated>2016-07-17T14:09:51+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,541 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Build Your Own Testing Framework]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/07/15/build-your-own-testing-framework/"/>
+    <updated>2016-07-15T08:00:06+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/07/15/build-your-own-testing-framework</id>
+    <content type="html"><![CDATA[<p>Today we are going to test-drive the testing framework without any external testing framework.
+This will be done through test-driving a simple kata (FizzBuzzKata). For example:</p>
+
+<ul>
+<li>every time we expect a test to fail and it doesn&rsquo;t, this is a failing test for our testing framework, that we will be fixing,</li>
+<li>every time we expect a test to pass and it doesn&rsquo;t, this is another failing test for our testing framework, that we will be fixing.</li>
+</ul>
+
+
+<p>For practical reasons, today we are going to use concrete programming language instead of pseudo-code - javascript. Except for small details, that we will point out, the techniques shown here are language-agnostic.</p>
+
+<p>This article is only first one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts!</p>
+
+<p>Shall we begin?</p>
+
+<h2>FizzBuzzKata</h2>
+
+<p>Given the number,</p>
+
+<ul>
+<li>return <code>Fizz</code> when the number is divisible by 3,</li>
+<li>return <code>Buzz</code> when the number is divisible by 5,</li>
+<li>return <code>FizzBuzz</code> when the number is divisible by 3 and 5,</li>
+<li>return string representation of number otherwise.</li>
+</ul>
+
+
+<h2>Writing your first test</h2>
+
+<p>How do we write our first test, when we don&rsquo;t have a testing framework and we want to create one? - It seems, that we have to design how the test should like in our brand new testing framework.</p>
+
+<p>I personally, would go with the xUnit-like design, since it is relatively simple. Given this, we might write our first test and it will look something like that:</p>
+
+<pre><code class="javascript">// test/FizzBuzzKataTest.js
+
+function FizzBuzzKataTest() {
+    this.testNormalNumberIsReturned = function() {
+        this.assertTrue("1" === fizzBuzz(1));
+    };
+}
+</code></pre>
+
+<p>This test should fail, because function <code>fizzBuzz</code> is not defined, but it doesn&rsquo;t fail, since function <code>testNormalNumberIsReturned</code> is never called. In fact, the object with <code>FizzBuzzKataTest</code> is never being created.</p>
+
+<p>Easiest way to solve that:</p>
+
+<pre><code class="javascript">// test/FizzBuzzKataTest.js
+
+function FizzBuzzKataTest() { ... }
+
+var test = new FizzBuzzKataTest();
+test.testNormalNumberIsReturned();
+</code></pre>
+
+<p>If we run this code with <code>node</code>:</p>
+
+<pre><code class="bash">node test/FizzBuzzKataTest.js
+</code></pre>
+
+<p>We will get the expected error:</p>
+
+<pre><code>/path/to/project/test/FizzBuzzKataTest.js:3
+        this.assertTrue("1" === fizzBuzz(1));
+                               ^
+
+ReferenceError: fizzBuzz is not defined
+</code></pre>
+
+<p>So, let&rsquo;s define this function:</p>
+
+<pre><code class="javascript">// test/FizzBuzzKataTest.js
+
+function FizzBuzzKataTest() { ... }
+
+function fizzBuzz() {}
+</code></pre>
+
+<p>If we run our test again, we will get the following error:</p>
+
+<pre><code>/path/to/project/test/FizzBuzzKataTest.js:3
+        this.assertTrue("1" === fizzBuzz(1));
+             ^
+
+TypeError: this.assertTrue is not a function
+</code></pre>
+
+<p>Clearly, to fix it we need to define <code>assertTrue</code> on <code>FizzBuzzKataTest</code> object. Obviously, we do not want our user to define all their assertion for every test suite. This means, that we want to define it on <code>FizzBuzzKataTest</code> object outside of the definition of <code>FizzBuzzKataTest</code>.</p>
+
+<p>There are two ways to go about it:</p>
+
+<ul>
+<li>inheritance: make <code>FizzBuzzKataTest</code> inherit from some other object function <code>assertTrue</code>, or</li>
+<li>composition: make <code>FizzBuzzKataTest</code> accept a special object with function <code>assertTrue</code> defined on it.</li>
+</ul>
+
+
+<p>I would like to go with composition method since it gives us more flexibility in the long run:</p>
+
+<pre><code class="javascript">function FizzBuzzKataTest(t) { ... }
+</code></pre>
+
+<p>and the usage of <code>assertTrue</code> has to change appropriately:</p>
+
+<pre><code class="javascript">    t.assertTrue("1" === fizzBuzz(1));
+</code></pre>
+
+<p>and <code>t</code> has to be created and passed in correctly:</p>
+
+<pre><code class="javascript">function FizzBuzzKataTest(t) { ... }
+
+function fizzBuzz(number) {}
+
+var assertions = {
+    assertTrue: function(condition) {}
+};
+
+var test = new FizzBuzzKataTest(assertions);
+</code></pre>
+
+<p>If we run the test suite again, we will not get any failure anymore. But we were expecting <code>assertTrue</code> to fail, so let&rsquo;s make it fail:</p>
+
+<pre><code class="javascript">    assertTrue: function(condition) {
+        throw new Error("Expected to be true, but was false");
+    }
+</code></pre>
+
+<p>When we run the test suite, we get:</p>
+
+<pre><code>/path/to/project/test/FizzBuzzKataTest.js:11
+        throw new Error("Expected to be true, but got false");
+        ^
+
+Error: Expected to be true, but got false
+</code></pre>
+
+<p>Now, let&rsquo;s customize the error message a bit:</p>
+
+<pre><code class="javascript">    this.testNormalNumberIsReturned = function() {
+        t.assertTrue("1" === fizzBuzz(1), "Expected to equal " + "1" + ", but got: " + fizzBuzz(1));
+    }
+
+// ...
+
+    assertTrue: function(condition, message) {
+        throw new Error(message || "Expected to be true, bug got false");
+    }
+</code></pre>
+
+<p>When running this, we are getting the expected error:</p>
+
+<pre><code>/path/to/project/test/FizzBuzzKataTest.js:11
+        throw new Error(message || "Expected to be true, bug got false");
+        ^
+
+Error: Expected to equal 1, but got: undefined
+</code></pre>
+
+<p>This looks better now. Let&rsquo;s fix the error now by implementing the simplest thing that could work:</p>
+
+<pre><code class="javascript">function fizzBuzz(number) {
+    return "1";
+}
+</code></pre>
+
+<p>And as we run our test suite we get:</p>
+
+<pre><code>/path/to/project/test/FizzBuzzKataTest.js:13
+        throw new Error(message || "Expected to be true, bug got false");
+        ^
+
+Error: Expected to equal 1, but got: 1
+</code></pre>
+
+<p>Oh, it should have passed the test. I know why it didn&rsquo;t: we throw this error unconditionally, let&rsquo;s add an appropriate <code>if</code> statement to <code>assertTrue</code> function:</p>
+
+<pre><code class="javascript">    assertTrue: function(condition, message) {
+        if (!condition) {
+            throw new Error(...);
+        }
+    }
+</code></pre>
+
+<p>If we run this code, it does not fail. That was our first green state - it took as awhile to get here. The reason for this is that we are not only test-driving <code>FizzBuzzKata</code>, additionally, we are writing a feature test for a non-existing testing framework. Now that we are green, we should think about refactoring, i.e.: making the structure of our code right.</p>
+
+<p>Obviously, we should move our testing framework code outside of the test suite file. Probably, somewhere in <code>src/TestingFramework.js</code>. For that, we need to first parametrize <code>FizzBuzzKataTest</code> and extract the function to run the test suite.</p>
+
+<p>Parametrize:</p>
+
+<pre><code class="javascript">var testSuiteConstructor = FizzBuzzKataTest;
+var testSuite = new testSuiteConstructor(assertions);
+testSuite.testNormalNumberIsReturned();
+</code></pre>
+
+<p>and extract method:</p>
+
+<pre><code class="javascript">function runTestSuite(testSuiteConstructor) {
+    var testSuite = new testSuiteConstructor(assertions);
+    testSuite.testNormalNumberIsReturned();
+}
+
+var testSuiteConstructor = FizzBuzzKataTest;
+runTestSuite(testSuiteConstructor);
+</code></pre>
+
+<p>and inline the variable <code>testSuiteConstructor</code>:</p>
+
+<pre><code class="javascript">runTestSuite(FizzBuzzKataTest);
+</code></pre>
+
+<p>Now it is time to move testing code to <code>src/TestingFramework.js</code>:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+var assertions = {
+    assertTrue: function (condition, message) {
+        if (!condition) {
+            throw new Error(message || "Expected to be true, bug got false");
+        }
+    }
+};
+
+function runTestSuite(testSuiteConstructor) {
+    var testSuite = new testSuiteConstructor(assertions);
+    testSuite.testNormalNumberIsReturned();
+}
+</code></pre>
+
+<p>And to be able to require <code>runTestSuite</code> function:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+var assertions = { ... };
+
+function runTestSuite(testSuiteConstructor) { ... }
+
+module.exports = runTestSuite;
+</code></pre>
+
+<p>And, finally, let&rsquo;s use that from our test suite:</p>
+
+<pre><code class="javascript">// test/FizzBuzzKataTest.js
+
+var runTestSuite = require("../src/TestingFramework");
+
+function FizzBuzzKataTest(t) { ... }
+
+function fizzBuzz(number) { ... }
+
+runTestSuite(FizzBuzzKataTest);
+</code></pre>
+
+<p>If we run the test suite again, everything should pass. Somehow, I don&rsquo;t feel comfortable now, let&rsquo;s try to break the test suite and see if it will fail as expected:</p>
+
+<pre><code class="javascript">function fizzBuzz(number) {
+    return "2";  // &lt;-- "1" was changed to "2" here
+}
+</code></pre>
+
+<p>And run tests:</p>
+
+<pre><code>/path/to/project/src/TestingFramework.js:4
+            throw new Error(message || "Expected to be true, bug got false");
+            ^
+
+Error: Expected to equal 1, but got: 2
+</code></pre>
+
+<p>Yes, it still works as expected. We have just introduced a Mutation to our code, to see if it is still tested properly. Let&rsquo;s undo the Mutation and see the test still pass. And it does.</p>
+
+<p>If you look closely now, it should be possible to inline <code>FizzBuzzKataTest</code> definition as an argument of <code>runTestSuite</code> call:</p>
+
+<pre><code class="javascript">var runTestSuite = require(...);
+
+function fizzBuzz(number) { ... }
+
+runTestSuite(function (t) { ... });
+</code></pre>
+
+<p>And if we run our test suite, it still works. Just to check, that we are still good, let&rsquo;s repeat our Mutation from the previous step. It should still fail as expected. And it does. Undo the mutation and the test is still passing. Great.</p>
+
+<p>I think we are done with Refactoring step, for now, let&rsquo;s get back to writing another failing test.</p>
+
+<h2>Writing the second test</h2>
+
+<pre><code class="javascript">    this.testAnotherNormalNumberIsReturned = function() {
+        t.assertTrue("2" === fizzBuzz(2), "Expected to equal " + "2" + ", but got: " + fizzBuzz(2));
+    };
+</code></pre>
+
+<p>If we run these tests, they do not fail. This is strange, let&rsquo;s look at <code>runTestSuite</code> function again:</p>
+
+<pre><code class="javascript">function runTestSuite(testSuiteConstructor) {
+    var testSuite = new testSuiteConstructor(assertions);
+    testSuite.testNormalNumberIsReturned();
+}
+</code></pre>
+
+<p>Great, it just runs one specific function, we should probably run all functions starting from <code>test</code> instead:</p>
+
+<pre><code class="javascript">function runTestSuite(testSuiteConstructor) {
+    var testSuite = new testSuiteConstructor(assertions);
+
+    for (var testName in testSuite) {
+        if (testName.match(/^test/)) {
+            testSuite[testName]();
+        }
+    }
+}
+</code></pre>
+
+<p><em>REMARK: this code is Javascript specific. Other programming languages will have their own way of iterating over the function/method list and calling a function by its name. Usually, it is some sort of reflection for compiled languages and meta-programming features for interpreted languages.</em></p>
+
+<p>If we run tests now, we get the expected failure:</p>
+
+<pre><code>/path/to/project/src/TestingFramework.js:4
+            throw new Error(message || "Expected to be true, bug got false");
+            ^
+
+Error: Expected to equal 2, but got: 1
+</code></pre>
+
+<p>If we try to change <code>return "1"</code> to <code>return "2"</code>, of course this test will pass, but the other will fail:</p>
+
+<pre><code>/path/to/project/src/TestingFramework.js:4
+            throw new Error(message || "Expected to be true, bug got false");
+            ^
+
+Error: Expected to equal 1, but got: 2
+</code></pre>
+
+<p>This is great for couple of reasons:</p>
+
+<ul>
+<li>It validates, that our change to how <code>test*</code> functions are discovered is correct, and</li>
+<li>We have to have a bit smarter implementation to pass both tests now:</li>
+</ul>
+
+
+<pre><code class="javascript">function fizzBuzz(number) {
+    return number.toString();
+}
+</code></pre>
+
+<p>And if we run the tests, they pass. Now, that we are in Green state, we should start refactoring. Have you noticed the duplication already?</p>
+
+<pre><code class="javascript">t.assertTrue("1" === fizzBuzz(1), "Expected to equal " + "1" + ", but got: " + fizzBuzz(1));
+
+// and:
+
+t.assertTrue("2" === fizzBuzz(2), "Expected to equal " + "2" + ", but got: " + fizzBuzz(2));
+</code></pre>
+
+<p>Extracting <code>"1"</code> and <code>"2"</code> as variable <code>expected</code>, and <code>fizzBuzz(1)</code> and <code>fizzBuzz(2)</code> as variable <code>actual</code>, makes these 2 lines identical:</p>
+
+<pre><code class="javascript">this.testNormalNumberIsReturned = function () {
+    var expected = "1";
+    var actual = fizzBuzz(1);
+    t.assertTrue(expected === actual, "Expected to equal " + expected + ", but got: " + actual);
+};
+
+this.testAnotherNormalNumberIsReturned = function() {
+    var expected = "2";
+    var actual = fizzBuzz(2);
+    t.assertTrue(expected === actual, "Expected to equal " + expected + ", but got: " + actual);
+};
+</code></pre>
+
+<p>Specifically, this is identical:</p>
+
+<pre><code class="javascript">t.assertTrue(expected === actual, "Expected to equal " + expected + ", but got: " + actual);
+</code></pre>
+
+<p>This sounds like <code>t.assertEqual(expected, actual)</code> to me. So let&rsquo;s extract it:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+var assertions = {
+    assertTrue: function(condition, message) { ... },
+
+    assertEqual: function(expected, actual) {
+        this.assertTrue(
+          expected === actual,
+          "Expected to equal " + expected + ", but got: " + actual
+        );
+    }
+}
+</code></pre>
+
+<p>Now, let&rsquo;s use it and inline our <code>expected</code> and <code>actual</code> variables:</p>
+
+<pre><code class="javascript">this.testNormalNumberIsReturned = function () {
+    t.assertEqual("1", fizzBuzz(1));
+};
+
+this.testAnotherNormalNumberIsReturned = function() {
+    t.assertEqual("2", fizzBuzz(2));
+};
+</code></pre>
+
+<p>This looks much more readable. If we run tests, they still pass. If we try to break our code by using some Mutation, the tests fail as expected. Great, our refactoring was a success!</p>
+
+<p>Let&rsquo;s finish test-driving our <code>fizzBuzz</code> function.</p>
+
+<h2>Test-Driving Fizz Buzz Kata</h2>
+
+<p>First test for <code>Fizz</code> case:</p>
+
+<pre><code class="javascript">// test:
+this.testFizzIsReturned = function () {
+    t.assertEqual("Fizz", fizzBuzz(3));
+};
+
+// Error: Expected to equal Fizz, but got: 3
+
+// implementation:
+function fizzBuzz(number) {
+    if (number === 3) return "Fizz";
+    return number.toString();
+}
+</code></pre>
+
+<p>This is pretty stupid implementation, but it works for that one tests, so let&rsquo;s write the test, that will break this implementation and force us to write real <code>if</code> condition:</p>
+
+<pre><code class="javascript">// test:
+this.testFizzIsReturnedForDifferentNumber = function () {
+    t.assertEqual("Fizz", fizzBuzz(6));
+};
+
+// Error: Expected to equal Fizz, but got: 6
+
+// implementation:
+function fizzBuzz(number) {
+    if (number % 3 === 0) return "Fizz";
+    return number.toString();
+}
+</code></pre>
+
+<p>This technique is called Triangulation:</p>
+
+<ul>
+<li>the first test is to force us to write some <code>if</code> statement with a correct body,</li>
+<li>second is to force us to make the condition right.</li>
+<li>If we had an <code>else</code> clause, we would have had another test to make that part right.</li>
+</ul>
+
+
+<p>OK, that looks like a right implementation for <code>Fizz</code>, let&rsquo;s write the test for <code>Buzz</code> now:</p>
+
+<pre><code class="javascript">// test:
+this.testBuzzIsReturned = function () {
+    t.assertEqual("Buzz", fizzBuzz(5));
+};
+
+// Error: Expected to equal Buzz, but got: 5
+
+// stupid implementation:
+function fizzBuzz(number) {
+    if (number === 5) return "Buzz";
+    if (number % 3 === 0) return "Fizz";
+    return number.toString();
+}
+
+// Triangulation:
+this.testBuzzIsReturnedForDifferentNumber = function () {
+    t.assertEqual("Buzz", fizzBuzz(10));
+};
+
+// Error: Expected to equal Buzz, but got: 10
+
+// correct implementation:
+function fizzBuzz(number) {
+    if (number % 5 === 0) return "Buzz";
+    if (number % 3 === 0) return "Fizz";
+    return number.toString();
+}
+</code></pre>
+
+<p>And finally let&rsquo;s implement final requirement <code>FizzBuzz</code>:</p>
+
+<pre><code class="javascript">// test:
+this.testFizzBuzzIsReturned = function () {
+    t.assertEqual("FizzBuzz", fizzBuzz(15));
+};
+
+// Error: Expected to equal FizzBuzz, but got: Buzz
+
+// stupid implementation:
+function fizzBuzz(number) {
+    if (number === 15) return "FizzBuzz";
+    if (number % 5 === 0) return "Buzz";
+    if (number % 3 === 0) return "Fizz";
+    return number.toString();
+}
+
+// Triangulation:
+this.testFizzBuzzIsReturnedForDifferentNumber = function () {
+    t.assertEqual("FizzBuzz", fizzBuzz(30));
+};
+
+// Error: Expected to equal FizzBuzz, but got: Buzz
+
+// correct implementation:
+function fizzBuzz(number) {
+    if (number % 15 === 0) return "FizzBuzz";
+    if (number % 5 === 0) return "Buzz";
+    if (number % 3 === 0) return "Fizz";
+    return number.toString();
+}
+</code></pre>
+
+<p>I think we are done with the implementation. <code>FizzBuzzKata</code> has an extended set of requirements, but they are out of the scope of this article. These requirements force us to introduce Strategy pattern and stop using this unmaintainable chain of <code>if</code> statements.</p>
+
+<p>Refactoring this code to Strategy pattern is left as an exercise for the reader.</p>
+
+<h2>Bottom Line</h2>
+
+<p>Congratulations! Using <code>FizzBuzzKata</code> we have test-driven bare-bones testing framework to the point, that we can do Test-Driven Development for a simple Kata. And all that without having any testing framework in place.</p>
+
+<p>The code is available on Github: <a href="https://github.com/waterlink/BuildYourOwnTestingFrameworkPart1">https://github.com/waterlink/BuildYourOwnTestingFrameworkPart1</a></p>
+
+<p>Now, with this minimal framework in place, it should be possible to unit-test the framework itself, so that we can support more use cases. This will be covered in next series of &ldquo;Build Your Own Testing Framework&rdquo;. Stay tuned!</p>
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Why I Don't Use Mocking Frameworks Anymore]]></title>

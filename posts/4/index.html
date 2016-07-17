@@ -9,14 +9,11 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Lets start off with very simple code: 1
+  <meta name="description" content="TL;DR This post describes two different issues: Race conditions when taking reference of loop variable and passing it to another goroutine: 1
 2
 3
 4
-5
-6
-7
-func toJSON(post Post) string { return fmt.Sprintf( `{&quot;post_title&quot;: &quot;%s&quot;, & &hellip;">
+5 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +72,316 @@ func toJSON(post Post) string { return fmt.Sprintf( `{&quot;post_title&quot;: &q
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/">Why Do You Need to Be Careful With Loop Variable in Go</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-01-08T02:28:45+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>2:28 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>TL;DR</h2>
+
+<p>This post describes two different issues:</p>
+
+<h3>Race conditions when taking reference of loop variable and passing it to another goroutine:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// WRONG: pass message by reference</span>
+</span><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. more fields here ..</span>
+</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">message</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// CORRECT: pass message by value</span>
+</span><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. more fields here ..</span>
+</span><span class='line'>                <span class="c1">// Pass message by value here</span>
+</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="nx">message</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>See explanation <a href="#taking_reference_of_loop_variable">here</a>.</p>
+
+<h3>Race conditions when using loop variable inside of goroutine inside of loop:</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// WRONG: use loop variable directly from goroutine</span>
+</span><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. do something important with message ..</span>
+</span><span class='line'>        <span class="p">}()</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// CORRECT: pass loop variable by value as an argument for goroutine&#39;s function</span>
+</span><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">message</span> <span class="nx">Message</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. do something important with message ..</span>
+</span><span class='line'>        <span class="p">}(</span><span class="nx">message</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>See explanation <a href="#running_goroutine_that_uses_loop_variable">here</a>.</p>
+
+<h2><a href="#taking_reference_of_loop_variable" id="taking_reference_of_loop_variable">Taking reference of loop variable</a></h2>
+
+<p>Lets start off with simple code example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. more fields here ..</span>
+</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">message</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Looks quite legit. In practice it will often cause race conditions. Because
+<code>message</code> variable is defined once and then mutated in each loop iteration. The
+variable is passed pointer to some concurrent collaborators, which causes race
+conditions and very confusing bugs.</p>
+
+<p>Above code can be re-written as:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// local scope begins here</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="p">(</span>
+</span><span class='line'>                <span class="nx">message</span> <span class="nx">Message</span>
+</span><span class='line'>                <span class="nx">ok</span> <span class="kt">bool</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'>        <span class="k">for</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">message</span><span class="p">,</span> <span class="nx">ok</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">inbox</span>
+</span><span class='line'>                <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+</span><span class='line'>                        <span class="k">break</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                        <span class="c1">// .. more fields here ..</span>
+</span><span class='line'>                        <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">message</span><span class="p">,</span>
+</span><span class='line'>                <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="c1">// local scope ends here</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Looking at this code, it is quite obvious why it would have race conditions.</p>
+
+<p>Correct way of doing that would be to either define a new variable manually
+each iteration and copy <code>message</code>&rsquo;s value into it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">m</span> <span class="o">:=</span> <span class="nx">message</span>
+</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                <span class="c1">// ...</span>
+</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">m</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Another way of doing that would be to take control of how loop variable works
+yourself:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">message</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">inbox</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">break</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                <span class="c1">// ...</span>
+</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">message</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Taking into account, that until the <code>EnhancedMessage</code> is processed by
+concurrent collaborator and garbage collected, variables, created during each
+iteration, i.e.: <code>m</code> and <code>message</code> for both examples, will stay in memory.
+Therefore it is possible to just use pass-by-value instead of
+pass-by-reference to achieve the same result. It is simpler too:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
+</span><span class='line'>                <span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="c1">// Given the fact that `EnhancedMessage.Original` definition</span>
+</span><span class='line'>                <span class="c1">// changed to be of value type `Message`</span>
+</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="nx">message</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Personally, I prefer latter. If you know of any drawbacks of this approach
+comparing to other 2, or if you know of entirely better way of doing that,
+please let me know.</p>
+
+<h2><a href="#running_goroutine_that_uses_loop_variable" id="running_goroutine_that_uses_loop_variable">Running goroutine, that uses loop variable</a></h2>
+
+<p>Example code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. do something important with message ..</span>
+</span><span class='line'>        <span class="p">}()</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This code might look legit too. You might think it will process whole inbox
+concurrently, but most probably it will process only a couple of last elements
+multiple times.</p>
+
+<p>If you rewrite the loop in a similar fashion as in
+<a href="#taking_reference_of_loop_variable">previous section</a>, you would notice that
+<code>message</code> would be mutated while these goroutines are still processing it. This
+will cause confusing race conditions.</p>
+
+<p>Correct way of doing that is:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">message</span> <span class="nx">Message</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">// .. do something important with message ..</span>
+</span><span class='line'>        <span class="p">}(</span><span class="nx">message</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In this case, it is basically the same as copying the value to the new defined
+variable at each iteration of the loop. It just looks nicer.</p>
+
+<h2>Thanks!</h2>
+
+<p>If you have any questions, suggestions or just want to chat about the topic,
+you can ping me on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a> or
+drop a comment on <a href="https://news.ycombinator.com/item?id=10864593">hackernews</a>.</p>
+
+<p>Especially, if you think I am wrong somewhere in this article, please tell me,
+I will only be happy to learn and iterate over this article to improve it.</p>
+
+<p>Happy coding!</p>
+
+<h2>Credits</h2>
+
+<ul>
+<li>Benjamin Lewis - proofreading. <a href="https://github.com/23inhouse/">Github</a>,
+<a href="https://twitter.com/23inhouse">Twitter</a>.</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -541,66 +848,6 @@ image.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/">Running Kitchen-docker Tests With Upstart</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-08-05T19:10:36+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>7:10 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>TL;DR:</p>
-
-<figure class='code'><figcaption><span>.kitchen.yml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="c1"># .kitchen.yml</span>
-</span><span class='line'><span class="nn">---</span>
-</span><span class='line'><span class="l-Scalar-Plain">driver</span><span class="p-Indicator">:</span>
-</span><span class='line'>  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">docker</span>
-</span><span class='line'>  <span class="l-Scalar-Plain">use_sudo</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>              <span class="c1"># this depends if you need to do `sudo` to run `docker` command or not</span>
-</span><span class='line'>  <span class="l-Scalar-Plain">disable_upstart</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
-</span><span class='line'>  <span class="l-Scalar-Plain">image</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu-upstart:14.04</span>
-</span><span class='line'>  <span class="l-Scalar-Plain">run_command</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/sbin/init</span>
-</span><span class='line'>
-</span><span class='line'><span class="l-Scalar-Plain">platforms</span><span class="p-Indicator">:</span>
-</span><span class='line'>  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu-14.04</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>It is possible because there is this official base image specifically for upstart: <a href="https://registry.hub.docker.com/_/ubuntu-upstart/.">https://registry.hub.docker.com/_/ubuntu-upstart/.</a></p>
-
-<p>After making your <code>.kitchen.yml</code> look like this, just use <code>kitchen</code> as you would normally would.</p>
-
-<p>Happy coding! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/5">&larr; Older</a>
@@ -616,6 +863,10 @@ image.</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/07/15/build-your-own-testing-framework/">Build Your Own Testing Framework</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper/">TL;DR on Sustainable Software Development Paper</a>
@@ -643,10 +894,6 @@ image.</p>
     
       <li class="post">
         <a href="/blog/2016/02/13/tdd-number-4-path-finding/">TDD #4: Path Finding</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/02/05/why-are-you-slow/">Why Are You Slow?</a>
       </li>
     
   </ul>

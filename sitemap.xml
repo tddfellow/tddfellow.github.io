@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://www.tddfellow.com/blog/2016/07/15/build-your-own-testing-framework/</loc>
+    <lastmod>2016-07-15T08:00:06+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://www.tddfellow.com/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper/</loc>
     <lastmod>2016-06-28T02:22:07+02:00</lastmod>
   </url>
@@ -309,6 +313,15 @@
   </url>
   <url>
     <loc>http://www.tddfellow.com/blog/categories/sustainable-software-development/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/xunit/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/javascript/</loc>
   </url>
   <url>
     <loc>http://www.tddfellow.com/posts/2/</loc>
