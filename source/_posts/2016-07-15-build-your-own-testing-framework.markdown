@@ -20,7 +20,7 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 
 For practical reasons, today we are going to use concrete programming language instead of pseudo-code - javascript. Except for small details, that we will point out, the techniques shown here are language-agnostic.
 
-This article is only first one of the series "Build Your Own Testing Framework" == so make sure to stick around for next parts!
+This article is only first one of the series "Build Your Own Testing Framework", so make sure to stick around for next parts!
 
 Shall we begin?
 
@@ -44,7 +44,7 @@ I personally, would go with the xUnit-like design, since it is relatively simple
 
 function FizzBuzzKataTest() {
     this.testNormalNumberIsReturned = function() {
-        this.assertTrue("1" == fizzBuzz(1));
+        this.assertTrue("1" === fizzBuzz(1));
     };
 }
 ```
@@ -72,7 +72,7 @@ We will get the expected error:
 
 ```
 /path/to/project/test/FizzBuzzKataTest.js:3
-        this.assertTrue("1" == fizzBuzz(1));
+        this.assertTrue("1" === fizzBuzz(1));
                                ^
 
 ReferenceError: fizzBuzz is not defined
@@ -92,7 +92,7 @@ If we run our test again, we will get the following error:
 
 ```
 /path/to/project/test/FizzBuzzKataTest.js:3
-        this.assertTrue("1" == fizzBuzz(1));
+        this.assertTrue("1" === fizzBuzz(1));
              ^
 
 TypeError: this.assertTrue is not a function
@@ -114,7 +114,7 @@ function FizzBuzzKataTest(t) { ... }
 and the usage of `assertTrue` has to change appropriately:
 
 ```javascript
-    t.assertTrue("1" == fizzBuzz(1));
+    t.assertTrue("1" === fizzBuzz(1));
 ```
 
 and `t` has to be created and passed in correctly:
@@ -153,7 +153,7 @@ Now, let's customize the error message a bit:
 
 ```javascript
     this.testNormalNumberIsReturned = function() {
-        t.assertTrue("1" == fizzBuzz(1), "Expected to equal " + "1" + ", but got: " + fizzBuzz(1));
+        t.assertTrue("1" === fizzBuzz(1), "Expected to equal " + "1" + ", but got: " + fizzBuzz(1));
     }
 
 // ...
@@ -227,7 +227,7 @@ runTestSuite(testSuiteConstructor);
 
 and inline the variable `testSuiteConstructor`:
 
-```javscript
+```javascript
 runTestSuite(FizzBuzzKataTest);
 ```
 
@@ -314,7 +314,7 @@ I think we are done with Refactoring step, for now, let's get back to writing an
 
 ```javascript
     this.testAnotherNormalNumberIsReturned = function() {
-        t.assertTrue("2" == fizzBuzz(2), "Expected to equal " + "2" + ", but got: " + fizzBuzz(2));
+        t.assertTrue("2" === fizzBuzz(2), "Expected to equal " + "2" + ", but got: " + fizzBuzz(2));
     };
 ```
 
@@ -396,14 +396,14 @@ this.testNormalNumberIsReturned = function () {
 this.testAnotherNormalNumberIsReturned = function() {
     var expected = "2";
     var actual = fizzBuzz(2);
-    t.assertTrue(expected == actual, "Expected to equal " + expected + ", but got: " + actual);
+    t.assertTrue(expected === actual, "Expected to equal " + expected + ", but got: " + actual);
 };
 ```
 
 Specifically, this is identical:
 
 ```javascript
-t.assertTrue(expected == actual, "Expected to equal " + expected + ", but got: " + actual);
+t.assertTrue(expected === actual, "Expected to equal " + expected + ", but got: " + actual);
 ```
 
 This sounds like `t.assertEqual(expected, actual)` to me. So let's extract it:
@@ -416,7 +416,7 @@ var assertions = {
 
     assertEqual: function(expected, actual) {
         this.assertTrue(
-          expected == actual,
+          expected === actual,
           "Expected to equal " + expected + ", but got: " + actual
         );
     }
