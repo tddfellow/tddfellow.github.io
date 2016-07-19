@@ -3,7 +3,8 @@
 // If you need a handy color picker try http://hslpicker.com
 
 $base: #444;
-$base-bg: #fff;
+$base-bg: #f9f9f9;
+$base-shadow: $base-bg;
 
 // kill noise images
 $noise-bg: none;
@@ -33,6 +34,7 @@ $sidebar-bg: $base-bg !default;
 $sidebar-color: $base !default;
 $sidebar-border: $base-bg !default;
 $sidebar-border-hover: $base-bg !default;
+$sidebar-shadow-color: $base-shadow !default;
 
 // footer
 $footer-color: $base !default;

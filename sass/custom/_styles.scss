@@ -31,3 +31,12 @@ table {
 .terminator {
   display: table;
 }
+
+.side-shadow-border, aside.sidebar section h1, aside.sidebar li {
+  box-shadow: 0px 1px $sidebar-shadow-color;
+}
+
+aside.sidebar {
+  text-shadow: 0px 1px $sidebar-shadow-color;
+  border-top: 1px solid $sidebar-shadow-color;
+}
