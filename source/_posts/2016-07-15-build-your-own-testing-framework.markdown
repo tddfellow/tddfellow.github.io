@@ -20,7 +20,7 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 
 For practical reasons, today we are going to use concrete programming language instead of pseudo-code - javascript. Except for small details, that we will point out, the techniques shown here are language-agnostic.
 
-This article is only first one of the series "Build Your Own Testing Framework", so make sure to stick around for next parts!
+This article is only first one of the series "Build Your Own Testing Framework", so make sure to stick around for next parts! All articles of these series can be found here: http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/.
 
 Shall we begin?
 
@@ -159,7 +159,7 @@ Now, let's customize the error message a bit:
 // ...
 
     assertTrue: function(condition, message) {
-        throw new Error(message || "Expected to be true, bug got false");
+        throw new Error(message || "Expected to be true, but got false");
     }
 ```
 
@@ -167,7 +167,7 @@ When running this, we are getting the expected error:
 
 ```
 /path/to/project/test/FizzBuzzKataTest.js:11
-        throw new Error(message || "Expected to be true, bug got false");
+        throw new Error(message || "Expected to be true, but got false");
         ^
 
 Error: Expected to equal 1, but got: undefined
@@ -185,7 +185,7 @@ And as we run our test suite we get:
 
 ```
 /path/to/project/test/FizzBuzzKataTest.js:13
-        throw new Error(message || "Expected to be true, bug got false");
+        throw new Error(message || "Expected to be true, but got false");
         ^
 
 Error: Expected to equal 1, but got: 1
@@ -239,7 +239,7 @@ Now it is time to move testing code to `src/TestingFramework.js`:
 var assertions = {
     assertTrue: function (condition, message) {
         if (!condition) {
-            throw new Error(message || "Expected to be true, bug got false");
+            throw new Error(message || "Expected to be true, but got false");
         }
     }
 };
@@ -288,7 +288,7 @@ And run tests:
 
 ```
 /path/to/project/src/TestingFramework.js:4
-            throw new Error(message || "Expected to be true, bug got false");
+            throw new Error(message || "Expected to be true, but got false");
             ^
 
 Error: Expected to equal 1, but got: 2
@@ -347,7 +347,7 @@ If we run tests now, we get the expected failure:
 
 ```
 /path/to/project/src/TestingFramework.js:4
-            throw new Error(message || "Expected to be true, bug got false");
+            throw new Error(message || "Expected to be true, but got false");
             ^
 
 Error: Expected to equal 2, but got: 1
@@ -357,7 +357,7 @@ If we try to change `return "1"` to `return "2"`, of course this test will pass,
 
 ```
 /path/to/project/src/TestingFramework.js:4
-            throw new Error(message || "Expected to be true, bug got false");
+            throw new Error(message || "Expected to be true, but got false");
             ^
 
 Error: Expected to equal 1, but got: 2
