@@ -363,7 +363,117 @@ I think we have all required tests for `assertTrue` now. This is great! And have
 
 ## Refactoring `AssertTrueTest`
 
+The duplication that is present here is our `try { ... } catch (..) { ... }` construct. Let's make it a completely duplicate code by extracting couple of local variables:
 
+```javascript
+// first, let's extract the Action Under the Test variable:
+var action = function () { t.assertTrue(false); };
+
+try {
+    action();
+} catch (error) {
+    t.assertEqual("Expected to be true, but got false", error.message);
+}
+
+// next, let's extract the Expected Error Message:
+var expectedMessage = "Expected to be true, but got false";
+
+try {
+    action();
+} catch (error) {
+    t.assertEqual(expectedMessage, error.message);
+}
+```
+
+If we apply the same refactoring for all tests in the `AssertTrueTest` suite, we will see the duplication:
+
+```javascript
+try {
+    action();
+} catch (error) {
+    t.assertEqual(expectedMessage, error.message);
+}
+```
+
+Let's give that operation a name and extract is as a function: `assertThrow(expectedMessage, action)`:
+
+```javascript
+function assertThrow(expectedMessage, action) {
+    try {
+        action();
+    } catch (error) {
+        t.assertEqual(expectedMessage, error.message);
+    }
+}
+```
+
+Use this function in all tests and inline all the extracted local variables:
+
+```javascript
+this.testFailure = function () {
+    assertThrow("Expected to be true, but got false", function () {
+        t.assertTrue(false);
+    });
+};
+
+this.testCustomFailureMessage = function () {
+    assertThrow("it is not true!", function () {
+        t.assertTrue(false, "it is not true!");
+    });
+};
+
+this.testCustomFailureMessage_withOtherMessage = function () {
+    assertThrow("should be true", function () {
+        t.assertTrue(false, "should be true");
+    });
+};
+```
+
+Function `assertThrow` seems to be useful for any test, not just `AssertTrueTest` suite. Let's move it to the `assertions` object. We will be doing that by using Parallel Change technique:
+
+1. Create new functionality first;
+2. Step by step migrate all calls to use new functionality instead of old one;
+3. Once old functionality is not used, remove it.
+
+Advantage of that method, is that it consists of very small steps, that can be executed with confidence and each such small step never leaves the user in red state (failing tests or compile/parsing errors).
+
+Let's see how this one can be applied here:
+
+`1. Create new functionality first` - we can do it by copying the `assertThrow` function to `assertions` object:
+
+```javascript
+// src/TestingFramework.js
+
+var assertions = {
+    // ...
+    assertThrow: function (expectedMessage, action) {
+        try {
+            action();
+        } catch (error) {
+            // `t` needs to be changed to `this` here
+            this.assertEqual(expectedMessage, error.message);
+        }
+    }
+};
+```
+
+The tests should still pass:
+
+```
+/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+```
+
+`2. Step by step migrate all calls to use new functionality instead of old one` - we do it by calling `assertThrow` on `t` (our assertions object) in the test suite. Since we still haven't removed the old `assertThrow` function, we can do that one function call at the time and the tests will always be green:
+
+```javascript
+this.testFailure = function () {
+    t.assertThrow("Expected to be true, but got false", function () {
+        t.assertTrue(false);
+    });
+};
+```
 
 
 
