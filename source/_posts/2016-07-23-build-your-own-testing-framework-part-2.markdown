@@ -12,7 +12,7 @@ categories:
 - javascript
 ---
 
-Today we are going to unit-test existing functionality of our own testing framework, that we have test-driven with `FizzBuzzKata` in the previous part.
+Today we are going to unit-test existing functionality of our own testing framework, that we have test-driven with `FizzBuzzKata` in [the previous part](/blog/2016/07/15/build-your-own-testing-framework/).
 
 This needs to be done, since currently only happy paths are implicitly tested via `FizzBuzzKata` test suite, i.e.: when all the tests pass. The following unhappy paths are not tested at the moment:
 
@@ -554,16 +554,10 @@ runTestSuite(function (t) {
 
 And the test should pass:
 
-```javascript
-var runTestSuite = require("../src/TestingFramework");
+```
+/usr/local/bin/node AssertThrowTest.js
 
-runTestSuite(function (t) {
-    this.testSuccess = function () {
-        t.assertThrow("an error message", function () {
-            throw new Error("an error message");
-        });
-    };
-});
+Process finished with exit code 0
 ```
 
 The code can be broken without test failure by not using `expectedMessage` parameter:
@@ -858,7 +852,7 @@ assertEqual: function (expected, actual) {
     this.assertTrue(
         expected == actual,
         "Expected to equal 42, but got: 29"
-    // ^ here is the exact constant is used ^
+    // ^ here the exact constant is used ^
     );
 },
 ```
