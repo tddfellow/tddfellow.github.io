@@ -199,7 +199,7 @@ Error: Expected to be true, but got false
 Process finished with exit code 1
 ```
 
-It fails, but this change breaks `assertEqual` too, so that we don't see any meaningful error message now. We can figure out if that is an expected failure or not by inspecting the stack trace:
+It fails, but this change breaks `assertEqual` too so that we don't see any meaningful error message now. We can figure out if that is an expected failure or not by inspecting the stack trace:
 
 ```
 Error: Expected to be true, but got false
@@ -435,7 +435,7 @@ Function `assertThrow` seems to be useful for any test, not just `AssertTrueTest
 2. Step by step migrate all calls to use new functionality instead of old one;
 3. Once old functionality is not used, remove it.
 
-Advantage of that method, is that it consists of very small steps, that can be executed with confidence and each such small step never leaves the user in red state (failing tests or compile/parsing errors).
+The advantage of that method is that it consists of very small steps, that can be executed with confidence and each such small step never leaves the user in a red state (failing tests or compile/parsing errors).
 
 Let's see how this one can be applied here:
 
@@ -533,7 +533,7 @@ runTestSuite(function (t) {
 });
 ```
 
-The only problem here, is that we are relying on the untested `assertThrow` assertion here. Let's unit-test it.
+The only problem here is that we are relying on the untested `assertThrow` assertion here. Let's unit-test it.
 
 ## Testing `assertThrow(expectedMessage, action)`
 
