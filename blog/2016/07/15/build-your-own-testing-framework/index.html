@@ -99,7 +99,7 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 
 <p>For practical reasons, today we are going to use concrete programming language instead of pseudo-code - javascript. Except for small details, that we will point out, the techniques shown here are language-agnostic.</p>
 
-<p>This article is only first one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts!</p>
+<p>This article is only first one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found here: <a href="http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/.">http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/.</a></p>
 
 <p>Shall we begin?</p>
 
@@ -300,7 +300,7 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 </span><span class='line'><span class="c1">// ...</span>
 </span><span class='line'>
 </span><span class='line'><span class="nx">assertTrue</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">condition</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, but got false&quot;</span><span class="p">);</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
@@ -313,7 +313,7 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 </pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/path/to/project/test/FizzBuzzKataTest.js:11</span>
-</span><span class='line'>        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, but got false&quot;</span><span class="p">);</span>
 </span><span class='line'>        <span class="o">^</span>
 </span><span class='line'>
 </span><span class='line'><span class="nb">Error</span><span class="o">:</span> <span class="nx">Expected</span> <span class="nx">to</span> <span class="nx">equal</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">got</span><span class="o">:</span> <span class="kc">undefined</span>
@@ -339,7 +339,7 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 </pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/path/to/project/test/FizzBuzzKataTest.js:13</span>
-</span><span class='line'>        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, but got false&quot;</span><span class="p">);</span>
 </span><span class='line'>        <span class="o">^</span>
 </span><span class='line'>
 </span><span class='line'><span class="nb">Error</span><span class="o">:</span> <span class="nx">Expected</span> <span class="nx">to</span> <span class="nx">equal</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">got</span><span class="o">:</span> <span class="mi">1</span>
@@ -423,7 +423,7 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 </span><span class='line'><span class="kd">var</span> <span class="nx">assertions</span> <span class="o">=</span> <span class="p">{</span>
 </span><span class='line'>    <span class="nx">assertTrue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">condition</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
 </span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">condition</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, but got false&quot;</span><span class="p">);</span>
 </span><span class='line'>        <span class="p">}</span>
 </span><span class='line'>    <span class="p">}</span>
 </span><span class='line'><span class="p">};</span>
@@ -496,7 +496,7 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 </pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/path/to/project/src/TestingFramework.js:4</span>
-</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, but got false&quot;</span><span class="p">);</span>
 </span><span class='line'>            <span class="o">^</span>
 </span><span class='line'>
 </span><span class='line'><span class="nb">Error</span><span class="o">:</span> <span class="nx">Expected</span> <span class="nx">to</span> <span class="nx">equal</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">got</span><span class="o">:</span> <span class="mi">2</span>
@@ -581,7 +581,7 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 </pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/path/to/project/src/TestingFramework.js:4</span>
-</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, but got false&quot;</span><span class="p">);</span>
 </span><span class='line'>            <span class="o">^</span>
 </span><span class='line'>
 </span><span class='line'><span class="nb">Error</span><span class="o">:</span> <span class="nx">Expected</span> <span class="nx">to</span> <span class="nx">equal</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">got</span><span class="o">:</span> <span class="mi">1</span>
@@ -596,7 +596,7 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 </pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="err">/path/to/project/src/TestingFramework.js:4</span>
-</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, bug got false&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="nx">message</span> <span class="o">||</span> <span class="s2">&quot;Expected to be true, but got false&quot;</span><span class="p">);</span>
 </span><span class='line'>            <span class="o">^</span>
 </span><span class='line'>
 </span><span class='line'><span class="nb">Error</span><span class="o">:</span> <span class="nx">Expected</span> <span class="nx">to</span> <span class="nx">equal</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">but</span> <span class="nx">got</span><span class="o">:</span> <span class="mi">2</span>
@@ -972,6 +972,8 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
         <a class="basic-alignment left" href="/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper/" title="Previous Post: TL;DR on Sustainable Software Development Paper">&laquo; TL;DR on Sustainable Software Development Paper</a>
       
       
+        <a class="basic-alignment right" href="/blog/2016/07/23/build-your-own-testing-framework-part-2/" title="Next Post: Build Your Own Testing Framework. Part 2">Build Your Own Testing Framework. Part 2 &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -983,6 +985,10 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/07/23/build-your-own-testing-framework-part-2/">Build Your Own Testing Framework. Part 2</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/07/15/build-your-own-testing-framework/">Build Your Own Testing Framework</a>
@@ -1010,10 +1016,6 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
     
       <li class="post">
         <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">Iterative Divide &amp; Conquer or How to Solve Problems</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/02/13/tdd-number-4-path-finding/">TDD #4: Path Finding</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-07-20T00:33:50+02:00</updated>
+  <updated>2016-07-23T19:52:16+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,904 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Build Your Own Testing Framework. Part 2]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/07/23/build-your-own-testing-framework-part-2/"/>
+    <updated>2016-07-23T14:52:42+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/07/23/build-your-own-testing-framework-part-2</id>
+    <content type="html"><![CDATA[<p>Today we are going to unit-test existing functionality of our own testing framework, that we have test-driven with <code>FizzBuzzKata</code> in <a href="/blog/2016/07/15/build-your-own-testing-framework/">the previous part</a>.</p>
+
+<p>This needs to be done, since currently only happy paths are implicitly tested via <code>FizzBuzzKata</code> test suite, i.e.: when all the tests pass. The following unhappy paths are not tested at the moment:</p>
+
+<ul>
+<li>when <code>assertTrue</code> fails, it throws an error,</li>
+<li>when <code>assertEqual</code> fails, it throws an error,</li>
+<li>when the test fails, it renders the error and fails the whole test suite run, i.e.: non-zero exit code.</li>
+</ul>
+
+
+<p>This article is the second one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found here: <a href="http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/.">http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/.</a></p>
+
+<p>Shall we get the ball rolling?</p>
+
+<h2>Testing <code>assertTrue(condition, message)</code></h2>
+
+<p>Let&rsquo;s create a test suite for <code>assertTrue</code> with the first test for the case, when <code>assertTrue</code> succeeds:</p>
+
+<pre><code class="javascript">// test/AssertTrueTest.js
+var runTestSuite = require("../src/TestingFramework");
+
+runTestSuite(function (t) {
+    this.testSuccess = function () {
+        t.assertTrue(true);
+    };
+});
+</code></pre>
+
+<p>If we run this test suite, it should not fail:</p>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>Let&rsquo;s check if that test actually is testing anything by trying to break the implementation of <code>assertTrue</code>:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+assertTrue: function (condition, message) {
+    if (condition) {    // &lt;- this condition was inverted
+        throw new Error(...);
+    }
+},
+</code></pre>
+
+<p>And if we run it, we get the expected error:</p>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+/path/to/project/src/TestingFramework.js:4
+            throw new Error(message || "Expected to be true, but got false");
+            ^
+
+Error: Expected to be true, but got false
+    .. stack trace ..
+
+Process finished with exit code 1
+</code></pre>
+
+<p>OK, it fails as expected, now we should undo our breaking change in the implementation and run the test suite again and it should pass:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+assertTrue: function (condition, message) {
+    if (!condition) {    // &lt;- the breaking change here have been undone
+        throw new Error(...);
+    }
+},
+</code></pre>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>Now, let&rsquo;s write a new test for the case, when <code>assertTrue</code> fails:</p>
+
+<pre><code class="javascript">// test/AssertTrueTest.js
+
+this.testFailure = function () {
+    try {
+        t.assertTrue(false);
+    } catch (error) {
+        t.assertEqual("Expected to be true, but got false", error.message);
+    }
+};
+</code></pre>
+
+<p>And if we run the test suite, it passes. If I was confident in the previous test, that I know why it didn&rsquo;t fail, here I feel a bit uncomfortable about writing these 5 lines of test code and never seeing them fail. So let&rsquo;s break the code once again!</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+assertTrue: function (condition, message) {
+    if (!condition) {
+        throw new Error(message || "oops");   // &lt;- we have changed error message here
+    }
+},
+</code></pre>
+
+<p>And if we run tests, we get an expected failure:</p>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+/path/to/project/src/TestingFramework.js:4
+            throw new Error(message || "oops");
+            ^
+
+Error: Expected to equal Expected to be true, but got false, but got: oops
+    .. stack trace ..
+
+Process finished with exit code 1
+</code></pre>
+
+<p>And if we undo our breaking change in the implementation the test should pass:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+assertTrue: function (condition, message) {
+    if (!condition) {
+        throw new Error(message || "Expected to be true, but got false");
+        //                         ^ we have restored correct message ^
+    }
+},
+</code></pre>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>And the last test for <code>assertTrue</code> to test the custom failure message:</p>
+
+<pre><code class="javascript">// test/AssertTrueTest.js
+
+this.testCustomFailureMessage = function () {
+    try {
+        t.assertTrue(false, "it is not true!");
+    } catch (error) {
+        t.assertEqual("it is not true!", error.message);
+    }
+};
+</code></pre>
+
+<p>If we run the test suite, it passes:</p>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>Even that I am confident enough, that this <code>try { ... } catch (..) { ... }</code> construction does the right thing, let&rsquo;s be diligent about it and break the implementation of that functionality and see this test fail:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+assertTrue: function (condition, message) {
+    if (!condition) {
+        throw new Error("Expected to be true, but got false");
+        //              ^ 'message || ' was removed here   ^
+    }
+},
+</code></pre>
+
+<p>If we run the test suite:</p>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+/path/to/project/src/TestingFramework.js:4
+            throw new Error("Expected to be true, but got false");
+            ^
+
+Error: Expected to be true, but got false
+    .. stack trace ..
+
+Process finished with exit code 1
+</code></pre>
+
+<p>It fails, but this change breaks <code>assertEqual</code> too so that we don&rsquo;t see any meaningful error message now. We can figure out if that is an expected failure or not by inspecting the stack trace:</p>
+
+<pre><code>Error: Expected to be true, but got false
+    at Object.assertions.assertTrue (/path/to/project/src/TestingFramework.js:4:19)
+    at Object.assertions.assertEqual (/path/to/project/src/TestingFramework.js:9:14)
+    at testCustomFailureMessage (/path/to/project/test/AssertTrueTest.js:20:15)
+    at runTestSuite (/path/to/project/src/TestingFramework.js:21:32)
+    at Object.&lt;anonymous&gt; (/path/to/project/test/AssertTrueTest.js:3:1)
+    at Module._compile (module.js:409:26)
+    at Object.Module._extensions..js (module.js:416:10)
+    at Module.load (module.js:343:32)
+    at Function.Module._load (module.js:300:12)
+    at Function.Module.runMain (module.js:441:10)
+</code></pre>
+
+<p>and precisely this line is the most interesting one:</p>
+
+<pre><code>at testCustomFailureMessage (/path/to/project/test/AssertTrueTest.js:20:15)
+</code></pre>
+
+<p>If we open the code at this stack trace frame, we will see:</p>
+
+<pre><code class="javascript">t.assertEqual("it is not true!", error.message);
+</code></pre>
+
+<p>Great, this is exactly what we expected. Undoing the breaking change and running the test suite again:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+assertTrue: function (condition, message) {
+    if (!condition) {
+        throw new Error(message || "Expected to be true, but got false");
+        //              ^ 'message || ' was inserted here again       ^
+    }
+},
+</code></pre>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>Interestingly enough, I know how to break the code now and all the tests will pass:</p>
+
+<p>First, let&rsquo;s extract local variable in <code>assertTrue</code>:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+assertTrue: function (condition, message) {
+    var errorMessage = message || "Expected to be true, but got false";
+
+    if (!condition) {
+        throw new Error(errorMessage);
+    }
+},
+</code></pre>
+
+<p>And that still passes its tests:</p>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>Now let&rsquo;s expand <code>message ||</code> into the proper <code>if</code> statement:</p>
+
+<pre><code class="javascript">var errorMessage = "Expected to be true, but got false";
+
+if (message) {
+    errorMessage = message;
+}
+</code></pre>
+
+<p>And that still passes its tests:</p>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>Now, what if I were to replace <code>errorMessage = message;</code> with <code>errorMessage = "it is not true!";</code> inside of the <code>if</code> statement:</p>
+
+<pre><code class="javascript">if (message) {
+    errorMessage = "it is not true!";
+}
+</code></pre>
+
+<p>The test still passes!</p>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>This is rather interesting. It seems, that we will have to make sure, that <code>message</code> parameter actually gets passed to <code>new Error(...)</code>. We can do that by applying the Triangulation technique focusing on <code>message</code> parameter:</p>
+
+<pre><code class="javascript">// test/AssertTrueTest.js
+
+this.testCustomFailureMessage_withOtherMessage = function () {
+    try {
+        t.assertTrue(false, "should be true");
+    } catch (error) {
+        t.assertEqual("should be true", error.message);
+    }
+};
+</code></pre>
+
+<p>And if we run the test suite, we get our expected failure:</p>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+/path/to/project/src/TestingFramework.js:10
+            throw new Error(errorMessage);
+            ^
+
+Error: it is not true!
+    ...
+    at testCustomFailureMessage_withOtherMessage (/path/to/project/test/AssertTrueTest.js:28:15)
+    ...
+
+Process finished with exit code 1
+</code></pre>
+
+<p>And if we look at the stack trace frame, it points us to the correct line of code:</p>
+
+<pre><code class="javascript">t.assertEqual("should be true", error.message);
+</code></pre>
+
+<p>And we can now fix the test by fixing the implementation:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+// inside of `assertTrue` function:
+if (message) {
+    errorMessage = message;   // &lt;- here we actually have to use 'message' now
+}
+</code></pre>
+
+<p>And when we run the test suite, it passes:</p>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>I think we have all required tests for <code>assertTrue</code> now. This is great! And have you spotted the duplication already?</p>
+
+<h2>Refactoring <code>AssertTrueTest</code></h2>
+
+<p>The duplication that is present here is our <code>try { ... } catch (..) { ... }</code> construct. Let&rsquo;s make it a completely duplicate code by extracting couple of local variables:</p>
+
+<pre><code class="javascript">// first, let's extract the Action Under the Test variable:
+var action = function () { t.assertTrue(false); };
+
+try {
+    action();
+} catch (error) {
+    t.assertEqual("Expected to be true, but got false", error.message);
+}
+
+// next, let's extract the Expected Error Message:
+var expectedMessage = "Expected to be true, but got false";
+
+try {
+    action();
+} catch (error) {
+    t.assertEqual(expectedMessage, error.message);
+}
+</code></pre>
+
+<p>If we apply the same refactoring for all tests in the <code>AssertTrueTest</code> suite, we will see the duplication:</p>
+
+<pre><code class="javascript">try {
+    action();
+} catch (error) {
+    t.assertEqual(expectedMessage, error.message);
+}
+</code></pre>
+
+<p>Let&rsquo;s give that operation a name and extract is as a function: <code>assertThrow(expectedMessage, action)</code>:</p>
+
+<pre><code class="javascript">function assertThrow(expectedMessage, action) {
+    try {
+        action();
+    } catch (error) {
+        t.assertEqual(expectedMessage, error.message);
+    }
+}
+</code></pre>
+
+<p>Use this function in all tests and inline all the extracted local variables:</p>
+
+<pre><code class="javascript">this.testFailure = function () {
+    assertThrow("Expected to be true, but got false", function () {
+        t.assertTrue(false);
+    });
+};
+
+this.testCustomFailureMessage = function () {
+    assertThrow("it is not true!", function () {
+        t.assertTrue(false, "it is not true!");
+    });
+};
+
+this.testCustomFailureMessage_withOtherMessage = function () {
+    assertThrow("should be true", function () {
+        t.assertTrue(false, "should be true");
+    });
+};
+</code></pre>
+
+<p>Function <code>assertThrow</code> seems to be useful for any test, not just <code>AssertTrueTest</code> suite. Let&rsquo;s move it to the <code>assertions</code> object. We will be doing that by using Parallel Change technique:</p>
+
+<ol>
+<li>Create new functionality first;</li>
+<li>Step by step migrate all calls to use new functionality instead of old one;</li>
+<li>Once old functionality is not used, remove it.</li>
+</ol>
+
+
+<p>The advantage of that method is that it consists of very small steps, that can be executed with confidence and each such small step never leaves the user in a red state (failing tests or compile/parsing errors).</p>
+
+<p>Let&rsquo;s see how this one can be applied here:</p>
+
+<p><code>1. Create new functionality first</code> - we can do it by copying the <code>assertThrow</code> function to <code>assertions</code> object:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+var assertions = {
+    // ...
+    assertThrow: function (expectedMessage, action) {
+        try {
+            action();
+        } catch (error) {
+            // `t` needs to be changed to `this` here
+            this.assertEqual(expectedMessage, error.message);
+        }
+    }
+};
+</code></pre>
+
+<p>The tests should still pass:</p>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p><code>2. Step by step migrate all calls to use new functionality instead of old one</code> - we do it by calling <code>assertThrow</code> on <code>t</code> (our assertions object) in the test suite. Since we still haven&rsquo;t removed the old <code>assertThrow</code> function, we can do that one function call at the time and the tests will always be green:</p>
+
+<pre><code class="javascript">this.testFailure = function () {
+    t.assertThrow("Expected to be true, but got false", function () {
+// ^ 't.' added here ^
+        t.assertTrue(false);
+    });
+};
+
+// run tests and they still pass.
+
+this.testCustomFailureMessage = function () {
+    t.assertThrow("it is not true!", function () {
+// ^ 't.' added here ^
+        t.assertTrue(false, "it is not true!");
+    });
+};
+
+// run tests and they still pass.
+
+this.testCustomFailureMessage_withOtherMessage = function () {
+    t.assertThrow("should be true", function () {
+// ^ 't.' added here ^
+        t.assertTrue(false, "should be true");
+    });
+};
+</code></pre>
+
+<p><code>3. Once old functionality is not used, remove it.</code> - now we can remove our <code>assertThrow</code> function defined inside of the <code>AssertTrueTest</code> suite and run tests:</p>
+
+<pre><code>/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>And they pass. Let&rsquo;s see the complete <code>AssertTrueTest</code> suite again:</p>
+
+<pre><code class="javascript">// test/AssertTrueTest.js
+var runTestSuite = require("../src/TestingFramework");
+
+runTestSuite(function (t) {
+    this.testSuccess = function () {
+        t.assertTrue(true);
+    };
+
+    this.testFailure = function () {
+        t.assertThrow("Expected to be true, but got false", function () {
+            t.assertTrue(false);
+        });
+    };
+
+    this.testCustomFailureMessage = function () {
+        t.assertThrow("it is not true!", function () {
+            t.assertTrue(false, "it is not true!");
+        });
+    };
+
+    this.testCustomFailureMessage_withOtherMessage = function () {
+        t.assertThrow("should be true", function () {
+            t.assertTrue(false, "should be true");
+        });
+    };
+});
+</code></pre>
+
+<p>The only problem here is that we are relying on the untested <code>assertThrow</code> assertion here. Let&rsquo;s unit-test it.</p>
+
+<h2>Testing <code>assertThrow(expectedMessage, action)</code></h2>
+
+<p>Let&rsquo;s create a new test suite with first test when <code>assertThrow</code> succeeds:</p>
+
+<pre><code class="javascript">// test/AssertThrowTest.js
+var runTestSuite = require("../src/TestingFramework");
+
+runTestSuite(function (t) {
+    this.testSuccess = function () {
+        assertThrow("an error message", function () {
+            throw new Error("an error message");
+        });
+    };
+});
+</code></pre>
+
+<p>And the test should pass:</p>
+
+<pre><code>/usr/local/bin/node AssertThrowTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>The code can be broken without test failure by not using <code>expectedMessage</code> parameter:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+assertThrow: function (expectedMessage, action) {
+    try {
+        action();
+    } catch (error) {
+        this.assertEqual("an error message", error.message);
+        // ^ here 'expectedMessage' was changed to constant ^
+    }
+}
+</code></pre>
+
+<p>Let&rsquo;s triangulate the code to make sure <code>expectedMessage</code> is used correctly by adding a new test:</p>
+
+<pre><code class="javascript">// test/AssertThrowTest.js
+
+this.testSuccess_withDifferentExpectedMessage = function () {
+    t.assertThrow("a different error message", function () {
+        throw new Error("a different error message");
+    });
+};
+</code></pre>
+
+<p>And that test fails as expected:</p>
+
+<pre><code>/usr/local/bin/node AssertThrowTest.js
+/path/to/project/src/TestingFramework.js:10
+            throw new Error(errorMessage);
+            ^
+
+Error: Expected to equal an error message, but got: a different error message
+
+Process finished with exit code 1
+</code></pre>
+
+<p>Undoing the breaking change (Mutation) will make the test pass:</p>
+
+<pre><code>/usr/local/bin/node AssertThrowTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>Next test is to make sure, that <code>assertThrow</code> is actually comparing actual and expected error messages correctly:</p>
+
+<pre><code class="javascript">// test/AssertThrowTest.js
+
+this.testFailure = function () {
+    t.assertThrow("Expected to equal an error message, but got: a different error message", function () {
+        t.assertThrow("an error message", function () {
+            throw new Error("a different error message");
+        });
+    });
+};
+</code></pre>
+
+<p>And it passes. The last test, that <code>assertThrow</code> needs is the case, when <code>action()</code> is not throwing any error. In that case <code>assertThrow</code> should fail:</p>
+
+<pre><code class="javascript">// test/AssertThrowTest.js
+
+this.testFailure_whenActionDoesNotThrow = function () {
+    t.assertThrow("Expected to throw an error, but nothing was thrown", function () {
+        t.assertThrow("an error message", function () {
+            // does nothing
+        });
+    });
+};
+</code></pre>
+
+<p>Oh, and that test is passing! We clearly don&rsquo;t have that functionality yet. We have to add another test without usage of outer <code>t.assertThrow</code> to make sure that we get a test failure:</p>
+
+<pre><code class="javascript">this.testThrows_whenActionDoesNotThrow = function () {
+    var hasThrown = false;
+
+    try {
+        t.assertThrow("an error message", function () {
+            // does nothing
+        });
+    } catch (error) {
+        hasThrown = true;
+    }
+
+    t.assertTrue(hasThrown, "it should have thrown");
+};
+</code></pre>
+
+<p>And if we run our tests we get the expected failure:</p>
+
+<pre><code>/usr/local/bin/node AssertThrowTest.js
+/path/to/project/src/TestingFramework.js:10
+            throw new Error(errorMessage);
+            ^
+
+Error: it should have thrown
+
+Process finished with exit code 1
+</code></pre>
+
+<p>We can fix that by verifying, that <code>catch</code> block is executed in the <code>assertThrow</code> function:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+assertThrow: function (expectedMessage, action) {
+    var hasThrown = false;  // &lt;- we initialize hasThrown here
+
+    try {
+        action();
+    } catch (error) {
+        hasThrown = true;   // &lt;- and we set it to true in the catch block
+        this.assertEqual(expectedMessage, error.message);
+    }
+
+    this.assertTrue(hasThrown);  // &lt;- and we check that it is true
+}
+</code></pre>
+
+<p>And now if we run the test suite, the original test that we were trying to write fails as expected:</p>
+
+<pre><code>/usr/local/bin/node AssertThrowTest.js
+/path/to/project/src/TestingFramework.js:10
+            throw new Error(errorMessage);
+            ^
+
+Error: Expected to equal Expected to throw an error, but nothing was thrown, but got: Expected to be true, but got false
+
+Process finished with exit code 1
+</code></pre>
+
+<p>Now we need to fix the custom message provided to <code>assertTrue</code> call inside of <code>assertThrow</code>:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+// inside of assertThrow:
+this.assertTrue(hasThrown, "Expected to throw an error, but nothing was thrown");
+</code></pre>
+
+<p>And the test pass:</p>
+
+<pre><code>/usr/local/bin/node AssertThrowTest.js
+
+Process finished with exit code 0
+</code></pre>
+
+<p>Great, I think we are done with testing the <code>assertThrow</code> function. Let&rsquo;s see the whole <code>AssertThrowTest</code> suite:</p>
+
+<pre><code class="javascript">// test/AssertThrowTest.js
+var runTestSuite = require("../src/TestingFramework");
+
+runTestSuite(function (t) {
+    this.testSuccess = function () {
+        t.assertThrow("an error message", function () {
+            throw new Error("an error message");
+        });
+    };
+
+    this.testSuccess_withDifferentExpectedMessage = function () {
+        t.assertThrow("a different error message", function () {
+            throw new Error("a different error message");
+        });
+    };
+
+    this.testFailure = function () {
+        t.assertThrow("Expected to equal an error message, but got: a different error message", function () {
+            t.assertThrow("an error message", function () {
+                throw new Error("a different error message");
+            });
+        });
+    };
+
+    this.testFailure_whenActionDoesNotThrow = function () {
+        t.assertThrow("Expected to throw an error, but nothing was thrown", function () {
+            t.assertThrow("an error message", function () {
+                // does nothing
+            });
+        });
+    };
+
+    this.testThrows_whenActionDoesNotThrow = function () {
+        var hasThrown = false;
+
+        try {
+            t.assertThrow("an error message", function () {
+                // does nothing
+            });
+        } catch (error) {
+            hasThrown = true;
+        }
+
+        t.assertTrue(hasThrown, "it should have thrown");
+    };
+});
+</code></pre>
+
+<p>Last one for today is <code>assertEqual</code>:</p>
+
+<h2>Testing <code>assertEqual(expected, actual)</code></h2>
+
+<p>Let&rsquo;s create a test suite with the first test, when <code>assertEqual</code> succeeds:</p>
+
+<pre><code class="javascript">// test/AssertEqualTest.js
+var runTestSuite = require("../src/TestingFramework");
+
+runTestSuite(function (t) {
+    this.testSuccess = function () {
+        t.assertEqual(42, 42);
+    };
+});
+</code></pre>
+
+<p>This test passes, and it can be broken without test failure by always comparing to <code>42</code>:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+assertEqual: function (expected, actual) {
+    this.assertTrue(
+        42 == actual,   // &lt;- here 'expected' is replaced with constant
+        "Expected to equal " + expected + ", but got: " + actual
+    );
+},
+</code></pre>
+
+<p>Triangulation to fix that:</p>
+
+<pre><code class="javascript">// test
+this.testSuccess_whenExpectedIsDifferent = function () {
+    t.assertEqual(29, 29);
+};
+
+// Error: Expected to equal 29, but got: 29
+
+// fix implementation:
+expected == actual,   // &lt;- here 'expected' is restored
+
+// and the test passes
+</code></pre>
+
+<p>Next mutation that does not break any tests looks this way:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+assertEqual: function (expected, actual) {
+    this.assertTrue(
+        expected == actual,
+        // "Expected to equal " + expected + ", but got: " + actual
+        "oops"    // &lt;- replace error message
+    );
+},
+</code></pre>
+
+<p>Let&rsquo;s add the test to protect from this kind of mutation:</p>
+
+<pre><code class="javascript">this.testFailure = function () {
+    t.assertThrow("Expected to equal 42, but got: 29", function () {
+        t.assertEqual(42, 29);
+    });
+};
+</code></pre>
+
+<p>This fails with <code>Error: oops</code>, because <code>assertThrow</code> uses <code>assertEqual</code>. Stack trace shows, that the failure is happening here:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js in assertThrow
+this.assertEqual(expectedMessage, error.message);
+</code></pre>
+
+<p>So that is the expected failure. We can fix it by always providing the message <code>"Expected to equal 42, but got: 29"</code>:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js in assertions
+assertEqual: function (expected, actual) {
+    this.assertTrue(
+        expected == actual,
+        "Expected to equal 42, but got: 29"
+    // ^ here the exact constant is used ^
+    );
+},
+</code></pre>
+
+<p>This needs some more triangulation:</p>
+
+<pre><code class="javascript">this.testFailure_withDifferentExpectedAndActual = function () {
+    t.assertThrow("Expected to equal 94, but got: 1027", function () {
+        t.assertEqual(94, 1027);
+    });
+};
+
+// Error: Expected to equal 42, but got: 29
+
+// fix:
+this.assertTrue(
+    expected == actual,
+    "Expected to equal " + expected + ", but got: " + actual
+);
+</code></pre>
+
+<p>I think we are done now with testing the <code>assertEqual</code> function. The <code>AssertEqualTest</code> suite is looking like that now:</p>
+
+<pre><code class="javascript">// test/AssertEqualTest.js
+var runTestSuite = require("../src/TestingFramework");
+
+runTestSuite(function (t) {
+    this.testSuccess = function () {
+        t.assertEqual(42, 42);
+    };
+
+    this.testSuccess_whenExpectedIsDifferent = function () {
+        t.assertEqual(29, 29);
+    };
+
+    this.testFailure = function () {
+        t.assertThrow("Expected to equal 42, but got: 29", function () {
+            t.assertEqual(42, 29);
+        });
+    };
+
+    this.testFailure_withDifferentExpectedAndActual = function () {
+        t.assertThrow("Expected to equal 94, but got: 1027", function () {
+            t.assertEqual(94, 1027);
+        });
+    };
+});
+</code></pre>
+
+<h2>Final <code>assertions</code> object after all the testing</h2>
+
+<pre><code class="javascript">// src/TestingFramework.js
+var assertions = {
+    assertTrue: function (condition, message) {
+        var errorMessage = "Expected to be true, but got false";
+
+        if (message) {
+            errorMessage = message;
+        }
+
+        if (!condition) {
+            throw new Error(errorMessage);
+        }
+    },
+
+    assertEqual: function (expected, actual) {
+        this.assertTrue(
+            expected == actual,
+            "Expected to equal " + expected + ", but got: " + actual
+        );
+    },
+
+    assertThrow: function (expectedMessage, action) {
+        var hasThrown = false;
+
+        try {
+            action();
+        } catch (error) {
+            hasThrown = true;
+            this.assertEqual(expectedMessage, error.message);
+        }
+
+        this.assertTrue(
+            hasThrown,
+            "Expected to throw an error, but nothing was thrown"
+        );
+    }
+};
+</code></pre>
+
+<h2>Bottom Line</h2>
+
+<p>Congratulations! We have completely unit-tested our assertions <code>assertTrue</code> and <code>assertEqual</code>. This resulted in natural emergence of the new assertion - <code>assertThrow</code>. We have unit-tested it too!</p>
+
+<p>Additionally, we have practiced usage of Mutational Testing and Triangulation Technique to detect missing test cases and derive them from the code. Also, we have slightly touched the Parallel Change refactoring technique - we will see more of that in the future in these series.</p>
+
+<p>The code is available on Github: <a href="https://github.com/waterlink/BuildYourOwnTestingFrameworkPart2">https://github.com/waterlink/BuildYourOwnTestingFrameworkPart2</a></p>
+
+<p>Now that we have unit-tested some basic assertions, we should unit-test our testing framework test runner: <code>runTestSuite</code> function. This will be covered in next series of &ldquo;Build Your Own Testing Framework&rdquo;. Stay tuned!</p>
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Your Own Testing Framework]]></title>
@@ -29,7 +927,7 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 
 <p>For practical reasons, today we are going to use concrete programming language instead of pseudo-code - javascript. Except for small details, that we will point out, the techniques shown here are language-agnostic.</p>
 
-<p>This article is only first one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts!</p>
+<p>This article is only first one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found here: <a href="http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/.">http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/.</a></p>
 
 <p>Shall we begin?</p>
 
@@ -162,14 +1060,14 @@ Error: Expected to be true, but got false
 // ...
 
     assertTrue: function(condition, message) {
-        throw new Error(message || "Expected to be true, bug got false");
+        throw new Error(message || "Expected to be true, but got false");
     }
 </code></pre>
 
 <p>When running this, we are getting the expected error:</p>
 
 <pre><code>/path/to/project/test/FizzBuzzKataTest.js:11
-        throw new Error(message || "Expected to be true, bug got false");
+        throw new Error(message || "Expected to be true, but got false");
         ^
 
 Error: Expected to equal 1, but got: undefined
@@ -185,7 +1083,7 @@ Error: Expected to equal 1, but got: undefined
 <p>And as we run our test suite we get:</p>
 
 <pre><code>/path/to/project/test/FizzBuzzKataTest.js:13
-        throw new Error(message || "Expected to be true, bug got false");
+        throw new Error(message || "Expected to be true, but got false");
         ^
 
 Error: Expected to equal 1, but got: 1
@@ -234,7 +1132,7 @@ runTestSuite(testSuiteConstructor);
 var assertions = {
     assertTrue: function (condition, message) {
         if (!condition) {
-            throw new Error(message || "Expected to be true, bug got false");
+            throw new Error(message || "Expected to be true, but got false");
         }
     }
 };
@@ -279,7 +1177,7 @@ runTestSuite(FizzBuzzKataTest);
 <p>And run tests:</p>
 
 <pre><code>/path/to/project/src/TestingFramework.js:4
-            throw new Error(message || "Expected to be true, bug got false");
+            throw new Error(message || "Expected to be true, but got false");
             ^
 
 Error: Expected to equal 1, but got: 2
@@ -333,7 +1231,7 @@ runTestSuite(function (t) { ... });
 <p>If we run tests now, we get the expected failure:</p>
 
 <pre><code>/path/to/project/src/TestingFramework.js:4
-            throw new Error(message || "Expected to be true, bug got false");
+            throw new Error(message || "Expected to be true, but got false");
             ^
 
 Error: Expected to equal 2, but got: 1
@@ -342,7 +1240,7 @@ Error: Expected to equal 2, but got: 1
 <p>If we try to change <code>return "1"</code> to <code>return "2"</code>, of course this test will pass, but the other will fail:</p>
 
 <pre><code>/path/to/project/src/TestingFramework.js:4
-            throw new Error(message || "Expected to be true, bug got false");
+            throw new Error(message || "Expected to be true, but got false");
             ^
 
 Error: Expected to equal 1, but got: 2

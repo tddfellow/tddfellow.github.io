@@ -9,11 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="TL;DR This post describes two different issues: Race conditions when taking reference of loop variable and passing it to another goroutine: 1
-2
-3
-4
-5 &hellip;">
+  <meta name="description" content="Recommended to watch in a full-screen and on 720p or higher quality. List of all TDD Screencasts can be found here. Script Hello! I am Oleksii &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,6 +68,196 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/02/02/test-driven-development-screencast-number-1/">Test-Driven-Development Screencast #1</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-02-02T07:59:25+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2016</span></span> <span class='time'>7:59 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><iframe width="560" height="315" src="https://www.youtube.com/embed/QnEvjrszst4?list=PLbNxoJawcer22UE8lT93-fX8ZYFNtoXFu" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
+
+<h2>Script</h2>
+
+<p>Hello! I am Oleksii Fedorov, and this is the first episode of
+Test-Driven-Development Screencast.</p>
+
+<p>Today, I am going to briefly address following questions about
+Test-Driven-Development:
+- What TDD is?
+- What are main benefits of doing TDD?</p>
+
+<p>At the end I am going to demonstrate a small example on how to implement simple
+sorting algorithm using TDD.</p>
+
+<p>Let me open my slides. Don&rsquo;t worry: there are only three small slides.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vim ./slides/*</span></code></pre></td></tr></table></div></figure>
+
+
+<p>TDD is Software Development discipline. Therefore, basic rules, defined by TDD,
+are arbitrary, weird and are to be followed to the letter, if you want it to be
+useful. There is a reason for that – but we will talk shortly about that. Let
+me read these basic rules for you:</p>
+
+<ol>
+<li><p>You are not allowed to write a line of production code, unless test fails.</p>
+
+<p>Which means, that I will have to write the test even before I have something
+to test. It may sound stupid. Maybe, it is stupid. Maybe, it is not.</p>
+
+<p>But the next rule is even more weird than the first one:</p></li>
+<li><p>You are not allowed to write more of a test, that is sufficient to fail.</p>
+
+<p>It is important to clarify, what ˝fail˝ means in this context. It means test
+expectation failure, and compilation/parsing/interpretation failure
+(depending if your programming language is compiled or interpreted).</p>
+
+<p>Which means, that you will have to interrupt yourself, while writing a test,
+because you have mentioned the class or package, that does not exist yet. Or
+you have mentioned the method or function, that does not exist yet.</p>
+
+<p>Now that may sound really stupid to you. Bear with me, and lets see how
+weird the last rule is:</p></li>
+<li><p>You are not allowed to write more production code, that is sufficient to
+make the failing test pass.</p>
+
+<p>Which means, that once you have defined a class, that was mentioned - you
+have just fixed a failing test, and you have to go back and write more of
+the test, or add new test.</p>
+
+<p>Which means, that once you have defined a method, that was mentioned - you
+have just fixed a failing test, and you have to got back and write more of
+the test again.</p>
+
+<p>Which means, that once you changed your production code only slightly in
+direction of the correct implementation, you have to go back and write more
+tests.</p>
+
+<p>This is interesting. Now you got yourself in a very tight lock. In a very
+tight feedback loop. Write a line of test, write a line of code, write a
+line of test, write a line of code, and so on. The length of this loop is
+probably 5, 10, 30 seconds. If you have a test suite that needs half an hour
+to run, you will not do TDD.</p></li>
+</ol>
+
+
+<p>What happens if you do not follow this discipline to the letter? If you slip
+there and there?: write a bit more production code, than you had to?, write a
+bit more of a test, than you had to?, or even wrote a test after writing the
+whole class under test?</p>
+
+<p>Well, you have just lost the main benefit of TDD: you can no longer trust the
+test suite. For sure, there will be some untested code if you do it this way.</p>
+
+<p>Why do we need 100% test coverage, you ask? 70% sounds like an awesome
+achievement! Or is it?..</p>
+
+<p>What can you tell from the fact, that only 70% of your code is covered by test
+suite? Only that 30% is not covered, and therefore, there is no quick and easy
+way to verify that it works.</p>
+
+<p>Lets imagine the following scenario:</p>
+
+<ul>
+<li>You open a file on your screen.</li>
+<li>You spot some nasty duplication, and you know you want to fix it.</li>
+<li>You even see an obvious way to fix it.</li>
+<li>You touch your keyboard.</li>
+<li>And now, the fear overwhelms you: this class is not tested.</li>
+<li>And your reaction? - I won&rsquo;t touch it!</li>
+</ul>
+
+
+<p>That is where code starts to rot, while nobody cleans it up, because test suite
+can not be trusted, and the whole codebase slowly down-slides to a big pile of
+mess.</p>
+
+<p>Now, lets imagine, that you have 100% code coverage (Well, maybe 98%, because
+100% is the goal, that is not achievable). And the same scenario:</p>
+
+<ul>
+<li>You open a file on your screen.</li>
+<li>You spot some nasty duplication.</li>
+<li>You fix the duplication.</li>
+<li>You run tests - and they are green.</li>
+<li>You check-in cleaner code in your code control system.</li>
+</ul>
+
+
+<p>Or, lets say, that the problem is not trivial:
+- You spot the long method.
+- You split it in 3 methods - tests are still green.
+- You proceed and extract these methods to the new class.
+- And tests fail.
+- Undo-Undo-Undo. And you are back to the green state.
+- And now you think for a moment, what happened there.
+- And you already have this ˝Gotcha!˝.
+- And you successfully extract a class again - and the test suite is green.
+- You check-in cleaner code in your code control system.</p>
+
+<p>Undo button becomes your best friend. Once you stop knowing what is going on,
+or what you are doing, or you simply confused, you can always go back to the
+green state; that just happens to be 25 seconds ago (or 2-3 undo) away, because
+of the tight feedback loop you got yourself into.</p>
+
+<p>Now, there is a hidden rule of TDD. That feels more, like an implementation
+detail of TDD:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>:next</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As tests become more specific, production code should become more generic.</p>
+
+<p>And it is very true, otherwise, you would end up adding a bunch of <code>if</code>
+statements every time you add a failing test.</p>
+
+<p>What that means, I will point out during the example.</p>
+
+<p>And lets sum up now:</p>
+
+<p>100% Code Coverage =>
+  Lack of Fear =>
+  Consistent Random Kindness to the Code =>
+  Clean Code.</p>
+
+<hr />
+
+<p>60% Code Coverage =>
+  Fear to Break It =>
+  ˝I won&rsquo;t touch it!˝ =>
+  Mess.</p>
+
+<p>Now we can finally move on to the example. Next time, on the next episode of
+Test-Driven-Development Screencast! Have a good day.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -590,264 +776,6 @@ issues on corresponding github project. Pull requests are welcome!</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x/">Docker Machine Guide (VirtualBox on Mac OS X)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-08-31T10:21:06+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>10:21 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><em>(VirtualBox on Mac OS X)</em></p>
-
-<p>This guide is a combination of official docs and usage experience.</p>
-
-<h2>Installation</h2>
-
-<p><em>Install virtualbox first
-<a href="https://www.virtualbox.org/wiki/Downloads">virtualbox downloads</a>.</em></p>
-
-<p>Look at this page: <a href="https://github.com/docker/machine/releases/">https://github.com/docker/machine/releases/</a> and pick latest
-release. At the time of writing this is <code>v0.4.1</code>.</p>
-
-<p>Now, assign version number to an environment variable, together with your
-architecture:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">DOCKER_MACHINE_VERSION</span><span class="o">=</span>v0.4.1
-</span><span class='line'><span class="nv">DOCKER_MACHINE_ARCH</span><span class="o">=</span>darwin-amd64
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now download <code>docker-machine</code> binary and put it onto your <code>PATH</code> (recommended
-is <code>~/bin/</code>):</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir -p ~/bin
-</span><span class='line'><span class="nv">URL</span><span class="o">=</span>https://github.com/docker/machine/releases/download/<span class="k">${</span><span class="nv">DOCKER_MACHINE_VERSION</span><span class="k">}</span>/docker-machine_<span class="k">${</span><span class="nv">DOCKER_MACHINE_ARCH</span><span class="k">}</span>
-</span><span class='line'><span class="nv">OUTPUT</span><span class="o">=</span>~/bin/docker-machine
-</span><span class='line'>curl -L <span class="k">${</span><span class="nv">URL</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
-</span><span class='line'>chmod +x <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you still haven&rsquo;t yet, put <code>~/bin/</code> on your <code>PATH</code> with <code>export
-PATH=$PATH:$HOME/bin</code> into your <code>.bashrc</code> or <code>.zshrc</code> (or whatever shell you
-use).</p>
-
-<h2>Installing docker client</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">URL</span><span class="o">=</span>https://get.docker.com/builds/Darwin/x86_64/docker-latest
-</span><span class='line'><span class="nv">OUTPUT</span><span class="o">=</span>~/bin/docker
-</span><span class='line'>curl -L <span class="k">${</span><span class="nv">URL</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
-</span><span class='line'>chmod +x <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Creating your first docker machine</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine create -d virtualbox dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This is how you create docker machine with name <code>dev</code> having virtualbox as a
-backend.</p>
-
-<p>But after some time you will encounter a problem of running out of memory. So
-my recommended command to create your primary development docker machine is
-this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine create -d virtualbox dev --virtualbox-memory <span class="s2">&quot;5120&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This will create virtualbox VM with enough memory to run low-to-moderate size
-clusters with <code>docker-compose</code>. Which should be enough for development.</p>
-
-<p>This should be your primary docker machine that is always activated and used.
-There is no need to destroy and re-create this <code>dev</code> machine unless you are
-testing some edge-cases. And better to use additional docker machine with
-different name for this.</p>
-
-<h2>Connecting to your <code>dev</code> docker machine</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">eval</span> <span class="k">$(</span>docker-machine env dev<span class="k">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After this command, you will have everything you need to run <code>docker</code> in the same terminal:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Using alpine image here because it is only ~5 MB</span>
-</span><span class='line'>docker run -it --rm alpine <span class="nb">echo</span> <span class="s1">&#39;hello world&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You should see:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># .. pulling alpine image here .. and:</span>
-</span><span class='line'>hello world
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>It might be annoying to run <code>eval $(docker-machine env dev)</code> each time you open
-new terminal. So feel free to put this line into your <code>.bashrc</code> or <code>.zshrc</code> or
-whatever shell you use:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># in .bashrc:</span>
-</span><span class='line'><span class="nb">eval</span> <span class="k">$(</span>docker-machine env dev<span class="k">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you have just powered on your Mac (or just stopped your docker machine) you
-will experience this error:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>Error: Host does not exist: dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In that case just start it with:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine start dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And re-open your terminal.</p>
-
-<h2>Dealing with docker machine&rsquo;s IP address</h2>
-
-<p>Fact: docker machine&rsquo;s IP address stays the same, usually 192.168.99.100,
-unless:</p>
-
-<ul>
-<li>you destroy your docker machine <code>dev</code>, create another VirtualBox VM and
-create docker machine <code>dev</code> afterwards, or</li>
-<li>you have custom VirtualBox configuration.</li>
-</ul>
-
-
-<p>Given that docker machine&rsquo;s IP address stays the same or changes very rarely,
-you can simply put its IP address in your <code>/etc/hosts</code>.</p>
-
-<p>First, figure out current docker machine&rsquo;s IP address:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine ip dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And put it in <code>/etc/hosts</code>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># in /etc/hosts</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># Put IP address previous command has returned here:</span>
-</span><span class='line'>192.168.99.100 docker-dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>To test that it works correclty try to run:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker run -it --rm -p 80:80 nginx
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And now reach <code>http://docker-dev</code> in your browser - you should see default
-Nginx page.</p>
-
-<p>If you want to refer docker machine <code>dev</code> in your scripts, it is better to use
-<code>$(docker-machine ip dev)</code> capabilities for that. For example, <code>curl</code>-ing the
-page we have seen in browser just now:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>curl <span class="k">$(</span>docker-machine ip dev<span class="k">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>For teams it would make sense to agree on the same name for primary development
-docker machine. <code>dev</code> works just great!</p>
-
-<p><em>NOTE: personally, I use both <code>docker-dev</code> and just <code>dev</code> as a hostname to type
-less, but that might clash with something else, so <code>docker-dev</code> it is.</em></p>
-
-<h2>Upgrading</h2>
-
-<p>To upgrade <code>docker-machine</code> or <code>docker</code> binaries, just follow <code>Installation</code>
-instructions again.</p>
-
-<p>To upgrade <code>docker</code> server inside of already running docker machine, use:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine upgrade dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This will update to the latest version of <code>docker</code> server and <code>boot2docker</code>
-image.</p>
-
-<h2>Re-creating a fresh <code>dev</code> docker machine</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine rm dev
-</span><span class='line'>docker-machine create -d virtualbox dev --virtualbox-memory <span class="s2">&quot;5120&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Further reading</h2>
-
-<ul>
-<li><a href="https://docs.docker.com/machine/">Overview of Docker Machine</a></li>
-<li><a href="https://docs.docker.com/machine/get-started/">Get started with Docker Machine and a local VM</a></li>
-</ul>
-
-
-<p>Comments on <a href="https://news.ycombinator.com/item?id=10146082">hackernews</a>.</p>
-
-<p>Happy hacking! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/5">&larr; Older</a>
@@ -863,6 +791,10 @@ image.</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/07/23/build-your-own-testing-framework-part-2/">Build Your Own Testing Framework. Part 2</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/07/15/build-your-own-testing-framework/">Build Your Own Testing Framework</a>
@@ -890,10 +822,6 @@ image.</p>
     
       <li class="post">
         <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">Iterative Divide &amp; Conquer or How to Solve Problems</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/02/13/tdd-number-4-path-finding/">TDD #4: Path Finding</a>
       </li>
     
   </ul>
