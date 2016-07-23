@@ -722,20 +722,248 @@ And the test pass:
 Process finished with exit code 0
 ```
 
-Great, I think we are done with testing the `assertThrow` function. Last one for today is `assertEqual`:
+Great, I think we are done with testing the `assertThrow` function. Let's see the whole `AssertThrowTest` suite:
+
+```javascript
+// test/AssertThrowTest.js
+var runTestSuite = require("../src/TestingFramework");
+
+runTestSuite(function (t) {
+    this.testSuccess = function () {
+        t.assertThrow("an error message", function () {
+            throw new Error("an error message");
+        });
+    };
+
+    this.testSuccess_withDifferentExpectedMessage = function () {
+        t.assertThrow("a different error message", function () {
+            throw new Error("a different error message");
+        });
+    };
+
+    this.testFailure = function () {
+        t.assertThrow("Expected to equal an error message, but got: a different error message", function () {
+            t.assertThrow("an error message", function () {
+                throw new Error("a different error message");
+            });
+        });
+    };
+
+    this.testFailure_whenActionDoesNotThrow = function () {
+        t.assertThrow("Expected to throw an error, but nothing was thrown", function () {
+            t.assertThrow("an error message", function () {
+                // does nothing
+            });
+        });
+    };
+
+    this.testThrows_whenActionDoesNotThrow = function () {
+        var hasThrown = false;
+
+        try {
+            t.assertThrow("an error message", function () {
+                // does nothing
+            });
+        } catch (error) {
+            hasThrown = true;
+        }
+
+        t.assertTrue(hasThrown, "it should have thrown");
+    };
+});
+```
+
+Last one for today is `assertEqual`:
 
 ## Testing `assertEqual(expected, actual)`
 
+Let's create a test suite with the first test, when `assertEqual` succeeds:
 
+```javascript
+// test/AssertEqualTest.js
+var runTestSuite = require("../src/TestingFramework");
 
+runTestSuite(function (t) {
+    this.testSuccess = function () {
+        t.assertEqual(42, 42);
+    };
+});
+```
 
+This test passes, and it can be broken without test failure by always comparing to `42`:
 
+```javascript
+// src/TestingFramework.js
 
+assertEqual: function (expected, actual) {
+    this.assertTrue(
+        42 == actual,   // <- here 'expected' is replaced with constant
+        "Expected to equal " + expected + ", but got: " + actual
+    );
+},
+```
 
+Triangulation to fix that:
 
-## Next time
+```javascript
+// test
+this.testSuccess_whenExpectedIsDifferent = function () {
+    t.assertEqual(29, 29);
+};
 
-Additionally, today we are going to add the following two features to our testing framework:
+// Error: Expected to equal 29, but got: 29
 
-    do not stop execution on first failure and run all tests, and
-    report amount of total tests and amount of tests that have failed.
+// fix implementation:
+expected == actual,   // <- here 'expected' is restored
+
+// and the test passes
+```
+
+Next mutation that does not break any tests looks this way:
+
+```javascript
+// src/TestingFramework.js
+
+assertEqual: function (expected, actual) {
+    this.assertTrue(
+        expected == actual,
+        // "Expected to equal " + expected + ", but got: " + actual
+        "oops"    // <- replace error message
+    );
+},
+```
+
+Let's add the test to protect from this kind of mutation:
+
+```javascript
+this.testFailure = function () {
+    t.assertThrow("Expected to equal 42, but got: 29", function () {
+        t.assertEqual(42, 29);
+    });
+};
+```
+
+This fails with `Error: oops`, because `assertThrow` uses `assertEqual`. Stack trace shows, that the failure is happening here:
+
+```javascript
+// src/TestingFramework.js in assertThrow
+this.assertEqual(expectedMessage, error.message);
+```
+
+So that is the expected failure. We can fix it by always providing the message `"Expected to equal 42, but got: 29"`:
+
+```javascript
+// src/TestingFramework.js in assertions
+assertEqual: function (expected, actual) {
+    this.assertTrue(
+        expected == actual,
+        "Expected to equal 42, but got: 29"
+    // ^ here is the exact constant is used ^
+    );
+},
+```
+
+This needs some more triangulation:
+
+```javascript
+this.testFailure_withDifferentExpectedAndActual = function () {
+    t.assertThrow("Expected to equal 94, but got: 1027", function () {
+        t.assertEqual(94, 1027);
+    });
+};
+
+// Error: Expected to equal 42, but got: 29
+
+// fix:
+this.assertTrue(
+    expected == actual,
+    "Expected to equal " + expected + ", but got: " + actual
+);
+```
+
+I think we are done now with testing the `assertEqual` function. The `AssertEqualTest` suite is looking like that now:
+
+```javascript
+// test/AssertEqualTest.js
+var runTestSuite = require("../src/TestingFramework");
+
+runTestSuite(function (t) {
+    this.testSuccess = function () {
+        t.assertEqual(42, 42);
+    };
+
+    this.testSuccess_whenExpectedIsDifferent = function () {
+        t.assertEqual(29, 29);
+    };
+
+    this.testFailure = function () {
+        t.assertThrow("Expected to equal 42, but got: 29", function () {
+            t.assertEqual(42, 29);
+        });
+    };
+
+    this.testFailure_withDifferentExpectedAndActual = function () {
+        t.assertThrow("Expected to equal 94, but got: 1027", function () {
+            t.assertEqual(94, 1027);
+        });
+    };
+});
+```
+
+## Final `assertions` object after all the testing
+
+```javascript
+// src/TestingFramework.js
+var assertions = {
+    assertTrue: function (condition, message) {
+        var errorMessage = "Expected to be true, but got false";
+
+        if (message) {
+            errorMessage = message;
+        }
+
+        if (!condition) {
+            throw new Error(errorMessage);
+        }
+    },
+
+    assertEqual: function (expected, actual) {
+        this.assertTrue(
+            expected == actual,
+            "Expected to equal " + expected + ", but got: " + actual
+        );
+    },
+
+    assertThrow: function (expectedMessage, action) {
+        var hasThrown = false;
+
+        try {
+            action();
+        } catch (error) {
+            hasThrown = true;
+            this.assertEqual(expectedMessage, error.message);
+        }
+
+        this.assertTrue(
+            hasThrown,
+            "Expected to throw an error, but nothing was thrown"
+        );
+    }
+};
+```
+
+## Bottom Line
+
+Congratulations! We have completely unit-tested our assertions `assertTrue` and `assertEqual`. This resulted in natural emergence of the new assertion - `assertThrow`. We have unit-tested it too!
+
+Additionally, we have practiced usage of Mutational Testing and Triangulation Technique to detect missing test cases and derive them from the code. Also, we have slightly touched the Parallel Change refactoring technique - we will see more of that in the future in these series.
+
+The code is available on Github: https://github.com/waterlink/BuildYourOwnTestingFrameworkPart2
+
+Now that we have unit-tested some basic assertions, we should unit-test our testing framework test runner: `runTestSuite` function. This will be covered in next series of "Build Your Own Testing Framework". Stay tuned!
+
+## Thanks!
+
+Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: [@waterlink000](https://twitter.com/waterlink000).
+
+If you have any questions or feedback for me, don't hesitate to reach me out on Twitter: [@waterlink000](https://twitter.com/waterlink000).
