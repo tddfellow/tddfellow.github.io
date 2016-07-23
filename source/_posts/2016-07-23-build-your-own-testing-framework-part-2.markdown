@@ -24,7 +24,7 @@ This article is the second one of the series "Build Your Own Testing Framework",
 
 Shall we get the ball rolling?
 
-## Testing `assertTrue`
+## Testing `assertTrue(condition, message)`
 
 Let's create a test suite for `assertTrue` with the first test for the case, when `assertTrue` succeeds:
 
@@ -470,10 +470,261 @@ Process finished with exit code 0
 ```javascript
 this.testFailure = function () {
     t.assertThrow("Expected to be true, but got false", function () {
+// ^ 't.' added here ^
         t.assertTrue(false);
     });
 };
+
+// run tests and they still pass.
+
+this.testCustomFailureMessage = function () {
+    t.assertThrow("it is not true!", function () {
+// ^ 't.' added here ^
+        t.assertTrue(false, "it is not true!");
+    });
+};
+
+// run tests and they still pass.
+
+this.testCustomFailureMessage_withOtherMessage = function () {
+    t.assertThrow("should be true", function () {
+// ^ 't.' added here ^
+        t.assertTrue(false, "should be true");
+    });
+};
 ```
+
+`3. Once old functionality is not used, remove it.` - now we can remove our `assertThrow` function defined inside of the `AssertTrueTest` suite and run tests:
+
+```
+/usr/local/bin/node AssertTrueTest.js
+
+Process finished with exit code 0
+```
+
+And they pass. Let's see the complete `AssertTrueTest` suite again:
+
+```javascript
+// test/AssertTrueTest.js
+var runTestSuite = require("../src/TestingFramework");
+
+runTestSuite(function (t) {
+    this.testSuccess = function () {
+        t.assertTrue(true);
+    };
+
+    this.testFailure = function () {
+        t.assertThrow("Expected to be true, but got false", function () {
+            t.assertTrue(false);
+        });
+    };
+
+    this.testCustomFailureMessage = function () {
+        t.assertThrow("it is not true!", function () {
+            t.assertTrue(false, "it is not true!");
+        });
+    };
+
+    this.testCustomFailureMessage_withOtherMessage = function () {
+        t.assertThrow("should be true", function () {
+            t.assertTrue(false, "should be true");
+        });
+    };
+});
+```
+
+The only problem here, is that we are relying on the untested `assertThrow` assertion here. Let's unit-test it.
+
+## Testing `assertThrow(expectedMessage, action)`
+
+Let's create a new test suite with first test when `assertThrow` succeeds:
+
+```javascript
+// test/AssertThrowTest.js
+var runTestSuite = require("../src/TestingFramework");
+
+runTestSuite(function (t) {
+    this.testSuccess = function () {
+        assertThrow("an error message", function () {
+            throw new Error("an error message");
+        });
+    };
+});
+```
+
+And the test should pass:
+
+```javascript
+var runTestSuite = require("../src/TestingFramework");
+
+runTestSuite(function (t) {
+    this.testSuccess = function () {
+        t.assertThrow("an error message", function () {
+            throw new Error("an error message");
+        });
+    };
+});
+```
+
+The code can be broken without test failure by not using `expectedMessage` parameter:
+
+```javascript
+// src/TestingFramework.js
+
+assertThrow: function (expectedMessage, action) {
+    try {
+        action();
+    } catch (error) {
+        this.assertEqual("an error message", error.message);
+        // ^ here 'expectedMessage' was changed to constant ^
+    }
+}
+```
+
+Let's triangulate the code to make sure `expectedMessage` is used correctly by adding a new test:
+
+```javascript
+// test/AssertThrowTest.js
+
+this.testSuccess_withDifferentExpectedMessage = function () {
+    t.assertThrow("a different error message", function () {
+        throw new Error("a different error message");
+    });
+};
+```
+
+And that test fails as expected:
+
+```
+/usr/local/bin/node AssertThrowTest.js
+/path/to/project/src/TestingFramework.js:10
+            throw new Error(errorMessage);
+            ^
+
+Error: Expected to equal an error message, but got: a different error message
+
+Process finished with exit code 1
+```
+
+Undoing the breaking change (Mutation) will make the test pass:
+
+```
+/usr/local/bin/node AssertThrowTest.js
+
+Process finished with exit code 0
+```
+
+Next test is to make sure, that `assertThrow` is actually comparing actual and expected error messages correctly:
+
+```javascript
+// test/AssertThrowTest.js
+
+this.testFailure = function () {
+    t.assertThrow("Expected to equal an error message, but got: a different error message", function () {
+        t.assertThrow("an error message", function () {
+            throw new Error("a different error message");
+        });
+    });
+};
+```
+
+And it passes. The last test, that `assertThrow` needs is the case, when `action()` is not throwing any error. In that case `assertThrow` should fail:
+
+```javascript
+// test/AssertThrowTest.js
+
+this.testFailure_whenActionDoesNotThrow = function () {
+    t.assertThrow("Expected to throw an error, but nothing was thrown", function () {
+        t.assertThrow("an error message", function () {
+            // does nothing
+        });
+    });
+};
+```
+
+Oh, and that test is passing! We clearly don't have that functionality yet. We have to add another test without usage of outer `t.assertThrow` to make sure that we get a test failure:
+
+```javascript
+this.testThrows_whenActionDoesNotThrow = function () {
+    var hasThrown = false;
+
+    try {
+        t.assertThrow("an error message", function () {
+            // does nothing
+        });
+    } catch (error) {
+        hasThrown = true;
+    }
+
+    t.assertTrue(hasThrown, "it should have thrown");
+};
+```
+
+And if we run our tests we get the expected failure:
+
+```
+/usr/local/bin/node AssertThrowTest.js
+/path/to/project/src/TestingFramework.js:10
+            throw new Error(errorMessage);
+            ^
+
+Error: it should have thrown
+
+Process finished with exit code 1
+```
+
+We can fix that by verifying, that `catch` block is executed in the `assertThrow` function:
+
+```javascript
+// src/TestingFramework.js
+
+assertThrow: function (expectedMessage, action) {
+    var hasThrown = false;  // <- we initialize hasThrown here
+
+    try {
+        action();
+    } catch (error) {
+        hasThrown = true;   // <- and we set it to true in the catch block
+        this.assertEqual(expectedMessage, error.message);
+    }
+
+    this.assertTrue(hasThrown);  // <- and we check that it is true
+}
+```
+
+And now if we run the test suite, the original test that we were trying to write fails as expected:
+
+```
+/usr/local/bin/node AssertThrowTest.js
+/path/to/project/src/TestingFramework.js:10
+            throw new Error(errorMessage);
+            ^
+
+Error: Expected to equal Expected to throw an error, but nothing was thrown, but got: Expected to be true, but got false
+
+Process finished with exit code 1
+```
+
+Now we need to fix the custom message provided to `assertTrue` call inside of `assertThrow`:
+
+```javascript
+// src/TestingFramework.js
+
+// inside of assertThrow:
+this.assertTrue(hasThrown, "Expected to throw an error, but nothing was thrown");
+```
+
+And the test pass:
+
+```
+/usr/local/bin/node AssertThrowTest.js
+
+Process finished with exit code 0
+```
+
+Great, I think we are done with testing the `assertThrow` function. Last one for today is `assertEqual`:
+
+## Testing `assertEqual(expected, actual)`
 
 
 
