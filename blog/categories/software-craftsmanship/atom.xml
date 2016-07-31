@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Software-craftsmanship | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/software-craftsmanship/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-07-31T11:09:56+02:00</updated>
+  <id>http://www.tddfellow.com/</id>
+  <author>
+    <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Parallel Change Refactoring]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/07/31/parallel-change-refactoring/"/>
+    <updated>2016-07-31T09:57:31+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/07/31/parallel-change-refactoring</id>
+    <content type="html"><![CDATA[<p>Parallel Change is the refactoring technique, that allows implementing backward-incompatible changes to an API in a safe manner. It consists of 3 steps:</p>
+
+<ul>
+<li>Expand - add new functionality as an extension of the interface (e.g.: add new methods), instead of editing signatures of existing interfaces</li>
+<li>Migrate - mark (or log a warning) existing interface as deprecated and give time to the clients of the interface to migrate to the new interface. This might be as simple as changing your own code-base one client of this interface at a time in case when you do not have 3rd party clients of these interfaces</li>
+<li>Contract - once all clients have migrated remove old interfaces</li>
+</ul>
+
+
+<p>This technique is tremendously useful when you have 3rd party clients for your API (open-source library, SaaS with REST API, etc). Also, it is as useful for normal application development because it allows such breaking changes to never break your test suite. It allows deploying your code in the middle of the refactoring, in fact, every few minutes (Continuous Integration + Continuous Deployment).</p>
+
+<p>This article contains code examples in a pseudo-code.</p>
+
+<h2><code>UserSearch</code></h2>
+
+<p>Let&rsquo;s imagine, that we have some class, that is used to search <code>User</code> by id:</p>
+
+<pre><code class="swift">class UserSearch {
+  func search(id : UserId): [User] {
+    // .. we somehow use the database gateway here to search ..
+  }
+}
+</code></pre>
+
+<p>Now, new requirement comes in and it seems, that we need to be able to search by e-mail too, so we have to add more functionality here:</p>
+
+<pre><code class="swift">class UserSearch {
+  // ...
+
+  func search_by_email(email : Email): [User] {
+    // .. we somehow use the database gateway here to search ..
+  }
+}
+</code></pre>
+
+<p>Later, new requirement comes in and now we need to be able to search by the nickname too. So we follow the pattern:</p>
+
+<pre><code class="swift">class UserSearch {
+  // ...
+
+  func search_by_nickname(nickname : Nickname): [User] {
+    // .. we somehow use the database gateway here to search ..
+  }
+}
+</code></pre>
+
+<p>This is great and all, but we clearly can see, how this class violates Open-Closed Principle: every time there is a new thing to search the user by, we will have to alter this class. This is not good. One of the possible solutions might be closing this class against this kind of change by introducing polymorphic <code>Query</code>:</p>
+
+<pre><code class="swift">class UserSearch {
+  // all other search_* methods were removed
+
+  func search(query : Query): [User] {
+    // .. we somehow use the database gateway here to search
+  }
+}
+</code></pre>
+
+<p>After doing that, if we run our test suite, it will be failing, probably, even with compile errors. This is not good because now we have to go through every failure and fix it, this will prevent us from continuously integrating for quite some time (half an hour, or a couple of days, depending on the impact of this change). And this has high chances of resulting in merge conflicts, that will impede work of others on our team.</p>
+
+<p>Instead, let&rsquo;s apply the parallel change.</p>
+
+<h2>Applying Parallel Change</h2>
+
+<h3>Expand</h3>
+
+<p>First, we need to introduce brand new method of our class (of course with unit-tests), without touching anything else:</p>
+
+<pre><code class="swift">class UserSearch {
+  // ...
+
+  func search_by_query(query : Query): [User] {
+    // .. we somehow use the database gateway here to search
+  }
+}
+</code></pre>
+
+<p>At this point, we are going to deploy this new code.</p>
+
+<h3>Migrate</h3>
+
+<p>Second, we need to add a deprecation warning to old interface, and, in fact, old functions can be rewritten via new one:</p>
+
+<pre><code class="swift">class UserSearch {
+  func search(id : UserId): [User] {
+    warn("`UserSearch.search` is deprecated. Use `UserSearch.search_by_query` instead")
+    search_by_query(UserIdQuery(id))
+  }
+
+  func search_by_email(email : Email): [User] {
+    warn("`UserSearch.search_by_email` is deprecated. Use `UserSearch.search_by_query` instead")
+    search_by_query(UserEmailQuery(email))
+  }
+
+  func search_by_nickname(nickname : Nickname): [User] {
+    warn("`UserSearch.search_by_nickname` is deprecated. Use `UserSearch.search_by_query` instead")
+    search_by_query(UserNicknameQuery(nickname))
+  }
+
+  // ...
+}
+</code></pre>
+
+<p>At this point, we are going to deploy this new code.</p>
+
+<p>Next, we need to:</p>
+
+<ul>
+<li>inform all clients of our system about this deprecation and give them time-frame to migrate, or</li>
+<li>if all clients of <code>UserSearch</code> are under our control, we need to change all calls to use new interface:</li>
+</ul>
+
+
+<pre><code class="swift">// was: `user_search.search(user_id)`
+user_search.search_by_query(UserIdQuery(user_id))
+</code></pre>
+
+<p>After every line of change like that (big system probably has a multitude of these) we are going to deploy.</p>
+
+<pre><code class="swift">// was: `user_search.search_by_email(user_email)`
+user_search.search_by_query(UserEmailQuery(user_email))
+</code></pre>
+
+<p>After every line of change like that we are going to deploy.</p>
+
+<pre><code class="swift">// was: `user_search.search_by_nickname(user_nickname)`
+user_search.search_by_query(UserNicknameQuery(user_nickname))
+</code></pre>
+
+<p>Of course, after each line we are going to deploy.</p>
+
+<h3>Contract</h3>
+
+<p>Once all our tests pass and there is no single deprecation warning from <code>UserSession</code>, or the time-frame we have given to our 3rd party clients is finished, we can remove old functionality by simply removing deprecated methods (and their unit-tests), and what we will have left is:</p>
+
+<pre><code class="swift">class UserSearch {
+  func search_by_query(query : Query): [User] {
+    // .. we somehow use the database gateway here to search
+  }
+}
+</code></pre>
+
+<p>Of course, we can deploy our system now.</p>
+
+<h2>Bottom Line</h2>
+
+<p>Notice, how following this technique avoids even a single compile error or test suite failure. And if failure happens, the last small code change (probably one line) was wrong, you just <code>CTRL+Z</code> it to get back to GREEN state.</p>
+
+<p>Was that refactoring necessary? Oh yeah it was, because in next few weeks, there were new requirements that would have forced us to add 2 new <code>search_by_*</code> methods to <code>UserSearch</code> class - instead, we just created new derivatives of <code>Query</code> interface/protocol and used them in the places where they are needed. This way we were able to change how <code>UserSearch</code> class works without modifying its source code, by only adding new code. This is a great win.</p>
+
+<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
+
+<ul>
+<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
+<li>Open-Closed Principle - changing behavior by adding new code,</li>
+<li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD,</li>
+<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series and so much more!</li>
+</ul>
+
+
+<p>Stay tuned!</p>
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

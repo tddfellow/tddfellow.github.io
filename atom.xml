@@ -4,7 +4,7 @@
   <title><![CDATA[That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-07-23T19:52:16+02:00</updated>
+  <updated>2016-07-31T11:09:56+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,252 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Parallel Change Refactoring]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/07/31/parallel-change-refactoring/"/>
+    <updated>2016-07-31T09:57:31+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/07/31/parallel-change-refactoring</id>
+    <content type="html"><![CDATA[<p>Parallel Change is the refactoring technique, that allows implementing backward-incompatible changes to an API in a safe manner. It consists of 3 steps:</p>
+
+<ul>
+<li>Expand - add new functionality as an extension of the interface (e.g.: add new methods), instead of editing signatures of existing interfaces</li>
+<li>Migrate - mark (or log a warning) existing interface as deprecated and give time to the clients of the interface to migrate to the new interface. This might be as simple as changing your own code-base one client of this interface at a time in case when you do not have 3rd party clients of these interfaces</li>
+<li>Contract - once all clients have migrated remove old interfaces</li>
+</ul>
+
+
+<p>This technique is tremendously useful when you have 3rd party clients for your API (open-source library, SaaS with REST API, etc). Also, it is as useful for normal application development because it allows such breaking changes to never break your test suite. It allows deploying your code in the middle of the refactoring, in fact, every few minutes (Continuous Integration + Continuous Deployment).</p>
+
+<p>This article contains code examples in a pseudo-code.</p>
+
+<h2><code>UserSearch</code></h2>
+
+<p>Let&rsquo;s imagine, that we have some class, that is used to search <code>User</code> by id:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search</span><span class="p">(</span><span class="kt">id</span> <span class="o">:</span> <span class="n">UserId</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search ..</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, new requirement comes in and it seems, that we need to be able to search by e-mail too, so we have to add more functionality here:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_email</span><span class="p">(</span><span class="nl">email</span> <span class="p">:</span> <span class="n">Email</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search ..</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Later, new requirement comes in and now we need to be able to search by the nickname too. So we follow the pattern:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_nickname</span><span class="p">(</span><span class="nl">nickname</span> <span class="p">:</span> <span class="n">Nickname</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search ..</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is great and all, but we clearly can see, how this class violates Open-Closed Principle: every time there is a new thing to search the user by, we will have to alter this class. This is not good. One of the possible solutions might be closing this class against this kind of change by introducing polymorphic <code>Query</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// all other search_* methods were removed</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search</span><span class="p">(</span><span class="nl">query</span> <span class="p">:</span> <span class="n">Query</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After doing that, if we run our test suite, it will be failing, probably, even with compile errors. This is not good because now we have to go through every failure and fix it, this will prevent us from continuously integrating for quite some time (half an hour, or a couple of days, depending on the impact of this change). And this has high chances of resulting in merge conflicts, that will impede work of others on our team.</p>
+
+<p>Instead, let&rsquo;s apply the parallel change.</p>
+
+<h2>Applying Parallel Change</h2>
+
+<h3>Expand</h3>
+
+<p>First, we need to introduce brand new method of our class (of course with unit-tests), without touching anything else:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_query</span><span class="p">(</span><span class="nl">query</span> <span class="p">:</span> <span class="n">Query</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point, we are going to deploy this new code.</p>
+
+<h3>Migrate</h3>
+
+<p>Second, we need to add a deprecation warning to old interface, and, in fact, old functions can be rewritten via new one:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search</span><span class="p">(</span><span class="kt">id</span> <span class="o">:</span> <span class="n">UserId</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">warn</span><span class="p">(</span><span class="s">&quot;`UserSearch.search` is deprecated. Use `UserSearch.search_by_query` instead&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">search_by_query</span><span class="p">(</span><span class="n">UserIdQuery</span><span class="p">(</span><span class="kt">id</span><span class="p">))</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_email</span><span class="p">(</span><span class="nl">email</span> <span class="p">:</span> <span class="n">Email</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">warn</span><span class="p">(</span><span class="s">&quot;`UserSearch.search_by_email` is deprecated. Use `UserSearch.search_by_query` instead&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">search_by_query</span><span class="p">(</span><span class="n">UserEmailQuery</span><span class="p">(</span><span class="n">email</span><span class="p">))</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_nickname</span><span class="p">(</span><span class="nl">nickname</span> <span class="p">:</span> <span class="n">Nickname</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">warn</span><span class="p">(</span><span class="s">&quot;`UserSearch.search_by_nickname` is deprecated. Use `UserSearch.search_by_query` instead&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">search_by_query</span><span class="p">(</span><span class="n">UserNicknameQuery</span><span class="p">(</span><span class="n">nickname</span><span class="p">))</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point, we are going to deploy this new code.</p>
+
+<p>Next, we need to:</p>
+
+<ul>
+<li>inform all clients of our system about this deprecation and give them time-frame to migrate, or</li>
+<li>if all clients of <code>UserSearch</code> are under our control, we need to change all calls to use new interface:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="c1">// was: `user_search.search(user_id)`</span>
+</span><span class='line'><span class="n">user_search</span><span class="p">.</span><span class="n">search_by_query</span><span class="p">(</span><span class="n">UserIdQuery</span><span class="p">(</span><span class="n">user_id</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After every line of change like that (big system probably has a multitude of these) we are going to deploy.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="c1">// was: `user_search.search_by_email(user_email)`</span>
+</span><span class='line'><span class="n">user_search</span><span class="p">.</span><span class="n">search_by_query</span><span class="p">(</span><span class="n">UserEmailQuery</span><span class="p">(</span><span class="n">user_email</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After every line of change like that we are going to deploy.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="c1">// was: `user_search.search_by_nickname(user_nickname)`</span>
+</span><span class='line'><span class="n">user_search</span><span class="p">.</span><span class="n">search_by_query</span><span class="p">(</span><span class="n">UserNicknameQuery</span><span class="p">(</span><span class="n">user_nickname</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Of course, after each line we are going to deploy.</p>
+
+<h3>Contract</h3>
+
+<p>Once all our tests pass and there is no single deprecation warning from <code>UserSession</code>, or the time-frame we have given to our 3rd party clients is finished, we can remove old functionality by simply removing deprecated methods (and their unit-tests), and what we will have left is:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_query</span><span class="p">(</span><span class="nl">query</span> <span class="p">:</span> <span class="n">Query</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Of course, we can deploy our system now.</p>
+
+<h2>Bottom Line</h2>
+
+<p>Notice, how following this technique avoids even a single compile error or test suite failure. And if failure happens, the last small code change (probably one line) was wrong, you just <code>CTRL+Z</code> it to get back to GREEN state.</p>
+
+<p>Was that refactoring necessary? Oh yeah it was, because in next few weeks, there were new requirements that would have forced us to add 2 new <code>search_by_*</code> methods to <code>UserSearch</code> class - instead, we just created new derivatives of <code>Query</code> interface/protocol and used them in the places where they are needed. This way we were able to change how <code>UserSearch</code> class works without modifying its source code, by only adding new code. This is a great win.</p>
+
+<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
+
+<ul>
+<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
+<li>Open-Closed Principle - changing behavior by adding new code,</li>
+<li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD,</li>
+<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series and so much more!</li>
+</ul>
+
+
+<p>Stay tuned!</p>
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Your Own Testing Framework. Part 2]]></title>
@@ -4893,349 +5139,6 @@ image.</p>
 <h2>Thanks!</h2>
 
 <p>If you have any questions, suggestions or just want to chat about how contracts.ruby is awesome, you can ping me on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues using <a href="https://github.com/egonSchiele/contracts.ruby">contracts.ruby</a> or <a href="https://github.com/waterlink/contracts-rspec">contracts-rspec</a> you can create issues on corresponding github project. Pull requests are welcome!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Object Oriented Design. Important Things]]></title>
-    <link href="http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things/"/>
-    <updated>2015-03-12T23:23:45+01:00</updated>
-    <id>http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things</id>
-    <content type="html"><![CDATA[<h2>Slides from my talk <a href="https://twitter.com/BrainlyGroup">@brainly</a> 12 Mar 2015</h2>
-
-<p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>, I would love to hear from you.</em></p>
-
-<p>Code examples are in ruby/pseudo-code.</p>
-
-<iframe src="//www.slideshare.net/slideshow/embed_code/45775223" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-
-
-<h2>Object Oriented Programming</h2>
-
-<p>Most notable features of OOP:</p>
-
-<ul>
-<li>Encapsulation - keep data together with behavior that needs that data, effectively hiding this data from everything else.</li>
-<li>Inheritance - usually a subclassing, inheriting all behavior and data, in some language even all private details.</li>
-<li>Polymorphism - ability to substitute instances of one class with instances of others.</li>
-</ul>
-
-
-<h3>How important these features are for OO design?</h3>
-
-<p>Imagine, that given 100 points you want to distribute them between these 3 features, and each number will represent an importance of corresponding feature.</p>
-
-<p>This would be my answer (and my personal opinion):</p>
-
-<table>
-<thead>
-<tr>
-<th style="text-align:center;">Encapsulation</th>
-<th style="text-align:center;">Polymorphism</th>
-<th style="text-align:center;">Inheritance</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center;">80</td>
-<td style="text-align:center;">40</td>
-<td style="text-align:center;">-20</td>
-</tr>
-</tbody>
-</table>
-
-
-<p>And 100 = 80 + 40 + (-20) :)</p>
-
-<h3>Why inheritance is so bad?</h3>
-
-<p>Because it increases coupling (usually): subclass (usually) depends on some data and/or behavior of its superclass. Even worse: (usually) it is not public data/behavior. I.e.: it violates principle of encapsulation badly. (Usually).</p>
-
-<p>There are actually cases, when you do want your classes to be in inheritance hierarchy, it is the case, when your domain has the same hierarchy naturally in real world. And type inheritance doesn&rsquo;t really mean behavior inheritance.</p>
-
-<h3>So how to avoid violation of encapsulation using inheritance?</h3>
-
-<ul>
-<li>Be careful, use only public interfaces of your superclass.</li>
-<li>Replace inheritance with composition and delegation, because when you use only public interfaces of superclass, then you don&rsquo;t really need inheritance.</li>
-</ul>
-
-
-<h2>Coupling</h2>
-
-<h3>Why coupling is bad?</h3>
-
-<p>Imagine you need to change behavior of class X.</p>
-
-<p>You will have to change any other piece of code base, that directly depends on this behavior of class X.</p>
-
-<p>More coupling you have, more changes will have to take place, and probably, in totally unrelated parts of codebase.</p>
-
-<p>As a result it:</p>
-
-<ul>
-<li>Exponentially increases time required for change</li>
-<li>Invites bugs (lots of)</li>
-</ul>
-
-
-<h3>Dependency</h3>
-
-<p>Dependency, is basically what coupling is, - is not really your friend, so you need to watch out for them.</p>
-
-<h3>How to deal with dependencies?</h3>
-
-<ul>
-<li>Dependency inversion principle - Instead of referring foreign system/package/class/module/whatever, refer an abstract interface.</li>
-<li>Dependency injection - Technique, that allows to provision all dependencies to parts of your system and basically fulfill all required interfaces.</li>
-</ul>
-
-
-<h3>An example</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Answer</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">rating</span>
-</span><span class='line'>    <span class="no">RatingService</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">rating_for</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>What is the problem with this code? - It is a dependency <code>Answer -&gt; RatingService</code>. What if you wanted to A/B test different rating models? You will definitely have troubles with that approach, especially if it is not the only place, that reference <code>RatingService</code>.</p>
-
-<h3>Use dependency injection!</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Answer</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">rating_service</span><span class="p">)</span>
-</span><span class='line'>    <span class="vi">@rating_service</span> <span class="o">=</span> <span class="n">rating_service</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">rating</span>
-</span><span class='line'>    <span class="vi">@rating_service</span><span class="o">.</span><span class="n">rating_for</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now you can easily have multiple rating services and A/B test them, or do whatever you want, it is really flexible.</p>
-
-<h3>It is still coupling</h3>
-
-<p>But coupling to abstract interface, instead of real implementation, which means, you can exchange different implementations without changing users of this interface. Which basically improves polymorphism features of your code. It is very loose coupling.</p>
-
-<h2>Test Driven Development</h2>
-
-<h3>How is it related to OO design?</h3>
-
-<p>It provides very short feedback on your OO design:</p>
-
-<ul>
-<li>If you have troubles writing test - your design is wrong and you need to step back</li>
-<li>If you don&rsquo;t like how your test look like - your design is wrong and you need to step back</li>
-<li>If you have troubles making test green - your design is wrong and you need to step back</li>
-</ul>
-
-
-<p>It is really almost like pairing partner if used right! Of course pairing still provides even better feedback loop - real-time continuous feedback loop!</p>
-
-<h3>Unit tests vs integration tests</h3>
-
-<p>Integration tests are scam!:</p>
-
-<ul>
-<li>Very slow => bad feedback loop</li>
-<li>Exponential count of paths to test</li>
-</ul>
-
-
-<h3>Unit tests just don&rsquo;t work. Are they?</h3>
-
-<p>Everything works in isolation != the whole system works as expected.</p>
-
-<p>Testing in isolation = providing fake objects and/or mocks for all your dependencies</p>
-
-<p>Mocks and fake objects can make your unit test green, but in fact the code is broken, because one of the dependencies has changed its behavior or even public interface in unexpected fashion.</p>
-
-<h3>Answer: Cut your system at value boundaries!</h3>
-
-<p>Instead of method call boundaries. And we arrive at Actor Model.</p>
-
-<h2>Actor Model</h2>
-
-<p>Given this example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">RatingService</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">rating_for</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">)</span>
-</span><span class='line'>    <span class="c1"># .. calculate rating somehow ..</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Problems with this class:</p>
-
-<ul>
-<li>Any user of this class will have to stub out its <code>#rating_for</code> in unit tests.</li>
-<li>It invites additional behavior to be added (since it is as simple as adding additional public method), which will kill single responsibility feature of this class.</li>
-</ul>
-
-
-<h3>Actor Model solves this</h3>
-
-<p>Warning, it is ruby pseudo-code:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">actor</span> <span class="no">RatingService</span>
-</span><span class='line'>  <span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">,</span> <span class="n">outbox</span> <span class="o">=</span> <span class="n">inbox</span><span class="o">.</span><span class="n">fetch</span>
-</span><span class='line'>  <span class="c1"># .. calculate rating somehow ..</span>
-</span><span class='line'>  <span class="n">outbox</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">rating</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">rating_service</span> <span class="o">=</span> <span class="no">RatingService</span><span class="o">.</span><span class="n">new</span>
-</span><span class='line'><span class="n">rating_service</span><span class="o">.</span><span class="n">start</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Way better now:</h3>
-
-<ul>
-<li>Allows unit testing easily without mocks and fake objects: by peeking inside its inbox in unit tests instead, and checking that it received right message.</li>
-<li>It is really hard to pack more responsibility to this, since it has no methods, it has just one body, that is responsible for processing exactly one message.</li>
-</ul>
-
-
-<p><em>You of course can encode something strange in message, and organize your own method dispatch mechanism through actors inbox, but that is just silly (usually).</em></p>
-
-<h3>Easy to unit test:</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># creating actor, but not starting it</span>
-</span><span class='line'><span class="n">rating_actor</span> <span class="o">=</span> <span class="no">RatingCalculator</span><span class="o">.</span><span class="n">new</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># dependency injection of rating actor</span>
-</span><span class='line'><span class="n">answer_actor</span> <span class="o">=</span> <span class="no">Answer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">answer_id</span><span class="p">,</span> <span class="n">rating_actor</span><span class="p">)</span>
-</span><span class='line'><span class="n">answer_actor</span><span class="o">.</span><span class="n">start</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">render_actor</span> <span class="o">=</span> <span class="no">Render</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">answer_actor</span><span class="p">)</span>
-</span><span class='line'><span class="n">render_actor</span><span class="o">.</span><span class="n">run</span>
-</span><span class='line'><span class="n">expect</span><span class="p">(</span><span class="n">rating_actor</span><span class="o">.</span><span class="n">inbox</span><span class="p">)</span>
-</span><span class='line'>  <span class="o">.</span><span class="n">to</span> <span class="kp">include</span><span class="p">(</span><span class="o">[</span><span class="n">comments</span><span class="p">,</span> <span class="n">upvotes</span><span class="p">,</span> <span class="n">downvotes</span><span class="p">,</span> <span class="n">outbox</span><span class="o">]</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># fake response from rating actor</span>
-</span><span class='line'><span class="n">outbox</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span>
-</span><span class='line'><span class="n">expect</span><span class="p">(</span><span class="n">render_actor</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">render_rating</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In unit tests you start only one actor - actor under test, and all other actors just get instantiated correctly and passed in as a dependencies where needed. Since they are not started, they will not consume any messages from their inbox, which means that you can consume these inboxes from your unit test, and check that the messages that arrived at inboxes are expected.</p>
-
-<h2>When the code is done</h2>
-
-<ul>
-<li>It works!</li>
-<li>It is readable (future me will not curse me for writing this code)</li>
-<li>It has no duplication</li>
-<li>And it is as short as possible (while maintaining all of the above)</li>
-</ul>
-
-
-<h3>Code comments</h3>
-
-<p>Basically a code smell (I&rsquo;m not talking about documentation comments)</p>
-
-<p>Example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># when user is active</span>
-</span><span class='line'><span class="k">if</span> <span class="n">activity_service</span><span class="o">.</span><span class="n">has_events</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="ss">min_date</span><span class="p">:</span> <span class="mi">2</span><span class="o">.</span><span class="n">weeks</span><span class="o">.</span><span class="n">ago</span><span class="p">)</span>
-</span><span class='line'>  <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">user</span><span class="o">.</span><span class="n">fraud?</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Which is bad from more than one point of view, it literally should have been:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">active?</span>
-</span><span class='line'><span class="c1"># or</span>
-</span><span class='line'><span class="k">if</span> <span class="n">activity_service</span><span class="o">.</span><span class="n">user_is_active?</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-</span><span class='line'><span class="c1"># .. more variations can be here ..</span>
-</span><span class='line'><span class="c1"># .. but all of them will be better ..</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>If code needs comment:</h3>
-
-<ul>
-<li>it is not readable</li>
-<li>it fails to communicate its intent</li>
-</ul>
-
-
-<p>You should be able to read the code and understand it. In that order: read -> understand.</p>
-
-<p>You shouldn&rsquo;t interpret it in your head. You shouldn&rsquo;t have Ruby (or your favorite language here) instance running in your head.</p>
-
-<h2>To sum it up</h2>
-
-<ul>
-<li>Inheritance is good only in very rare cases</li>
-<li>Coupling and dependencies are not your friends, take them under control with dependency inversion &amp; injection</li>
-<li>TDD as a shortest feedback cycle for your OO design</li>
-<li>Write code in such way, that you would thank yourself for that in the future</li>
-</ul>
-
-
-<p>Recommended reading: &ldquo;Pragmatic Programmer: From Journeyman to Master&rdquo; by Andrew Hunt and David Thomas. It is insanely good, concise book with lots of awesome references to other resources.</p>
-
-<h2>Thanks!</h2>
-
-<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
 ]]></content>
   </entry>
   
