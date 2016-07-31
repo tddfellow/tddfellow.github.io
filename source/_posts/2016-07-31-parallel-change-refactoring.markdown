@@ -3,6 +3,7 @@ layout: post
 title: "Parallel Change Refactoring"
 date: 2016-07-31 09:57:31 +0200
 comments: true
+description: Parallel Change is the refactoring technique, that allows implementing backward-incompatible changes to an API in a safe manner. It allows deploying your code in the middle of the refactoring, in fact, every few minutes.
 categories:
 - pseudo-code
 - refactoring
