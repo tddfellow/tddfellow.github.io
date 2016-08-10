@@ -3,6 +3,7 @@ layout: post
 title: "TDD #6: Continuous Integration Training"
 date: 2016-08-10 19:35:41 +0200
 comments: true
+description: New TDD Screencast is out! Today we are going to discuss Continuous Integration, what it is and what it isn't. We will define best Check-Out/Check-In cycle. We will explore ways to train our Continuous Integration skills. And we will do some live coding on Kata with special restriction, that allows one to train such skills. Then we will draw a bottom line.
 categories:
 - screencast
 - TDD
