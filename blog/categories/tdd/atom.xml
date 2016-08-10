@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tdd | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/tdd/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-07-31T11:26:02+02:00</updated>
+  <updated>2016-08-10T19:41:17+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,30 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TDD #6: Continuous Integration Training]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/08/10/tdd-screencast-number-6-continuous-integration-training/"/>
+    <updated>2016-08-10T19:35:41+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/08/10/tdd-screencast-number-6-continuous-integration-training</id>
+    <content type="html"><![CDATA[<iframe src="https://player.vimeo.com/video/178357638" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+
+<p><a href="https://vimeo.com/178357638">Test-Driven Development Screencast #6: Continuous Integration Training</a></p>
+
+<p><em>(Recommended to watch full-screen and HD: 720p or more)</em></p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
+
+<h2>Summary</h2>
+
+<p>Today we are going to discuss Continuous Integration, what it is and what it isn&rsquo;t. We will define best Check-Out/Check-In cycle. We will explore ways to train our Continuous Integration skills. And we will do some live coding on Kata with special restriction, that allows one to train such skills. Then we will draw a bottom line.</p>
+
+<p>Thanks for watching! If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Your Own Testing Framework. Part 2]]></title>
@@ -1533,58 +1557,6 @@ function fizzBuzz(number) {
 <p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
 
 <p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[TDD #4: Path Finding]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/02/13/tdd-number-4-path-finding/"/>
-    <updated>2016-02-13T09:56:15+01:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/02/13/tdd-number-4-path-finding</id>
-    <content type="html"><![CDATA[<iframe width="560" height="315" src="https://www.youtube.com/embed/DTzhlNIjWRY" frameborder="0" allowfullscreen></iframe>
-
-
-<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
-
-<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
-
-<h2>Script</h2>
-
-<p>Hello. I am Oleksii Fedorov and I am wearing a hat of That TDD Fellow. That
-means you are watching TDD Screencast episode #4.</p>
-
-<p>As mentioned in the previous episode, today we are going to implement a path
-finding algorithm.</p>
-
-<p>Specifically, our first problem in a path finding theme will be the following:</p>
-
-<ul>
-<li>We are given a directional graph, that consists of nodes and edges between
-them.</li>
-<li>We are given two nodes: start and finish.</li>
-<li>We need to answer such questions:
-
-<ul>
-<li>Is there a path from start to finish?</li>
-<li>If there is, What this path is?</li>
-</ul>
-</li>
-</ul>
-
-
-<p>I need to make a remark, that we clearly dont have to return the shortest path,
-just any path, that we can find. We will tackle shortest path problem in later
-episodes.</p>
-
-<p>Now, I think we can start.</p>
-
-<pre><code>./watch.sh
-vim         # coding session
-</code></pre>
-
-<p>This was pretty easy to make a DFS algorithm to emerge on its own, by driving
-it with the specification. Lets see if it is possible to do the same with
-shortest path problem.. Next time, on the TDD Screencast. Have a nice day.</p>
 ]]></content>
   </entry>
   

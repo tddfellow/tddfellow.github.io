@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tdd-screencasts | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/tdd-screencasts/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-07-31T11:26:02+02:00</updated>
+  <updated>2016-08-10T19:41:17+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,30 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TDD #6: Continuous Integration Training]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/08/10/tdd-screencast-number-6-continuous-integration-training/"/>
+    <updated>2016-08-10T19:35:41+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/08/10/tdd-screencast-number-6-continuous-integration-training</id>
+    <content type="html"><![CDATA[<iframe src="https://player.vimeo.com/video/178357638" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+
+<p><a href="https://vimeo.com/178357638">Test-Driven Development Screencast #6: Continuous Integration Training</a></p>
+
+<p><em>(Recommended to watch full-screen and HD: 720p or more)</em></p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
+
+<h2>Summary</h2>
+
+<p>Today we are going to discuss Continuous Integration, what it is and what it isn&rsquo;t. We will define best Check-Out/Check-In cycle. We will explore ways to train our Continuous Integration skills. And we will do some live coding on Kata with special restriction, that allows one to train such skills. Then we will draw a bottom line.</p>
+
+<p>Thanks for watching! If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TDD #5: English Numbers Kata]]></title>
@@ -188,174 +212,6 @@ again?</p>
 
 <p>Find out next time, on the next episode of Test-Driven-Development! Have a good
 day.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Test-Driven-Development Screencast #1]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/02/02/test-driven-development-screencast-number-1/"/>
-    <updated>2016-02-02T07:59:25+01:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/02/02/test-driven-development-screencast-number-1</id>
-    <content type="html"><![CDATA[<iframe width="560" height="315" src="https://www.youtube.com/embed/QnEvjrszst4?list=PLbNxoJawcer22UE8lT93-fX8ZYFNtoXFu" frameborder="0" allowfullscreen></iframe>
-
-
-<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
-
-<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
-
-<h2>Script</h2>
-
-<p>Hello! I am Oleksii Fedorov, and this is the first episode of
-Test-Driven-Development Screencast.</p>
-
-<p>Today, I am going to briefly address following questions about
-Test-Driven-Development:
-- What TDD is?
-- What are main benefits of doing TDD?</p>
-
-<p>At the end I am going to demonstrate a small example on how to implement simple
-sorting algorithm using TDD.</p>
-
-<p>Let me open my slides. Don&rsquo;t worry: there are only three small slides.</p>
-
-<pre><code>vim ./slides/*
-</code></pre>
-
-<p>TDD is Software Development discipline. Therefore, basic rules, defined by TDD,
-are arbitrary, weird and are to be followed to the letter, if you want it to be
-useful. There is a reason for that – but we will talk shortly about that. Let
-me read these basic rules for you:</p>
-
-<ol>
-<li><p>You are not allowed to write a line of production code, unless test fails.</p>
-
-<p>Which means, that I will have to write the test even before I have something
-to test. It may sound stupid. Maybe, it is stupid. Maybe, it is not.</p>
-
-<p>But the next rule is even more weird than the first one:</p></li>
-<li><p>You are not allowed to write more of a test, that is sufficient to fail.</p>
-
-<p>It is important to clarify, what ˝fail˝ means in this context. It means test
-expectation failure, and compilation/parsing/interpretation failure
-(depending if your programming language is compiled or interpreted).</p>
-
-<p>Which means, that you will have to interrupt yourself, while writing a test,
-because you have mentioned the class or package, that does not exist yet. Or
-you have mentioned the method or function, that does not exist yet.</p>
-
-<p>Now that may sound really stupid to you. Bear with me, and lets see how
-weird the last rule is:</p></li>
-<li><p>You are not allowed to write more production code, that is sufficient to
-make the failing test pass.</p>
-
-<p>Which means, that once you have defined a class, that was mentioned - you
-have just fixed a failing test, and you have to go back and write more of
-the test, or add new test.</p>
-
-<p>Which means, that once you have defined a method, that was mentioned - you
-have just fixed a failing test, and you have to got back and write more of
-the test again.</p>
-
-<p>Which means, that once you changed your production code only slightly in
-direction of the correct implementation, you have to go back and write more
-tests.</p>
-
-<p>This is interesting. Now you got yourself in a very tight lock. In a very
-tight feedback loop. Write a line of test, write a line of code, write a
-line of test, write a line of code, and so on. The length of this loop is
-probably 5, 10, 30 seconds. If you have a test suite that needs half an hour
-to run, you will not do TDD.</p></li>
-</ol>
-
-
-<p>What happens if you do not follow this discipline to the letter? If you slip
-there and there?: write a bit more production code, than you had to?, write a
-bit more of a test, than you had to?, or even wrote a test after writing the
-whole class under test?</p>
-
-<p>Well, you have just lost the main benefit of TDD: you can no longer trust the
-test suite. For sure, there will be some untested code if you do it this way.</p>
-
-<p>Why do we need 100% test coverage, you ask? 70% sounds like an awesome
-achievement! Or is it?..</p>
-
-<p>What can you tell from the fact, that only 70% of your code is covered by test
-suite? Only that 30% is not covered, and therefore, there is no quick and easy
-way to verify that it works.</p>
-
-<p>Lets imagine the following scenario:</p>
-
-<ul>
-<li>You open a file on your screen.</li>
-<li>You spot some nasty duplication, and you know you want to fix it.</li>
-<li>You even see an obvious way to fix it.</li>
-<li>You touch your keyboard.</li>
-<li>And now, the fear overwhelms you: this class is not tested.</li>
-<li>And your reaction? - I won&rsquo;t touch it!</li>
-</ul>
-
-
-<p>That is where code starts to rot, while nobody cleans it up, because test suite
-can not be trusted, and the whole codebase slowly down-slides to a big pile of
-mess.</p>
-
-<p>Now, lets imagine, that you have 100% code coverage (Well, maybe 98%, because
-100% is the goal, that is not achievable). And the same scenario:</p>
-
-<ul>
-<li>You open a file on your screen.</li>
-<li>You spot some nasty duplication.</li>
-<li>You fix the duplication.</li>
-<li>You run tests - and they are green.</li>
-<li>You check-in cleaner code in your code control system.</li>
-</ul>
-
-
-<p>Or, lets say, that the problem is not trivial:
-- You spot the long method.
-- You split it in 3 methods - tests are still green.
-- You proceed and extract these methods to the new class.
-- And tests fail.
-- Undo-Undo-Undo. And you are back to the green state.
-- And now you think for a moment, what happened there.
-- And you already have this ˝Gotcha!˝.
-- And you successfully extract a class again - and the test suite is green.
-- You check-in cleaner code in your code control system.</p>
-
-<p>Undo button becomes your best friend. Once you stop knowing what is going on,
-or what you are doing, or you simply confused, you can always go back to the
-green state; that just happens to be 25 seconds ago (or 2-3 undo) away, because
-of the tight feedback loop you got yourself into.</p>
-
-<p>Now, there is a hidden rule of TDD. That feels more, like an implementation
-detail of TDD:</p>
-
-<pre><code>:next
-</code></pre>
-
-<p>As tests become more specific, production code should become more generic.</p>
-
-<p>And it is very true, otherwise, you would end up adding a bunch of <code>if</code>
-statements every time you add a failing test.</p>
-
-<p>What that means, I will point out during the example.</p>
-
-<p>And lets sum up now:</p>
-
-<p>100% Code Coverage =>
-  Lack of Fear =>
-  Consistent Random Kindness to the Code =>
-  Clean Code.</p>
-
-<hr />
-
-<p>60% Code Coverage =>
-  Fear to Break It =>
-  ˝I won&rsquo;t touch it!˝ =>
-  Mess.</p>
-
-<p>Now we can finally move on to the example. Next time, on the next episode of
-Test-Driven-Development Screencast! Have a good day.</p>
 ]]></content>
   </entry>
   

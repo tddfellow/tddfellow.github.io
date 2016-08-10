@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Let&rsquo;s imagine a beginner programmer, who have learned a programming language basics, can write programs and can read someone else&rsquo;s &hellip;">
+  <meta name="description" content="It is tedious, slow and error-prone to test correctness of program manually. This article is an introduction, how to make this process as simple as a &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -76,6 +76,162 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/">Automating Manual Checks or How to Save Time and Get Rapid Feedback</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-06-05T12:37:22+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>12:37 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><em>It is tedious, slow and error-prone to test correctness of program manually. This article is an introduction, how to make this process as simple as a hit of one button, very fast and precise.</em></p>
+
+<p>In the last issue <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">about Iterative Divide &amp; Conquer</a> we have found out, how it is tedious to manually check that our program works correctly.</p>
+
+<p>We have concluded, that it is tedious and slow to manually check that the output of our <code>print</code> statements is correct. Additionally, it is really easy to make a mistake and to oversee incorrect lines of the output, especially, when we have tons of them. As well, this applies to any other form of manual testing, including testing the application as an End User (via clicking/tapping for UI applications, via executing tons of commands for CLI applications).</p>
+
+<h2>Mitigating human error-proneness via automation</h2>
+
+<p>Let&rsquo;s get back to our example from the previous issue:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>    <span class="c1"># twenty</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span>    <span class="c1"># twenty-seven</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>    <span class="c1"># forty-two</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">70</span><span class="p">)</span>    <span class="c1"># seventy</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">99</span><span class="p">)</span>    <span class="c1"># ninety-nine</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What if we could ask our computer to run <code>english_integer_in_tens</code> function with provided arguments and check that the output is exactly what we provided in a comment?</p>
+
+<p>Let&rsquo;s try to put it in pseudo-code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer_in_tens</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="s2">&quot;twenty&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer_in_tens</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="s2">&quot;forty-two&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run that code, of course, we will get some sort of compilation error, or runtime error (depending on the programming language), because function <code>equal</code> is not defined yet. Let&rsquo;s define it! Presumably, it should be comparing left argument with right argument and printing something useful on the screen.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">equal</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">left</span> <span class="o">!=</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">print</span><span class="p">(</span><span class="s2">&quot;Failure: &quot;</span> <span class="o">+</span> <span class="nx">left</span> <span class="o">+</span> <span class="s2">&quot; should be equal to &quot;</span> <span class="o">+</span> <span class="nx">right</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">print</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run the program after defining this function we will get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="nx">OK</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we were to break the function <code>english_integer_in_tens</code>&rsquo;s implementation, we might get something like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="nx">Failure</span><span class="o">:</span> <span class="nx">twenty</span> <span class="nx">should</span> <span class="nx">be</span> <span class="nx">equal</span> <span class="nx">to</span> <span class="nx">forty</span><span class="o">-</span><span class="nx">two</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Making automation nicer</h2>
+
+<p>Having all this output every time we import our small library in any application going to the standard output would be annoying to say the least. How about separating the test automation from the library?</p>
+
+<p>Let&rsquo;s extract all our testing <code>print</code>-s into the separate file, import original file from it and replace all <code>print</code>-s with <code>equal</code>-s:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">import</span> <span class="nx">english_integer</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">equal</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_number</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;zero&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_number</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;one&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="p">...</span>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer</span><span class="p">(</span><span class="mi">43</span><span class="p">),</span> <span class="s2">&quot;forty-three&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">97</span><span class="p">),</span> <span class="s2">&quot;minus ninety-seven&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Running only this separate file will produce expected output:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="p">...</span>
+</span><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="nx">OK</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Importing or running directly our original library will not produce any output. This is much nicer.</p>
+
+<h2>Thank you for reading!</h2>
+
+<p>Today we have made our testing:</p>
+
+<ul>
+<li>easier: hit of one button, or one command on the terminal;</li>
+<li>faster: from minutes of manual verification to milliseconds of automated checks;</li>
+<li>preciser: automated checks can&rsquo;t make a mistake, if we have something except <code>OK</code> - we have an error, if everything is <code>OK</code> - the program is working correctly;</li>
+<li>better feedback cycle: we can see if our change is correct in the matter of 1-2 seconds after making this change.</li>
+</ul>
+
+
+<p>Next time we will build a fully-functional mini testing framework. Stay tuned!</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -984,77 +1140,6 @@ using it?!).</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/02/04/tdd-number-3-kind-sort/">TDD #3: Kind Sort</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2016-02-04T01:16:18+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>1:16 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><iframe width="560" height="315" src="https://www.youtube.com/embed/TR2hKaR4zg8" frameborder="0" allowfullscreen></iframe>
-
-
-<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
-
-<h2>Script</h2>
-
-<p>Hello, hello! I am Oleksii Fedorov, and this is the third
-episode of TDD Screencast.</p>
-
-<p>In last episode we have implemented a sorting algorithm
-using TDD, without thinking about algorithm beforehand. As a
-result, bubble sort have emerged.</p>
-
-<p>We have noticed, that there is a small weird thing about
-this implementation: it has unspecified behavior - mutation
-of the original array.</p>
-
-<p>So we asked, which algorithm would emerge, if we were to ban
-such side-effects from our algorithm. Let&rsquo;s find out!</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>./watch.sh
-</span><span class='line'>vim           # implement sorting algorithm</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I think we are done here. If you look closely, it is a
-quicksort. It is not the most memory-efficient
-implementation, but that is something that is simple to
-optimize (instead of passing recursively arrays, pass
-original array and indexes). That optimization will involve
-actual mutation of the array in place, so if we want to stay
-true to our specification /show test for no-side-effects/.
-We will have to copy the array once, using some sort of
-wrapper function.</p>
-
-<p>Applying this optimization I leave as an exercise to you my
-users.</p>
-
-<p>In the next episode we will look into path-finding problem,
-and we will see, how these techniques apply there. See you
-next time! Have a nice day.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/4">&larr; Older</a>
@@ -1070,6 +1155,10 @@ next time! Have a nice day.</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/08/10/tdd-screencast-number-6-continuous-integration-training/">TDD #6: Continuous Integration Training</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/07/31/parallel-change-refactoring/">Parallel Change Refactoring</a>
@@ -1097,10 +1186,6 @@ next time! Have a nice day.</p>
     
       <li class="post">
         <a href="/blog/2016/06/13/tdd-as-an-enabling-practice-or-how-to-be-faster-with-tdd/">TDD as an Enabling Practice or How to Be Faster With TDD</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/">Automating Manual Checks or How to Save Time and Get Rapid Feedback</a>
       </li>
     
   </ul>

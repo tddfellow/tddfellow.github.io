@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Continuous-integration | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/continuous-integration/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-07-31T11:26:02+02:00</updated>
+  <updated>2016-08-10T19:41:17+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,30 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[TDD #6: Continuous Integration Training]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/08/10/tdd-screencast-number-6-continuous-integration-training/"/>
+    <updated>2016-08-10T19:35:41+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/08/10/tdd-screencast-number-6-continuous-integration-training</id>
+    <content type="html"><![CDATA[<iframe src="https://player.vimeo.com/video/178357638" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+
+<p><a href="https://vimeo.com/178357638">Test-Driven Development Screencast #6: Continuous Integration Training</a></p>
+
+<p><em>(Recommended to watch full-screen and HD: 720p or more)</em></p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
+
+<h2>Summary</h2>
+
+<p>Today we are going to discuss Continuous Integration, what it is and what it isn&rsquo;t. We will define best Check-Out/Check-In cycle. We will explore ways to train our Continuous Integration skills. And we will do some live coding on Kata with special restriction, that allows one to train such skills. Then we will draw a bottom line.</p>
+
+<p>Thanks for watching! If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[TDD as an Enabling Practice or How to Be Faster With TDD]]></title>
