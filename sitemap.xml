@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://www.tddfellow.com/blog/2016/08/14/build-your-own-testing-framework-part-3/</loc>
+    <lastmod>2016-08-14T13:55:17+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://www.tddfellow.com/blog/2016/08/10/tdd-screencast-number-6-continuous-integration-training/</loc>
     <lastmod>2016-08-10T19:35:41+02:00</lastmod>
   </url>
@@ -340,23 +344,5 @@
   </url>
   <url>
     <loc>http://www.tddfellow.com/blog/categories/software-craftsmanship/</loc>
-  </url>
-  <url>
-    <loc>http://www.tddfellow.com/posts/2/</loc>
-  </url>
-  <url>
-    <loc>http://www.tddfellow.com/posts/3/</loc>
-  </url>
-  <url>
-    <loc>http://www.tddfellow.com/posts/4/</loc>
-  </url>
-  <url>
-    <loc>http://www.tddfellow.com/posts/5/</loc>
-  </url>
-  <url>
-    <loc>http://www.tddfellow.com/posts/6/</loc>
-  </url>
-  <url>
-    <loc>http://www.tddfellow.com/posts/7/</loc>
   </url>
 </urlset>
