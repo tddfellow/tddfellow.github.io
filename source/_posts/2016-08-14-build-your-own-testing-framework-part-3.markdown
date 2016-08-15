@@ -2,6 +2,7 @@
 layout: post
 title: "Build Your Own Testing Framework. Part 3"
 date: 2016-08-14 13:55:17 +0200
+description: Today we are going to unit-test `runTestSuite` function of our testing framework. Currently, only its happy path is implicitly tested via every test of the system. Additionally, this function's unhappy paths are, in fact, untestable at the moment.
 comments: true
 categories:
 - TDD
