@@ -9,20 +9,8 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="TL;DR: .kitchen.yml1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-# .kitchen.yml
----
-driver: name: docker use_sudo: false # this depends if you need to do `sudo` to run ` &hellip;">
+  <meta name="description" content="(VirtualBox on Mac OS X) This guide is a combination of official docs and usage experience. Installation Install virtualbox first
+virtualbox &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -89,6 +77,264 @@ driver: name: docker use_sudo: false # this depends if you need to do `sudo` to 
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x/">Docker Machine Guide (VirtualBox on Mac OS X)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-08-31T10:21:06+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>10:21 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><em>(VirtualBox on Mac OS X)</em></p>
+
+<p>This guide is a combination of official docs and usage experience.</p>
+
+<h2>Installation</h2>
+
+<p><em>Install virtualbox first
+<a href="https://www.virtualbox.org/wiki/Downloads">virtualbox downloads</a>.</em></p>
+
+<p>Look at this page: <a href="https://github.com/docker/machine/releases/">https://github.com/docker/machine/releases/</a> and pick latest
+release. At the time of writing this is <code>v0.4.1</code>.</p>
+
+<p>Now, assign version number to an environment variable, together with your
+architecture:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">DOCKER_MACHINE_VERSION</span><span class="o">=</span>v0.4.1
+</span><span class='line'><span class="nv">DOCKER_MACHINE_ARCH</span><span class="o">=</span>darwin-amd64
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now download <code>docker-machine</code> binary and put it onto your <code>PATH</code> (recommended
+is <code>~/bin/</code>):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir -p ~/bin
+</span><span class='line'><span class="nv">URL</span><span class="o">=</span>https://github.com/docker/machine/releases/download/<span class="k">${</span><span class="nv">DOCKER_MACHINE_VERSION</span><span class="k">}</span>/docker-machine_<span class="k">${</span><span class="nv">DOCKER_MACHINE_ARCH</span><span class="k">}</span>
+</span><span class='line'><span class="nv">OUTPUT</span><span class="o">=</span>~/bin/docker-machine
+</span><span class='line'>curl -L <span class="k">${</span><span class="nv">URL</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
+</span><span class='line'>chmod +x <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you still haven&rsquo;t yet, put <code>~/bin/</code> on your <code>PATH</code> with <code>export
+PATH=$PATH:$HOME/bin</code> into your <code>.bashrc</code> or <code>.zshrc</code> (or whatever shell you
+use).</p>
+
+<h2>Installing docker client</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">URL</span><span class="o">=</span>https://get.docker.com/builds/Darwin/x86_64/docker-latest
+</span><span class='line'><span class="nv">OUTPUT</span><span class="o">=</span>~/bin/docker
+</span><span class='line'>curl -L <span class="k">${</span><span class="nv">URL</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
+</span><span class='line'>chmod +x <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Creating your first docker machine</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine create -d virtualbox dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is how you create docker machine with name <code>dev</code> having virtualbox as a
+backend.</p>
+
+<p>But after some time you will encounter a problem of running out of memory. So
+my recommended command to create your primary development docker machine is
+this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine create -d virtualbox dev --virtualbox-memory <span class="s2">&quot;5120&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will create virtualbox VM with enough memory to run low-to-moderate size
+clusters with <code>docker-compose</code>. Which should be enough for development.</p>
+
+<p>This should be your primary docker machine that is always activated and used.
+There is no need to destroy and re-create this <code>dev</code> machine unless you are
+testing some edge-cases. And better to use additional docker machine with
+different name for this.</p>
+
+<h2>Connecting to your <code>dev</code> docker machine</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">eval</span> <span class="k">$(</span>docker-machine env dev<span class="k">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After this command, you will have everything you need to run <code>docker</code> in the same terminal:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Using alpine image here because it is only ~5 MB</span>
+</span><span class='line'>docker run -it --rm alpine <span class="nb">echo</span> <span class="s1">&#39;hello world&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You should see:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># .. pulling alpine image here .. and:</span>
+</span><span class='line'>hello world
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It might be annoying to run <code>eval $(docker-machine env dev)</code> each time you open
+new terminal. So feel free to put this line into your <code>.bashrc</code> or <code>.zshrc</code> or
+whatever shell you use:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># in .bashrc:</span>
+</span><span class='line'><span class="nb">eval</span> <span class="k">$(</span>docker-machine env dev<span class="k">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you have just powered on your Mac (or just stopped your docker machine) you
+will experience this error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Error: Host does not exist: dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In that case just start it with:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine start dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And re-open your terminal.</p>
+
+<h2>Dealing with docker machine&rsquo;s IP address</h2>
+
+<p>Fact: docker machine&rsquo;s IP address stays the same, usually 192.168.99.100,
+unless:</p>
+
+<ul>
+<li>you destroy your docker machine <code>dev</code>, create another VirtualBox VM and
+create docker machine <code>dev</code> afterwards, or</li>
+<li>you have custom VirtualBox configuration.</li>
+</ul>
+
+
+<p>Given that docker machine&rsquo;s IP address stays the same or changes very rarely,
+you can simply put its IP address in your <code>/etc/hosts</code>.</p>
+
+<p>First, figure out current docker machine&rsquo;s IP address:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine ip dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And put it in <code>/etc/hosts</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># in /etc/hosts</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Put IP address previous command has returned here:</span>
+</span><span class='line'>192.168.99.100 docker-dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To test that it works correclty try to run:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker run -it --rm -p 80:80 nginx
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And now reach <code>http://docker-dev</code> in your browser - you should see default
+Nginx page.</p>
+
+<p>If you want to refer docker machine <code>dev</code> in your scripts, it is better to use
+<code>$(docker-machine ip dev)</code> capabilities for that. For example, <code>curl</code>-ing the
+page we have seen in browser just now:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>curl <span class="k">$(</span>docker-machine ip dev<span class="k">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For teams it would make sense to agree on the same name for primary development
+docker machine. <code>dev</code> works just great!</p>
+
+<p><em>NOTE: personally, I use both <code>docker-dev</code> and just <code>dev</code> as a hostname to type
+less, but that might clash with something else, so <code>docker-dev</code> it is.</em></p>
+
+<h2>Upgrading</h2>
+
+<p>To upgrade <code>docker-machine</code> or <code>docker</code> binaries, just follow <code>Installation</code>
+instructions again.</p>
+
+<p>To upgrade <code>docker</code> server inside of already running docker machine, use:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine upgrade dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will update to the latest version of <code>docker</code> server and <code>boot2docker</code>
+image.</p>
+
+<h2>Re-creating a fresh <code>dev</code> docker machine</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine rm dev
+</span><span class='line'>docker-machine create -d virtualbox dev --virtualbox-memory <span class="s2">&quot;5120&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Further reading</h2>
+
+<ul>
+<li><a href="https://docs.docker.com/machine/">Overview of Docker Machine</a></li>
+<li><a href="https://docs.docker.com/machine/get-started/">Get started with Docker Machine and a local VM</a></li>
+</ul>
+
+
+<p>Comments on <a href="https://news.ycombinator.com/item?id=10146082">hackernews</a>.</p>
+
+<p>Happy hacking! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -697,67 +943,6 @@ driver: name: docker use_sudo: false # this depends if you need to do `sudo` to 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/">How Can contracts.ruby Be Used in the Community With Duck Typing Culture?</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-03-10T11:11:23+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:11 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>So, given simple example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">Num</span><span class="p">,</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>One can ask: &ldquo;But it is ruby, what about duck typing, I want just pass two things that have certain methods defined on them&rdquo;</p>
-
-<p>And my answer, you can easily do that:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:save</span><span class="p">,</span> <span class="ss">:has_valid?</span><span class="o">]</span><span class="p">,</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:to_s</span><span class="o">]</span> <span class="o">=&gt;</span> <span class="no">Any</span>
-</span><span class='line'><span class="k">def</span> <span class="nf">assign_user_a_default_email</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">default_email</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">default_email</span> <span class="k">unless</span> <span class="n">user</span><span class="o">.</span><span class="n">has_valid?</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span>
-</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">save</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This is a built-in <code>RespondTo</code> contract. You can get a list of all of them here: <a href="http://egonschiele.github.io/contracts.ruby/#built-in-contracts">http://egonschiele.github.io/contracts.ruby/#built-in-contracts</a></p>
-
-<p>If you have any questions, you can always ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/7">&larr; Older</a>
@@ -773,6 +958,10 @@ driver: name: docker use_sudo: false # this depends if you need to do `sudo` to 
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/08/20/eliminating-if-statements-legacy-endpoint-primer/">Eliminating &#8216;if&#8217; Statements: Legacy Endpoint Primer</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/08/14/build-your-own-testing-framework-part-3/">Build Your Own Testing Framework. Part 3</a>
@@ -800,10 +989,6 @@ driver: name: docker use_sudo: false # this depends if you need to do `sudo` to 
     
       <li class="post">
         <a href="/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/">Why I Don&#8217;t Use Mocking Frameworks Anymore</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/06/19/tdd-number-5-english-numbers-kata/">TDD #5: English Numbers Kata</a>
       </li>
     
   </ul>

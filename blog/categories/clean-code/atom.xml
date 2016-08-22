@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Clean-code | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/clean-code/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-08-15T18:49:39+02:00</updated>
+  <updated>2016-08-22T09:25:20+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,281 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Eliminating 'if' Statements: Legacy Endpoint Primer]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/08/20/eliminating-if-statements-legacy-endpoint-primer/"/>
+    <updated>2016-08-20T11:59:37+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/08/20/eliminating-if-statements-legacy-endpoint-primer</id>
+    <content type="html"><![CDATA[<p><code>if</code> statements tend to duplicate throughout the code base. This may lead to subtle mistakes and bugs. One way to avoid that problem is to eliminate <code>if</code> statement completely. Today we are going to take a look at one example of such elimination. Code examples today will be in Kotlin.</p>
+
+<h2>Problem at hand</h2>
+
+<ul>
+<li>Our API has an endpoint for issuing some sort of <code>verification token</code> given <code>device id</code> and <code>phone number</code> of the user&rsquo;s mobile device.</li>
+<li>We need to integrate these <code>verification tokens</code> with 3rd party API.</li>
+<li>The format of <code>verification token</code> is fairly standardized.</li>
+<li>After initial research, it turned out that <code>issuer</code> field of <code>verification token</code> has to be URL of the API that has issued that token and 3rd party API in question validates this fact.</li>
+<li>Currently, <code>issuer</code> field gets generated as <code>com.tddfellow</code>. According to this standard, it has to be <code>https://tddfellow.com</code>.</li>
+<li>Additionally, we have to support old versions of mobile clients for next 6 months, that are validating <code>issuer</code> to be <code>com.tddfellow</code>, we can not change them as they are already installed on users&#8217; mobile devices.</li>
+</ul>
+
+
+<p>Solution: bump the version of our API from <code>v1</code> to <code>v2</code> and use <code>v1</code> for integration with old mobile clients and use <code>v2</code> for integration with 3rd party API and all new clients.</p>
+
+<h2>Current Relevant Code</h2>
+
+<p>Main program, containing routing information:</p>
+
+<pre><code class="kotlin">// Main.kt
+
+fun main(args: Array&lt;String&gt;) {
+    val secureTokenSource = SimpleSecureTokenSource()
+    val verificationTokenGateway = DummyVerificationTokenGateway()
+
+    val issueVerificationTokenUseCase = UseCase(secureTokenSource, verificationTokenGateway)
+    val issueVerificationTokenEndpoint = Endpoint(issueVerificationTokenUseCase)
+
+    Spark.get("/api/v1/issueVerificationToken") { request, response -&gt;
+        issueVerificationTokenEndpoint.issueVerificationToken(
+                deviceId = request.queryParams("deviceId"),
+                phoneNumber = request.queryParams("phoneNumber")
+        )
+    }
+}
+</code></pre>
+
+<p>Endpoint that issues verification token:</p>
+
+<pre><code class="kotlin">// ApiEndpoints/IssueVerificationToken/Endpoint.kt
+
+class Endpoint(private val useCase: UseCase) {
+
+    fun issueVerificationToken(deviceId: String, phoneNumber: String): IssueVerificationTokenEndpointResponse {
+        val issueVerificationToken = useCase.issueVerificationToken(deviceId, phoneNumber)
+
+        return IssueVerificationTokenEndpointResponse(
+                issuer = issueVerificationToken.issuer,
+                token = issueVerificationToken.secureToken
+        )
+    }
+
+}
+</code></pre>
+
+<p>And the UseCase itself:</p>
+
+<pre><code class="kotlin">// IssueVerificationToken/UseCase.kt
+
+open class UseCase(private val secureTokenSource: SecureTokenSource,
+                   private val verificationTokenGateway: VerificationTokenGateway) {
+
+    open fun issueVerificationToken(deviceId: String, phoneNumber: String): VerificationToken {
+        val verificationToken = VerificationToken(
+                issuer = "com.tddfellow",
+                deviceId = deviceId,
+                phoneNumber = phoneNumber,
+                secureToken = secureTokenSource.generateToken()
+        )
+
+        verificationTokenGateway.persist(verificationToken)
+        return verificationToken
+    }
+
+}
+</code></pre>
+
+<p>Code can be found <a href="https://github.com/waterlink/LegacyEndpointPrimer/">here</a>.</p>
+
+<h2>Solution With Awkward <code>if</code> Statement</h2>
+
+<p>Easiest solution using passed in <code>apiVersion</code> from the <code>Main</code> program and switch on it being old or new in the use case to determine which issuer to generate:</p>
+
+<pre><code class="kotlin">// Main.kt
+
+Spark.get("/api/v1/issueVerificationToken") { request, response -&gt;
+    issueVerificationTokenEndpoint.issueVerificationToken(
+            deviceId = request.queryParams("deviceId"),
+            phoneNumber = request.queryParams("phoneNumber"),
+
+            // here we are passing "old" version to the endpoint
+            apiVersion = "v1"
+    )
+}
+
+Spark.get("/api/v2/issueVerificationToken") { request, response -&gt;
+    issueVerificationTokenEndpoint.issueVerificationToken(
+            deviceId = request.queryParams("deviceId"),
+            phoneNumber = request.queryParams("phoneNumber"),
+
+            // here we are passing "new" version to the endpoint
+            apiVersion = "v2"
+    )
+}
+</code></pre>
+
+<p>And the endpoint just passes this value through to the use case:</p>
+
+<pre><code class="kotlin">// ApiEndpoints/IssueVerificationToken/Endpoint.kt
+
+fun issueVerificationToken(deviceId: String,
+                           phoneNumber: String,
+                           apiVersion: String): IssueVerificationTokenEndpointResponse {
+
+    val issueVerificationToken = useCase.issueVerificationToken(
+            deviceId = deviceId,
+            phoneNumber = phoneNumber,
+
+            // here we are passing API version through
+            apiVersion = apiVersion
+    )
+
+    return IssueVerificationTokenEndpointResponse(
+            issuer = issueVerificationToken.issuer,
+            token = issueVerificationToken.secureToken
+    )
+}
+</code></pre>
+
+<p>And finally the <code>if</code> statement in the use case:</p>
+
+<pre><code class="kotlin">// IssueVerificationToken/UseCase.kt
+
+private val OLD_ISSUER = "com.tddfellow"
+private val NEW_ISSUER = "https://tddfellow.com"
+private val OLD_API_VERSION = "v1"
+
+fun issueVerificationToken(deviceId: String, phoneNumber: String, apiVersion: String): VerificationToken {
+    val verificationToken = VerificationToken(
+            issuer = getIssuerFor(apiVersion),
+            deviceId = deviceId,
+            phoneNumber = phoneNumber,
+            secureToken = secureTokenSource.generateToken()
+    )
+
+    verificationTokenGateway.persist(verificationToken)
+    return verificationToken
+}
+
+private fun getIssuerFor(apiVersion: String): String {
+    if (apiVersion.equals(OLD_API_VERSION)) {
+        return OLD_ISSUER
+    }
+    return NEW_ISSUER
+}
+</code></pre>
+
+<p>The full code change available <a href="https://github.com/waterlink/LegacyEndpointPrimer/pull/1">here (via open Pull Request)</a>.</p>
+
+<p>This solution has quite a few problems:</p>
+
+<ul>
+<li><code>if</code> statement smells a bit</li>
+<li>use case probably should not have any knowledge of <code>apiVersion</code>, since APIs is not our domain, it is just a delivery mechanism</li>
+</ul>
+
+
+<p>If we were to pass some object, like <code>TokenIssuer</code>, it would probably be more appropriate to have use case know of it. Let&rsquo;s try to refactor:</p>
+
+<h2>Refactoring <code>if</code> Statement Using Polymorphism</h2>
+
+<p>First, let&rsquo;s start passing in the token issuer in the routing:</p>
+
+<pre><code class="kotlin">// Main.kt
+
+Spark.get("/api/v1/issueVerificationToken") { request, response -&gt;
+    issueVerificationTokenEndpoint.issueVerificationToken(
+            deviceId = request.queryParams("deviceId"),
+            phoneNumber = request.queryParams("phoneNumber"),
+
+            // here we pass a specific object now for old token issuer:
+            tokenIssuer = OldTokenIssuer()
+    )
+}
+
+Spark.get("/api/v2/issueVerificationToken") { request, response -&gt;
+    issueVerificationTokenEndpoint.issueVerificationToken(
+            deviceId = request.queryParams("deviceId"),
+            phoneNumber = request.queryParams("phoneNumber"),
+
+            // here we pass an object that returns URL according to the standard
+            tokenIssuer = UrlTokenIssuer()
+    )
+}
+</code></pre>
+
+<p>And this is how <code>TokenIssuer</code> and its derivatives are looking like:</p>
+
+<pre><code class="kotlin">// IssueVerificationToken/TokenIssuer.kt
+
+interface TokenIssuer {
+
+    fun getName(): String
+
+}
+</code></pre>
+
+<pre><code class="kotlin">// IssueVerificationToken/OldTokenIssuer.kt
+
+class OldTokenIssuer : TokenIssuer {
+
+    override fun getName() = "com.tddfellow"
+
+}
+</code></pre>
+
+<pre><code class="kotlin">// IssueVerificationToken/UrlTokenIssuer.kt
+
+class UrlTokenIssuer : TokenIssuer {
+
+    override fun getName() = "https://tddfellow.com"
+
+}
+</code></pre>
+
+<p>As you might guess, endpoint just passes this object through to the use case. And the use case itself just calls <code>getName()</code> on it when generating issuer:</p>
+
+<pre><code class="kotlin">// IssueVerificationToken/UseCase.kt
+
+fun issueVerificationToken(deviceId: String, phoneNumber: String, tokenIssuer: TokenIssuer): VerificationToken {
+    val verificationToken = VerificationToken(
+
+            // here is how much simpler it becomes
+            issuer = tokenIssuer.getName(),
+
+            deviceId = deviceId,
+            phoneNumber = phoneNumber,
+            secureToken = secureTokenSource.generateToken()
+    )
+
+    verificationTokenGateway.persist(verificationToken)
+    return verificationToken
+}
+</code></pre>
+
+<p>Full code change can be seen <a href="https://github.com/waterlink/LegacyEndpointPrimer/pull/2">here (in the Pull Request)</a>.</p>
+
+<h2>Bottom Line</h2>
+
+<p>This code may be refactored further so that even <code>Endpoint</code> class will not have to know about <code>tokenIssuer</code> and pass it through. I will leave that as an exercise to you, my dear reader.</p>
+
+<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
+
+<ul>
+<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
+<li>Open-Closed Principle - changing behavior by adding new code,</li>
+<li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD,</li>
+<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, Test-Driven Development screencasts and so much more!</li>
+</ul>
+
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Parallel Change Refactoring]]></title>

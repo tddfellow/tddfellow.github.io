@@ -4,7 +4,7 @@
   <title><![CDATA[That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-08-15T18:49:39+02:00</updated>
+  <updated>2016-08-22T09:25:20+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,466 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Eliminating 'if' Statements: Legacy Endpoint Primer]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/08/20/eliminating-if-statements-legacy-endpoint-primer/"/>
+    <updated>2016-08-20T11:59:37+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/08/20/eliminating-if-statements-legacy-endpoint-primer</id>
+    <content type="html"><![CDATA[<p><code>if</code> statements tend to duplicate throughout the code base. This may lead to subtle mistakes and bugs. One way to avoid that problem is to eliminate <code>if</code> statement completely. Today we are going to take a look at one example of such elimination. Code examples today will be in Kotlin.</p>
+
+<h2>Problem at hand</h2>
+
+<ul>
+<li>Our API has an endpoint for issuing some sort of <code>verification token</code> given <code>device id</code> and <code>phone number</code> of the user&rsquo;s mobile device.</li>
+<li>We need to integrate these <code>verification tokens</code> with 3rd party API.</li>
+<li>The format of <code>verification token</code> is fairly standardized.</li>
+<li>After initial research, it turned out that <code>issuer</code> field of <code>verification token</code> has to be URL of the API that has issued that token and 3rd party API in question validates this fact.</li>
+<li>Currently, <code>issuer</code> field gets generated as <code>com.tddfellow</code>. According to this standard, it has to be <code>https://tddfellow.com</code>.</li>
+<li>Additionally, we have to support old versions of mobile clients for next 6 months, that are validating <code>issuer</code> to be <code>com.tddfellow</code>, we can not change them as they are already installed on users&#8217; mobile devices.</li>
+</ul>
+
+
+<p>Solution: bump the version of our API from <code>v1</code> to <code>v2</code> and use <code>v1</code> for integration with old mobile clients and use <code>v2</code> for integration with 3rd party API and all new clients.</p>
+
+<h2>Current Relevant Code</h2>
+
+<p>Main program, containing routing information:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// Main.kt</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Array</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">val</span> <span class="py">secureTokenSource</span> <span class="p">=</span> <span class="n">SimpleSecureTokenSource</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">val</span> <span class="py">verificationTokenGateway</span> <span class="p">=</span> <span class="n">DummyVerificationTokenGateway</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">val</span> <span class="py">issueVerificationTokenUseCase</span> <span class="p">=</span> <span class="n">UseCase</span><span class="p">(</span><span class="n">secureTokenSource</span><span class="p">,</span> <span class="n">verificationTokenGateway</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">val</span> <span class="py">issueVerificationTokenEndpoint</span> <span class="p">=</span> <span class="n">Endpoint</span><span class="p">(</span><span class="n">issueVerificationTokenUseCase</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">Spark</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="s">&quot;/api/v1/issueVerificationToken&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span> <span class="p">-&gt;</span>
+</span><span class='line'>        <span class="n">issueVerificationTokenEndpoint</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span>
+</span><span class='line'>                <span class="n">deviceId</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;deviceId&quot;</span><span class="p">),</span>
+</span><span class='line'>                <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;phoneNumber&quot;</span><span class="p">)</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Endpoint that issues verification token:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// ApiEndpoints/IssueVerificationToken/Endpoint.kt</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Endpoint</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">useCase</span><span class="p">:</span> <span class="n">UseCase</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">fun</span> <span class="nf">issueVerificationToken</span><span class="p">(</span><span class="n">deviceId</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">phoneNumber</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">IssueVerificationTokenEndpointResponse</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">val</span> <span class="py">issueVerificationToken</span> <span class="p">=</span> <span class="n">useCase</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span><span class="n">deviceId</span><span class="p">,</span> <span class="n">phoneNumber</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="n">IssueVerificationTokenEndpointResponse</span><span class="p">(</span>
+</span><span class='line'>                <span class="n">issuer</span> <span class="p">=</span> <span class="n">issueVerificationToken</span><span class="p">.</span><span class="n">issuer</span><span class="p">,</span>
+</span><span class='line'>                <span class="n">token</span> <span class="p">=</span> <span class="n">issueVerificationToken</span><span class="p">.</span><span class="n">secureToken</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And the UseCase itself:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// IssueVerificationToken/UseCase.kt</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">open</span> <span class="k">class</span> <span class="nc">UseCase</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">secureTokenSource</span><span class="p">:</span> <span class="n">SecureTokenSource</span><span class="p">,</span>
+</span><span class='line'>                   <span class="k">private</span> <span class="k">val</span> <span class="py">verificationTokenGateway</span><span class="p">:</span> <span class="n">VerificationTokenGateway</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">open</span> <span class="k">fun</span> <span class="nf">issueVerificationToken</span><span class="p">(</span><span class="n">deviceId</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">phoneNumber</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">VerificationToken</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">val</span> <span class="py">verificationToken</span> <span class="p">=</span> <span class="n">VerificationToken</span><span class="p">(</span>
+</span><span class='line'>                <span class="n">issuer</span> <span class="p">=</span> <span class="s">&quot;com.tddfellow&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="n">deviceId</span> <span class="p">=</span> <span class="n">deviceId</span><span class="p">,</span>
+</span><span class='line'>                <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">phoneNumber</span><span class="p">,</span>
+</span><span class='line'>                <span class="n">secureToken</span> <span class="p">=</span> <span class="n">secureTokenSource</span><span class="p">.</span><span class="n">generateToken</span><span class="p">()</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">verificationTokenGateway</span><span class="p">.</span><span class="n">persist</span><span class="p">(</span><span class="n">verificationToken</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">verificationToken</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Code can be found <a href="https://github.com/waterlink/LegacyEndpointPrimer/">here</a>.</p>
+
+<h2>Solution With Awkward <code>if</code> Statement</h2>
+
+<p>Easiest solution using passed in <code>apiVersion</code> from the <code>Main</code> program and switch on it being old or new in the use case to determine which issuer to generate:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// Main.kt</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Spark</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="s">&quot;/api/v1/issueVerificationToken&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span> <span class="p">-&gt;</span>
+</span><span class='line'>    <span class="n">issueVerificationTokenEndpoint</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span>
+</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;deviceId&quot;</span><span class="p">),</span>
+</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;phoneNumber&quot;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// here we are passing &quot;old&quot; version to the endpoint</span>
+</span><span class='line'>            <span class="n">apiVersion</span> <span class="p">=</span> <span class="s">&quot;v1&quot;</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Spark</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="s">&quot;/api/v2/issueVerificationToken&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span> <span class="p">-&gt;</span>
+</span><span class='line'>    <span class="n">issueVerificationTokenEndpoint</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span>
+</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;deviceId&quot;</span><span class="p">),</span>
+</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;phoneNumber&quot;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// here we are passing &quot;new&quot; version to the endpoint</span>
+</span><span class='line'>            <span class="n">apiVersion</span> <span class="p">=</span> <span class="s">&quot;v2&quot;</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And the endpoint just passes this value through to the use case:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// ApiEndpoints/IssueVerificationToken/Endpoint.kt</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">fun</span> <span class="nf">issueVerificationToken</span><span class="p">(</span><span class="n">deviceId</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+</span><span class='line'>                           <span class="n">phoneNumber</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+</span><span class='line'>                           <span class="n">apiVersion</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">IssueVerificationTokenEndpointResponse</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">val</span> <span class="py">issueVerificationToken</span> <span class="p">=</span> <span class="n">useCase</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span>
+</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">deviceId</span><span class="p">,</span>
+</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">phoneNumber</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// here we are passing API version through</span>
+</span><span class='line'>            <span class="n">apiVersion</span> <span class="p">=</span> <span class="n">apiVersion</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">IssueVerificationTokenEndpointResponse</span><span class="p">(</span>
+</span><span class='line'>            <span class="n">issuer</span> <span class="p">=</span> <span class="n">issueVerificationToken</span><span class="p">.</span><span class="n">issuer</span><span class="p">,</span>
+</span><span class='line'>            <span class="n">token</span> <span class="p">=</span> <span class="n">issueVerificationToken</span><span class="p">.</span><span class="n">secureToken</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And finally the <code>if</code> statement in the use case:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// IssueVerificationToken/UseCase.kt</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">private</span> <span class="k">val</span> <span class="py">OLD_ISSUER</span> <span class="p">=</span> <span class="s">&quot;com.tddfellow&quot;</span>
+</span><span class='line'><span class="k">private</span> <span class="k">val</span> <span class="py">NEW_ISSUER</span> <span class="p">=</span> <span class="s">&quot;https://tddfellow.com&quot;</span>
+</span><span class='line'><span class="k">private</span> <span class="k">val</span> <span class="py">OLD_API_VERSION</span> <span class="p">=</span> <span class="s">&quot;v1&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">fun</span> <span class="nf">issueVerificationToken</span><span class="p">(</span><span class="n">deviceId</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">phoneNumber</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">apiVersion</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">VerificationToken</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">val</span> <span class="py">verificationToken</span> <span class="p">=</span> <span class="n">VerificationToken</span><span class="p">(</span>
+</span><span class='line'>            <span class="n">issuer</span> <span class="p">=</span> <span class="n">getIssuerFor</span><span class="p">(</span><span class="n">apiVersion</span><span class="p">),</span>
+</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">deviceId</span><span class="p">,</span>
+</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">phoneNumber</span><span class="p">,</span>
+</span><span class='line'>            <span class="n">secureToken</span> <span class="p">=</span> <span class="n">secureTokenSource</span><span class="p">.</span><span class="n">generateToken</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">verificationTokenGateway</span><span class="p">.</span><span class="n">persist</span><span class="p">(</span><span class="n">verificationToken</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">verificationToken</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">private</span> <span class="k">fun</span> <span class="nf">getIssuerFor</span><span class="p">(</span><span class="n">apiVersion</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">String</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">apiVersion</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">OLD_API_VERSION</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">OLD_ISSUER</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">NEW_ISSUER</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The full code change available <a href="https://github.com/waterlink/LegacyEndpointPrimer/pull/1">here (via open Pull Request)</a>.</p>
+
+<p>This solution has quite a few problems:</p>
+
+<ul>
+<li><code>if</code> statement smells a bit</li>
+<li>use case probably should not have any knowledge of <code>apiVersion</code>, since APIs is not our domain, it is just a delivery mechanism</li>
+</ul>
+
+
+<p>If we were to pass some object, like <code>TokenIssuer</code>, it would probably be more appropriate to have use case know of it. Let&rsquo;s try to refactor:</p>
+
+<h2>Refactoring <code>if</code> Statement Using Polymorphism</h2>
+
+<p>First, let&rsquo;s start passing in the token issuer in the routing:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// Main.kt</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Spark</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="s">&quot;/api/v1/issueVerificationToken&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span> <span class="p">-&gt;</span>
+</span><span class='line'>    <span class="n">issueVerificationTokenEndpoint</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span>
+</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;deviceId&quot;</span><span class="p">),</span>
+</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;phoneNumber&quot;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// here we pass a specific object now for old token issuer:</span>
+</span><span class='line'>            <span class="n">tokenIssuer</span> <span class="p">=</span> <span class="n">OldTokenIssuer</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Spark</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="s">&quot;/api/v2/issueVerificationToken&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span> <span class="p">-&gt;</span>
+</span><span class='line'>    <span class="n">issueVerificationTokenEndpoint</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span>
+</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;deviceId&quot;</span><span class="p">),</span>
+</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;phoneNumber&quot;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// here we pass an object that returns URL according to the standard</span>
+</span><span class='line'>            <span class="n">tokenIssuer</span> <span class="p">=</span> <span class="n">UrlTokenIssuer</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And this is how <code>TokenIssuer</code> and its derivatives are looking like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// IssueVerificationToken/TokenIssuer.kt</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">interface</span> <span class="n">TokenIssuer</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">fun</span> <span class="nf">getName</span><span class="p">():</span> <span class="n">String</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// IssueVerificationToken/OldTokenIssuer.kt</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">OldTokenIssuer</span> <span class="p">:</span> <span class="n">TokenIssuer</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getName</span><span class="p">()</span> <span class="p">=</span> <span class="s">&quot;com.tddfellow&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// IssueVerificationToken/UrlTokenIssuer.kt</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">UrlTokenIssuer</span> <span class="p">:</span> <span class="n">TokenIssuer</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getName</span><span class="p">()</span> <span class="p">=</span> <span class="s">&quot;https://tddfellow.com&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you might guess, endpoint just passes this object through to the use case. And the use case itself just calls <code>getName()</code> on it when generating issuer:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// IssueVerificationToken/UseCase.kt</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">fun</span> <span class="nf">issueVerificationToken</span><span class="p">(</span><span class="n">deviceId</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">phoneNumber</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">tokenIssuer</span><span class="p">:</span> <span class="n">TokenIssuer</span><span class="p">):</span> <span class="n">VerificationToken</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">val</span> <span class="py">verificationToken</span> <span class="p">=</span> <span class="n">VerificationToken</span><span class="p">(</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">// here is how much simpler it becomes</span>
+</span><span class='line'>            <span class="n">issuer</span> <span class="p">=</span> <span class="n">tokenIssuer</span><span class="p">.</span><span class="n">getName</span><span class="p">(),</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">deviceId</span><span class="p">,</span>
+</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">phoneNumber</span><span class="p">,</span>
+</span><span class='line'>            <span class="n">secureToken</span> <span class="p">=</span> <span class="n">secureTokenSource</span><span class="p">.</span><span class="n">generateToken</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">verificationTokenGateway</span><span class="p">.</span><span class="n">persist</span><span class="p">(</span><span class="n">verificationToken</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">verificationToken</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Full code change can be seen <a href="https://github.com/waterlink/LegacyEndpointPrimer/pull/2">here (in the Pull Request)</a>.</p>
+
+<h2>Bottom Line</h2>
+
+<p>This code may be refactored further so that even <code>Endpoint</code> class will not have to know about <code>tokenIssuer</code> and pass it through. I will leave that as an exercise to you, my dear reader.</p>
+
+<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
+
+<ul>
+<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
+<li>Open-Closed Principle - changing behavior by adding new code,</li>
+<li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD,</li>
+<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, Test-Driven Development screencasts and so much more!</li>
+</ul>
+
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Your Own Testing Framework. Part 3]]></title>
@@ -5304,244 +5764,6 @@ issues on corresponding github project. Pull requests are welcome!</p>
 <p>Comments on <a href="https://news.ycombinator.com/item?id=10147783">hackernews</a>.</p>
 
 <p>Happy coding! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Docker Machine Guide (VirtualBox on Mac OS X)]]></title>
-    <link href="http://www.tddfellow.com/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x/"/>
-    <updated>2015-08-31T10:21:06+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x</id>
-    <content type="html"><![CDATA[<p><em>(VirtualBox on Mac OS X)</em></p>
-
-<p>This guide is a combination of official docs and usage experience.</p>
-
-<h2>Installation</h2>
-
-<p><em>Install virtualbox first
-<a href="https://www.virtualbox.org/wiki/Downloads">virtualbox downloads</a>.</em></p>
-
-<p>Look at this page: <a href="https://github.com/docker/machine/releases/">https://github.com/docker/machine/releases/</a> and pick latest
-release. At the time of writing this is <code>v0.4.1</code>.</p>
-
-<p>Now, assign version number to an environment variable, together with your
-architecture:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">DOCKER_MACHINE_VERSION</span><span class="o">=</span>v0.4.1
-</span><span class='line'><span class="nv">DOCKER_MACHINE_ARCH</span><span class="o">=</span>darwin-amd64
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now download <code>docker-machine</code> binary and put it onto your <code>PATH</code> (recommended
-is <code>~/bin/</code>):</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir -p ~/bin
-</span><span class='line'><span class="nv">URL</span><span class="o">=</span>https://github.com/docker/machine/releases/download/<span class="k">${</span><span class="nv">DOCKER_MACHINE_VERSION</span><span class="k">}</span>/docker-machine_<span class="k">${</span><span class="nv">DOCKER_MACHINE_ARCH</span><span class="k">}</span>
-</span><span class='line'><span class="nv">OUTPUT</span><span class="o">=</span>~/bin/docker-machine
-</span><span class='line'>curl -L <span class="k">${</span><span class="nv">URL</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
-</span><span class='line'>chmod +x <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you still haven&rsquo;t yet, put <code>~/bin/</code> on your <code>PATH</code> with <code>export
-PATH=$PATH:$HOME/bin</code> into your <code>.bashrc</code> or <code>.zshrc</code> (or whatever shell you
-use).</p>
-
-<h2>Installing docker client</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">URL</span><span class="o">=</span>https://get.docker.com/builds/Darwin/x86_64/docker-latest
-</span><span class='line'><span class="nv">OUTPUT</span><span class="o">=</span>~/bin/docker
-</span><span class='line'>curl -L <span class="k">${</span><span class="nv">URL</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
-</span><span class='line'>chmod +x <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Creating your first docker machine</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine create -d virtualbox dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This is how you create docker machine with name <code>dev</code> having virtualbox as a
-backend.</p>
-
-<p>But after some time you will encounter a problem of running out of memory. So
-my recommended command to create your primary development docker machine is
-this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine create -d virtualbox dev --virtualbox-memory <span class="s2">&quot;5120&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This will create virtualbox VM with enough memory to run low-to-moderate size
-clusters with <code>docker-compose</code>. Which should be enough for development.</p>
-
-<p>This should be your primary docker machine that is always activated and used.
-There is no need to destroy and re-create this <code>dev</code> machine unless you are
-testing some edge-cases. And better to use additional docker machine with
-different name for this.</p>
-
-<h2>Connecting to your <code>dev</code> docker machine</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">eval</span> <span class="k">$(</span>docker-machine env dev<span class="k">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After this command, you will have everything you need to run <code>docker</code> in the same terminal:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Using alpine image here because it is only ~5 MB</span>
-</span><span class='line'>docker run -it --rm alpine <span class="nb">echo</span> <span class="s1">&#39;hello world&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You should see:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># .. pulling alpine image here .. and:</span>
-</span><span class='line'>hello world
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>It might be annoying to run <code>eval $(docker-machine env dev)</code> each time you open
-new terminal. So feel free to put this line into your <code>.bashrc</code> or <code>.zshrc</code> or
-whatever shell you use:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># in .bashrc:</span>
-</span><span class='line'><span class="nb">eval</span> <span class="k">$(</span>docker-machine env dev<span class="k">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you have just powered on your Mac (or just stopped your docker machine) you
-will experience this error:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>Error: Host does not exist: dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In that case just start it with:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine start dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And re-open your terminal.</p>
-
-<h2>Dealing with docker machine&rsquo;s IP address</h2>
-
-<p>Fact: docker machine&rsquo;s IP address stays the same, usually 192.168.99.100,
-unless:</p>
-
-<ul>
-<li>you destroy your docker machine <code>dev</code>, create another VirtualBox VM and
-create docker machine <code>dev</code> afterwards, or</li>
-<li>you have custom VirtualBox configuration.</li>
-</ul>
-
-
-<p>Given that docker machine&rsquo;s IP address stays the same or changes very rarely,
-you can simply put its IP address in your <code>/etc/hosts</code>.</p>
-
-<p>First, figure out current docker machine&rsquo;s IP address:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine ip dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And put it in <code>/etc/hosts</code>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># in /etc/hosts</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># Put IP address previous command has returned here:</span>
-</span><span class='line'>192.168.99.100 docker-dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>To test that it works correclty try to run:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker run -it --rm -p 80:80 nginx
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And now reach <code>http://docker-dev</code> in your browser - you should see default
-Nginx page.</p>
-
-<p>If you want to refer docker machine <code>dev</code> in your scripts, it is better to use
-<code>$(docker-machine ip dev)</code> capabilities for that. For example, <code>curl</code>-ing the
-page we have seen in browser just now:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>curl <span class="k">$(</span>docker-machine ip dev<span class="k">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>For teams it would make sense to agree on the same name for primary development
-docker machine. <code>dev</code> works just great!</p>
-
-<p><em>NOTE: personally, I use both <code>docker-dev</code> and just <code>dev</code> as a hostname to type
-less, but that might clash with something else, so <code>docker-dev</code> it is.</em></p>
-
-<h2>Upgrading</h2>
-
-<p>To upgrade <code>docker-machine</code> or <code>docker</code> binaries, just follow <code>Installation</code>
-instructions again.</p>
-
-<p>To upgrade <code>docker</code> server inside of already running docker machine, use:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine upgrade dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This will update to the latest version of <code>docker</code> server and <code>boot2docker</code>
-image.</p>
-
-<h2>Re-creating a fresh <code>dev</code> docker machine</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine rm dev
-</span><span class='line'>docker-machine create -d virtualbox dev --virtualbox-memory <span class="s2">&quot;5120&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Further reading</h2>
-
-<ul>
-<li><a href="https://docs.docker.com/machine/">Overview of Docker Machine</a></li>
-<li><a href="https://docs.docker.com/machine/get-started/">Get started with Docker Machine and a local VM</a></li>
-</ul>
-
-
-<p>Comments on <a href="https://news.ycombinator.com/item?id=10146082">hackernews</a>.</p>
-
-<p>Happy hacking! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
 ]]></content>
   </entry>
   
