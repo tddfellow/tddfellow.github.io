@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Today we are going to unit-test existing functionality of our own testing framework, that we have test-driven with FizzBuzzKata in the previous part &hellip;">
+  <meta name="description" content="Parallel Change is the refactoring technique, that allows implementing backward-incompatible changes to an API in a safe manner. It consists of 3 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -76,6 +76,272 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/07/31/parallel-change-refactoring/">Parallel Change Refactoring</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-07-31T09:57:31+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2016</span></span> <span class='time'>9:57 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Parallel Change is the refactoring technique, that allows implementing backward-incompatible changes to an API in a safe manner. It consists of 3 steps:</p>
+
+<ul>
+<li>Expand - add new functionality as an extension of the interface (e.g.: add new methods), instead of editing signatures of existing interfaces</li>
+<li>Migrate - mark (or log a warning) existing interface as deprecated and give time to the clients of the interface to migrate to the new interface. This might be as simple as changing your own code-base one client of this interface at a time in case when you do not have 3rd party clients of these interfaces</li>
+<li>Contract - once all clients have migrated remove old interfaces</li>
+</ul>
+
+
+<p>This technique is tremendously useful when you have 3rd party clients for your API (open-source library, SaaS with REST API, etc). Also, it is as useful for normal application development because it allows such breaking changes to never break your test suite. It allows deploying your code in the middle of the refactoring, in fact, every few minutes (Continuous Integration + Continuous Deployment).</p>
+
+<p>This article contains code examples in a pseudo-code.</p>
+
+<h2><code>UserSearch</code></h2>
+
+<p>Let&rsquo;s imagine, that we have some class, that is used to search <code>User</code> by id:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search</span><span class="p">(</span><span class="kt">id</span> <span class="o">:</span> <span class="n">UserId</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search ..</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, new requirement comes in and it seems, that we need to be able to search by e-mail too, so we have to add more functionality here:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_email</span><span class="p">(</span><span class="nl">email</span> <span class="p">:</span> <span class="n">Email</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search ..</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Later, new requirement comes in and now we need to be able to search by the nickname too. So we follow the pattern:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_nickname</span><span class="p">(</span><span class="nl">nickname</span> <span class="p">:</span> <span class="n">Nickname</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search ..</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is great and all, but we clearly can see, how this class violates Open-Closed Principle: every time there is a new thing to search the user by, we will have to alter this class. This is not good. One of the possible solutions might be closing this class against this kind of change by introducing polymorphic <code>Query</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// all other search_* methods were removed</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search</span><span class="p">(</span><span class="nl">query</span> <span class="p">:</span> <span class="n">Query</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After doing that, if we run our test suite, it will be failing, probably, even with compile errors. This is not good because now we have to go through every failure and fix it, this will prevent us from continuously integrating for quite some time (half an hour, or a couple of days, depending on the impact of this change). And this has high chances of resulting in merge conflicts, that will impede work of others on our team.</p>
+
+<p>Instead, let&rsquo;s apply the parallel change.</p>
+
+<h2>Applying Parallel Change</h2>
+
+<h3>Expand</h3>
+
+<p>First, we need to introduce brand new method of our class (of course with unit-tests), without touching anything else:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_query</span><span class="p">(</span><span class="nl">query</span> <span class="p">:</span> <span class="n">Query</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point, we are going to deploy this new code.</p>
+
+<h3>Migrate</h3>
+
+<p>Second, we need to add a deprecation warning to old interface, and, in fact, old functions can be rewritten via new one:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search</span><span class="p">(</span><span class="kt">id</span> <span class="o">:</span> <span class="n">UserId</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">warn</span><span class="p">(</span><span class="s">&quot;`UserSearch.search` is deprecated. Use `UserSearch.search_by_query` instead&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">search_by_query</span><span class="p">(</span><span class="n">UserIdQuery</span><span class="p">(</span><span class="kt">id</span><span class="p">))</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_email</span><span class="p">(</span><span class="nl">email</span> <span class="p">:</span> <span class="n">Email</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">warn</span><span class="p">(</span><span class="s">&quot;`UserSearch.search_by_email` is deprecated. Use `UserSearch.search_by_query` instead&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">search_by_query</span><span class="p">(</span><span class="n">UserEmailQuery</span><span class="p">(</span><span class="n">email</span><span class="p">))</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_nickname</span><span class="p">(</span><span class="nl">nickname</span> <span class="p">:</span> <span class="n">Nickname</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">warn</span><span class="p">(</span><span class="s">&quot;`UserSearch.search_by_nickname` is deprecated. Use `UserSearch.search_by_query` instead&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">search_by_query</span><span class="p">(</span><span class="n">UserNicknameQuery</span><span class="p">(</span><span class="n">nickname</span><span class="p">))</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point, we are going to deploy this new code.</p>
+
+<p>Next, we need to:</p>
+
+<ul>
+<li>inform all clients of our system about this deprecation and give them time-frame to migrate, or</li>
+<li>if all clients of <code>UserSearch</code> are under our control, we need to change all calls to use new interface:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="c1">// was: `user_search.search(user_id)`</span>
+</span><span class='line'><span class="n">user_search</span><span class="p">.</span><span class="n">search_by_query</span><span class="p">(</span><span class="n">UserIdQuery</span><span class="p">(</span><span class="n">user_id</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After every line of change like that (big system probably has a multitude of these) we are going to deploy.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="c1">// was: `user_search.search_by_email(user_email)`</span>
+</span><span class='line'><span class="n">user_search</span><span class="p">.</span><span class="n">search_by_query</span><span class="p">(</span><span class="n">UserEmailQuery</span><span class="p">(</span><span class="n">user_email</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After every line of change like that we are going to deploy.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="c1">// was: `user_search.search_by_nickname(user_nickname)`</span>
+</span><span class='line'><span class="n">user_search</span><span class="p">.</span><span class="n">search_by_query</span><span class="p">(</span><span class="n">UserNicknameQuery</span><span class="p">(</span><span class="n">user_nickname</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Of course, after each line we are going to deploy.</p>
+
+<h3>Contract</h3>
+
+<p>Once all our tests pass and there is no single deprecation warning from <code>UserSession</code>, or the time-frame we have given to our 3rd party clients is finished, we can remove old functionality by simply removing deprecated methods (and their unit-tests), and what we will have left is:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_query</span><span class="p">(</span><span class="nl">query</span> <span class="p">:</span> <span class="n">Query</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Of course, we can deploy our system now.</p>
+
+<h2>Bottom Line</h2>
+
+<p>Notice, how following this technique avoids even a single compile error or test suite failure. And if failure happens, the last small code change (probably one line) was wrong, you just <code>CTRL+Z</code> it to get back to GREEN state.</p>
+
+<p>Was that refactoring necessary? Oh yeah it was, because in next few weeks, there were new requirements that would have forced us to add 2 new <code>search_by_*</code> methods to <code>UserSearch</code> class - instead, we just created new derivatives of <code>Query</code> interface/protocol and used them in the places where they are needed. This way we were able to change how <code>UserSearch</code> class works without modifying its source code, by only adding new code. This is a great win.</p>
+
+<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
+
+<ul>
+<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
+<li>Open-Closed Principle - changing behavior by adding new code,</li>
+<li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD,</li>
+<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series and so much more!</li>
+</ul>
+
+
+<p>Stay tuned!</p>
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2639,147 +2905,6 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/">Why I Don&#8217;t Use Mocking Frameworks Anymore</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2016-06-21T08:04:10+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>21</span><span class='date-suffix'>st</span>, <span class='date-year'>2016</span></span> <span class='time'>8:04 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Some time ago, I have discovered, that using your own custom test double classes, instead of a test framework makes my test code more readable and maintainable. Here is an example (pseudo-code):</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">test_password_revealer_when_toggled_reveals_password</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">passwordController</span> <span class="o">=</span> <span class="nx">MockPasswordController</span><span class="p">.</span><span class="k">new</span><span class="p">()</span>
-</span><span class='line'>  <span class="nx">passwordRevealer</span> <span class="o">=</span> <span class="nx">PasswordRevealer</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">passwordRevealer</span><span class="p">.</span><span class="nx">toggle</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">expect</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">isRevealed</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The same test with mocking framework would look this way:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">test_password_revealer_when_toggled_reveals_password</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">passwordController</span> <span class="o">=</span> <span class="nx">MockFramework</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="s2">&quot;PasswordController&quot;</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">passwordRevealer</span> <span class="o">=</span> <span class="nx">PasswordRevealer</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">spy</span> <span class="o">=</span> <span class="nx">spyOn</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">reveal</span><span class="p">())</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">passwordRevealer</span><span class="p">.</span><span class="nx">toggle</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">expect</span><span class="p">(</span><span class="nx">spy</span><span class="p">.</span><span class="nx">haveBeenCalled</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you take a closer look at the last example, and, specifically at these 2 lines:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">spy</span> <span class="o">=</span> <span class="nx">spyOn</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">reveal</span><span class="p">())</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">expect</span><span class="p">(</span><span class="nx">spy</span><span class="p">.</span><span class="nx">haveBeenCalled</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>They use a language, that is not relevant to the domain, therefore, they make the test less readable.</p>
-
-<p>Additionally, they have knowledge of which exactly method <code>PasswordRevealer#toggle()</code> should call on <code>passwordController</code>. If we were to rename <code>reveal</code> method, all tests for <code>PasswordRevealer</code> would fail.
-The same thing would happen if we were to extract methods/functions/objects out of the <code>PasswordRevealer</code>.</p>
-
-<p>Of course, creating such test doubles yourself will involve some boilerplate code - this is a trade-off. Example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">MockPasswordController</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">reveal</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;revealed&quot;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">hide</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">isRevealed</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">==</span> <span class="s2">&quot;revealed&quot;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Making this trade-off, will simplify the case when we were to change the name: we would change the name at 3 places:</p>
-
-<ul>
-<li>in test double class,</li>
-<li>in caller class,</li>
-<li>in &ldquo;real&rdquo; implementation class.</li>
-</ul>
-
-
-<p>Whereas with a mocking framework, we would have to hunt for all failing tests, and usually, it means hundreds of failing tests.</p>
-
-<h2>Thank you!</h2>
-
-<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/3">&larr; Older</a>
@@ -2795,6 +2920,10 @@ The same thing would happen if we were to extract methods/functions/objects out 
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Getting Stuck While Doing TDD. Part 1: Example</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/08/20/eliminating-if-statements-legacy-endpoint-primer/">Eliminating &#8216;if&#8217; Statements: Legacy Endpoint Primer</a>
@@ -2822,10 +2951,6 @@ The same thing would happen if we were to extract methods/functions/objects out 
     
       <li class="post">
         <a href="/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper/">TL;DR on Sustainable Software Development Paper</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/">Why I Don&#8217;t Use Mocking Frameworks Anymore</a>
       </li>
     
   </ul>

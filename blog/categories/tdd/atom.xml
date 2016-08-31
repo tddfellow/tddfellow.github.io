@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tdd | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/tdd/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-08-22T09:25:20+02:00</updated>
+  <updated>2016-08-31T02:49:59+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,381 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Stuck While Doing TDD. Part 1: Example]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/"/>
+    <updated>2016-08-30T15:27:30+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example</id>
+    <content type="html"><![CDATA[<p>Following 3 rules of TDD sounds really simple at first. In practice there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called &ldquo;getting stuck&rdquo; in TDD. In this article we will explore how exactly this happens and how to prevent that.</p>
+
+<p>Code examples today will be in Ruby programming language. The technique itself is, of course, language-agnostic.</p>
+
+<h2>TL;DR</h2>
+
+<p>&ldquo;Getting stuck&rdquo; happens for a couple of reasons:</p>
+
+<ul>
+<li>wrong order of tests</li>
+<li>production code is not getting more general with each test</li>
+</ul>
+
+
+<p>This is a series of articles:</p>
+
+<ol>
+<li>Part 1: Example (reading this)</li>
+<li>Part 2: Buggy Code and Forcing Our Way Through (coming soon)</li>
+<li>Part 3: Triangulation to the Rescue! (coming soon)</li>
+</ol>
+
+
+<h2>&ldquo;Getting Stuck&rdquo; in TDD</h2>
+
+<p>Usually &ldquo;Getting Stuck&rdquo; follows this pattern:</p>
+
+<ul>
+<li>write some test and implement it via &ldquo;simplest thing that might possibly work&rdquo;,</li>
+<li>write another test and implement it again in non-general manner,</li>
+<li>write some more tests in that fashion, while never addressing the fact that production code now looks completely wrong from what it should probably be looking like,</li>
+<li>write new test, that forces us to completely rewrite production code in a complete algorithm just to make it pass.</li>
+</ul>
+
+
+<p>This last step usually takes minutes to hours depending on the complexity of the problem at hand. Additionally, first few tests are basically wasted time, since they did not produce any bits of knowledge in the production code that persisted in production code in the end. Even worse, there are quite some chances that the algorithm that we have just written is not fully covered by current tests, since we have written it in one go just to make current failing test pass - this is no longer correct TDD and can not guarantee high test coverage, and, therefore, can not guarantee high confidence anymore.</p>
+
+<p>Let&rsquo;s go through a small example on how one can get stuck in TDD:</p>
+
+<h2>Order Kind Validation - Getting Stuck</h2>
+
+<p>Let&rsquo;s define the problem at hand first. We have some sort of order request as an input to our system and we need to validate that its kind is correct:</p>
+
+<ul>
+<li>valid order kinds: <code>private</code>, <code>corporate</code>, <code>bundle</code>,</li>
+<li>order kinds can be combined,</li>
+<li><code>private</code> and <code>corporate</code> order kinds can not be combined, otherwise <code>InvalidOrderError</code> with message <code>Order kind can not be 'private' and 'corporate' at the same time</code>,</li>
+<li>either <code>private</code> or <code>corporate</code> should be always present, otherwise <code>InvalidOrderError</code> with message <code>Order kind should be 'private' or 'corporate'</code>,</li>
+<li>if order kind is not in the above list, then we need to raise <code>InvalidOrderError</code> with message <code>Order kind can be one of: 'private', 'corporate', 'bundle'</code>,</li>
+<li>if order kind is not present or an empty string, then we need to raise <code>InvalidOrderError</code> with message <code>Order kind can not be empty</code>.</li>
+</ul>
+
+
+<p>This is fairly simple problem and it is easy to get stuck while doing TDD here. So let&rsquo;s write our first test: &ldquo;When order has no order_kind, then we should get InvalidOrderError with message &lsquo;Order kind can not be empty&rsquo;&rdquo;:</p>
+
+<pre><code class="ruby">RSpec.describe OrderKindValidator do
+  it "fails with message about order kind being empty when it is absent" do
+    validator = OrderKindValidator.new
+
+    expect { validator.validate({ items: 42 }) }
+        .to raise_error(InvalidOrderError, "Order kind can not be empty")
+  end
+end
+</code></pre>
+
+<p>And the simplest implementation possible:</p>
+
+<pre><code class="ruby">class OrderKindValidator
+  def validate(order)
+    raise InvalidOrderError.new("Order kind can not be empty")
+  end
+end
+
+class InvalidOrderError &lt; StandardError
+end
+</code></pre>
+
+<p>Next test is our next simplest edge case - when kind&rsquo;s value is <code>nil</code>:</p>
+
+<pre><code class="ruby">it "fails with message about order kind being empty when it is nil" do
+  validator = OrderKindValidator.new
+
+  expect { validator.validate({items: 42, kind: nil }) }
+      .to raise_error(InvalidOrderError, "Order kind can not be empty")
+end
+</code></pre>
+
+<p>It does not fail at all, so we don&rsquo;t have any reason to change the production code. We can already spot a little duplication - <code>validator</code> variable. Let&rsquo;s extract it as a named subject of the test suite:</p>
+
+<pre><code class="ruby">subject(:validator) { OrderKindValidator.new }
+</code></pre>
+
+<p>And <code>OrderKindValidator</code> can be replaced with <code>described_class</code> (RSpec feature), so that we will not have to change too much in case we wanted to change name of the class:</p>
+
+<pre><code class="ruby">subject(:validator) { described_class.new }
+</code></pre>
+
+<p>Next simplest edge case - when kind is an empty array:</p>
+
+<pre><code class="ruby">it "fails with message about order kind being empty when it has zero elements" do
+  expect { validator.validate({items: 42, kind: [] }) }
+      .to raise_error(InvalidOrderError, "Order kind can not be empty")
+end
+</code></pre>
+
+<p>I believe I am spotting annoying pattern now:</p>
+
+<pre><code class="ruby">it "fails with message MESSAGE when it is KIND_CASE" do
+  expect { validator.validate({items: 42, kind: KIND_VALUE}) }
+    .to raise_error(InvalidOrderError, MESSAGE)
+end
+</code></pre>
+
+<p>It would be really nice to write it in this fashion:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be empty").when_order_kind_is_absent
+it_fails_with("Order kind can not be empty").when_order_kind_is nil
+it_fails_with("Order kind can not be empty").when_order_kind_is []
+</code></pre>
+
+<p>And as another duplication piles up:</p>
+
+<pre><code class="ruby">it_fails_with_order_kind_not_empty = it_fails_with("Order kind can not be empty")
+
+it_fails_with_order_kind_not_empty.when_order_kind_is_absent
+it_fails_with_order_kind_not_empty.when_order_kind_is nil
+it_fails_with_order_kind_not_empty.when_order_kind_is []
+</code></pre>
+
+<p>Now the next tests look very easy and simple:</p>
+
+<pre><code class="ruby">it_fails_with_order_kind_not_empty.when_order_kind_is [nil]
+it_fails_with_order_kind_not_empty.when_order_kind_is [""]
+it_fails_with_order_kind_not_empty.when_order_kind_is [nil, nil]
+it_fails_with_order_kind_not_empty.when_order_kind_is ["", ""]
+it_fails_with_order_kind_not_empty.when_order_kind_is ["private", ""]
+it_fails_with_order_kind_not_empty.when_order_kind_is ["private", nil]
+</code></pre>
+
+<p>And they all pass right from the go. The implementation for the <code>it_fails_with</code> is looking like this:</p>
+
+<pre><code class="ruby">RSpec.describe OrderKindValidator do
+  class ItFailsWith
+    def initialize(spec, expected_message)
+      @spec = spec
+      @expected_message = expected_message
+    end
+
+    def when_order_kind_is_absent
+      expect_failure("absent", {items: 42})
+    end
+
+    def when_order_kind_is(value)
+      expect_failure(value.inspect, {items: 42, kind: value})
+    end
+
+    private
+
+    def expect_failure(feature, order, expected_message = @expected_message)
+      @spec.it("fails with message #{expected_message.inspect} when order kind is #{feature}") do
+        expect { validator.validate(order) }
+            .to raise_error(InvalidOrderError, expected_message)
+      end
+    end
+  end
+
+  def self.it_fails_with(message)
+    ItFailsWith.new(self, message)
+  end
+end
+</code></pre>
+
+<p>So, let&rsquo;s write our next edge case - when order kind is invalid:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+    .when_order_kind_is ["invalid"]
+</code></pre>
+
+<p>Pretty neat! And oh, it fails:</p>
+
+<pre><code>expected InvalidOrderError with
+  "Order kind can be one of: 'private', 'corporate', 'bundle'",
+got #&lt;InvalidOrderError: Order kind can not be empty&gt;
+</code></pre>
+
+<p>And the fix:</p>
+
+<pre><code class="ruby">def validate(order)
+  if order[:kind] == ["invalid"]
+    raise InvalidOrderError.new(
+        "Order kind can be one of: 'private', 'corporate', 'bundle'"
+    )
+  end
+
+  raise InvalidOrderError.new("Order kind can not be empty")
+end
+</code></pre>
+
+<p>Let&rsquo;s write our next test - when order kind is <code>private</code>:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is ["private"]
+</code></pre>
+
+<p>This fails as expected with <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. And to make it pass we need to wrap second <code>raise</code> statement in the <code>if</code> condition:</p>
+
+<pre><code class="ruby">if order[:kind] != ["private"]
+  raise InvalidOrderError.new("Order kind can not be empty")
+end
+</code></pre>
+
+<p>The implementation for <code>it_does_not_fail</code> looks like that:</p>
+
+<pre><code class="ruby">class ItDoesNotFail
+  def initialize(spec)
+    @spec = spec
+  end
+
+  def when_order_kind_is(value)
+    @spec.it("does not fail when order kind is #{value.inspect}") do
+      expect { validator.validate({items: 42, kind: value}) }
+        .not_to raise_error
+    end
+  end
+end
+
+def self.it_does_not_fail
+  ItDoesNotFail.new(self)
+end
+</code></pre>
+
+<p>Let&rsquo;s write our next test:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is ["corporate"]
+</code></pre>
+
+<p>And it fails with the expected error: <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. The fix is to amend our <code>if</code> condition with that case:</p>
+
+<pre><code class="ruby">if order[:kind] != ["private"] &amp;&amp; order[:kind] != ["corporate"]
+                                # ^  we have added this case  ^
+  raise InvalidOrderError.new("Order kind can not be empty")
+end
+</code></pre>
+
+<p>And the tests pass. Our next business rule is that one of <code>private</code> and <code>corporate</code> should be always present:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind should be 'private' or 'corporate'")
+    .when_order_kind_is ["bundle"]
+</code></pre>
+
+<p>As expected the test fails:</p>
+
+<pre><code>expected InvalidOrderError with
+  "Order kind should be 'private' or 'corporate'",
+got #&lt;InvalidOrderError: Order kind can not be empty&gt;
+</code></pre>
+
+<p>And to fix it we just need to sprinkle another <code>if</code> statement in the middle of the function:</p>
+
+<pre><code class="ruby">if order[:kind] == ["bundle"]
+  raise InvalidOrderError.new("Order kind should be 'private' or 'corporate'")
+end
+</code></pre>
+
+<p>As expected, the test passes. Now we should test other business rule - order can not be of <code>private</code> and <code>corporate</code> kind at the same time:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
+    .when_order_kind_is %w(private corporate)
+</code></pre>
+
+<p>This, as expected, fails with error message:</p>
+
+<pre><code>expected InvalidOrderError with
+  "Order kind can not be 'private' and 'corporate' at the same time",
+got #&lt;InvalidOrderError: Order kind can not be empty&gt;
+</code></pre>
+
+<p>And easiest way to fix that is to add another <code>if</code> statement:</p>
+
+<pre><code class="ruby">if order[:kind] == %w(private corporate)
+  raise InvalidOrderError.new(
+      "Order kind can not be 'private' and 'corporate' at the same time"
+  )
+end
+</code></pre>
+
+<p>And it passes. Let&rsquo;s test that we can combine <code>private</code> or <code>corporate</code> with <code>bundle</code> order kinds:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is %w(private bundle)
+</code></pre>
+
+<p>And it fails with error: <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. To fix this we will have to amend our last <code>if</code> condition in the function even more:</p>
+
+<pre><code class="ruby">if order[:kind] != ["private"] &amp;&amp; order[:kind] != ["corporate"] &amp;&amp;
+    order[:kind] != %w(private bundle)
+  # ^    this is our new condition    ^
+  raise InvalidOrderError.new("Order kind can not be empty")
+end
+</code></pre>
+
+<p>And the test passes. Let&rsquo;s refactor the code a bit:</p>
+
+<ul>
+<li>First we should extract <code>order[:kind]</code> duplication to a local variable <code>kind</code></li>
+<li>Extract common parts of <code>raise</code> statement to the private method</li>
+</ul>
+
+
+<p>After this, <code>OrderKindValidator</code> will look a bit cleaner:</p>
+
+<pre><code class="ruby">class OrderKindValidator
+  def validate(order)
+    kind = order[:kind]
+
+    if kind == ["invalid"]
+      fail_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+    end
+
+    if kind == ["bundle"]
+      fail_with("Order kind should be 'private' or 'corporate'")
+    end
+
+    if kind == %w(private corporate)
+      fail_with("Order kind can not be 'private' and 'corporate' at the same time")
+    end
+
+    if kind != ["private"] &amp;&amp; kind != ["corporate"] &amp;&amp;
+        kind != %w(private bundle)
+      fail_with("Order kind can not be empty")
+    end
+  end
+
+  private
+
+  def fail_with(message)
+    raise InvalidOrderError.new(message)
+  end
+end
+</code></pre>
+
+<p>Let&rsquo;s write our next test for the same business rule (now a corporate bundle):</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is %w(corporate bundle)
+</code></pre>
+
+<p>And it fails with error: <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. To fix this we need to add <code>&amp;&amp; kind != %w(corporate bundle)</code> to our last <code>if</code> condition again.</p>
+
+<p>Now it seems that we have implemented all the business rules (we have all tests for them). Or did we?</p>
+
+<h2>Bottom Line</h2>
+
+<p>Buggy <code>if</code>-riddled code is what we&rsquo;ve got. We will see why in the next part of &ldquo;Getting Stuck While Doing TDD&rdquo; series. Stay tuned!</p>
+
+<p>Today we have implemented our not-so-complex problem at hand while following 3 rules of TDD. The result was not of the best quality and we will take a look why in further articles of these series. You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
+
+<ul>
+<li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD (these series),</li>
+<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
+<li>Open-Closed Principle - changing behavior by adding new code,</li>
+<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, Test-Driven Development screencasts and so much more!</li>
+</ul>
+
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Your Own Testing Framework. Part 3]]></title>
@@ -1816,24 +2191,6 @@ function fizzBuzz(number) {
 <p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
 
 <p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[TDD #5: English Numbers Kata]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/06/19/tdd-number-5-english-numbers-kata/"/>
-    <updated>2016-06-19T18:41:39+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/06/19/tdd-number-5-english-numbers-kata</id>
-    <content type="html"><![CDATA[<iframe src="https://player.vimeo.com/video/171307899?color=c9ff23" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-
-
-<p><a href="https://vimeo.com/171307899">Test-Driven Development Screencast #5: English Numbers Kata</a></p>
-
-<p><em>(Recommended to watch full-screen and HD: 720p or more)</em></p>
-
-<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
-
-<p>This screencast was born from my previous blog post: <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">Iterative Divide &amp; Conquer or How to solve problems</a>.</p>
 ]]></content>
   </entry>
   
