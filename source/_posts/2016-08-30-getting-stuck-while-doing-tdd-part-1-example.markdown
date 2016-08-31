@@ -373,6 +373,8 @@ it_does_not_fail.when_order_kind_is %w(corporate bundle)
 
 And it fails with error: `expected no Exception, got #<InvalidOrderError: Order kind can not be empty>`. To fix this we need to add `&& kind != %w(corporate bundle)` to our last `if` condition again.
 
+The code can be found in GitHub repository in [an open pull request here](https://github.com/waterlink/order_kind_validator/pull/1/files).
+
 Now it seems that we have implemented all the business rules (we have all tests for them). Or did we?
 
 ## Bottom Line
