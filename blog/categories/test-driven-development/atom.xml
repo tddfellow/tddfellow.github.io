@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Test-driven-development | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/test-driven-development/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-08-31T02:49:59+02:00</updated>
+  <updated>2016-08-31T03:20:44+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -18,7 +18,7 @@
     <link href="http://www.tddfellow.com/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/"/>
     <updated>2016-08-30T15:27:30+02:00</updated>
     <id>http://www.tddfellow.com/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example</id>
-    <content type="html"><![CDATA[<p>Following 3 rules of TDD sounds really simple at first. In practice there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called &ldquo;getting stuck&rdquo; in TDD. In this article we will explore how exactly this happens and how to prevent that.</p>
+    <content type="html"><![CDATA[<p>Following 3 rules of TDD sounds really simple at first. In practice, there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called &ldquo;getting stuck&rdquo; in TDD. In this article, we will explore how exactly this happens and how to prevent that.</p>
 
 <p>Code examples today will be in Ruby programming language. The technique itself is, of course, language-agnostic.</p>
 
@@ -47,13 +47,13 @@
 
 <ul>
 <li>write some test and implement it via &ldquo;simplest thing that might possibly work&rdquo;,</li>
-<li>write another test and implement it again in non-general manner,</li>
+<li>write another test and implement it again in a non-general manner,</li>
 <li>write some more tests in that fashion, while never addressing the fact that production code now looks completely wrong from what it should probably be looking like,</li>
-<li>write new test, that forces us to completely rewrite production code in a complete algorithm just to make it pass.</li>
+<li>write a new test, that forces us to completely rewrite production code in a complete algorithm just to make it pass.</li>
 </ul>
 
 
-<p>This last step usually takes minutes to hours depending on the complexity of the problem at hand. Additionally, first few tests are basically wasted time, since they did not produce any bits of knowledge in the production code that persisted in production code in the end. Even worse, there are quite some chances that the algorithm that we have just written is not fully covered by current tests, since we have written it in one go just to make current failing test pass - this is no longer correct TDD and can not guarantee high test coverage, and, therefore, can not guarantee high confidence anymore.</p>
+<p>This last step usually takes minutes to hours depending on the complexity of the problem at hand. Additionally, the first few tests are basically wasted time since they did not produce any bits of knowledge in the production code that persisted in production code in the end. Even worse, chances are that the algorithm that we have just written is not fully covered by current tests, since we have written it in one go just to make current failing test pass - this is no longer correct TDD and can not guarantee high test coverage, and, therefore, can not guarantee high confidence anymore.</p>
 
 <p>Let&rsquo;s go through a small example on how one can get stuck in TDD:</p>
 
@@ -71,10 +71,10 @@
 </ul>
 
 
-<p>This is fairly simple problem and it is easy to get stuck while doing TDD here. So let&rsquo;s write our first test: &ldquo;When order has no order_kind, then we should get InvalidOrderError with message &lsquo;Order kind can not be empty&rsquo;&rdquo;:</p>
+<p>This is a fairly simple problem and it is easy to get stuck while doing TDD here. So let&rsquo;s write our first test: &ldquo;When order has no order_kind, then we should get InvalidOrderError with message &lsquo;Order kind can not be empty&rsquo;&rdquo;:</p>
 
 <pre><code class="ruby">RSpec.describe OrderKindValidator do
-  it "fails with message about order kind being empty when it is absent" do
+  it "fails with a message about order kind being empty when it is absent" do
     validator = OrderKindValidator.new
 
     expect { validator.validate({ items: 42 }) }
@@ -97,7 +97,7 @@ end
 
 <p>Next test is our next simplest edge case - when kind&rsquo;s value is <code>nil</code>:</p>
 
-<pre><code class="ruby">it "fails with message about order kind being empty when it is nil" do
+<pre><code class="ruby">it "fails with a message about order kind being empty when it is nil" do
   validator = OrderKindValidator.new
 
   expect { validator.validate({items: 42, kind: nil }) }
@@ -117,7 +117,7 @@ end
 
 <p>Next simplest edge case - when kind is an empty array:</p>
 
-<pre><code class="ruby">it "fails with message about order kind being empty when it has zero elements" do
+<pre><code class="ruby">it "fails with a message about order kind being empty when it has zero elements" do
   expect { validator.validate({items: 42, kind: [] }) }
       .to raise_error(InvalidOrderError, "Order kind can not be empty")
 end
@@ -281,7 +281,7 @@ got #&lt;InvalidOrderError: Order kind can not be empty&gt;
 end
 </code></pre>
 
-<p>As expected, the test passes. Now we should test other business rule - order can not be of <code>private</code> and <code>corporate</code> kind at the same time:</p>
+<p>As expected, the test passes. Now we should test the next business rule - order can not be of <code>private</code> and <code>corporate</code> kind at the same time:</p>
 
 <pre><code class="ruby">it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
     .when_order_kind_is %w(private corporate)
@@ -320,7 +320,7 @@ end
 <p>And the test passes. Let&rsquo;s refactor the code a bit:</p>
 
 <ul>
-<li>First we should extract <code>order[:kind]</code> duplication to a local variable <code>kind</code></li>
+<li>First, we should extract <code>order[:kind]</code> duplication to a local variable <code>kind</code></li>
 <li>Extract common parts of <code>raise</code> statement to the private method</li>
 </ul>
 
@@ -363,6 +363,8 @@ end
 </code></pre>
 
 <p>And it fails with error: <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. To fix this we need to add <code>&amp;&amp; kind != %w(corporate bundle)</code> to our last <code>if</code> condition again.</p>
+
+<p>The code can be found in GitHub repository in <a href="https://github.com/waterlink/order_kind_validator/pull/1/files">an open pull request here</a>.</p>
 
 <p>Now it seems that we have implemented all the business rules (we have all tests for them). Or did we?</p>
 

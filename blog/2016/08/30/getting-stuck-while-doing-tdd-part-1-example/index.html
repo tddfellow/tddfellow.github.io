@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Following 3 rules of TDD sounds really simple at first. In practice there is a moment when one has to implement the whole algorithm at once to make &hellip;">
+  <meta name="description" content="Following 3 rules of TDD sounds really simple at first. In practice, there is a moment when one has to implement the whole algorithm at once to make &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -33,7 +33,7 @@
 <meta name="twitter:site" content="@waterlink000">
 <meta name="twitter:creator" content="@waterlink000">
 <meta name="twitter:title" content="Getting Stuck While Doing TDD. Part 1: Example">
-<meta name="twitter:description" content="Following 3 rules of TDD sounds really simple at first. In practice there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called 'getting stuck' in TDD. In this article we will explore how exactly this happens and how to prevent that.">
+<meta name="twitter:description" content="Following 3 rules of TDD sounds really simple at first. In practice, there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called 'getting stuck' in TDD. In this article, we will explore how exactly this happens and how to prevent that.">
 <meta name="twitter:image" content="http://www.tddfellow.com/images/logo.png">
 
   
@@ -95,7 +95,7 @@
   </header>
 
 
-<div class="entry-content"><p>Following 3 rules of TDD sounds really simple at first. In practice there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called &ldquo;getting stuck&rdquo; in TDD. In this article we will explore how exactly this happens and how to prevent that.</p>
+<div class="entry-content"><p>Following 3 rules of TDD sounds really simple at first. In practice, there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called &ldquo;getting stuck&rdquo; in TDD. In this article, we will explore how exactly this happens and how to prevent that.</p>
 
 <p>Code examples today will be in Ruby programming language. The technique itself is, of course, language-agnostic.</p>
 
@@ -124,13 +124,13 @@
 
 <ul>
 <li>write some test and implement it via &ldquo;simplest thing that might possibly work&rdquo;,</li>
-<li>write another test and implement it again in non-general manner,</li>
+<li>write another test and implement it again in a non-general manner,</li>
 <li>write some more tests in that fashion, while never addressing the fact that production code now looks completely wrong from what it should probably be looking like,</li>
-<li>write new test, that forces us to completely rewrite production code in a complete algorithm just to make it pass.</li>
+<li>write a new test, that forces us to completely rewrite production code in a complete algorithm just to make it pass.</li>
 </ul>
 
 
-<p>This last step usually takes minutes to hours depending on the complexity of the problem at hand. Additionally, first few tests are basically wasted time, since they did not produce any bits of knowledge in the production code that persisted in production code in the end. Even worse, there are quite some chances that the algorithm that we have just written is not fully covered by current tests, since we have written it in one go just to make current failing test pass - this is no longer correct TDD and can not guarantee high test coverage, and, therefore, can not guarantee high confidence anymore.</p>
+<p>This last step usually takes minutes to hours depending on the complexity of the problem at hand. Additionally, the first few tests are basically wasted time since they did not produce any bits of knowledge in the production code that persisted in production code in the end. Even worse, chances are that the algorithm that we have just written is not fully covered by current tests, since we have written it in one go just to make current failing test pass - this is no longer correct TDD and can not guarantee high test coverage, and, therefore, can not guarantee high confidence anymore.</p>
 
 <p>Let&rsquo;s go through a small example on how one can get stuck in TDD:</p>
 
@@ -148,7 +148,7 @@
 </ul>
 
 
-<p>This is fairly simple problem and it is easy to get stuck while doing TDD here. So let&rsquo;s write our first test: &ldquo;When order has no order_kind, then we should get InvalidOrderError with message &lsquo;Order kind can not be empty&rsquo;&rdquo;:</p>
+<p>This is a fairly simple problem and it is easy to get stuck while doing TDD here. So let&rsquo;s write our first test: &ldquo;When order has no order_kind, then we should get InvalidOrderError with message &lsquo;Order kind can not be empty&rsquo;&rdquo;:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -159,7 +159,7 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">RSpec</span><span class="o">.</span><span class="n">describe</span> <span class="no">OrderKindValidator</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">it</span> <span class="s2">&quot;fails with message about order kind being empty when it is absent&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">it</span> <span class="s2">&quot;fails with a message about order kind being empty when it is absent&quot;</span> <span class="k">do</span>
 </span><span class='line'>    <span class="n">validator</span> <span class="o">=</span> <span class="no">OrderKindValidator</span><span class="o">.</span><span class="n">new</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">expect</span> <span class="p">{</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">({</span> <span class="ss">items</span><span class="p">:</span> <span class="mi">42</span> <span class="p">})</span> <span class="p">}</span>
@@ -198,7 +198,7 @@
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;fails with message about order kind being empty when it is nil&quot;</span> <span class="k">do</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;fails with a message about order kind being empty when it is nil&quot;</span> <span class="k">do</span>
 </span><span class='line'>  <span class="n">validator</span> <span class="o">=</span> <span class="no">OrderKindValidator</span><span class="o">.</span><span class="n">new</span>
 </span><span class='line'>
 </span><span class='line'>  <span class="n">expect</span> <span class="p">{</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">({</span><span class="ss">items</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="ss">kind</span><span class="p">:</span> <span class="kp">nil</span> <span class="p">})</span> <span class="p">}</span>
@@ -227,7 +227,7 @@
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;fails with message about order kind being empty when it has zero elements&quot;</span> <span class="k">do</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;fails with a message about order kind being empty when it has zero elements&quot;</span> <span class="k">do</span>
 </span><span class='line'>  <span class="n">expect</span> <span class="p">{</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">({</span><span class="ss">items</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="ss">kind</span><span class="p">:</span> <span class="o">[]</span> <span class="p">})</span> <span class="p">}</span>
 </span><span class='line'>      <span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">InvalidOrderError</span><span class="p">,</span> <span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
 </span><span class='line'><span class="k">end</span>
@@ -502,7 +502,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>As expected, the test passes. Now we should test other business rule - order can not be of <code>private</code> and <code>corporate</code> kind at the same time:</p>
+<p>As expected, the test passes. Now we should test the next business rule - order can not be of <code>private</code> and <code>corporate</code> kind at the same time:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -562,7 +562,7 @@
 <p>And the test passes. Let&rsquo;s refactor the code a bit:</p>
 
 <ul>
-<li>First we should extract <code>order[:kind]</code> duplication to a local variable <code>kind</code></li>
+<li>First, we should extract <code>order[:kind]</code> duplication to a local variable <code>kind</code></li>
 <li>Extract common parts of <code>raise</code> statement to the private method</li>
 </ul>
 
@@ -636,6 +636,8 @@
 
 
 <p>And it fails with error: <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. To fix this we need to add <code>&amp;&amp; kind != %w(corporate bundle)</code> to our last <code>if</code> condition again.</p>
+
+<p>The code can be found in GitHub repository in <a href="https://github.com/waterlink/order_kind_validator/pull/1/files">an open pull request here</a>.</p>
 
 <p>Now it seems that we have implemented all the business rules (we have all tests for them). Or did we?</p>
 
