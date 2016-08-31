@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Getting Stuck While Doing TDD. Part 1: Example"
-description: "Following 3 rules of TDD sounds really simple at first. In practice there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called 'getting stuck' in TDD. In this article we will explore how exactly this happens and how to prevent that."
+description: "Following 3 rules of TDD sounds really simple at first. In practice, there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called 'getting stuck' in TDD. In this article, we will explore how exactly this happens and how to prevent that."
 date: 2016-08-30 15:27:30 +0200
 comments: true
 categories:
@@ -13,7 +13,7 @@ categories:
 - getting-stuck-while-doing-tdd
 ---
 
-Following 3 rules of TDD sounds really simple at first. In practice there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called "getting stuck" in TDD. In this article we will explore how exactly this happens and how to prevent that.
+Following 3 rules of TDD sounds really simple at first. In practice, there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called "getting stuck" in TDD. In this article, we will explore how exactly this happens and how to prevent that.
 
 Code examples today will be in Ruby programming language. The technique itself is, of course, language-agnostic.
 
@@ -35,11 +35,11 @@ This is a series of articles:
 Usually "Getting Stuck" follows this pattern:
 
 - write some test and implement it via "simplest thing that might possibly work",
-- write another test and implement it again in non-general manner,
+- write another test and implement it again in a non-general manner,
 - write some more tests in that fashion, while never addressing the fact that production code now looks completely wrong from what it should probably be looking like,
-- write new test, that forces us to completely rewrite production code in a complete algorithm just to make it pass.
+- write a new test, that forces us to completely rewrite production code in a complete algorithm just to make it pass.
 
-This last step usually takes minutes to hours depending on the complexity of the problem at hand. Additionally, first few tests are basically wasted time, since they did not produce any bits of knowledge in the production code that persisted in production code in the end. Even worse, there are quite some chances that the algorithm that we have just written is not fully covered by current tests, since we have written it in one go just to make current failing test pass - this is no longer correct TDD and can not guarantee high test coverage, and, therefore, can not guarantee high confidence anymore.
+This last step usually takes minutes to hours depending on the complexity of the problem at hand. Additionally, the first few tests are basically wasted time since they did not produce any bits of knowledge in the production code that persisted in production code in the end. Even worse, chances are that the algorithm that we have just written is not fully covered by current tests, since we have written it in one go just to make current failing test pass - this is no longer correct TDD and can not guarantee high test coverage, and, therefore, can not guarantee high confidence anymore.
 
 Let's go through a small example on how one can get stuck in TDD:
 
@@ -54,11 +54,11 @@ Let's define the problem at hand first. We have some sort of order request as an
 - if order kind is not in the above list, then we need to raise `InvalidOrderError` with message `Order kind can be one of: 'private', 'corporate', 'bundle'`,
 - if order kind is not present or an empty string, then we need to raise `InvalidOrderError` with message `Order kind can not be empty`.
 
-This is fairly simple problem and it is easy to get stuck while doing TDD here. So let's write our first test: "When order has no order_kind, then we should get InvalidOrderError with message 'Order kind can not be empty'":
+This is a fairly simple problem and it is easy to get stuck while doing TDD here. So let's write our first test: "When order has no order_kind, then we should get InvalidOrderError with message 'Order kind can not be empty'":
 
 ```ruby
 RSpec.describe OrderKindValidator do
-  it "fails with message about order kind being empty when it is absent" do
+  it "fails with a message about order kind being empty when it is absent" do
     validator = OrderKindValidator.new
 
     expect { validator.validate({ items: 42 }) }
@@ -83,7 +83,7 @@ end
 Next test is our next simplest edge case - when kind's value is `nil`:
 
 ```ruby
-it "fails with message about order kind being empty when it is nil" do
+it "fails with a message about order kind being empty when it is nil" do
   validator = OrderKindValidator.new
 
   expect { validator.validate({items: 42, kind: nil }) }
@@ -106,7 +106,7 @@ subject(:validator) { described_class.new }
 Next simplest edge case - when kind is an empty array:
 
 ```ruby
-it "fails with message about order kind being empty when it has zero elements" do
+it "fails with a message about order kind being empty when it has zero elements" do
   expect { validator.validate({items: 42, kind: [] }) }
       .to raise_error(InvalidOrderError, "Order kind can not be empty")
 end
@@ -286,7 +286,7 @@ if order[:kind] == ["bundle"]
 end
 ```
 
-As expected, the test passes. Now we should test other business rule - order can not be of `private` and `corporate` kind at the same time:
+As expected, the test passes. Now we should test the next business rule - order can not be of `private` and `corporate` kind at the same time:
 
 ```ruby
 it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
@@ -329,7 +329,7 @@ end
 
 And the test passes. Let's refactor the code a bit:
 
-- First we should extract `order[:kind]` duplication to a local variable `kind`
+- First, we should extract `order[:kind]` duplication to a local variable `kind`
 - Extract common parts of `raise` statement to the private method
 
 After this, `OrderKindValidator` will look a bit cleaner:
