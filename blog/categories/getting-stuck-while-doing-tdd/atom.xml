@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Getting-stuck-while-doing-tdd | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/getting-stuck-while-doing-tdd/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-08-31T03:20:44+02:00</updated>
+  <updated>2016-08-31T15:36:58+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,321 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/"/>
+    <updated>2016-08-31T02:35:06+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through</id>
+    <content type="html"><![CDATA[<p>Welcome back to the &ldquo;Getting Stuck While Doing TDD&rdquo; series. Today we are going to see the results of getting stuck while doing TDD and scratch the surface of how to avoid this outcome.</p>
+
+<p>Code examples today will be in Ruby programming language. The technique itself is, of course, language-agnostic.</p>
+
+<h2>TL;DR</h2>
+
+<ul>
+<li>It is painful and difficult to force your way through when getting stuck in TDD.</li>
+<li>It results in degraded guarantees from TDD (such as test coverage, semantical stability, and confidence).</li>
+</ul>
+
+
+<p>Ways to avoid this outcome:</p>
+
+<ul>
+<li>do not write tests that will not fail with the current production code</li>
+<li>choose next test to write that will address particular detail about production code that is wrong or not general enough (Triangulation)</li>
+</ul>
+
+
+<p>Finally, do not forget to remove redundant tests if any.</p>
+
+<p>This is a series of articles:</p>
+
+<ol>
+<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
+<li>Part 2: Buggy Code and Forcing Our Way Through (reading this)</li>
+<li>Part 3: Triangulation to the Rescue! (coming soon)</li>
+</ol>
+
+
+<h2>Buggy if-riddled code</h2>
+
+<p>Buggy <code>if</code>-riddled code is what we&rsquo;ve got. It is even not so easy to read. While we can refactor it to be more readable that won&rsquo;t change the presence of bugs, though. Let&rsquo;s still do it to understand what happens in this code better:</p>
+
+<pre><code class="ruby">class OrderKindValidator
+  def validate(order)
+    kinds = order[:kind]
+
+    validate_only_known(kinds)
+    validate_has_required(kinds)
+    validate_no_conflicting(kinds)
+    validate_non_empty(kinds)
+  end
+
+  private
+
+  def validate_non_empty(kinds)
+    if empty?(kinds)
+      fail_with("Order kind can not be empty")
+    end
+  end
+
+  def validate_no_conflicting(kinds)
+    if has_conflicting(kinds)
+      fail_with("Order kind can not be 'private' and 'corporate' at the same time")
+    end
+  end
+
+  def validate_has_required(kinds)
+    if has_no_required(kinds)
+      fail_with("Order kind should be 'private' or 'corporate'")
+    end
+  end
+
+  def validate_only_known(kinds)
+    if invalid?(kinds)
+      fail_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+    end
+  end
+
+  def empty?(kind)
+    kind != ["private"] &amp;&amp; kind != ["corporate"] &amp;&amp;
+        kind != %w(private bundle) &amp;&amp;
+        kind != %w(corporate bundle)
+  end
+
+  def has_conflicting(kind)
+    kind == %w(private corporate)
+  end
+
+  def has_no_required(kind)
+    kind == ["bundle"]
+  end
+
+  def invalid?(kind)
+    kind == ["invalid"]
+  end
+
+  def fail_with(message)
+    raise InvalidOrderError.new(message)
+  end
+end
+</code></pre>
+
+<p>Structure of the class, actually, sounds just right, but conditions are not good:</p>
+
+<pre><code class="ruby">def empty?(kind)
+  kind != ["private"] &amp;&amp; kind != ["corporate"] &amp;&amp;
+      kind != %w(private bundle) &amp;&amp;
+      kind != %w(corporate bundle)
+end
+</code></pre>
+
+<p>Really? It does not do what it says. At all. It basically just solves the problem very specifically to the tests. I can easily come up with a test that will break it:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+    .when_order_kind_is ["almost anything"]
+
+# Error: expected InvalidOrderError with
+#    "Order kind can be one of: 'private', 'corporate', 'bundle'",
+# got #&lt;InvalidOrderError: Order kind can not be empty&gt;
+
+# or other test
+it_does_not_fail.when_order_kind_is %w(corporate corporate)
+</code></pre>
+
+<pre><code class="ruby">def has_conflicting(kind)
+  kind == %w(private corporate)
+end
+</code></pre>
+
+<p>This at least does what it says. But only for one specific case, instead of general one. One test that I can come up with right away:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
+    .when_order_kind_is %w(private corporate bundle)
+
+# and another one:
+it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
+    .when_order_kind_is %w(corporate private)
+</code></pre>
+
+<pre><code class="ruby">def has_no_required(kind)
+  kind == ["bundle"]
+end
+</code></pre>
+
+<p>While this may work for our current requirements, it is really confusing for the reader. Method name says: &ldquo;has no required kind&rdquo; while method body checks if it is only <code>bundle</code>. And it does not work well with that edge case:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind should be 'private' or 'corporate'")
+    .when_order_kind_is %w(bundle bundle)
+</code></pre>
+
+<p>While this case is quite unlikely, nothing in business rules forbid that and some other part of the system may as well duplicate <code>bundle</code> kind for some reason or it may be a user input mistake.</p>
+
+<pre><code class="ruby">def invalid?(kind)
+  kind == ["invalid"]
+end
+</code></pre>
+
+<p>This method, indeed, checks that <code>kind</code> is <code>invalid</code>. Literally <code>"invalid"</code>. Which would mean, that all kinds except exactly <code>"invalid"</code> are allowed. This is not true according to our business rules. In fact, we have already written the failing test for this some moments ago:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+    .when_order_kind_is ["almost anything"]
+</code></pre>
+
+<p>Let&rsquo;s comment out these failing tests and try to force-TDD our way through these bugs by uncommenting and fixing them one-by-one following Red-Green-Refactor loop:</p>
+
+<h2>Forcing our way through</h2>
+
+<p>So, let&rsquo;s uncomment our first failing test:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+    .when_order_kind_is ["almost anything"]
+</code></pre>
+
+<p>We are expecting <code>validate_only_known</code> to fail with its message and that means <code>invalid?(kinds)</code> should return true. To make it return <code>true</code> in this case and preserve its old behavior we will need to remove <code>private</code>, <code>corporate</code> and <code>bundle</code> from <code>kinds</code> and check that it is not empty:</p>
+
+<pre><code class="ruby">def invalid?(kinds)
+  (kinds - %w(private corporate bundle)).any?
+end
+</code></pre>
+
+<p>See how we had to write the whole thing in one go. There is no chance to write it incrementally because there will be a bunch of tests that fail. Wait! While it does not fail for any tests related to invalid kinds, it fails for all tests related to emptiness:</p>
+
+<pre><code>OrderKindValidator
+  fails with message "Order kind can not be empty"
+    when order kind is [""] (FAILED - 1)
+    when order kind is ["", ""] (FAILED - 2)
+    when order kind is ["private", ""] (FAILED - 3)
+    when order kind is absent (FAILED - 4)
+    when order kind is nil (FAILED - 5)
+</code></pre>
+
+<p>So we need to change more production code to make this one tiny test pass. It looks like <code>validate_non_empty</code> is a culprit now - it is being called after <code>validate_only_known</code>. It should be the other way around:</p>
+
+<pre><code class="ruby">def validate(order)
+  kinds = order[:kind]
+
+  validate_non_empty(kinds)
+# ^ we moved this up here ^
+
+  validate_only_known(kinds)
+  validate_has_required(kinds)
+  validate_no_conflicting(kinds)
+end
+</code></pre>
+
+<p>Oh! Now a bunch of other tests fails:</p>
+
+<pre><code>OrderKindValidator
+  fails with message "Order kind should be 'private' or 'corporate'"
+    when order kind is ["bundle"] (FAILED - 1)
+
+  fails with a message "Order kind can not be 'private' and 'corporate' at the same time"
+    when order kind is ["private", "corporate"] (FAILED - 4)
+
+  fails with a message "Order kind can be one of: 'private', 'corporate', 'bundle'"
+    when order kind is ["almost anything"] (FAILED - 2)
+    when order kind is ["invalid"] (FAILED - 3)
+</code></pre>
+
+<p>From failure messages it is possible to guess, that the culprit is <code>empty?(kinds)</code> function that fails in too much cases now, such as: <code>["bundle"]</code>, <code>["private", "corporate"]</code>, <code>["almost anything"]</code> and <code>["invalid"]</code>. This is because it was not doing what it said it was:</p>
+
+<pre><code class="ruby">def empty?(kinds)
+  kinds != ["private"] &amp;&amp; kinds != ["corporate"] &amp;&amp;
+      kinds != %w(private bundle) &amp;&amp;
+      kinds != %w(corporate bundle)
+end
+</code></pre>
+
+<p>And this is why it was hard to change the order of validations. We will have to completely rewrite this function. Let&rsquo;s start small and see which tests fail:</p>
+
+<pre><code class="ruby">def empty?(kinds)
+  false
+end
+</code></pre>
+
+<p>The failures are:</p>
+
+<pre><code>OrderKindValidator
+  fails with message "Order kind can not be empty"
+    when order kind is ["private", ""] (FAILED - 1)
+    when order kind is [nil] (FAILED - 2)
+    when order kind is ["", ""] (FAILED - 3)
+    when order kind is nil (FAILED - 4)
+    when order kind is [""] (FAILED - 5)
+    when order kind is absent (FAILED - 6)
+    when order kind is [nil, nil] (FAILED - 7)
+    when order kind is ["private", nil] (FAILED - 8)
+    when order kind is [] (FAILED - 9)
+</code></pre>
+
+<p>Good, only tests related directly to this case are failing. So one-by-one we can construct our condition while fixing these test failures:</p>
+
+<ol>
+<li><code>kinds.nil?</code></li>
+<li><code>|| kinds.empty?</code></li>
+<li><code>|| kinds[0].nil?</code>   (turned out to be redundant in the end)</li>
+<li><code>|| kinds[0].empty?</code> (turned out to be redundant in the end)</li>
+<li><code>|| kinds.any? { |k| k.nil? || k.empty? }</code></li>
+</ol>
+
+
+<p>After refactoring <code>empty?</code> the function now is looking this way:</p>
+
+<pre><code class="ruby">def empty?(kinds)
+  absent_or_empty?(kinds) ||
+      kinds.any? { |kind| absent_or_empty?(kind) }
+end
+
+def absent_or_empty?(value)
+  value.nil? || value.empty?
+end
+</code></pre>
+
+<p>And all tests, finally, pass. It took a lot of effort and re-writing to get this one little test to pass. This is what we call &ldquo;Getting Stuck&rdquo; in TDD. There is always an order of tests that will lead to this result almost for any somewhat complex problem.</p>
+
+<p>The code can be found in GitHub repository in <a href="https://github.com/waterlink/order_kind_validator/pull/2/files">an open pull request here</a>.</p>
+
+<p>Almost guaranteed ways to get stuck in TDD:</p>
+
+<ul>
+<li>write tests that do not fail,</li>
+<li>do not address weird results of &ldquo;simplest thing that could possibly work&rdquo; to make the test pass and moving on to the next business rule,</li>
+<li>make production code a mirror of the tests and too specific, not general.</li>
+</ul>
+
+
+<p>And to not get stuck is to do the opposite:</p>
+
+<ul>
+<li>do not write the test that will not fail (wait until later, when it will fail), and</li>
+<li>always first write the test that will point out next deficiency in the current production code (in TDD this is called Triangulation), and</li>
+<li>while making some failing test pass, make sure that the change in production code covers not only this one specific test, rather, a whole class of tests (Golden Rule of TDD: As tests get more specific, production code gets more generic).</li>
+</ul>
+
+
+<h2>Bottom Line</h2>
+
+<p>Today we have seen how bad the results of getting stuck while doing TDD can be. In the next article of these series, we will explore Golden Rule of TDD and the technique called Triangulation, that allows us to incrementally test-drive code in a way, that it will always be conforming to the Golden Rule of TDD and therefore will never get us stuck. Stay tuned!</p>
+
+<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
+
+<ul>
+<li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD (these series),</li>
+<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
+<li>Open-Closed Principle - changing behavior by adding new code,</li>
+<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, Test-Driven Development screencasts and so much more!</li>
+</ul>
+
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Getting Stuck While Doing TDD. Part 1: Example]]></title>
@@ -36,7 +351,7 @@
 
 <ol>
 <li>Part 1: Example (reading this)</li>
-<li>Part 2: Buggy Code and Forcing Our Way Through (coming soon)</li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
 <li>Part 3: Triangulation to the Rescue! (coming soon)</li>
 </ol>
 
