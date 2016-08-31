@@ -27,7 +27,7 @@ Code examples today will be in Ruby programming language. The technique itself i
 This is a series of articles:
 
 1. Part 1: Example (reading this)
-2. Part 2: Buggy Code and Forcing Our Way Through (coming soon)
+2. [Part 2: Buggy Code and Forcing Our Way Through](/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/)
 3. Part 3: Triangulation to the Rescue! (coming soon)
 
 ## "Getting Stuck" in TDD
