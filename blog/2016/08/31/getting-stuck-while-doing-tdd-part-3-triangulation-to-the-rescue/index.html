@@ -1,0 +1,1199 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue! - That TDD Fellow | Tech Blog | Screencasts</title>
+  <meta name="author" content="Oleksii Fedorov (waterlink)">
+
+  
+  <meta name="description" content="Following 3 rules of TDD sounds really simple at first. Until you get stuck. Today we are going to learn the Golden Rule of TDD and how to not get &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="That TDD Fellow | Tech Blog | Screencasts" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@waterlink000">
+<meta name="twitter:creator" content="@waterlink000">
+<meta name="twitter:title" content="Getting stuck while doing TDD. Part 3: Triangulation to the Rescue!">
+<meta name="twitter:description" content="Following 3 rules of TDD sounds really simple at first. Until you get stuck. Today we are going to learn the Golden Rule of TDD and how to not get stuck while doing TDD.">
+<meta name="twitter:image" content="http://www.tddfellow.com/images/logo.png">
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-73226470-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">That TDD Fellow | Tech Blog | Screencasts</a></h1>
+  
+    <h2>Let&#8217;s stop fearing our own creations and start being in control of them. Let&#8217;s be professional.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories/tdd-screencasts/">Screencasts</a></li>
+  <li><a href="/blog/categories/build-your-own-testing-framework/">Build Testing Framework</a></li>
+  <li><a href="/blog/categories/getting-stuck-while-doing-tdd/">Getting Stuck in TDD</a></li>
+  <li><a href="/about-me">About me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-08-31T02:35:32+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2016</span></span> <span class='time'>2:35 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Welcome back to the &ldquo;Getting Stuck While Doing TDD&rdquo; series. Today we are going to learn the Golden Rule of TDD and how to not get stuck while doing TDD.</p>
+
+<h2>TL;DR</h2>
+
+<ul>
+<li>&ldquo;As tests get more specific, production code gets more generic&rdquo;.</li>
+<li><code>RED</code> is as important as other in Red-Green-Refactor cycle. If next test does not fail, it is either: already implemented, or has to wait until a later time (until it will fail).</li>
+<li><p>At its core the Triangulation Technique has the following idea:</p>
+
+<p>After implementing one business rule (with Red-Green-Refactor) make sure to find all &ldquo;weirdnesses&rdquo; or non-generalities in the production code and one-by-one eliminate them by writing a test, that proves such non-generality, and then making it pass while removing non-generality. This is the third cycle of TDD - Mini Cycle.</p></li>
+</ul>
+
+
+<p>This is a series of articles:</p>
+
+<ol>
+<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
+<li>Part 3: Triangulation to the Rescue! (reading this)</li>
+</ol>
+
+
+<p>Shall we get started?</p>
+
+<h2>Specific/Generic Rule of TDD</h2>
+
+<blockquote><p>As tests get more specific, production code gets more generic.</p></blockquote>
+
+<p>When making the next failing test pass, our production code should also pass a whole class of similar tests. Best shown in the very simple example. The task at hand is to write the function <code>sum(a, b)</code> that will add two numbers. Let&rsquo;s see us a violation of the Specific/Generic rule:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">expect</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; NoMethodError: undefined method `sum&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">sum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span> <span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; expected: 4, got: nil</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">sum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="mi">4</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">expect</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected: 5, got: 4</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">sum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">2</span>
+</span><span class='line'>    <span class="mi">4</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>    <span class="mi">5</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The production code to make this last test pass is as specific as the failing test now. The test of the same class (where we change the value of the <code>b</code> parameter) will fail for it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">expect</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">42</span><span class="p">))</span><span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">44</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected: 44, got: 5</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To follow the Specific/Generic rule we ought to make <code>4</code> into <code>2 + b</code> like that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">sum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="mi">2</span> <span class="o">+</span> <span class="n">b</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This way, when we change <code>b</code> to any value it will still pass the test, aside from the fact, that we didn&rsquo;t do anything about <code>a</code>. This is because we still don&rsquo;t have any test showing us, that parameter <code>a</code> is important, like the following one:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">expect</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span><span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected: 11, got: 9</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Again we can make it pass in a very specific fashion by introducing specific <code>if</code> statement, or we could do it to pass the whole class of such tests:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">sum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Have you noticed, that from the test suite side we had to &ldquo;prove&rdquo; that some knowledge in the system is important and had to be used? This technique is called Triangulation.</p>
+
+<h2>Triangulation Technique</h2>
+
+<p>In the essence, Triangulation technique has a very simple idea at its core:</p>
+
+<ol>
+<li>Change certain important* knowledge in the system.</li>
+<li>Assert that the production code behaves in an accordingly expected manner.</li>
+</ol>
+
+
+<p><em>* - important from the perspective of the system or unit under the test</em></p>
+
+<h2>Red-Green-Refactor has to have all stages</h2>
+
+<p>One Red-Green-Refactor cycle really has to have all stages in it. And I&rsquo;m not ranting right now about &ldquo;Refactor&rdquo; stage, that is a given. Rather, I insist on the &ldquo;Red&rdquo; stage - in TDD, when we write a new test, it has to fail. Writing tests that do not fail is another way to get ourselves stuck while doing TDD. One could ask: &ldquo;If I can&rsquo;t write this test because it does not fail, what should I do about the requirement it represents?&rdquo;, and the answer is rather simple - either this requirement is already implemented and tested by other tests, or we still need this test and we will get back to it later when it actually will fail.</p>
+
+<p>As we can remember, in the first part of these series, we were going through an <code>OrderKindValidator</code> example, and we were writing multiple tests in a row, that were all expecting the same outcome and of course they didn&rsquo;t fail, because we had one line in our function that made them all pass. If we were to sprinkle some other tests, that do fail (like a test for a valid order kind), after making it pass, all of these tests will now be failing and therefore they are good candidates for our next test. Let&rsquo;s see it with our own eyes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is_absent</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind can not be empty&quot;,</span>
+</span><span class='line'><span class="c1"># =&gt; got #&lt;NoMethodError:</span>
+</span><span class='line'><span class="c1"># =&gt;      undefined method `validate&#39; for #&lt;OrderKindValidator:0x000000020335c0&gt;&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">OrderKindValidator</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind can not be empty&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; but nothing was raised</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="p">,</span> <span class="s2">&quot;Order kind can not be empty&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now is the point, where we have to choose our next test, and last time we have chosen the test with the same outcome and it did not go so well. Let&rsquo;s choose a test with different outcome, e.g.: when valid order kind is provided:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected no Exception,</span>
+</span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, we have 2 options, to either check for <code>order[:kind] == %w(private)</code> or to check for <code>order[:kind]</code> being absent. It does not matter what we choose at this point, so let&rsquo;s go with the first one:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span> <span class="o">==</span> <span class="sx">%w(private)</span>
+</span><span class='line'>    <span class="k">return</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="p">,</span> <span class="s2">&quot;Order kind can not be empty&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now let&rsquo;s apply Triangulation technique. We should always ask ourselves the question: &ldquo;What is weird about this code?&rdquo; and &ldquo;What failing test should I write to point out this weirdness?&rdquo;. First weirdness we can spot is that the validator currently accepts only one order kind - <code>private</code>. According to our requirements it should also accept <code>corporate</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(corporate)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected no Exception,</span>
+</span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">kinds</span> <span class="o">=</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">kinds</span> <span class="o">==</span> <span class="sx">%w(private)</span> <span class="o">||</span> <span class="n">kinds</span> <span class="o">==</span> <span class="sx">%w(corporate)</span>
+</span><span class='line'>    <span class="c1"># ...</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We also know, that our system should handle duplicate entries in <code>order[:kind]</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private private)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected no Exception,</span>
+</span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">kinds</span> <span class="o">=</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;private&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="n">kinds</span> <span class="o">==</span> <span class="sx">%w(corporate)</span>
+</span><span class='line'>    <span class="c1"># ...</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind can not be empty&quot;,</span>
+</span><span class='line'><span class="c1"># =&gt; got #&lt;NoMethodError: undefined method `include?&#39;</span>
+</span><span class='line'><span class="c1"># =&gt; for nil:NilClass&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Wow! We, of course, can check for <code>kinds</code> to not be <code>nil</code>, but I would rather listen to this test failure and put a check for <code>kinds</code> being absent (and this makes for our second check, that we could have chosen from):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">kinds</span> <span class="o">=</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="n">kinds</span><span class="o">.</span><span class="n">nil?</span>
+</span><span class='line'>    <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="p">,</span> <span class="s2">&quot;Order kind can not be empty&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;private&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="n">kinds</span> <span class="o">==</span> <span class="sx">%w(corporate)</span>
+</span><span class='line'>    <span class="k">return</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="p">,</span> <span class="s2">&quot;Order kind can not be empty&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So this passes all our tests. It may look weird, and this is exactly the pointer for us which test to write next to prove, that this weirdness is incorrect:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(invalid)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError</span>
+</span><span class='line'><span class="c1"># =&gt; with &quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;,</span>
+</span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+</span><span class='line'>  <span class="c1"># ...</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Production code starts looking not so clean and I think it is time to give things proper names:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">OrderKindValidator</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">kinds</span> <span class="o">=</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">empty?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">fail_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">unless</span> <span class="n">valid?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">fail_with</span><span class="p">(</span><span class="s2">&quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">valid?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;private&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="n">kinds</span> <span class="o">==</span> <span class="sx">%w(corporate)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">empty?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">kinds</span><span class="o">.</span><span class="n">nil?</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">fail_with</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="p">,</span> <span class="n">message</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There is only one weirdness, that is left for triangulation in current production code, before we can move on to the next requirement - <code>private</code> can be duplicated while <code>corporate</code> can not:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(corporate corporate)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected no Exception,</span>
+</span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">valid?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;private&quot;</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;corporate&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Great, now we can safely go back to our empty order kind edge cases:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="o">[]</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind can not be empty&quot;,</span>
+</span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">empty?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">kinds</span><span class="o">.</span><span class="n">nil?</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">.</span><span class="n">empty?</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="o">[</span><span class="kp">nil</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind can not be empty&quot;,</span>
+</span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">empty?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">kinds</span><span class="o">.</span><span class="n">nil?</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">.</span><span class="n">empty?</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">nil?</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="o">[</span><span class="s2">&quot;&quot;</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind can not be empty&quot;,</span>
+</span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">empty?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">kinds</span><span class="o">.</span><span class="n">nil?</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">.</span><span class="n">empty?</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">nil?</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">empty?</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And it is a good opportunity to eliminate some duplication:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">empty?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">empty_value?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">empty_value?</span><span class="p">(</span><span class="n">kinds</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">empty_value?</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">value</span><span class="o">.</span><span class="n">nil?</span> <span class="o">||</span> <span class="n">value</span><span class="o">.</span><span class="n">empty?</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, it is a good time to triangulate, because we have a weirdness in our code: <code>kinds[0]</code>. To prove that this is too specific we can write another test:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="o">[</span><span class="s2">&quot;private&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind can not be empty&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; but nothing was raised</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">empty?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">empty_value?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">.</span><span class="n">any?</span> <span class="p">{</span> <span class="o">|</span><span class="n">kind</span><span class="o">|</span> <span class="n">empty_value?</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice, how every single test that we have written was failing and how easy it was to make it pass. This suggests that we are probably moving in the right direction. Let&rsquo;s test our next requirement - we can combine <code>private</code> and <code>bundle</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private bundle)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Wait a minute. This is really bad. We should have a failing test here. This happened because we are checking only for the inclusion of <code>private</code> or <code>corporate</code> and we do not care about anything else in the <code>order[:kind]</code> array. We have to discard this test and try to go with failing version of the same business rule - invalid order kind can not be combined with <code>private</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private invalid)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError</span>
+</span><span class='line'><span class="c1"># =&gt; with &quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; but nothing was raised</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">valid?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">return</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">kinds</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;invalid&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;private&quot;</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;corporate&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>While this works, it leads to two other weirdnesses: <code>kinds[1]</code> and <code>"invalid"</code>, let&rsquo;s the latter first:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private another_invalid)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError</span>
+</span><span class='line'><span class="c1"># =&gt; with &quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; but nothing was raised</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">valid?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">return</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">kinds</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="n">kinds</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">!=</span> <span class="s2">&quot;private&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;private&quot;</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;corporate&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; expected no Exception,</span>
+</span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&gt;</span>
+</span><span class='line'><span class="c1"># .. and more failures ..</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Other tests fail now, from them it is possible to see, that second kind should be either <code>private</code> or <code>corporate</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">valid?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">return</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">kinds</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">&amp;&amp;</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">!=</span> <span class="s2">&quot;private&quot;</span> <span class="o">&amp;&amp;</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">!=</span> <span class="s2">&quot;corporate&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;private&quot;</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;corporate&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This looks rather clunky, we should make it a bit cleaner:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">ALLOWED_ORDER_KINDS</span> <span class="o">=</span> <span class="sx">%w(private corporate)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">valid?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">return</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">kinds</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> <span class="o">&amp;&amp;</span>
+</span><span class='line'>      <span class="o">!</span><span class="no">ALLOWED_ORDER_KINDS</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">kinds</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;private&quot;</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;corporate&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let&rsquo;s eliminate the other weirdness - <code>kinds[1]</code>, it probably should verify all kinds in the array:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(invalid private)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError</span>
+</span><span class='line'><span class="c1"># =&gt; with &quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; but nothing was raised</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">valid?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">return</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">kinds</span><span class="o">.</span><span class="n">any?</span> <span class="p">{</span> <span class="o">|</span><span class="n">kind</span><span class="o">|</span>
+</span><span class='line'>    <span class="o">!</span><span class="no">ALLOWED_ORDER_KINDS</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;private&quot;</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>      <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;corporate&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And now this can be greatly simplified by inverting the boolean logic:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">valid?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">kinds</span><span class="o">.</span><span class="n">all?</span> <span class="p">{</span> <span class="o">|</span><span class="n">kind</span><span class="o">|</span>
+</span><span class='line'>    <span class="no">ALLOWED_ORDER_KINDS</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now that we have dealt with all weirdnesses in our production code, let&rsquo;s get back to our requirement:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private bundle)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected no Exception,</span>
+</span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Wow! Now it fails exactly as it should. This means that it is now the right time for this test! Let&rsquo;s make it pass by adding <code>bundle</code> to the list of allowed order kinds:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">ALLOWED_ORDER_KINDS</span> <span class="o">=</span> <span class="sx">%w(private corporate bundle)</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nice! Our next requirement is about <code>bundle</code> not being used on its own, i.e.: either <code>private</code> or <code>corporate</code> is required:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind should be &#39;private&#39; or &#39;corporate&#39;&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(bundle)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind should be &#39;private&#39; or &#39;corporate&#39;&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; but nothing was raised</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+</span><span class='line'>  <span class="c1"># ...</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="n">kinds</span> <span class="o">==</span> <span class="sx">%w(bundle)</span>
+</span><span class='line'>    <span class="n">fail_with</span><span class="p">(</span><span class="s2">&quot;Order kind should be &#39;private&#39; or &#39;corporate&#39;&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And this is good enough, because that is really the only case, when this can happen until the list of allowed order kinds is extended by future business requirements. We should at least give this condition a proper name:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">unless</span> <span class="n">has_required?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">fail_with</span><span class="p">(</span><span class="s2">&quot;Order kind should be &#39;private&#39; or &#39;corporate&#39;&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># ...</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">has_required?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">kinds</span> <span class="o">!=</span> <span class="sx">%w(bundle)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Except, that we could provide duplicated <code>bundle</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind should be &#39;private&#39; or &#39;corporate&#39;&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(bundle bundle)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError</span>
+</span><span class='line'><span class="c1"># =&gt; with &quot;Order kind should be &#39;private&#39; or &#39;corporate&#39;&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; but nothing was raised</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">has_required?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="c1"># Easy to fix if we de-duplicate it with #uniq:</span>
+</span><span class='line'>  <span class="n">kinds</span><span class="o">.</span><span class="n">uniq</span> <span class="o">!=</span> <span class="sx">%w(bundle)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now it is time to move on to the final requirement about conflicts between <code>private</code> and <code>corporate</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be &#39;private&#39; and &#39;corporate&#39; at the same time&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private corporate)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError</span>
+</span><span class='line'><span class="c1"># =&gt; with &quot;Order kind can not be &#39;private&#39; and &#39;corporate&#39; at the same time&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; but nothing was raised</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+</span><span class='line'>  <span class="c1"># ...</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="n">kinds</span> <span class="o">==</span> <span class="sx">%w(private corporate)</span>
+</span><span class='line'>    <span class="n">fail_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be &#39;private&#39; and &#39;corporate&#39; at the same time&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Of course, <code>kinds == %w(private corporate)</code> can be considered too specific for production code, we should triangulate it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be &#39;private&#39; and &#39;corporate&#39; at the same time&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(corporate private)</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError</span>
+</span><span class='line'><span class="c1"># =&gt; with &quot;Order kind can not be &#39;private&#39; and &#39;corporate&#39; at the same time&quot;</span>
+</span><span class='line'><span class="c1"># =&gt; but nothing was raised</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;private&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+</span><span class='line'>    <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;corporate&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">fail_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be &#39;private&#39; and &#39;corporate&#39; at the same time&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="c1"># =&gt; PASS</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And, finally, let&rsquo;s give this condition a proper name:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="n">has_conflicts?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">fail_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be &#39;private&#39; and &#39;corporate&#39; at the same time&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># ...</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">has_conflicts?</span><span class="p">(</span><span class="n">kinds</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;private&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+</span><span class='line'>    <span class="n">kinds</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;corporate&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I believe we are done now. Source for this example can be found in <a href="https://github.com/waterlink/order_kind_validator/pull/3">an open pull request here</a>.</p>
+
+<p>Let&rsquo;s recap how Triangulation technique worked for us here.</p>
+
+<h2>Triangulation Technique in Depth</h2>
+
+<p>The main goal of triangulation is to prove that the code is not general enough along some axis (class of tests) by writing a test and then making sure it passes. Effective application of the technique requires to prove and eliminate all such &ldquo;weirdnesses&rdquo; or non-generalities from the production code after each Red-Green-Refactor cycle for business requirements. This is, in fact, the 3rd cycle of Test-Driven-Development called Mini Cycle of TDD, it should be executed about every 10 minutes.</p>
+
+<p>Another observation is that following this technique we are introducing only one small piece of knowledge into our production code, for example:</p>
+
+<ul>
+<li>When writing a test for next business requirement, we are introducing the fact that we need an <code>if</code> statement with a certain body (in this example it was a <code>raise error</code> statement). Since we can not introduce the <code>if</code> statement without a condition we need to put some condition there and we put a very specific condition on purpose since we know that it is tested and it is simple.</li>
+<li>Next, we are proving that this condition is too specific by writing a test, and then making it pass with a more generic solution. This way we are introducing a tiny little bit more knowledge in our production code.</li>
+<li>We are repeating this iterative process until the production code is generic enough for the current specification (test suite). And we start over. This is the Mini Cycle of TDD.</li>
+</ul>
+
+
+<h2>Bottom Line</h2>
+
+<p>Today we have learned the Golden Rule of TDD - &ldquo;As tests get more specific, production code gets more generic&rdquo;, and we have learned the Triangulation Technique, that allows us to follow this rule in an incremental and confident way. Additionally, we have learned, that following Red-Green-Refactor strictly is important, and this includes even the <code>RED</code> stage of this cycle - when the test for business requirement does not fail, it is either: already implemented or it has to wait for later.</p>
+
+<p>This is a series of articles:</p>
+
+<ol>
+<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
+<li>Part 3: Triangulation to the Rescue! (reading this)</li>
+</ol>
+
+
+<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
+
+<ul>
+<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
+<li>Open-Closed Principle - changing behavior by adding new code,</li>
+<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, 4 Cycles of TDD, Test-Driven Development screencasts and so much more!</li>
+</ul>
+
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Oleksii Fedorov (waterlink)</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-08-31T02:35:32+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2016</span></span> <span class='time'>2:35 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/getting-stuck-while-doing-tdd/'>getting-stuck-while-doing-tdd</a>, <a class='category' href='/blog/categories/problem-solving/'>problem-solving</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/test-driven-development/'>test-driven-development</a>, <a class='category' href='/blog/categories/triangulation/'>triangulation</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/" data-via="waterlink000" data-counturl="http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/" title="Previous Post: Getting stuck while doing TDD. Part 2: Buggy Code and Forcing Our Way Through">&laquo; Getting stuck while doing TDD. Part 2: Buggy Code and Forcing Our Way Through</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Getting Stuck While Doing TDD. Part 1: Example</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/20/eliminating-if-statements-legacy-endpoint-primer/">Eliminating &#8216;if&#8217; Statements: Legacy Endpoint Primer</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/14/build-your-own-testing-framework-part-3/">Build Your Own Testing Framework. Part 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/10/tdd-screencast-number-6-continuous-integration-training/">TDD #6: Continuous Integration Training</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/07/31/parallel-change-refactoring/">Parallel Change Refactoring</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/07/23/build-your-own-testing-framework-part-2/">Build Your Own Testing Framework. Part 2</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/waterlink">@waterlink</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'waterlink',
+            count: 7,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+    <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+  </a>
+  <br />
+  Except where otherwise noted, content on this site is licensed under a
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+  <br/>
+
+  Except where otherwise noted, code examples on this site are licensed under a
+  <a rel="license" href="https://github.com/waterlink/waterlink.github.io/tree/source/LICENSE">MIT License</a>.
+  <br/>
+
+  Copyright &copy; 2016 - Oleksii Fedorov (waterlink) -
+  <br/>
+
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

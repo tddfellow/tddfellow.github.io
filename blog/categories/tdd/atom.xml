@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tdd | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/tdd/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-08-31T16:26:54+02:00</updated>
+  <updated>2016-09-11T22:18:02+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,566 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/"/>
+    <updated>2016-08-31T02:35:32+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue</id>
+    <content type="html"><![CDATA[<p>Welcome back to the &ldquo;Getting Stuck While Doing TDD&rdquo; series. Today we are going to learn the Golden Rule of TDD and how to not get stuck while doing TDD.</p>
+
+<h2>TL;DR</h2>
+
+<ul>
+<li>&ldquo;As tests get more specific, production code gets more generic&rdquo;.</li>
+<li><code>RED</code> is as important as other in Red-Green-Refactor cycle. If next test does not fail, it is either: already implemented, or has to wait until a later time (until it will fail).</li>
+<li><p>At its core the Triangulation Technique has the following idea:</p>
+
+<p>After implementing one business rule (with Red-Green-Refactor) make sure to find all &ldquo;weirdnesses&rdquo; or non-generalities in the production code and one-by-one eliminate them by writing a test, that proves such non-generality, and then making it pass while removing non-generality. This is the third cycle of TDD - Mini Cycle.</p></li>
+</ul>
+
+
+<p>This is a series of articles:</p>
+
+<ol>
+<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
+<li>Part 3: Triangulation to the Rescue! (reading this)</li>
+</ol>
+
+
+<p>Shall we get started?</p>
+
+<h2>Specific/Generic Rule of TDD</h2>
+
+<blockquote><p>As tests get more specific, production code gets more generic.</p></blockquote>
+
+<p>When making the next failing test pass, our production code should also pass a whole class of similar tests. Best shown in the very simple example. The task at hand is to write the function <code>sum(a, b)</code> that will add two numbers. Let&rsquo;s see us a violation of the Specific/Generic rule:</p>
+
+<pre><code class="ruby">expect(sum(2, 2)).to eq(4)
+# =&gt; NoMethodError: undefined method `sum'
+
+def sum(a, b); end
+# =&gt; expected: 4, got: nil
+
+def sum(a, b)
+  4
+end
+# =&gt; PASS
+
+expect(sum(2, 3)).to eq(5)
+# =&gt; expected: 5, got: 4
+
+def sum(a, b)
+  if b == 2
+    4
+  else
+    5
+  end
+end
+# =&gt; PASS
+</code></pre>
+
+<p>The production code to make this last test pass is as specific as the failing test now. The test of the same class (where we change the value of the <code>b</code> parameter) will fail for it:</p>
+
+<pre><code class="ruby">expect(sum(2, 42)).to eq(44)
+# =&gt; expected: 44, got: 5
+</code></pre>
+
+<p>To follow the Specific/Generic rule we ought to make <code>4</code> into <code>2 + b</code> like that:</p>
+
+<pre><code class="ruby">def sum(a, b)
+  2 + b
+end
+# =&gt; PASS
+</code></pre>
+
+<p>This way, when we change <code>b</code> to any value it will still pass the test, aside from the fact, that we didn&rsquo;t do anything about <code>a</code>. This is because we still don&rsquo;t have any test showing us, that parameter <code>a</code> is important, like the following one:</p>
+
+<pre><code class="ruby">expect(sum(4, 7)).to eq(11)
+# =&gt; expected: 11, got: 9
+</code></pre>
+
+<p>Again we can make it pass in a very specific fashion by introducing specific <code>if</code> statement, or we could do it to pass the whole class of such tests:</p>
+
+<pre><code class="ruby">def sum(a, b)
+  a + b
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Have you noticed, that from the test suite side we had to &ldquo;prove&rdquo; that some knowledge in the system is important and had to be used? This technique is called Triangulation.</p>
+
+<h2>Triangulation Technique</h2>
+
+<p>In the essence, Triangulation technique has a very simple idea at its core:</p>
+
+<ol>
+<li>Change certain important* knowledge in the system.</li>
+<li>Assert that the production code behaves in an accordingly expected manner.</li>
+</ol>
+
+
+<p><em>* - important from the perspective of the system or unit under the test</em></p>
+
+<h2>Red-Green-Refactor has to have all stages</h2>
+
+<p>One Red-Green-Refactor cycle really has to have all stages in it. And I&rsquo;m not ranting right now about &ldquo;Refactor&rdquo; stage, that is a given. Rather, I insist on the &ldquo;Red&rdquo; stage - in TDD, when we write a new test, it has to fail. Writing tests that do not fail is another way to get ourselves stuck while doing TDD. One could ask: &ldquo;If I can&rsquo;t write this test because it does not fail, what should I do about the requirement it represents?&rdquo;, and the answer is rather simple - either this requirement is already implemented and tested by other tests, or we still need this test and we will get back to it later when it actually will fail.</p>
+
+<p>As we can remember, in the first part of these series, we were going through an <code>OrderKindValidator</code> example, and we were writing multiple tests in a row, that were all expecting the same outcome and of course they didn&rsquo;t fail, because we had one line in our function that made them all pass. If we were to sprinkle some other tests, that do fail (like a test for a valid order kind), after making it pass, all of these tests will now be failing and therefore they are good candidates for our next test. Let&rsquo;s see it with our own eyes:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be empty").when_order_kind_is_absent
+# =&gt; expected InvalidOrderError with "Order kind can not be empty",
+# =&gt; got #&lt;NoMethodError:
+# =&gt;      undefined method `validate' for #&lt;OrderKindValidator:0x000000020335c0&gt;&gt;
+
+class OrderKindValidator
+  def validate(order)
+  end
+end
+# =&gt; expected InvalidOrderError with "Order kind can not be empty"
+# =&gt; but nothing was raised
+
+def validate(order)
+  raise InvalidOrderError, "Order kind can not be empty"
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Now is the point, where we have to choose our next test, and last time we have chosen the test with the same outcome and it did not go so well. Let&rsquo;s choose a test with different outcome, e.g.: when valid order kind is provided:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is(%w(private))
+# =&gt; expected no Exception,
+# =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;
+</code></pre>
+
+<p>Now, we have 2 options, to either check for <code>order[:kind] == %w(private)</code> or to check for <code>order[:kind]</code> being absent. It does not matter what we choose at this point, so let&rsquo;s go with the first one:</p>
+
+<pre><code class="ruby">def validate(order)
+  if order[:kind] == %w(private)
+    return
+  end
+
+  raise InvalidOrderError, "Order kind can not be empty"
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Now let&rsquo;s apply Triangulation technique. We should always ask ourselves the question: &ldquo;What is weird about this code?&rdquo; and &ldquo;What failing test should I write to point out this weirdness?&rdquo;. First weirdness we can spot is that the validator currently accepts only one order kind - <code>private</code>. According to our requirements it should also accept <code>corporate</code>:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is(%w(corporate))
+# =&gt; expected no Exception,
+# =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;
+
+def validate(order)
+  kinds = order[:kind]
+  if kinds == %w(private) || kinds == %w(corporate)
+    # ...
+end
+# =&gt; PASS
+</code></pre>
+
+<p>We also know, that our system should handle duplicate entries in <code>order[:kind]</code>:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is(%w(private private))
+# =&gt; expected no Exception,
+# =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;
+
+def validate(order)
+  kinds = order[:kind]
+  if kinds.include?("private") || kinds == %w(corporate)
+    # ...
+end
+# =&gt; expected InvalidOrderError with "Order kind can not be empty",
+# =&gt; got #&lt;NoMethodError: undefined method `include?'
+# =&gt; for nil:NilClass&gt;
+</code></pre>
+
+<p>Wow! We, of course, can check for <code>kinds</code> to not be <code>nil</code>, but I would rather listen to this test failure and put a check for <code>kinds</code> being absent (and this makes for our second check, that we could have chosen from):</p>
+
+<pre><code class="ruby">def validate(order)
+  kinds = order[:kind]
+
+  if kinds.nil?
+    raise InvalidOrderError, "Order kind can not be empty"
+  end
+
+  if kinds.include?("private") || kinds == %w(corporate)
+    return
+  end
+
+  raise InvalidOrderError, "Order kind can not be empty"
+end
+# =&gt; PASS
+</code></pre>
+
+<p>So this passes all our tests. It may look weird, and this is exactly the pointer for us which test to write next to prove, that this weirdness is incorrect:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+  .when_order_kind_is(%w(invalid))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind can be one of: 'private', 'corporate', 'bundle'",
+# =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;
+
+def validate(order)
+  # ...
+
+  raise InvalidOrderError,
+    "Order kind can be one of: 'private', 'corporate', 'bundle'"
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Production code starts looking not so clean and I think it is time to give things proper names:</p>
+
+<pre><code class="ruby">class OrderKindValidator
+  def validate(order)
+    kinds = order[:kind]
+
+    if empty?(kinds)
+      fail_with("Order kind can not be empty")
+    end
+
+    unless valid?(kinds)
+      fail_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+    end
+  end
+
+  def valid?(kinds)
+    kinds.include?("private") || kinds == %w(corporate)
+  end
+
+  def empty?(kinds)
+    kinds.nil?
+  end
+
+  def fail_with(message)
+    raise InvalidOrderError, message
+  end
+end
+</code></pre>
+
+<p>There is only one weirdness, that is left for triangulation in current production code, before we can move on to the next requirement - <code>private</code> can be duplicated while <code>corporate</code> can not:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is(%w(corporate corporate))
+# =&gt; expected no Exception,
+# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
+
+def valid?(kinds)
+  kinds.include?("private") ||
+      kinds.include?("corporate")
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Great, now we can safely go back to our empty order kind edge cases:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be empty").when_order_kind_is([])
+# =&gt; expected InvalidOrderError with "Order kind can not be empty",
+# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
+
+def empty?(kinds)
+  kinds.nil? ||
+      kinds.empty?
+end
+# =&gt; PASS
+
+it_fails_with("Order kind can not be empty").when_order_kind_is([nil])
+# =&gt; expected InvalidOrderError with "Order kind can not be empty",
+# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
+
+def empty?(kinds)
+  kinds.nil? ||
+      kinds.empty? ||
+      kinds[0].nil?
+end
+# =&gt; PASS
+
+it_fails_with("Order kind can not be empty").when_order_kind_is([""])
+# =&gt; expected InvalidOrderError with "Order kind can not be empty",
+# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
+
+def empty?(kinds)
+  kinds.nil? ||
+      kinds.empty? ||
+      kinds[0].nil? ||
+      kinds[0].empty?
+end
+# =&gt; PASS
+</code></pre>
+
+<p>And it is a good opportunity to eliminate some duplication:</p>
+
+<pre><code class="ruby">def empty?(kinds)
+  empty_value?(kinds) ||
+      empty_value?(kinds[0])
+end
+
+def empty_value?(value)
+  value.nil? || value.empty?
+end
+</code></pre>
+
+<p>Now, it is a good time to triangulate, because we have a weirdness in our code: <code>kinds[0]</code>. To prove that this is too specific we can write another test:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be empty").when_order_kind_is(["private", ""])
+# =&gt; expected InvalidOrderError with "Order kind can not be empty"
+# =&gt; but nothing was raised
+
+def empty?(kinds)
+  empty_value?(kinds) ||
+      kinds.any? { |kind| empty_value?(kind) }
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Notice, how every single test that we have written was failing and how easy it was to make it pass. This suggests that we are probably moving in the right direction. Let&rsquo;s test our next requirement - we can combine <code>private</code> and <code>bundle</code>:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is(%w(private bundle))
+# =&gt; PASS
+</code></pre>
+
+<p>Wait a minute. This is really bad. We should have a failing test here. This happened because we are checking only for the inclusion of <code>private</code> or <code>corporate</code> and we do not care about anything else in the <code>order[:kind]</code> array. We have to discard this test and try to go with failing version of the same business rule - invalid order kind can not be combined with <code>private</code>:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+  .when_order_kind_is(%w(private invalid))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind can be one of: 'private', 'corporate', 'bundle'"
+# =&gt; but nothing was raised
+
+def valid?(kinds)
+  return false if kinds[1] == "invalid"
+
+  kinds.include?("private") ||
+      kinds.include?("corporate")
+end
+# =&gt; PASS
+</code></pre>
+
+<p>While this works, it leads to two other weirdnesses: <code>kinds[1]</code> and <code>"invalid"</code>, let&rsquo;s the latter first:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+  .when_order_kind_is(%w(private another_invalid))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind can be one of: 'private', 'corporate', 'bundle'"
+# =&gt; but nothing was raised
+
+def valid?(kinds)
+  return false if kinds[1] &amp;&amp; kinds[1] != "private"
+
+  kinds.include?("private") ||
+      kinds.include?("corporate")
+end
+# =&gt; expected no Exception,
+# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
+# .. and more failures ..
+</code></pre>
+
+<p>Other tests fail now, from them it is possible to see, that second kind should be either <code>private</code> or <code>corporate</code>:</p>
+
+<pre><code class="ruby">def valid?(kinds)
+  return false if kinds[1] &amp;&amp;
+      kinds[1] != "private" &amp;&amp;
+      kinds[1] != "corporate"
+
+  kinds.include?("private") ||
+      kinds.include?("corporate")
+end
+# =&gt; PASS
+</code></pre>
+
+<p>This looks rather clunky, we should make it a bit cleaner:</p>
+
+<pre><code class="ruby">ALLOWED_ORDER_KINDS = %w(private corporate)
+
+def valid?(kinds)
+  return false if kinds[1] &amp;&amp;
+      !ALLOWED_ORDER_KINDS.include?(kinds[1])
+
+  kinds.include?("private") ||
+      kinds.include?("corporate")
+end
+</code></pre>
+
+<p>Let&rsquo;s eliminate the other weirdness - <code>kinds[1]</code>, it probably should verify all kinds in the array:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+  .when_order_kind_is(%w(invalid private))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind can be one of: 'private', 'corporate', 'bundle'"
+# =&gt; but nothing was raised
+
+def valid?(kinds)
+  return false if kinds.any? { |kind|
+    !ALLOWED_ORDER_KINDS.include?(kind)
+  }
+
+  kinds.include?("private") ||
+      kinds.include?("corporate")
+end
+# =&gt; PASS
+</code></pre>
+
+<p>And now this can be greatly simplified by inverting the boolean logic:</p>
+
+<pre><code class="ruby">def valid?(kinds)
+  kinds.all? { |kind|
+    ALLOWED_ORDER_KINDS.include?(kind)
+  }
+end
+</code></pre>
+
+<p>Now that we have dealt with all weirdnesses in our production code, let&rsquo;s get back to our requirement:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is(%w(private bundle))
+# =&gt; expected no Exception,
+# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
+</code></pre>
+
+<p>Wow! Now it fails exactly as it should. This means that it is now the right time for this test! Let&rsquo;s make it pass by adding <code>bundle</code> to the list of allowed order kinds:</p>
+
+<pre><code class="ruby">ALLOWED_ORDER_KINDS = %w(private corporate bundle)
+# =&gt; PASS
+</code></pre>
+
+<p>Nice! Our next requirement is about <code>bundle</code> not being used on its own, i.e.: either <code>private</code> or <code>corporate</code> is required:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind should be 'private' or 'corporate'")
+  .when_order_kind_is(%w(bundle))
+# =&gt; expected InvalidOrderError with "Order kind should be 'private' or 'corporate'"
+# =&gt; but nothing was raised
+
+def validate(order)
+  # ...
+
+  if kinds == %w(bundle)
+    fail_with("Order kind should be 'private' or 'corporate'")
+  end
+end
+# =&gt; PASS
+</code></pre>
+
+<p>And this is good enough, because that is really the only case, when this can happen until the list of allowed order kinds is extended by future business requirements. We should at least give this condition a proper name:</p>
+
+<pre><code class="ruby">unless has_required?(kinds)
+  fail_with("Order kind should be 'private' or 'corporate'")
+end
+
+# ...
+
+def has_required?(kinds)
+  kinds != %w(bundle)
+end
+</code></pre>
+
+<p>Except, that we could provide duplicated <code>bundle</code>:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind should be 'private' or 'corporate'")
+  .when_order_kind_is(%w(bundle bundle))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind should be 'private' or 'corporate'"
+# =&gt; but nothing was raised
+
+def has_required?(kinds)
+  # Easy to fix if we de-duplicate it with #uniq:
+  kinds.uniq != %w(bundle)
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Now it is time to move on to the final requirement about conflicts between <code>private</code> and <code>corporate</code>:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
+  .when_order_kind_is(%w(private corporate))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind can not be 'private' and 'corporate' at the same time"
+# =&gt; but nothing was raised
+
+def validate(order)
+  # ...
+
+  if kinds == %w(private corporate)
+    fail_with("Order kind can not be 'private' and 'corporate' at the same time")
+  end
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Of course, <code>kinds == %w(private corporate)</code> can be considered too specific for production code, we should triangulate it:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
+  .when_order_kind_is(%w(corporate private))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind can not be 'private' and 'corporate' at the same time"
+# =&gt; but nothing was raised
+
+if kinds.include?("private") &amp;&amp;
+    kinds.include?("corporate")
+  fail_with("Order kind can not be 'private' and 'corporate' at the same time")
+end
+# =&gt; PASS
+</code></pre>
+
+<p>And, finally, let&rsquo;s give this condition a proper name:</p>
+
+<pre><code class="ruby">if has_conflicts?(kinds)
+  fail_with("Order kind can not be 'private' and 'corporate' at the same time")
+end
+
+# ...
+
+def has_conflicts?(kinds)
+  kinds.include?("private") &amp;&amp;
+    kinds.include?("corporate")
+end
+</code></pre>
+
+<p>I believe we are done now. Source for this example can be found in <a href="https://github.com/waterlink/order_kind_validator/pull/3">an open pull request here</a>.</p>
+
+<p>Let&rsquo;s recap how Triangulation technique worked for us here.</p>
+
+<h2>Triangulation Technique in Depth</h2>
+
+<p>The main goal of triangulation is to prove that the code is not general enough along some axis (class of tests) by writing a test and then making sure it passes. Effective application of the technique requires to prove and eliminate all such &ldquo;weirdnesses&rdquo; or non-generalities from the production code after each Red-Green-Refactor cycle for business requirements. This is, in fact, the 3rd cycle of Test-Driven-Development called Mini Cycle of TDD, it should be executed about every 10 minutes.</p>
+
+<p>Another observation is that following this technique we are introducing only one small piece of knowledge into our production code, for example:</p>
+
+<ul>
+<li>When writing a test for next business requirement, we are introducing the fact that we need an <code>if</code> statement with a certain body (in this example it was a <code>raise error</code> statement). Since we can not introduce the <code>if</code> statement without a condition we need to put some condition there and we put a very specific condition on purpose since we know that it is tested and it is simple.</li>
+<li>Next, we are proving that this condition is too specific by writing a test, and then making it pass with a more generic solution. This way we are introducing a tiny little bit more knowledge in our production code.</li>
+<li>We are repeating this iterative process until the production code is generic enough for the current specification (test suite). And we start over. This is the Mini Cycle of TDD.</li>
+</ul>
+
+
+<h2>Bottom Line</h2>
+
+<p>Today we have learned the Golden Rule of TDD - &ldquo;As tests get more specific, production code gets more generic&rdquo;, and we have learned the Triangulation Technique, that allows us to follow this rule in an incremental and confident way. Additionally, we have learned, that following Red-Green-Refactor strictly is important, and this includes even the <code>RED</code> stage of this cycle - when the test for business requirement does not fail, it is either: already implemented or it has to wait for later.</p>
+
+<p>This is a series of articles:</p>
+
+<ol>
+<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
+<li>Part 3: Triangulation to the Rescue! (reading this)</li>
+</ol>
+
+
+<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
+
+<ul>
+<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
+<li>Open-Closed Principle - changing behavior by adding new code,</li>
+<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, 4 Cycles of TDD, Test-Driven Development screencasts and so much more!</li>
+</ul>
+
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through]]></title>
@@ -45,7 +605,7 @@
 <ol>
 <li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
 <li>Part 2: Buggy Code and Forcing Our Way Through (reading this)</li>
-<li>Part 3: Triangulation to the Rescue! (coming soon)</li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
 </ol>
 
 
@@ -310,6 +870,15 @@ end
 
 <p>Today we have seen how bad the results of getting stuck while doing TDD can be. In the next article of these series, we will explore Golden Rule of TDD and the technique called Triangulation, that allows us to incrementally test-drive code in a way, that it will always be conforming to the Golden Rule of TDD and therefore will never get us stuck. Stay tuned!</p>
 
+<p>This is a series of articles:</p>
+
+<ol>
+<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
+<li>Part 2: Buggy Code and Forcing Our Way Through (reading this)</li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
+</ol>
+
+
 <p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
 
 <ul>
@@ -352,7 +921,7 @@ end
 <ol>
 <li>Part 1: Example (reading this)</li>
 <li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
-<li>Part 3: Triangulation to the Rescue! (coming soon)</li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
 </ol>
 
 
@@ -686,6 +1255,15 @@ end
 <h2>Bottom Line</h2>
 
 <p>Buggy <code>if</code>-riddled code is what we&rsquo;ve got. We will see why in the next part of &ldquo;Getting Stuck While Doing TDD&rdquo; series. Stay tuned!</p>
+
+<p>This is a series of articles:</p>
+
+<ol>
+<li>Part 1: Example (reading this)</li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
+</ol>
+
 
 <p>Today we have implemented our not-so-complex problem at hand while following 3 rules of TDD. The result was not of the best quality and we will take a look why in further articles of these series. You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
 
@@ -1073,904 +1651,6 @@ that.assertCalled = function () {
 <p>Today we are going to discuss Continuous Integration, what it is and what it isn&rsquo;t. We will define best Check-Out/Check-In cycle. We will explore ways to train our Continuous Integration skills. And we will do some live coding on Kata with special restriction, that allows one to train such skills. Then we will draw a bottom line.</p>
 
 <p>Thanks for watching! If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Build Your Own Testing Framework. Part 2]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/07/23/build-your-own-testing-framework-part-2/"/>
-    <updated>2016-07-23T14:52:42+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/07/23/build-your-own-testing-framework-part-2</id>
-    <content type="html"><![CDATA[<p>Today we are going to unit-test existing functionality of our own testing framework, that we have test-driven with <code>FizzBuzzKata</code> in <a href="/blog/2016/07/15/build-your-own-testing-framework/">the previous part</a>.</p>
-
-<p>This needs to be done, since currently only happy paths are implicitly tested via <code>FizzBuzzKata</code> test suite, i.e.: when all the tests pass. The following unhappy paths are not tested at the moment:</p>
-
-<ul>
-<li>when <code>assertTrue</code> fails, it throws an error,</li>
-<li>when <code>assertEqual</code> fails, it throws an error,</li>
-<li>when the test fails, it renders the error and fails the whole test suite run, i.e.: non-zero exit code.</li>
-</ul>
-
-
-<p>This article is the second one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found here: <a href="http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/.">http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/.</a></p>
-
-<p>Shall we get the ball rolling?</p>
-
-<h2>Testing <code>assertTrue(condition, message)</code></h2>
-
-<p>Let&rsquo;s create a test suite for <code>assertTrue</code> with the first test for the case, when <code>assertTrue</code> succeeds:</p>
-
-<pre><code class="javascript">// test/AssertTrueTest.js
-var runTestSuite = require("../src/TestingFramework");
-
-runTestSuite(function (t) {
-    this.testSuccess = function () {
-        t.assertTrue(true);
-    };
-});
-</code></pre>
-
-<p>If we run this test suite, it should not fail:</p>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>Let&rsquo;s check if that test actually is testing anything by trying to break the implementation of <code>assertTrue</code>:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-assertTrue: function (condition, message) {
-    if (condition) {    // &lt;- this condition was inverted
-        throw new Error(...);
-    }
-},
-</code></pre>
-
-<p>And if we run it, we get the expected error:</p>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-/path/to/project/src/TestingFramework.js:4
-            throw new Error(message || "Expected to be true, but got false");
-            ^
-
-Error: Expected to be true, but got false
-    .. stack trace ..
-
-Process finished with exit code 1
-</code></pre>
-
-<p>OK, it fails as expected, now we should undo our breaking change in the implementation and run the test suite again and it should pass:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-assertTrue: function (condition, message) {
-    if (!condition) {    // &lt;- the breaking change here have been undone
-        throw new Error(...);
-    }
-},
-</code></pre>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>Now, let&rsquo;s write a new test for the case, when <code>assertTrue</code> fails:</p>
-
-<pre><code class="javascript">// test/AssertTrueTest.js
-
-this.testFailure = function () {
-    try {
-        t.assertTrue(false);
-    } catch (error) {
-        t.assertEqual("Expected to be true, but got false", error.message);
-    }
-};
-</code></pre>
-
-<p>And if we run the test suite, it passes. If I was confident in the previous test, that I know why it didn&rsquo;t fail, here I feel a bit uncomfortable about writing these 5 lines of test code and never seeing them fail. So let&rsquo;s break the code once again!</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-assertTrue: function (condition, message) {
-    if (!condition) {
-        throw new Error(message || "oops");   // &lt;- we have changed error message here
-    }
-},
-</code></pre>
-
-<p>And if we run tests, we get an expected failure:</p>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-/path/to/project/src/TestingFramework.js:4
-            throw new Error(message || "oops");
-            ^
-
-Error: Expected to equal Expected to be true, but got false, but got: oops
-    .. stack trace ..
-
-Process finished with exit code 1
-</code></pre>
-
-<p>And if we undo our breaking change in the implementation the test should pass:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-assertTrue: function (condition, message) {
-    if (!condition) {
-        throw new Error(message || "Expected to be true, but got false");
-        //                         ^ we have restored correct message ^
-    }
-},
-</code></pre>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>And the last test for <code>assertTrue</code> to test the custom failure message:</p>
-
-<pre><code class="javascript">// test/AssertTrueTest.js
-
-this.testCustomFailureMessage = function () {
-    try {
-        t.assertTrue(false, "it is not true!");
-    } catch (error) {
-        t.assertEqual("it is not true!", error.message);
-    }
-};
-</code></pre>
-
-<p>If we run the test suite, it passes:</p>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>Even that I am confident enough, that this <code>try { ... } catch (..) { ... }</code> construction does the right thing, let&rsquo;s be diligent about it and break the implementation of that functionality and see this test fail:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-assertTrue: function (condition, message) {
-    if (!condition) {
-        throw new Error("Expected to be true, but got false");
-        //              ^ 'message || ' was removed here   ^
-    }
-},
-</code></pre>
-
-<p>If we run the test suite:</p>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-/path/to/project/src/TestingFramework.js:4
-            throw new Error("Expected to be true, but got false");
-            ^
-
-Error: Expected to be true, but got false
-    .. stack trace ..
-
-Process finished with exit code 1
-</code></pre>
-
-<p>It fails, but this change breaks <code>assertEqual</code> too so that we don&rsquo;t see any meaningful error message now. We can figure out if that is an expected failure or not by inspecting the stack trace:</p>
-
-<pre><code>Error: Expected to be true, but got false
-    at Object.assertions.assertTrue (/path/to/project/src/TestingFramework.js:4:19)
-    at Object.assertions.assertEqual (/path/to/project/src/TestingFramework.js:9:14)
-    at testCustomFailureMessage (/path/to/project/test/AssertTrueTest.js:20:15)
-    at runTestSuite (/path/to/project/src/TestingFramework.js:21:32)
-    at Object.&lt;anonymous&gt; (/path/to/project/test/AssertTrueTest.js:3:1)
-    at Module._compile (module.js:409:26)
-    at Object.Module._extensions..js (module.js:416:10)
-    at Module.load (module.js:343:32)
-    at Function.Module._load (module.js:300:12)
-    at Function.Module.runMain (module.js:441:10)
-</code></pre>
-
-<p>and precisely this line is the most interesting one:</p>
-
-<pre><code>at testCustomFailureMessage (/path/to/project/test/AssertTrueTest.js:20:15)
-</code></pre>
-
-<p>If we open the code at this stack trace frame, we will see:</p>
-
-<pre><code class="javascript">t.assertEqual("it is not true!", error.message);
-</code></pre>
-
-<p>Great, this is exactly what we expected. Undoing the breaking change and running the test suite again:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-assertTrue: function (condition, message) {
-    if (!condition) {
-        throw new Error(message || "Expected to be true, but got false");
-        //              ^ 'message || ' was inserted here again       ^
-    }
-},
-</code></pre>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>Interestingly enough, I know how to break the code now and all the tests will pass:</p>
-
-<p>First, let&rsquo;s extract local variable in <code>assertTrue</code>:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-assertTrue: function (condition, message) {
-    var errorMessage = message || "Expected to be true, but got false";
-
-    if (!condition) {
-        throw new Error(errorMessage);
-    }
-},
-</code></pre>
-
-<p>And that still passes its tests:</p>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>Now let&rsquo;s expand <code>message ||</code> into the proper <code>if</code> statement:</p>
-
-<pre><code class="javascript">var errorMessage = "Expected to be true, but got false";
-
-if (message) {
-    errorMessage = message;
-}
-</code></pre>
-
-<p>And that still passes its tests:</p>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>Now, what if I were to replace <code>errorMessage = message;</code> with <code>errorMessage = "it is not true!";</code> inside of the <code>if</code> statement:</p>
-
-<pre><code class="javascript">if (message) {
-    errorMessage = "it is not true!";
-}
-</code></pre>
-
-<p>The test still passes!</p>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>This is rather interesting. It seems, that we will have to make sure, that <code>message</code> parameter actually gets passed to <code>new Error(...)</code>. We can do that by applying the Triangulation technique focusing on <code>message</code> parameter:</p>
-
-<pre><code class="javascript">// test/AssertTrueTest.js
-
-this.testCustomFailureMessage_withOtherMessage = function () {
-    try {
-        t.assertTrue(false, "should be true");
-    } catch (error) {
-        t.assertEqual("should be true", error.message);
-    }
-};
-</code></pre>
-
-<p>And if we run the test suite, we get our expected failure:</p>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-/path/to/project/src/TestingFramework.js:10
-            throw new Error(errorMessage);
-            ^
-
-Error: it is not true!
-    ...
-    at testCustomFailureMessage_withOtherMessage (/path/to/project/test/AssertTrueTest.js:28:15)
-    ...
-
-Process finished with exit code 1
-</code></pre>
-
-<p>And if we look at the stack trace frame, it points us to the correct line of code:</p>
-
-<pre><code class="javascript">t.assertEqual("should be true", error.message);
-</code></pre>
-
-<p>And we can now fix the test by fixing the implementation:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-// inside of `assertTrue` function:
-if (message) {
-    errorMessage = message;   // &lt;- here we actually have to use 'message' now
-}
-</code></pre>
-
-<p>And when we run the test suite, it passes:</p>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>I think we have all required tests for <code>assertTrue</code> now. This is great! And have you spotted the duplication already?</p>
-
-<h2>Refactoring <code>AssertTrueTest</code></h2>
-
-<p>The duplication that is present here is our <code>try { ... } catch (..) { ... }</code> construct. Let&rsquo;s make it a completely duplicate code by extracting couple of local variables:</p>
-
-<pre><code class="javascript">// first, let's extract the Action Under the Test variable:
-var action = function () { t.assertTrue(false); };
-
-try {
-    action();
-} catch (error) {
-    t.assertEqual("Expected to be true, but got false", error.message);
-}
-
-// next, let's extract the Expected Error Message:
-var expectedMessage = "Expected to be true, but got false";
-
-try {
-    action();
-} catch (error) {
-    t.assertEqual(expectedMessage, error.message);
-}
-</code></pre>
-
-<p>If we apply the same refactoring for all tests in the <code>AssertTrueTest</code> suite, we will see the duplication:</p>
-
-<pre><code class="javascript">try {
-    action();
-} catch (error) {
-    t.assertEqual(expectedMessage, error.message);
-}
-</code></pre>
-
-<p>Let&rsquo;s give that operation a name and extract is as a function: <code>assertThrow(expectedMessage, action)</code>:</p>
-
-<pre><code class="javascript">function assertThrow(expectedMessage, action) {
-    try {
-        action();
-    } catch (error) {
-        t.assertEqual(expectedMessage, error.message);
-    }
-}
-</code></pre>
-
-<p>Use this function in all tests and inline all the extracted local variables:</p>
-
-<pre><code class="javascript">this.testFailure = function () {
-    assertThrow("Expected to be true, but got false", function () {
-        t.assertTrue(false);
-    });
-};
-
-this.testCustomFailureMessage = function () {
-    assertThrow("it is not true!", function () {
-        t.assertTrue(false, "it is not true!");
-    });
-};
-
-this.testCustomFailureMessage_withOtherMessage = function () {
-    assertThrow("should be true", function () {
-        t.assertTrue(false, "should be true");
-    });
-};
-</code></pre>
-
-<p>Function <code>assertThrow</code> seems to be useful for any test, not just <code>AssertTrueTest</code> suite. Let&rsquo;s move it to the <code>assertions</code> object. We will be doing that by using Parallel Change technique:</p>
-
-<ol>
-<li>Create new functionality first;</li>
-<li>Step by step migrate all calls to use new functionality instead of old one;</li>
-<li>Once old functionality is not used, remove it.</li>
-</ol>
-
-
-<p>The advantage of that method is that it consists of very small steps, that can be executed with confidence and each such small step never leaves the user in a red state (failing tests or compile/parsing errors).</p>
-
-<p>Let&rsquo;s see how this one can be applied here:</p>
-
-<p><code>1. Create new functionality first</code> - we can do it by copying the <code>assertThrow</code> function to <code>assertions</code> object:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-var assertions = {
-    // ...
-    assertThrow: function (expectedMessage, action) {
-        try {
-            action();
-        } catch (error) {
-            // `t` needs to be changed to `this` here
-            this.assertEqual(expectedMessage, error.message);
-        }
-    }
-};
-</code></pre>
-
-<p>The tests should still pass:</p>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p><code>2. Step by step migrate all calls to use new functionality instead of old one</code> - we do it by calling <code>assertThrow</code> on <code>t</code> (our assertions object) in the test suite. Since we still haven&rsquo;t removed the old <code>assertThrow</code> function, we can do that one function call at the time and the tests will always be green:</p>
-
-<pre><code class="javascript">this.testFailure = function () {
-    t.assertThrow("Expected to be true, but got false", function () {
-// ^ 't.' added here ^
-        t.assertTrue(false);
-    });
-};
-
-// run tests and they still pass.
-
-this.testCustomFailureMessage = function () {
-    t.assertThrow("it is not true!", function () {
-// ^ 't.' added here ^
-        t.assertTrue(false, "it is not true!");
-    });
-};
-
-// run tests and they still pass.
-
-this.testCustomFailureMessage_withOtherMessage = function () {
-    t.assertThrow("should be true", function () {
-// ^ 't.' added here ^
-        t.assertTrue(false, "should be true");
-    });
-};
-</code></pre>
-
-<p><code>3. Once old functionality is not used, remove it.</code> - now we can remove our <code>assertThrow</code> function defined inside of the <code>AssertTrueTest</code> suite and run tests:</p>
-
-<pre><code>/usr/local/bin/node AssertTrueTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>And they pass. Let&rsquo;s see the complete <code>AssertTrueTest</code> suite again:</p>
-
-<pre><code class="javascript">// test/AssertTrueTest.js
-var runTestSuite = require("../src/TestingFramework");
-
-runTestSuite(function (t) {
-    this.testSuccess = function () {
-        t.assertTrue(true);
-    };
-
-    this.testFailure = function () {
-        t.assertThrow("Expected to be true, but got false", function () {
-            t.assertTrue(false);
-        });
-    };
-
-    this.testCustomFailureMessage = function () {
-        t.assertThrow("it is not true!", function () {
-            t.assertTrue(false, "it is not true!");
-        });
-    };
-
-    this.testCustomFailureMessage_withOtherMessage = function () {
-        t.assertThrow("should be true", function () {
-            t.assertTrue(false, "should be true");
-        });
-    };
-});
-</code></pre>
-
-<p>The only problem here is that we are relying on the untested <code>assertThrow</code> assertion here. Let&rsquo;s unit-test it.</p>
-
-<h2>Testing <code>assertThrow(expectedMessage, action)</code></h2>
-
-<p>Let&rsquo;s create a new test suite with first test when <code>assertThrow</code> succeeds:</p>
-
-<pre><code class="javascript">// test/AssertThrowTest.js
-var runTestSuite = require("../src/TestingFramework");
-
-runTestSuite(function (t) {
-    this.testSuccess = function () {
-        assertThrow("an error message", function () {
-            throw new Error("an error message");
-        });
-    };
-});
-</code></pre>
-
-<p>And the test should pass:</p>
-
-<pre><code>/usr/local/bin/node AssertThrowTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>The code can be broken without test failure by not using <code>expectedMessage</code> parameter:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-assertThrow: function (expectedMessage, action) {
-    try {
-        action();
-    } catch (error) {
-        this.assertEqual("an error message", error.message);
-        // ^ here 'expectedMessage' was changed to constant ^
-    }
-}
-</code></pre>
-
-<p>Let&rsquo;s triangulate the code to make sure <code>expectedMessage</code> is used correctly by adding a new test:</p>
-
-<pre><code class="javascript">// test/AssertThrowTest.js
-
-this.testSuccess_withDifferentExpectedMessage = function () {
-    t.assertThrow("a different error message", function () {
-        throw new Error("a different error message");
-    });
-};
-</code></pre>
-
-<p>And that test fails as expected:</p>
-
-<pre><code>/usr/local/bin/node AssertThrowTest.js
-/path/to/project/src/TestingFramework.js:10
-            throw new Error(errorMessage);
-            ^
-
-Error: Expected to equal an error message, but got: a different error message
-
-Process finished with exit code 1
-</code></pre>
-
-<p>Undoing the breaking change (Mutation) will make the test pass:</p>
-
-<pre><code>/usr/local/bin/node AssertThrowTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>Next test is to make sure, that <code>assertThrow</code> is actually comparing actual and expected error messages correctly:</p>
-
-<pre><code class="javascript">// test/AssertThrowTest.js
-
-this.testFailure = function () {
-    t.assertThrow("Expected to equal an error message, but got: a different error message", function () {
-        t.assertThrow("an error message", function () {
-            throw new Error("a different error message");
-        });
-    });
-};
-</code></pre>
-
-<p>And it passes. The last test, that <code>assertThrow</code> needs is the case, when <code>action()</code> is not throwing any error. In that case <code>assertThrow</code> should fail:</p>
-
-<pre><code class="javascript">// test/AssertThrowTest.js
-
-this.testFailure_whenActionDoesNotThrow = function () {
-    t.assertThrow("Expected to throw an error, but nothing was thrown", function () {
-        t.assertThrow("an error message", function () {
-            // does nothing
-        });
-    });
-};
-</code></pre>
-
-<p>Oh, and that test is passing! We clearly don&rsquo;t have that functionality yet. We have to add another test without usage of outer <code>t.assertThrow</code> to make sure that we get a test failure:</p>
-
-<pre><code class="javascript">this.testThrows_whenActionDoesNotThrow = function () {
-    var hasThrown = false;
-
-    try {
-        t.assertThrow("an error message", function () {
-            // does nothing
-        });
-    } catch (error) {
-        hasThrown = true;
-    }
-
-    t.assertTrue(hasThrown, "it should have thrown");
-};
-</code></pre>
-
-<p>And if we run our tests we get the expected failure:</p>
-
-<pre><code>/usr/local/bin/node AssertThrowTest.js
-/path/to/project/src/TestingFramework.js:10
-            throw new Error(errorMessage);
-            ^
-
-Error: it should have thrown
-
-Process finished with exit code 1
-</code></pre>
-
-<p>We can fix that by verifying, that <code>catch</code> block is executed in the <code>assertThrow</code> function:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-assertThrow: function (expectedMessage, action) {
-    var hasThrown = false;  // &lt;- we initialize hasThrown here
-
-    try {
-        action();
-    } catch (error) {
-        hasThrown = true;   // &lt;- and we set it to true in the catch block
-        this.assertEqual(expectedMessage, error.message);
-    }
-
-    this.assertTrue(hasThrown);  // &lt;- and we check that it is true
-}
-</code></pre>
-
-<p>And now if we run the test suite, the original test that we were trying to write fails as expected:</p>
-
-<pre><code>/usr/local/bin/node AssertThrowTest.js
-/path/to/project/src/TestingFramework.js:10
-            throw new Error(errorMessage);
-            ^
-
-Error: Expected to equal Expected to throw an error, but nothing was thrown, but got: Expected to be true, but got false
-
-Process finished with exit code 1
-</code></pre>
-
-<p>Now we need to fix the custom message provided to <code>assertTrue</code> call inside of <code>assertThrow</code>:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-// inside of assertThrow:
-this.assertTrue(hasThrown, "Expected to throw an error, but nothing was thrown");
-</code></pre>
-
-<p>And the test pass:</p>
-
-<pre><code>/usr/local/bin/node AssertThrowTest.js
-
-Process finished with exit code 0
-</code></pre>
-
-<p>Great, I think we are done with testing the <code>assertThrow</code> function. Let&rsquo;s see the whole <code>AssertThrowTest</code> suite:</p>
-
-<pre><code class="javascript">// test/AssertThrowTest.js
-var runTestSuite = require("../src/TestingFramework");
-
-runTestSuite(function (t) {
-    this.testSuccess = function () {
-        t.assertThrow("an error message", function () {
-            throw new Error("an error message");
-        });
-    };
-
-    this.testSuccess_withDifferentExpectedMessage = function () {
-        t.assertThrow("a different error message", function () {
-            throw new Error("a different error message");
-        });
-    };
-
-    this.testFailure = function () {
-        t.assertThrow("Expected to equal an error message, but got: a different error message", function () {
-            t.assertThrow("an error message", function () {
-                throw new Error("a different error message");
-            });
-        });
-    };
-
-    this.testFailure_whenActionDoesNotThrow = function () {
-        t.assertThrow("Expected to throw an error, but nothing was thrown", function () {
-            t.assertThrow("an error message", function () {
-                // does nothing
-            });
-        });
-    };
-
-    this.testThrows_whenActionDoesNotThrow = function () {
-        var hasThrown = false;
-
-        try {
-            t.assertThrow("an error message", function () {
-                // does nothing
-            });
-        } catch (error) {
-            hasThrown = true;
-        }
-
-        t.assertTrue(hasThrown, "it should have thrown");
-    };
-});
-</code></pre>
-
-<p>Last one for today is <code>assertEqual</code>:</p>
-
-<h2>Testing <code>assertEqual(expected, actual)</code></h2>
-
-<p>Let&rsquo;s create a test suite with the first test, when <code>assertEqual</code> succeeds:</p>
-
-<pre><code class="javascript">// test/AssertEqualTest.js
-var runTestSuite = require("../src/TestingFramework");
-
-runTestSuite(function (t) {
-    this.testSuccess = function () {
-        t.assertEqual(42, 42);
-    };
-});
-</code></pre>
-
-<p>This test passes, and it can be broken without test failure by always comparing to <code>42</code>:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-assertEqual: function (expected, actual) {
-    this.assertTrue(
-        42 == actual,   // &lt;- here 'expected' is replaced with constant
-        "Expected to equal " + expected + ", but got: " + actual
-    );
-},
-</code></pre>
-
-<p>Triangulation to fix that:</p>
-
-<pre><code class="javascript">// test
-this.testSuccess_whenExpectedIsDifferent = function () {
-    t.assertEqual(29, 29);
-};
-
-// Error: Expected to equal 29, but got: 29
-
-// fix implementation:
-expected == actual,   // &lt;- here 'expected' is restored
-
-// and the test passes
-</code></pre>
-
-<p>Next mutation that does not break any tests looks this way:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-assertEqual: function (expected, actual) {
-    this.assertTrue(
-        expected == actual,
-        // "Expected to equal " + expected + ", but got: " + actual
-        "oops"    // &lt;- replace error message
-    );
-},
-</code></pre>
-
-<p>Let&rsquo;s add the test to protect from this kind of mutation:</p>
-
-<pre><code class="javascript">this.testFailure = function () {
-    t.assertThrow("Expected to equal 42, but got: 29", function () {
-        t.assertEqual(42, 29);
-    });
-};
-</code></pre>
-
-<p>This fails with <code>Error: oops</code>, because <code>assertThrow</code> uses <code>assertEqual</code>. Stack trace shows, that the failure is happening here:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js in assertThrow
-this.assertEqual(expectedMessage, error.message);
-</code></pre>
-
-<p>So that is the expected failure. We can fix it by always providing the message <code>"Expected to equal 42, but got: 29"</code>:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js in assertions
-assertEqual: function (expected, actual) {
-    this.assertTrue(
-        expected == actual,
-        "Expected to equal 42, but got: 29"
-    // ^ here the exact constant is used ^
-    );
-},
-</code></pre>
-
-<p>This needs some more triangulation:</p>
-
-<pre><code class="javascript">this.testFailure_withDifferentExpectedAndActual = function () {
-    t.assertThrow("Expected to equal 94, but got: 1027", function () {
-        t.assertEqual(94, 1027);
-    });
-};
-
-// Error: Expected to equal 42, but got: 29
-
-// fix:
-this.assertTrue(
-    expected == actual,
-    "Expected to equal " + expected + ", but got: " + actual
-);
-</code></pre>
-
-<p>I think we are done now with testing the <code>assertEqual</code> function. The <code>AssertEqualTest</code> suite is looking like that now:</p>
-
-<pre><code class="javascript">// test/AssertEqualTest.js
-var runTestSuite = require("../src/TestingFramework");
-
-runTestSuite(function (t) {
-    this.testSuccess = function () {
-        t.assertEqual(42, 42);
-    };
-
-    this.testSuccess_whenExpectedIsDifferent = function () {
-        t.assertEqual(29, 29);
-    };
-
-    this.testFailure = function () {
-        t.assertThrow("Expected to equal 42, but got: 29", function () {
-            t.assertEqual(42, 29);
-        });
-    };
-
-    this.testFailure_withDifferentExpectedAndActual = function () {
-        t.assertThrow("Expected to equal 94, but got: 1027", function () {
-            t.assertEqual(94, 1027);
-        });
-    };
-});
-</code></pre>
-
-<h2>Final <code>assertions</code> object after all the testing</h2>
-
-<pre><code class="javascript">// src/TestingFramework.js
-var assertions = {
-    assertTrue: function (condition, message) {
-        var errorMessage = "Expected to be true, but got false";
-
-        if (message) {
-            errorMessage = message;
-        }
-
-        if (!condition) {
-            throw new Error(errorMessage);
-        }
-    },
-
-    assertEqual: function (expected, actual) {
-        this.assertTrue(
-            expected == actual,
-            "Expected to equal " + expected + ", but got: " + actual
-        );
-    },
-
-    assertThrow: function (expectedMessage, action) {
-        var hasThrown = false;
-
-        try {
-            action();
-        } catch (error) {
-            hasThrown = true;
-            this.assertEqual(expectedMessage, error.message);
-        }
-
-        this.assertTrue(
-            hasThrown,
-            "Expected to throw an error, but nothing was thrown"
-        );
-    }
-};
-</code></pre>
-
-<h2>Bottom Line</h2>
-
-<p>Congratulations! We have completely unit-tested our assertions <code>assertTrue</code> and <code>assertEqual</code>. This resulted in natural emergence of the new assertion - <code>assertThrow</code>. We have unit-tested it too!</p>
-
-<p>Additionally, we have practiced usage of Mutational Testing and Triangulation Technique to detect missing test cases and derive them from the code. Also, we have slightly touched the Parallel Change refactoring technique - we will see more of that in the future in these series.</p>
-
-<p>The code is available on Github: <a href="https://github.com/waterlink/BuildYourOwnTestingFrameworkPart2">https://github.com/waterlink/BuildYourOwnTestingFrameworkPart2</a></p>
-
-<p>Now that we have unit-tested some basic assertions, we should unit-test our testing framework test runner: <code>runTestSuite</code> function. This will be covered in next series of &ldquo;Build Your Own Testing Framework&rdquo;. Stay tuned!</p>
-
-<h2>Thanks!</h2>
-
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
 
 <p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
 ]]></content>

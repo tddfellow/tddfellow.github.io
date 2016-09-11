@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ruby | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-08-31T16:26:54+02:00</updated>
+  <updated>2016-09-11T22:18:02+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,566 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/"/>
+    <updated>2016-08-31T02:35:32+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue</id>
+    <content type="html"><![CDATA[<p>Welcome back to the &ldquo;Getting Stuck While Doing TDD&rdquo; series. Today we are going to learn the Golden Rule of TDD and how to not get stuck while doing TDD.</p>
+
+<h2>TL;DR</h2>
+
+<ul>
+<li>&ldquo;As tests get more specific, production code gets more generic&rdquo;.</li>
+<li><code>RED</code> is as important as other in Red-Green-Refactor cycle. If next test does not fail, it is either: already implemented, or has to wait until a later time (until it will fail).</li>
+<li><p>At its core the Triangulation Technique has the following idea:</p>
+
+<p>After implementing one business rule (with Red-Green-Refactor) make sure to find all &ldquo;weirdnesses&rdquo; or non-generalities in the production code and one-by-one eliminate them by writing a test, that proves such non-generality, and then making it pass while removing non-generality. This is the third cycle of TDD - Mini Cycle.</p></li>
+</ul>
+
+
+<p>This is a series of articles:</p>
+
+<ol>
+<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
+<li>Part 3: Triangulation to the Rescue! (reading this)</li>
+</ol>
+
+
+<p>Shall we get started?</p>
+
+<h2>Specific/Generic Rule of TDD</h2>
+
+<blockquote><p>As tests get more specific, production code gets more generic.</p></blockquote>
+
+<p>When making the next failing test pass, our production code should also pass a whole class of similar tests. Best shown in the very simple example. The task at hand is to write the function <code>sum(a, b)</code> that will add two numbers. Let&rsquo;s see us a violation of the Specific/Generic rule:</p>
+
+<pre><code class="ruby">expect(sum(2, 2)).to eq(4)
+# =&gt; NoMethodError: undefined method `sum'
+
+def sum(a, b); end
+# =&gt; expected: 4, got: nil
+
+def sum(a, b)
+  4
+end
+# =&gt; PASS
+
+expect(sum(2, 3)).to eq(5)
+# =&gt; expected: 5, got: 4
+
+def sum(a, b)
+  if b == 2
+    4
+  else
+    5
+  end
+end
+# =&gt; PASS
+</code></pre>
+
+<p>The production code to make this last test pass is as specific as the failing test now. The test of the same class (where we change the value of the <code>b</code> parameter) will fail for it:</p>
+
+<pre><code class="ruby">expect(sum(2, 42)).to eq(44)
+# =&gt; expected: 44, got: 5
+</code></pre>
+
+<p>To follow the Specific/Generic rule we ought to make <code>4</code> into <code>2 + b</code> like that:</p>
+
+<pre><code class="ruby">def sum(a, b)
+  2 + b
+end
+# =&gt; PASS
+</code></pre>
+
+<p>This way, when we change <code>b</code> to any value it will still pass the test, aside from the fact, that we didn&rsquo;t do anything about <code>a</code>. This is because we still don&rsquo;t have any test showing us, that parameter <code>a</code> is important, like the following one:</p>
+
+<pre><code class="ruby">expect(sum(4, 7)).to eq(11)
+# =&gt; expected: 11, got: 9
+</code></pre>
+
+<p>Again we can make it pass in a very specific fashion by introducing specific <code>if</code> statement, or we could do it to pass the whole class of such tests:</p>
+
+<pre><code class="ruby">def sum(a, b)
+  a + b
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Have you noticed, that from the test suite side we had to &ldquo;prove&rdquo; that some knowledge in the system is important and had to be used? This technique is called Triangulation.</p>
+
+<h2>Triangulation Technique</h2>
+
+<p>In the essence, Triangulation technique has a very simple idea at its core:</p>
+
+<ol>
+<li>Change certain important* knowledge in the system.</li>
+<li>Assert that the production code behaves in an accordingly expected manner.</li>
+</ol>
+
+
+<p><em>* - important from the perspective of the system or unit under the test</em></p>
+
+<h2>Red-Green-Refactor has to have all stages</h2>
+
+<p>One Red-Green-Refactor cycle really has to have all stages in it. And I&rsquo;m not ranting right now about &ldquo;Refactor&rdquo; stage, that is a given. Rather, I insist on the &ldquo;Red&rdquo; stage - in TDD, when we write a new test, it has to fail. Writing tests that do not fail is another way to get ourselves stuck while doing TDD. One could ask: &ldquo;If I can&rsquo;t write this test because it does not fail, what should I do about the requirement it represents?&rdquo;, and the answer is rather simple - either this requirement is already implemented and tested by other tests, or we still need this test and we will get back to it later when it actually will fail.</p>
+
+<p>As we can remember, in the first part of these series, we were going through an <code>OrderKindValidator</code> example, and we were writing multiple tests in a row, that were all expecting the same outcome and of course they didn&rsquo;t fail, because we had one line in our function that made them all pass. If we were to sprinkle some other tests, that do fail (like a test for a valid order kind), after making it pass, all of these tests will now be failing and therefore they are good candidates for our next test. Let&rsquo;s see it with our own eyes:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be empty").when_order_kind_is_absent
+# =&gt; expected InvalidOrderError with "Order kind can not be empty",
+# =&gt; got #&lt;NoMethodError:
+# =&gt;      undefined method `validate' for #&lt;OrderKindValidator:0x000000020335c0&gt;&gt;
+
+class OrderKindValidator
+  def validate(order)
+  end
+end
+# =&gt; expected InvalidOrderError with "Order kind can not be empty"
+# =&gt; but nothing was raised
+
+def validate(order)
+  raise InvalidOrderError, "Order kind can not be empty"
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Now is the point, where we have to choose our next test, and last time we have chosen the test with the same outcome and it did not go so well. Let&rsquo;s choose a test with different outcome, e.g.: when valid order kind is provided:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is(%w(private))
+# =&gt; expected no Exception,
+# =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;
+</code></pre>
+
+<p>Now, we have 2 options, to either check for <code>order[:kind] == %w(private)</code> or to check for <code>order[:kind]</code> being absent. It does not matter what we choose at this point, so let&rsquo;s go with the first one:</p>
+
+<pre><code class="ruby">def validate(order)
+  if order[:kind] == %w(private)
+    return
+  end
+
+  raise InvalidOrderError, "Order kind can not be empty"
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Now let&rsquo;s apply Triangulation technique. We should always ask ourselves the question: &ldquo;What is weird about this code?&rdquo; and &ldquo;What failing test should I write to point out this weirdness?&rdquo;. First weirdness we can spot is that the validator currently accepts only one order kind - <code>private</code>. According to our requirements it should also accept <code>corporate</code>:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is(%w(corporate))
+# =&gt; expected no Exception,
+# =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;
+
+def validate(order)
+  kinds = order[:kind]
+  if kinds == %w(private) || kinds == %w(corporate)
+    # ...
+end
+# =&gt; PASS
+</code></pre>
+
+<p>We also know, that our system should handle duplicate entries in <code>order[:kind]</code>:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is(%w(private private))
+# =&gt; expected no Exception,
+# =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;
+
+def validate(order)
+  kinds = order[:kind]
+  if kinds.include?("private") || kinds == %w(corporate)
+    # ...
+end
+# =&gt; expected InvalidOrderError with "Order kind can not be empty",
+# =&gt; got #&lt;NoMethodError: undefined method `include?'
+# =&gt; for nil:NilClass&gt;
+</code></pre>
+
+<p>Wow! We, of course, can check for <code>kinds</code> to not be <code>nil</code>, but I would rather listen to this test failure and put a check for <code>kinds</code> being absent (and this makes for our second check, that we could have chosen from):</p>
+
+<pre><code class="ruby">def validate(order)
+  kinds = order[:kind]
+
+  if kinds.nil?
+    raise InvalidOrderError, "Order kind can not be empty"
+  end
+
+  if kinds.include?("private") || kinds == %w(corporate)
+    return
+  end
+
+  raise InvalidOrderError, "Order kind can not be empty"
+end
+# =&gt; PASS
+</code></pre>
+
+<p>So this passes all our tests. It may look weird, and this is exactly the pointer for us which test to write next to prove, that this weirdness is incorrect:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+  .when_order_kind_is(%w(invalid))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind can be one of: 'private', 'corporate', 'bundle'",
+# =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;
+
+def validate(order)
+  # ...
+
+  raise InvalidOrderError,
+    "Order kind can be one of: 'private', 'corporate', 'bundle'"
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Production code starts looking not so clean and I think it is time to give things proper names:</p>
+
+<pre><code class="ruby">class OrderKindValidator
+  def validate(order)
+    kinds = order[:kind]
+
+    if empty?(kinds)
+      fail_with("Order kind can not be empty")
+    end
+
+    unless valid?(kinds)
+      fail_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+    end
+  end
+
+  def valid?(kinds)
+    kinds.include?("private") || kinds == %w(corporate)
+  end
+
+  def empty?(kinds)
+    kinds.nil?
+  end
+
+  def fail_with(message)
+    raise InvalidOrderError, message
+  end
+end
+</code></pre>
+
+<p>There is only one weirdness, that is left for triangulation in current production code, before we can move on to the next requirement - <code>private</code> can be duplicated while <code>corporate</code> can not:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is(%w(corporate corporate))
+# =&gt; expected no Exception,
+# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
+
+def valid?(kinds)
+  kinds.include?("private") ||
+      kinds.include?("corporate")
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Great, now we can safely go back to our empty order kind edge cases:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be empty").when_order_kind_is([])
+# =&gt; expected InvalidOrderError with "Order kind can not be empty",
+# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
+
+def empty?(kinds)
+  kinds.nil? ||
+      kinds.empty?
+end
+# =&gt; PASS
+
+it_fails_with("Order kind can not be empty").when_order_kind_is([nil])
+# =&gt; expected InvalidOrderError with "Order kind can not be empty",
+# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
+
+def empty?(kinds)
+  kinds.nil? ||
+      kinds.empty? ||
+      kinds[0].nil?
+end
+# =&gt; PASS
+
+it_fails_with("Order kind can not be empty").when_order_kind_is([""])
+# =&gt; expected InvalidOrderError with "Order kind can not be empty",
+# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
+
+def empty?(kinds)
+  kinds.nil? ||
+      kinds.empty? ||
+      kinds[0].nil? ||
+      kinds[0].empty?
+end
+# =&gt; PASS
+</code></pre>
+
+<p>And it is a good opportunity to eliminate some duplication:</p>
+
+<pre><code class="ruby">def empty?(kinds)
+  empty_value?(kinds) ||
+      empty_value?(kinds[0])
+end
+
+def empty_value?(value)
+  value.nil? || value.empty?
+end
+</code></pre>
+
+<p>Now, it is a good time to triangulate, because we have a weirdness in our code: <code>kinds[0]</code>. To prove that this is too specific we can write another test:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be empty").when_order_kind_is(["private", ""])
+# =&gt; expected InvalidOrderError with "Order kind can not be empty"
+# =&gt; but nothing was raised
+
+def empty?(kinds)
+  empty_value?(kinds) ||
+      kinds.any? { |kind| empty_value?(kind) }
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Notice, how every single test that we have written was failing and how easy it was to make it pass. This suggests that we are probably moving in the right direction. Let&rsquo;s test our next requirement - we can combine <code>private</code> and <code>bundle</code>:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is(%w(private bundle))
+# =&gt; PASS
+</code></pre>
+
+<p>Wait a minute. This is really bad. We should have a failing test here. This happened because we are checking only for the inclusion of <code>private</code> or <code>corporate</code> and we do not care about anything else in the <code>order[:kind]</code> array. We have to discard this test and try to go with failing version of the same business rule - invalid order kind can not be combined with <code>private</code>:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+  .when_order_kind_is(%w(private invalid))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind can be one of: 'private', 'corporate', 'bundle'"
+# =&gt; but nothing was raised
+
+def valid?(kinds)
+  return false if kinds[1] == "invalid"
+
+  kinds.include?("private") ||
+      kinds.include?("corporate")
+end
+# =&gt; PASS
+</code></pre>
+
+<p>While this works, it leads to two other weirdnesses: <code>kinds[1]</code> and <code>"invalid"</code>, let&rsquo;s the latter first:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+  .when_order_kind_is(%w(private another_invalid))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind can be one of: 'private', 'corporate', 'bundle'"
+# =&gt; but nothing was raised
+
+def valid?(kinds)
+  return false if kinds[1] &amp;&amp; kinds[1] != "private"
+
+  kinds.include?("private") ||
+      kinds.include?("corporate")
+end
+# =&gt; expected no Exception,
+# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
+# .. and more failures ..
+</code></pre>
+
+<p>Other tests fail now, from them it is possible to see, that second kind should be either <code>private</code> or <code>corporate</code>:</p>
+
+<pre><code class="ruby">def valid?(kinds)
+  return false if kinds[1] &amp;&amp;
+      kinds[1] != "private" &amp;&amp;
+      kinds[1] != "corporate"
+
+  kinds.include?("private") ||
+      kinds.include?("corporate")
+end
+# =&gt; PASS
+</code></pre>
+
+<p>This looks rather clunky, we should make it a bit cleaner:</p>
+
+<pre><code class="ruby">ALLOWED_ORDER_KINDS = %w(private corporate)
+
+def valid?(kinds)
+  return false if kinds[1] &amp;&amp;
+      !ALLOWED_ORDER_KINDS.include?(kinds[1])
+
+  kinds.include?("private") ||
+      kinds.include?("corporate")
+end
+</code></pre>
+
+<p>Let&rsquo;s eliminate the other weirdness - <code>kinds[1]</code>, it probably should verify all kinds in the array:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
+  .when_order_kind_is(%w(invalid private))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind can be one of: 'private', 'corporate', 'bundle'"
+# =&gt; but nothing was raised
+
+def valid?(kinds)
+  return false if kinds.any? { |kind|
+    !ALLOWED_ORDER_KINDS.include?(kind)
+  }
+
+  kinds.include?("private") ||
+      kinds.include?("corporate")
+end
+# =&gt; PASS
+</code></pre>
+
+<p>And now this can be greatly simplified by inverting the boolean logic:</p>
+
+<pre><code class="ruby">def valid?(kinds)
+  kinds.all? { |kind|
+    ALLOWED_ORDER_KINDS.include?(kind)
+  }
+end
+</code></pre>
+
+<p>Now that we have dealt with all weirdnesses in our production code, let&rsquo;s get back to our requirement:</p>
+
+<pre><code class="ruby">it_does_not_fail.when_order_kind_is(%w(private bundle))
+# =&gt; expected no Exception,
+# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
+</code></pre>
+
+<p>Wow! Now it fails exactly as it should. This means that it is now the right time for this test! Let&rsquo;s make it pass by adding <code>bundle</code> to the list of allowed order kinds:</p>
+
+<pre><code class="ruby">ALLOWED_ORDER_KINDS = %w(private corporate bundle)
+# =&gt; PASS
+</code></pre>
+
+<p>Nice! Our next requirement is about <code>bundle</code> not being used on its own, i.e.: either <code>private</code> or <code>corporate</code> is required:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind should be 'private' or 'corporate'")
+  .when_order_kind_is(%w(bundle))
+# =&gt; expected InvalidOrderError with "Order kind should be 'private' or 'corporate'"
+# =&gt; but nothing was raised
+
+def validate(order)
+  # ...
+
+  if kinds == %w(bundle)
+    fail_with("Order kind should be 'private' or 'corporate'")
+  end
+end
+# =&gt; PASS
+</code></pre>
+
+<p>And this is good enough, because that is really the only case, when this can happen until the list of allowed order kinds is extended by future business requirements. We should at least give this condition a proper name:</p>
+
+<pre><code class="ruby">unless has_required?(kinds)
+  fail_with("Order kind should be 'private' or 'corporate'")
+end
+
+# ...
+
+def has_required?(kinds)
+  kinds != %w(bundle)
+end
+</code></pre>
+
+<p>Except, that we could provide duplicated <code>bundle</code>:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind should be 'private' or 'corporate'")
+  .when_order_kind_is(%w(bundle bundle))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind should be 'private' or 'corporate'"
+# =&gt; but nothing was raised
+
+def has_required?(kinds)
+  # Easy to fix if we de-duplicate it with #uniq:
+  kinds.uniq != %w(bundle)
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Now it is time to move on to the final requirement about conflicts between <code>private</code> and <code>corporate</code>:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
+  .when_order_kind_is(%w(private corporate))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind can not be 'private' and 'corporate' at the same time"
+# =&gt; but nothing was raised
+
+def validate(order)
+  # ...
+
+  if kinds == %w(private corporate)
+    fail_with("Order kind can not be 'private' and 'corporate' at the same time")
+  end
+end
+# =&gt; PASS
+</code></pre>
+
+<p>Of course, <code>kinds == %w(private corporate)</code> can be considered too specific for production code, we should triangulate it:</p>
+
+<pre><code class="ruby">it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
+  .when_order_kind_is(%w(corporate private))
+# =&gt; expected InvalidOrderError
+# =&gt; with "Order kind can not be 'private' and 'corporate' at the same time"
+# =&gt; but nothing was raised
+
+if kinds.include?("private") &amp;&amp;
+    kinds.include?("corporate")
+  fail_with("Order kind can not be 'private' and 'corporate' at the same time")
+end
+# =&gt; PASS
+</code></pre>
+
+<p>And, finally, let&rsquo;s give this condition a proper name:</p>
+
+<pre><code class="ruby">if has_conflicts?(kinds)
+  fail_with("Order kind can not be 'private' and 'corporate' at the same time")
+end
+
+# ...
+
+def has_conflicts?(kinds)
+  kinds.include?("private") &amp;&amp;
+    kinds.include?("corporate")
+end
+</code></pre>
+
+<p>I believe we are done now. Source for this example can be found in <a href="https://github.com/waterlink/order_kind_validator/pull/3">an open pull request here</a>.</p>
+
+<p>Let&rsquo;s recap how Triangulation technique worked for us here.</p>
+
+<h2>Triangulation Technique in Depth</h2>
+
+<p>The main goal of triangulation is to prove that the code is not general enough along some axis (class of tests) by writing a test and then making sure it passes. Effective application of the technique requires to prove and eliminate all such &ldquo;weirdnesses&rdquo; or non-generalities from the production code after each Red-Green-Refactor cycle for business requirements. This is, in fact, the 3rd cycle of Test-Driven-Development called Mini Cycle of TDD, it should be executed about every 10 minutes.</p>
+
+<p>Another observation is that following this technique we are introducing only one small piece of knowledge into our production code, for example:</p>
+
+<ul>
+<li>When writing a test for next business requirement, we are introducing the fact that we need an <code>if</code> statement with a certain body (in this example it was a <code>raise error</code> statement). Since we can not introduce the <code>if</code> statement without a condition we need to put some condition there and we put a very specific condition on purpose since we know that it is tested and it is simple.</li>
+<li>Next, we are proving that this condition is too specific by writing a test, and then making it pass with a more generic solution. This way we are introducing a tiny little bit more knowledge in our production code.</li>
+<li>We are repeating this iterative process until the production code is generic enough for the current specification (test suite). And we start over. This is the Mini Cycle of TDD.</li>
+</ul>
+
+
+<h2>Bottom Line</h2>
+
+<p>Today we have learned the Golden Rule of TDD - &ldquo;As tests get more specific, production code gets more generic&rdquo;, and we have learned the Triangulation Technique, that allows us to follow this rule in an incremental and confident way. Additionally, we have learned, that following Red-Green-Refactor strictly is important, and this includes even the <code>RED</code> stage of this cycle - when the test for business requirement does not fail, it is either: already implemented or it has to wait for later.</p>
+
+<p>This is a series of articles:</p>
+
+<ol>
+<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
+<li>Part 3: Triangulation to the Rescue! (reading this)</li>
+</ol>
+
+
+<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
+
+<ul>
+<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
+<li>Open-Closed Principle - changing behavior by adding new code,</li>
+<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, 4 Cycles of TDD, Test-Driven Development screencasts and so much more!</li>
+</ul>
+
+
+<h2>Thanks!</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through]]></title>
@@ -45,7 +605,7 @@
 <ol>
 <li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
 <li>Part 2: Buggy Code and Forcing Our Way Through (reading this)</li>
-<li>Part 3: Triangulation to the Rescue! (coming soon)</li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
 </ol>
 
 
@@ -310,6 +870,15 @@ end
 
 <p>Today we have seen how bad the results of getting stuck while doing TDD can be. In the next article of these series, we will explore Golden Rule of TDD and the technique called Triangulation, that allows us to incrementally test-drive code in a way, that it will always be conforming to the Golden Rule of TDD and therefore will never get us stuck. Stay tuned!</p>
 
+<p>This is a series of articles:</p>
+
+<ol>
+<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
+<li>Part 2: Buggy Code and Forcing Our Way Through (reading this)</li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
+</ol>
+
+
 <p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
 
 <ul>
@@ -352,7 +921,7 @@ end
 <ol>
 <li>Part 1: Example (reading this)</li>
 <li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
-<li>Part 3: Triangulation to the Rescue! (coming soon)</li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
 </ol>
 
 
@@ -687,6 +1256,15 @@ end
 
 <p>Buggy <code>if</code>-riddled code is what we&rsquo;ve got. We will see why in the next part of &ldquo;Getting Stuck While Doing TDD&rdquo; series. Stay tuned!</p>
 
+<p>This is a series of articles:</p>
+
+<ol>
+<li>Part 1: Example (reading this)</li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
+<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
+</ol>
+
+
 <p>Today we have implemented our not-so-complex problem at hand while following 3 rules of TDD. The result was not of the best quality and we will take a look why in further articles of these series. You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
 
 <ul>
@@ -795,115 +1373,6 @@ platforms:
 <p>After making your <code>.kitchen.yml</code> look like this, just use <code>kitchen</code> as you would normally would.</p>
 
 <p>Happy coding! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Using contracts.ruby With RSpec]]></title>
-    <link href="http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
-    <updated>2015-04-09T21:51:53+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
-    <content type="html"><![CDATA[<h2>Issues with RSpec mocks</h2>
-
-<p>Lets start from example:</p>
-
-<pre><code class="ruby">class Example
-  include Contracts
-
-  Contract Something =&gt; Any
-  def do_something(something)
-    something.call
-  end
-end
-</code></pre>
-
-<p>And its corresponding spec:</p>
-
-<pre><code class="ruby">require "rspec"
-
-RSpec.describe Example do
-  let(:example) { Example.new }
-  let(:something) { instance_double(Something, call: :hello) }
-
-  it "works" do
-    expect(example.do_something(something))
-      .to eq(:hello)
-  end
-end
-</code></pre>
-
-<p>Pretty straightforward unit test for <code>Example#do_something</code>. But if you run <code>rspec</code> you will get:</p>
-
-<pre><code>ContractError: Contract violation for argument 1 of 1:
-    Expected: Something,
-    Actual: #&lt;RSpec::Mocks::InstanceVerifyingDouble:0xa401a0 @name="Something (instance)"&gt;
-    Value guarded in: Example::do_something
-    With Contract: Something =&gt; Any
-</code></pre>
-
-<p>It happens because class contracts use <code>#is_a?</code> to determine if contract matches or not. Simply: <code>something.is_a?(Something)</code> is required to be <code>true</code>.</p>
-
-<p>But if we try to do it with <code>instance_double</code>, that is what we get:</p>
-
-<pre><code class="ruby">require "rspec/mocks/standalone"
-something = instance_double(Something)
-something.is_a?(Something)                              #=&gt; false
-something.is_a?(RSpec::Mocks::InstanceVerifyingDouble)  #=&gt; true
-</code></pre>
-
-<h2>Solution to problem</h2>
-
-<p>Pretty straightforward one:</p>
-
-<pre><code class="ruby">let(:something) { instance_double(Something, call: :hello) }
-
-before do
-  allow(something)
-    .to receive(:is_a?)
-    .with(Something)
-    .and_return(true)
-end
-</code></pre>
-
-<p>But this can be boring to type it each time you need an <code>instance_double</code> while working with <code>contracts</code>. So here you go:</p>
-
-<pre><code class="ruby"># Gemfile
-group :test do
-  gem "contracts-rspec"
-end
-</code></pre>
-
-<p>Run <code>bundle</code> to install <code>contracts-rspec</code> gem.</p>
-
-<pre><code class="ruby"># your spec file
-require "contracts/rspec"
-
-RSpec.describe Example do
-  include Contracts::RSpec::Mocks
-
-  # .. write code as in first example ..
-end
-</code></pre>
-
-<p>Now you are covered. Inclusion of <code>Contracts::RSpec::Mocks</code> slightly alters behavior of <code>instance_double</code>. Now it automatically stubs out <code>#is_a?(Klass)</code> to return <code>true</code> on the class it was created from. In our case <code>Something</code>. This happens here: <a href="https://github.com/waterlink/contracts-rspec/blob/master/lib/contracts/rspec/mocks.rb#L4-L8">https://github.com/waterlink/contracts-rspec/blob/master/lib/contracts/rspec/mocks.rb#L4-L8</a></p>
-
-<p>You can include it only in contexts you need, or you can do it globally from <code>spec_helper</code> like you do usually include spec helpers.</p>
-
-<h2>Links</h2>
-
-<ul>
-<li>Gem: <a href="https://github.com/waterlink/contracts-rspec">https://github.com/waterlink/contracts-rspec</a></li>
-<li>contracts.ruby: <a href="https://github.com/egonSchiele/contracts.ruby">https://github.com/egonSchiele/contracts.ruby</a></li>
-<li>contracts.ruby chat: <a href="https://gitter.im/egonSchiele/contracts.ruby">https://gitter.im/egonSchiele/contracts.ruby</a></li>
-<li>Born from here: <a href="https://github.com/egonSchiele/contracts.ruby/issues/14">egonSchiele/contracts.ruby#14</a></li>
-<li><a href="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></li>
-<li><a href="https://egonschiele.github.io/contracts.ruby/">Great contracts.ruby tutorial</a></li>
-</ul>
-
-
-<h2>Thanks!</h2>
-
-<p>If you have any questions, suggestions or just want to chat about how contracts.ruby is awesome, you can ping me on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues using <a href="https://github.com/egonSchiele/contracts.ruby">contracts.ruby</a> or <a href="https://github.com/waterlink/contracts-rspec">contracts-rspec</a> you can create issues on corresponding github project. Pull requests are welcome!</p>
 ]]></content>
   </entry>
   
