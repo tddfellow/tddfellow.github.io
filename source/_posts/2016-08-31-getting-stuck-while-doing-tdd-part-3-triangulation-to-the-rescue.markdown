@@ -112,7 +112,8 @@ One Red-Green-Refactor cycle really has to have all stages in it. And I'm not ra
 As we can remember, in the first part of these series, we were going through an `OrderKindValidator` example, and we were writing multiple tests in a row, that were all expecting the same outcome and of course they didn't fail, because we had one line in our function that made them all pass. If we were to sprinkle some other tests, that do fail (like a test for a valid order kind), after making it pass, all of these tests will now be failing and therefore they are good candidates for our next test. Let's see it with our own eyes:
 
 ```ruby
-it_fails_with("Order kind can not be empty").when_order_kind_is_absent
+it_fails_with("Order kind can not be empty")
+  .when_order_kind_is_absent
 # => expected InvalidOrderError with "Order kind can not be empty",
 # => got #<NoMethodError:
 # =>      undefined method `validate' for #<OrderKindValidator:0x000000020335c0>>
@@ -267,7 +268,8 @@ end
 Great, now we can safely go back to our empty order kind edge cases:
 
 ```ruby
-it_fails_with("Order kind can not be empty").when_order_kind_is([])
+it_fails_with("Order kind can not be empty")
+  .when_order_kind_is([])
 # => expected InvalidOrderError with "Order kind can not be empty",
 # => got #<InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'>
 
@@ -277,7 +279,8 @@ def empty?(kinds)
 end
 # => PASS
 
-it_fails_with("Order kind can not be empty").when_order_kind_is([nil])
+it_fails_with("Order kind can not be empty")
+  .when_order_kind_is([nil])
 # => expected InvalidOrderError with "Order kind can not be empty",
 # => got #<InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'>
 
@@ -288,7 +291,8 @@ def empty?(kinds)
 end
 # => PASS
 
-it_fails_with("Order kind can not be empty").when_order_kind_is([""])
+it_fails_with("Order kind can not be empty")
+  .when_order_kind_is([""])
 # => expected InvalidOrderError with "Order kind can not be empty",
 # => got #<InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'>
 
@@ -317,7 +321,8 @@ end
 Now, it is a good time to triangulate, because we have a weirdness in our code: `kinds[0]`. To prove that this is too specific we can write another test:
 
 ```ruby
-it_fails_with("Order kind can not be empty").when_order_kind_is(["private", ""])
+it_fails_with("Order kind can not be empty")
+  .when_order_kind_is(["private", ""])
 # => expected InvalidOrderError with "Order kind can not be empty"
 # => but nothing was raised
 
