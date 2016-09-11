@@ -4,7 +4,7 @@
   <title><![CDATA[That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-11T22:25:04+02:00</updated>
+  <updated>2016-09-11T22:25:10+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -201,7 +201,9 @@
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private)</span><span class="p">)</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private)</span><span class="p">)</span>
 </span><span class='line'><span class="c1"># =&gt; expected no Exception,</span>
 </span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
@@ -240,7 +242,9 @@
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(corporate)</span><span class="p">)</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(corporate)</span><span class="p">)</span>
 </span><span class='line'><span class="c1"># =&gt; expected no Exception,</span>
 </span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;</span>
 </span><span class='line'>
@@ -267,7 +271,9 @@
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private private)</span><span class="p">)</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private private)</span><span class="p">)</span>
 </span><span class='line'><span class="c1"># =&gt; expected no Exception,</span>
 </span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;</span>
 </span><span class='line'>
@@ -412,7 +418,9 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(corporate corporate)</span><span class="p">)</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(corporate corporate)</span><span class="p">)</span>
 </span><span class='line'><span class="c1"># =&gt; expected no Exception,</span>
 </span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&gt;</span>
 </span><span class='line'>
@@ -549,7 +557,9 @@
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private bundle)</span><span class="p">)</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private bundle)</span><span class="p">)</span>
 </span><span class='line'><span class="c1"># =&gt; PASS</span>
 </span></code></pre></td></tr></table></div></figure>
 
@@ -721,7 +731,9 @@
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private bundle)</span><span class="p">)</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="sx">%w(private bundle)</span><span class="p">)</span>
 </span><span class='line'><span class="c1"># =&gt; expected no Exception,</span>
 </span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
