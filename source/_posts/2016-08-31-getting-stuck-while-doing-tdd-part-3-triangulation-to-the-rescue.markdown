@@ -134,7 +134,8 @@ end
 Now is the point, where we have to choose our next test, and last time we have chosen the test with the same outcome and it did not go so well. Let's choose a test with different outcome, e.g.: when valid order kind is provided:
 
 ```ruby
-it_does_not_fail.when_order_kind_is(%w(private))
+it_does_not_fail
+  .when_order_kind_is(%w(private))
 # => expected no Exception,
 # => got #<InvalidOrderError: Order kind can not be empty>
 ```
@@ -155,7 +156,8 @@ end
 Now let's apply Triangulation technique. We should always ask ourselves the question: "What is weird about this code?" and "What failing test should I write to point out this weirdness?". First weirdness we can spot is that the validator currently accepts only one order kind - `private`. According to our requirements it should also accept `corporate`:
 
 ```ruby
-it_does_not_fail.when_order_kind_is(%w(corporate))
+it_does_not_fail
+  .when_order_kind_is(%w(corporate))
 # => expected no Exception,
 # => got #<InvalidOrderError: Order kind can not be empty>
 
@@ -170,7 +172,8 @@ end
 We also know, that our system should handle duplicate entries in `order[:kind]`:
 
 ```ruby
-it_does_not_fail.when_order_kind_is(%w(private private))
+it_does_not_fail
+  .when_order_kind_is(%w(private private))
 # => expected no Exception,
 # => got #<InvalidOrderError: Order kind can not be empty>
 
@@ -254,7 +257,8 @@ end
 There is only one weirdness, that is left for triangulation in current production code, before we can move on to the next requirement - `private` can be duplicated while `corporate` can not:
 
 ```ruby
-it_does_not_fail.when_order_kind_is(%w(corporate corporate))
+it_does_not_fail
+  .when_order_kind_is(%w(corporate corporate))
 # => expected no Exception,
 # => got #<InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'>
 
@@ -336,7 +340,8 @@ end
 Notice, how every single test that we have written was failing and how easy it was to make it pass. This suggests that we are probably moving in the right direction. Let's test our next requirement - we can combine `private` and `bundle`:
 
 ```ruby
-it_does_not_fail.when_order_kind_is(%w(private bundle))
+it_does_not_fail
+  .when_order_kind_is(%w(private bundle))
 # => PASS
 ```
 
@@ -439,7 +444,8 @@ end
 Now that we have dealt with all weirdnesses in our production code, let's get back to our requirement:
 
 ```ruby
-it_does_not_fail.when_order_kind_is(%w(private bundle))
+it_does_not_fail
+  .when_order_kind_is(%w(private bundle))
 # => expected no Exception,
 # => got #<InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'>
 ```
