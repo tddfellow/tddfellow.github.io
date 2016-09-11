@@ -33,7 +33,7 @@ This is a series of articles:
 
 1. [Part 1: Example](/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/)
 2. Part 2: Buggy Code and Forcing Our Way Through (reading this)
-3. Part 3: Triangulation to the Rescue! (coming soon)
+3. [Part 3: Triangulation to the Rescue!](/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/)
 
 ## Buggy if-riddled code
 
@@ -304,6 +304,12 @@ And to not get stuck is to do the opposite:
 ## Bottom Line
 
 Today we have seen how bad the results of getting stuck while doing TDD can be. In the next article of these series, we will explore Golden Rule of TDD and the technique called Triangulation, that allows us to incrementally test-drive code in a way, that it will always be conforming to the Golden Rule of TDD and therefore will never get us stuck. Stay tuned!
+
+This is a series of articles:
+
+1. [Part 1: Example](/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/)
+2. Part 2: Buggy Code and Forcing Our Way Through (reading this)
+3. [Part 3: Triangulation to the Rescue!](/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/)
 
 You would not want to miss next articles on this tech blog, we still have a lot to talk about:
 

@@ -28,7 +28,7 @@ This is a series of articles:
 
 1. Part 1: Example (reading this)
 2. [Part 2: Buggy Code and Forcing Our Way Through](/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/)
-3. Part 3: Triangulation to the Rescue! (coming soon)
+3. [Part 3: Triangulation to the Rescue!](/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/)
 
 ## "Getting Stuck" in TDD
 
@@ -380,6 +380,12 @@ Now it seems that we have implemented all the business rules (we have all tests 
 ## Bottom Line
 
 Buggy `if`-riddled code is what we've got. We will see why in the next part of "Getting Stuck While Doing TDD" series. Stay tuned!
+
+This is a series of articles:
+
+1. Part 1: Example (reading this)
+2. [Part 2: Buggy Code and Forcing Our Way Through](/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/)
+3. [Part 3: Triangulation to the Rescue!](/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/)
 
 Today we have implemented our not-so-complex problem at hand while following 3 rules of TDD. The result was not of the best quality and we will take a look why in further articles of these series. You would not want to miss next articles on this tech blog, we still have a lot to talk about:
 
