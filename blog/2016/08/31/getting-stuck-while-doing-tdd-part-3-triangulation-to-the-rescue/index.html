@@ -255,7 +255,9 @@
 <span class='line-number'>14</span>
 <span class='line-number'>15</span>
 <span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is_absent</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is_absent</span>
 </span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind can not be empty&quot;,</span>
 </span><span class='line'><span class="c1"># =&gt; got #&lt;NoMethodError:</span>
 </span><span class='line'><span class="c1"># =&gt;      undefined method `validate&#39; for #&lt;OrderKindValidator:0x000000020335c0&gt;&gt;</span>
@@ -536,7 +538,11 @@
 <span class='line-number'>30</span>
 <span class='line-number'>31</span>
 <span class='line-number'>32</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="o">[]</span><span class="p">)</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="o">[]</span><span class="p">)</span>
 </span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind can not be empty&quot;,</span>
 </span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&gt;</span>
 </span><span class='line'>
@@ -546,7 +552,8 @@
 </span><span class='line'><span class="k">end</span>
 </span><span class='line'><span class="c1"># =&gt; PASS</span>
 </span><span class='line'>
-</span><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="o">[</span><span class="kp">nil</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="o">[</span><span class="kp">nil</span><span class="o">]</span><span class="p">)</span>
 </span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind can not be empty&quot;,</span>
 </span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&gt;</span>
 </span><span class='line'>
@@ -557,7 +564,8 @@
 </span><span class='line'><span class="k">end</span>
 </span><span class='line'><span class="c1"># =&gt; PASS</span>
 </span><span class='line'>
-</span><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="o">[</span><span class="s2">&quot;&quot;</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="o">[</span><span class="s2">&quot;&quot;</span><span class="o">]</span><span class="p">)</span>
 </span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind can not be empty&quot;,</span>
 </span><span class='line'><span class="c1"># =&gt; got #&lt;InvalidOrderError: Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&gt;</span>
 </span><span class='line'>
@@ -603,7 +611,9 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="o">[</span><span class="s2">&quot;private&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">]</span><span class="p">)</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">when_order_kind_is</span><span class="p">(</span><span class="o">[</span><span class="s2">&quot;private&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">]</span><span class="p">)</span>
 </span><span class='line'><span class="c1"># =&gt; expected InvalidOrderError with &quot;Order kind can not be empty&quot;</span>
 </span><span class='line'><span class="c1"># =&gt; but nothing was raised</span>
 </span><span class='line'>

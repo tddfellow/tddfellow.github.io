@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Test-driven-development | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/test-driven-development/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-11T22:18:02+02:00</updated>
+  <updated>2016-09-11T22:25:04+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -120,7 +120,8 @@ end
 
 <p>As we can remember, in the first part of these series, we were going through an <code>OrderKindValidator</code> example, and we were writing multiple tests in a row, that were all expecting the same outcome and of course they didn&rsquo;t fail, because we had one line in our function that made them all pass. If we were to sprinkle some other tests, that do fail (like a test for a valid order kind), after making it pass, all of these tests will now be failing and therefore they are good candidates for our next test. Let&rsquo;s see it with our own eyes:</p>
 
-<pre><code class="ruby">it_fails_with("Order kind can not be empty").when_order_kind_is_absent
+<pre><code class="ruby">it_fails_with("Order kind can not be empty")
+  .when_order_kind_is_absent
 # =&gt; expected InvalidOrderError with "Order kind can not be empty",
 # =&gt; got #&lt;NoMethodError:
 # =&gt;      undefined method `validate' for #&lt;OrderKindValidator:0x000000020335c0&gt;&gt;
@@ -266,7 +267,8 @@ end
 
 <p>Great, now we can safely go back to our empty order kind edge cases:</p>
 
-<pre><code class="ruby">it_fails_with("Order kind can not be empty").when_order_kind_is([])
+<pre><code class="ruby">it_fails_with("Order kind can not be empty")
+  .when_order_kind_is([])
 # =&gt; expected InvalidOrderError with "Order kind can not be empty",
 # =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
 
@@ -276,7 +278,8 @@ def empty?(kinds)
 end
 # =&gt; PASS
 
-it_fails_with("Order kind can not be empty").when_order_kind_is([nil])
+it_fails_with("Order kind can not be empty")
+  .when_order_kind_is([nil])
 # =&gt; expected InvalidOrderError with "Order kind can not be empty",
 # =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
 
@@ -287,7 +290,8 @@ def empty?(kinds)
 end
 # =&gt; PASS
 
-it_fails_with("Order kind can not be empty").when_order_kind_is([""])
+it_fails_with("Order kind can not be empty")
+  .when_order_kind_is([""])
 # =&gt; expected InvalidOrderError with "Order kind can not be empty",
 # =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
 
@@ -314,7 +318,8 @@ end
 
 <p>Now, it is a good time to triangulate, because we have a weirdness in our code: <code>kinds[0]</code>. To prove that this is too specific we can write another test:</p>
 
-<pre><code class="ruby">it_fails_with("Order kind can not be empty").when_order_kind_is(["private", ""])
+<pre><code class="ruby">it_fails_with("Order kind can not be empty")
+  .when_order_kind_is(["private", ""])
 # =&gt; expected InvalidOrderError with "Order kind can not be empty"
 # =&gt; but nothing was raised
 
