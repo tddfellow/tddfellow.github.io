@@ -20,41 +20,41 @@ In terms of programming language, it might look like this:
 
 ```javascript
 function Duck() {
-	this.swim = function (coordinates) { ... };
-	this.quack = function (sentence) { ... };
+    this.swim = function (coordinates) { ... };
+    this.quack = function (sentence) { ... };
 }
 
 function RoboDuck() {
-	this.swim = function (coordinates) { ... };
-	this.quack = function (sentence) { ... };
+    this.swim = function (coordinates) { ... };
+    this.quack = function (sentence) { ... };
 }
 
 // .. and so on ..
 ```
 
-The point, is that the public interface has methods `swim()` and `quack()`. This is how you identify the duck in programming language. This concept is very similar to the concept of the `interface` in programming languages that have one, but it is not enforced in any way by the programming language.
+The point is that the public interface has methods `swim()` and `quack()`. This is how you identify the duck in a programming language. This concept is very similar to the concept of the `interface` in programming languages that have one, but it is not enforced in any way by the programming language.
 
 Duck typing is mostly natural in dynamic languages, where it is possible to send any message to any object and the check if that is something possible will happen at runtime. In static languages, it is still possible to use duck typing via some sort of Reflection.
 
 ### Contract test for duck types
 
-In dynamic language, it is important to make it obvious, that something is implementing certain duck type by writing one test suite for all implementers and executing it against them. For example:
+In a dynamic language, it is important to make it obvious, that something is implementing certain duck type by writing one test suite for all implementers and executing it against them. For example:
 
 ```javascript
 [Duck, RoboDuck].forEach(function (duckType) {
-	runTestSuite(function (t) {
-		this.testItSwimsLikeADuck = function () {
-			var duck = new duckType();
-			duck.swim({x: 5, y: 7});
-			t.assertThat(duck).swamTo({x: 5, y: 7});
-		};
+    runTestSuite(function (t) {
+        this.testItSwimsLikeADuck = function () {
+            var duck = new duckType();
+            duck.swim({x: 5, y: 7});
+            t.assertThat(duck).swamTo({x: 5, y: 7});
+        };
 
-		this.testItQuacksLikeADuck = function () {
-			var duck = new duckType();
-			duck.quack("hello world");
-			t.assertThat(duck).quacked("hello world");
-		};
-	});
+        this.testItQuacksLikeADuck = function () {
+            var duck = new duckType();
+            duck.quack("hello world");
+            t.assertThat(duck).quacked("hello world");
+        };
+    });
 });
 ```
 
@@ -62,10 +62,10 @@ This test suite has to go only through the Duck type public interface. If it is 
 
 ```javascript
 this.testItSwimsLikeADuck = function () {
-	var duck = new duckType();
-	var swim = duck.swim;
-	t.assertEqual("function", typeof(swim));
-	t.assertEqual(1, swim.length);
+    var duck = new duckType();
+    var swim = duck.swim;
+    t.assertEqual("function", typeof(swim));
+    t.assertEqual(1, swim.length);
 };
 ```
 
