@@ -4,7 +4,6 @@ title: "Build Your Own Testing Framework. Part 4"
 description: "As you might have noticed, currently, our testing framework only outputs failures and nothing else. It is impossible to know if it actually runs any tests when they all pass because there is no output. Today we will implement a simple reporter for our testing framework."
 date: 2016-09-17 10:00:32 +0200
 comments: true
-published: false
 categories:
 - TDD
 - test-driven-development
@@ -20,10 +19,10 @@ Welcome back to the new issue of "Build Your Own Testing Framework" series! As y
 
 ```
 SpyTest
-	testIsNotCalledInitially
-	testAssertNotCalledFailsWhenWasCalled
-	testIsCalledAfterBeingCalled
-	testAssertCalledFailsWhenWasNotCalled
+    testIsNotCalledInitially
+    testAssertNotCalledFailsWhenWasCalled
+    testIsCalledAfterBeingCalled
+    testAssertCalledFailsWhenWasNotCalled
 ```
 
 This article is the fourth one of the series "Build Your Own Testing Framework", so make sure to stick around for next parts! All articles of these series can be found [here](/blog/categories/build-your-own-testing-framework/).
@@ -32,7 +31,7 @@ Shall we get started?
 
 ## Render the name of the test suite
 
-So where should the name of the test suite come from? Probably it should be a test suite class name. Currently all of them are anonymous classes and therefore don't have a name:
+So where should the name of the test suite come from? Probably it should be a test suite class name. Currently, all of them are anonymous classes and therefore don't have a name:
 
 ```javascript
 runTestSuite(function () {
@@ -100,10 +99,10 @@ this.testItOutputsNameOfTheTest = function () {
 
 While this code works, it has multitude of problems:
 
-- If the test fail then `oldConsoleLog` function is not restored;
+- If the test fails then `oldConsoleLog` function is not restored;
 - It has too much setup (which we could extract as a function);
 - It has teardown (which would be nice to avoid if we could);
-- It is hard to read, because from 8 lines of code only 2 are delivering the core intent;
+- It is hard to read because from 8 lines of code only 2 are delivering the core intent;
 - And it is testing how exactly test suite name is being reported, which is basically a View-like concern.
 
 And fixing the last problem will actually fix everything else because this problem causes others. We can fix it by introducing some sort of `Reporter` type, that can respond to `reportTestSuite(name)` message:
@@ -357,7 +356,7 @@ function runTestSuite(testSuiteConstructor, options) {
 }
 ```
 
-And all tests pass now. Unfortunately, this is the ouput that we see now:
+And all tests pass now. Unfortunately, this is the output that we see now:
 
 ```
 
@@ -530,7 +529,7 @@ this.testAssertHasReportedTest_whenReporting_andFailing = function () {
 };
 ```
 
-After an investigation, it becomes clear, that this happens because we can not re-use `reporter` variable defined at the higher level, since all tests share the same `testSuite` object at the moment. We will have to move the creation of the `reporter` variable inside of each test:
+After an investigation, it becomes clear, that this happens because we can not re-use `reporter` variable defined at the higher level since all tests share the same `testSuite` object at the moment. We will have to move the creation of the `reporter` variable inside of each test:
 
 ```javascript
 this.testAssertHasReportedTest_whenReporting_andFailing = function () {
@@ -550,7 +549,7 @@ And this makes all our tests pass.
 
 ## Stateless tests
 
-This is quite noticeable problem, that our users can be frustrated with, so we probably should make it easy on them and allow such variables to be fresh for every test. This can be achieved quite easy if we were to create a new `testSuite` for each test. Let's write a simple test to show the problem:
+This is quite a noticeable problem, that our users can be frustrated with, so we probably should make it easy on them and allow such variables to be fresh for every test. This can be achieved quite easy if we were to create a new `testSuite` for each test. Let's write a simple test to show the problem:
 
 ```javascript
 // test/StatelessTest.js
@@ -580,17 +579,17 @@ function runTestSuite(testSuiteConstructor, options) {
   options = options || {};
   var reporter = options.reporter || new SimpleReporter();
 
-	reporter.reportTestSuite(testSuiteConstructor.name);
+    reporter.reportTestSuite(testSuiteConstructor.name);
 
-	var testSuitePrototype = createTestSuite(testSuiteConstructor);
-	// ^ we change this from `testSuite` to `testSuitePrototype`  ^
+    var testSuitePrototype = createTestSuite(testSuiteConstructor);
+    // ^ we change this from `testSuite` to `testSuitePrototype`  ^
 
   for (var testName in testSuitePrototype) {
     if (testName.match(/^test/)) {
       var testSuite = createTestSuite(testSuiteConstructor);
-			// ^   and we create our testSuite every time here   ^
+            // ^   and we create our testSuite every time here   ^
       testSuite[testName]();
-	// ^  and run test on it ^
+    // ^  and run test on it ^
     }
   }
 }
@@ -608,14 +607,14 @@ Finally, we need to make sure that the test suite, that we have written before w
 
 ```javascript
 this.testItOutputsNameOfTheTest = function () {
-	runTestSuite(function TestSuiteName(t) {
-		this.testSomeTestName = function () {};
-		this.testSomeOtherTestName = function () {};
-	}, {reporter: reporter});
+    runTestSuite(function TestSuiteName(t) {
+        this.testSomeTestName = function () {};
+        this.testSomeOtherTestName = function () {};
+    }, {reporter: reporter});
 
-	reporter.assertHasReportedTestSuite("TestSuiteName");
-	reporter.assertHasReportedTest("testSomeTestName");
-	reporter.assertHasReportedTest("testSomeOtherTestName");
+    reporter.assertHasReportedTestSuite("TestSuiteName");
+    reporter.assertHasReportedTest("testSomeTestName");
+    reporter.assertHasReportedTest("testSomeOtherTestName");
 };
 ```
 
@@ -624,19 +623,19 @@ As expected it fails with `Error: Expected test 'testSomeTestName' to be reporte
 ```javascript
 // src/TestingFramework.js in runTestSuite function:
 for (var testName in testSuitePrototype) {
-	if (testName.match(/^test/)) {
+    if (testName.match(/^test/)) {
 
-		reporter.reportTest(testName);
+        reporter.reportTest(testName);
 // ^  here is our implementation  ^
 
-		var testSuite = createTestSuite(testSuiteConstructor);
-		testSuite[testName]();
-	}
+        var testSuite = createTestSuite(testSuiteConstructor);
+        testSuite[testName]();
+    }
 }
 
 function SimpleReporter() {
-	// ...
-	// and we should not forget to implement it for real reporter
+    // ...
+    // and we should not forget to implement it for real reporter
   this.reportTest = function (name) {
     process.stdout.write("\t" + name + "\n");
   };
@@ -684,12 +683,12 @@ All the tests pass. Unfortunately, the output regarding this test suite looks we
 
 ```
 
-	testDefines_reportTestSuite
-	testDefines_reportTest
+    testDefines_reportTestSuite
+    testDefines_reportTest
 
 
-	testDefines_reportTestSuite
-	testDefines_reportTest
+    testDefines_reportTestSuite
+    testDefines_reportTest
 ```
 
 The test suite name is empty. I think we need an ability to define a custom and dynamic test suite name:
@@ -724,7 +723,7 @@ function runTestSuite(testSuiteConstructor, options) {
 // ^ this is the function that we introduced here to make it pass ^
   );
 
-	for (var testName in testSuitePrototype) { ... }
+    for (var testName in testSuitePrototype) { ... }
 }
 
 function getTestSuiteName(testSuiteConstructor, testSuitePrototype) {
@@ -745,7 +744,7 @@ IMPLEMENTATIONS.forEach(function (ReporterImplementation) {
       return ReporterImplementation.name + "_ReporterTest";
     };
 
-	// ...
+    // ...
 });
 ```
 
@@ -753,12 +752,12 @@ Then we are getting the proper output:
 
 ```
 SimpleReporter_ReporterTest
-	testDefines_reportTestSuite
-	testDefines_reportTest
+    testDefines_reportTestSuite
+    testDefines_reportTest
 
 ReporterSpy_ReporterTest
-	testDefines_reportTestSuite
-	testDefines_reportTest
+    testDefines_reportTestSuite
+    testDefines_reportTest
 ```
 
 ## Bottom Line
