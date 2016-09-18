@@ -10,7 +10,7 @@ categories:
 - testing
 ---
 
-Test double is a test object or a test function, that looks and behaves like its production counterpart, but is actually a simplified version that reduces the complexity and enables simpler testing. One can represent all types of test double as an inheritance tree like this:
+A test double is a test object or a test function, that looks and behaves like its production counterpart, but is actually a simplified version that reduces the complexity and enables simpler testing. One can represent all types of test double as an inheritance tree like this:
 
 <img src='//g.gravizo.com/g?
 @startuml;
@@ -78,7 +78,7 @@ someValue = "a value from the test";
 someFunction(exampleStubFunction);
 ```
 
-`Spy` - is a test stub, additionally, verifying an indirect output of the production code, by asserting afterwards, without having defined the expectations before the production code is executed. For example:
+`Spy` - is a test stub, additionally, verifying an indirect output of the production code, by asserting afterward, without having defined the expectations before the production code is executed. For example:
 
 ```javascript
 function ExampleSpyObject(assertions) {
@@ -126,7 +126,7 @@ someFunction(exampleSpyFunction);
 verifyExampleSpyFunction("helloWorld");
 ```
 
-`Mock` - is like a stub, but the expectations are defined before the execution of the production code and it can verify itself after the execution. A simple example:
+`Mock` - is a stub, but the expectations are defined before the execution of the production code and it can verify itself after the execution. A simple example:
 
 ```javascript
 function ExampleMockObject() {
@@ -176,7 +176,7 @@ Mocks can be much more complex (verifying order of messages, allowing multiple m
 
 And if you do have to use your own custom mocks, please, write tests for them, since they can have a lot of logic inside of them.
 
-And, finally, `Fake` - is a test double providing a simpler implementation used in the tests instead of the real thing. Good example is an in-memory database gateway, that behaves the same way the real one would, but it stores all the data in the memory. A very simple example:
+And, finally, `Fake` - is a test double providing a simpler implementation used in the tests instead of the real thing. A good example is an in-memory database gateway, that behaves the same way the real one would, but it stores all the data in the memory. A very simple example:
 
 ```javascript
 function FakeDatabase() {
@@ -204,7 +204,7 @@ function FakeDatabase() {
 }
 ```
 
-Obviously, fakes require full-blown testing for them. And if the real implementation is testable (even if it is slow), it is a good idea to have the same test suite for both: fake and real implementation. This way we can really be sure, that the fake behaves the same way as the real thing. And don't forget about the edge cases, for example, if the real thing can throw a `ConnectionError`, the fake should be able too (after being instructed to do so via special method in the tests).
+Obviously, fakes require full-blown testing for them. And if the real implementation is testable (even if it is slow), it is a good idea to have the same test suite for both: fake and real implementation. This way we can really be sure, that the fake behaves the same way as the real thing. And don't forget about the edge cases, for example, if the real thing can throw a `ConnectionError`, the fake should be able too (after being instructed to do so via a special method in the tests).
 
 ## Thanks
 
