@@ -9,6 +9,10 @@
     <lastmod>2016-09-18T16:31:48+02:00</lastmod>
   </url>
   <url>
+    <loc>http://www.tddfellow.com/blog/2016/09/17/build-your-own-testing-framework-part-4/</loc>
+    <lastmod>2016-09-17T10:00:32+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/</loc>
     <lastmod>2016-08-31T02:35:32+02:00</lastmod>
   </url>
@@ -382,9 +386,9 @@
     <loc>http://www.tddfellow.com/blog/categories/getting-stuck-while-doing-tdd/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/test-doubles/</loc>
+    <loc>http://www.tddfellow.com/blog/categories/duck-typing/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/blog/categories/duck-typing/</loc>
+    <loc>http://www.tddfellow.com/blog/categories/test-doubles/</loc>
   </url>
 </urlset>

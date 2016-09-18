@@ -9,7 +9,14 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Using contracts.ruby With RSpec. Part 2 Aug 31st, 2015 6:36 pm Remember Using contracts.ruby With RSpec ? RSpec mocks violate all :class contracts &hellip;">
+  <meta name="description" content="Intention-revealing Code Sep 8th, 2015 9:24 pm Lets start off with very simple code: 1
+2
+3
+4
+5
+6
+7
+func toJSON(post Post) string { return fmt. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -97,6 +104,142 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/09/08/intention-revealing-code/">Intention-revealing Code</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-09-08T21:24:52+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>9:24 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Lets start off with very simple code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kd">func</span> <span class="nx">toJSON</span><span class="p">(</span><span class="nx">post</span> <span class="nx">Post</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span>
+</span><span class='line'>                <span class="s">`{&quot;post_title&quot;: &quot;%s&quot;, &quot;post_content&quot;: &quot;%s&quot;}`</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">post</span><span class="p">.</span><span class="nx">Title</span><span class="p">,</span>
+</span><span class='line'>                <span class="nx">post</span><span class="p">.</span><span class="nx">Content</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is very simple code and it is easy to understand what it is doing and what
+it is doing wrong:</p>
+
+<ul>
+<li>It tries to marshal <code>post</code> struct to custom <code>JSON</code> representation.</li>
+<li>It fails when there are special characters in these strings.</li>
+<li>It does not use standard <code>MarshalJSON</code> interface.</li>
+</ul>
+
+
+<p>It can be fixed in a pretty simple way:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kd">func</span> <span class="p">(</span><span class="nx">post</span> <span class="nx">Post</span><span class="p">)</span> <span class="nx">MarshalJSON</span><span class="p">()</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}{</span>
+</span><span class='line'>                <span class="s">&quot;post_title&quot;</span><span class="p">:</span>   <span class="nx">post</span><span class="p">.</span><span class="nx">Title</span><span class="p">,</span>
+</span><span class='line'>                <span class="s">&quot;post_content&quot;</span><span class="p">:</span> <span class="nx">post</span><span class="p">.</span><span class="nx">Content</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">})</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And at the usage site, you can now just use standard <code>encoding/json</code> package
+capabilities:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">rawPost</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="nx">post</span><span class="p">)</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">err</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// do stuff with rawPost</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And now you can notice that tests do not pass. And the place that failed is
+totally unrelevant.  Long story short. Name of the original method was not
+revealing any real intent: it was actually specific json representation for
+usage with external API, but normal <code>json.Marshal</code> is used by this same
+application for providing responses to its own HTTP clients.</p>
+
+<p>Were the name a bit more intention-revealing, nobody would waste their time
+on finding this out by trial and mistake:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// should probably even sit in different package</span>
+</span><span class='line'><span class="kd">func</span> <span class="nx">marshalToExternalAPIFormat</span><span class="p">(</span><span class="nx">post</span> <span class="nx">Post</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And this is only a tip of the iceberg of how non-intention-revealing code can
+trip you over.</p>
+</div>
+  
+  
+
+
+<!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<h2>Stay Tuned!</h2>
+<div class="mc-field-group">
+  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
+	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
+  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
+</div>
+	<div id="mce-responses" class="clear">
+		<div class="response" id="mce-error-response" style="display:none"></div>
+		<div class="response" id="mce-success-response" style="display:none"></div>
+	</div>
+    </div>
+</form>
+</div>
+
+<!--End mc_embed_signup-->
+
+
+    </article>
   
   
     <article>
@@ -575,212 +718,6 @@ image.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/">Using contracts.ruby With RSpec</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-04-09T21:51:53+02:00'><span class='date'><span class='date-month'>Apr</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>9:51 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>Issues with RSpec mocks</h2>
-
-<p>Lets start from example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Example</span>
-</span><span class='line'>  <span class="kp">include</span> <span class="no">Contracts</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="no">Contract</span> <span class="no">Something</span> <span class="o">=&gt;</span> <span class="no">Any</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">do_something</span><span class="p">(</span><span class="n">something</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">something</span><span class="o">.</span><span class="n">call</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And its corresponding spec:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;rspec&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="no">RSpec</span><span class="o">.</span><span class="n">describe</span> <span class="no">Example</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">let</span><span class="p">(</span><span class="ss">:example</span><span class="p">)</span> <span class="p">{</span> <span class="no">Example</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span>
-</span><span class='line'>  <span class="n">let</span><span class="p">(</span><span class="ss">:something</span><span class="p">)</span> <span class="p">{</span> <span class="n">instance_double</span><span class="p">(</span><span class="no">Something</span><span class="p">,</span> <span class="ss">call</span><span class="p">:</span> <span class="ss">:hello</span><span class="p">)</span> <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">it</span> <span class="s2">&quot;works&quot;</span> <span class="k">do</span>
-</span><span class='line'>    <span class="n">expect</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">do_something</span><span class="p">(</span><span class="n">something</span><span class="p">))</span>
-</span><span class='line'>      <span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="ss">:hello</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Pretty straightforward unit test for <code>Example#do_something</code>. But if you run <code>rspec</code> you will get:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="ss">ContractError</span><span class="p">:</span> <span class="no">Contract</span> <span class="n">violation</span> <span class="k">for</span> <span class="n">argument</span> <span class="mi">1</span> <span class="n">of</span> <span class="mi">1</span><span class="p">:</span>
-</span><span class='line'>    <span class="ss">Expected</span><span class="p">:</span> <span class="no">Something</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">Actual</span><span class="p">:</span> <span class="c1">#&lt;RSpec::Mocks::InstanceVerifyingDouble:0xa401a0 @name=&quot;Something (instance)&quot;&gt;</span>
-</span><span class='line'>    <span class="no">Value</span> <span class="n">guarded</span> <span class="k">in</span><span class="p">:</span> <span class="no">Example</span><span class="o">::</span><span class="n">do_something</span>
-</span><span class='line'>    <span class="no">With</span> <span class="ss">Contract</span><span class="p">:</span> <span class="no">Something</span> <span class="o">=&gt;</span> <span class="no">Any</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>It happens because class contracts use <code>#is_a?</code> to determine if contract matches or not. Simply: <code>something.is_a?(Something)</code> is required to be <code>true</code>.</p>
-
-<p>But if we try to do it with <code>instance_double</code>, that is what we get:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;rspec/mocks/standalone&quot;</span>
-</span><span class='line'><span class="n">something</span> <span class="o">=</span> <span class="n">instance_double</span><span class="p">(</span><span class="no">Something</span><span class="p">)</span>
-</span><span class='line'><span class="n">something</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Something</span><span class="p">)</span>                              <span class="c1">#=&gt; false</span>
-</span><span class='line'><span class="n">something</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">RSpec</span><span class="o">::</span><span class="no">Mocks</span><span class="o">::</span><span class="no">InstanceVerifyingDouble</span><span class="p">)</span>  <span class="c1">#=&gt; true</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Solution to problem</h2>
-
-<p>Pretty straightforward one:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">let</span><span class="p">(</span><span class="ss">:something</span><span class="p">)</span> <span class="p">{</span> <span class="n">instance_double</span><span class="p">(</span><span class="no">Something</span><span class="p">,</span> <span class="ss">call</span><span class="p">:</span> <span class="ss">:hello</span><span class="p">)</span> <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">before</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">allow</span><span class="p">(</span><span class="n">something</span><span class="p">)</span>
-</span><span class='line'>    <span class="o">.</span><span class="n">to</span> <span class="n">receive</span><span class="p">(</span><span class="ss">:is_a?</span><span class="p">)</span>
-</span><span class='line'>    <span class="o">.</span><span class="n">with</span><span class="p">(</span><span class="no">Something</span><span class="p">)</span>
-</span><span class='line'>    <span class="o">.</span><span class="n">and_return</span><span class="p">(</span><span class="kp">true</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>But this can be boring to type it each time you need an <code>instance_double</code> while working with <code>contracts</code>. So here you go:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Gemfile</span>
-</span><span class='line'><span class="n">group</span> <span class="ss">:test</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">gem</span> <span class="s2">&quot;contracts-rspec&quot;</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Run <code>bundle</code> to install <code>contracts-rspec</code> gem.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># your spec file</span>
-</span><span class='line'><span class="nb">require</span> <span class="s2">&quot;contracts/rspec&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="no">RSpec</span><span class="o">.</span><span class="n">describe</span> <span class="no">Example</span> <span class="k">do</span>
-</span><span class='line'>  <span class="kp">include</span> <span class="no">Contracts</span><span class="o">::</span><span class="no">RSpec</span><span class="o">::</span><span class="no">Mocks</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="c1"># .. write code as in first example ..</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now you are covered. Inclusion of <code>Contracts::RSpec::Mocks</code> slightly alters behavior of <code>instance_double</code>. Now it automatically stubs out <code>#is_a?(Klass)</code> to return <code>true</code> on the class it was created from. In our case <code>Something</code>. This happens here: <a href="https://github.com/waterlink/contracts-rspec/blob/master/lib/contracts/rspec/mocks.rb#L4-L8">https://github.com/waterlink/contracts-rspec/blob/master/lib/contracts/rspec/mocks.rb#L4-L8</a></p>
-
-<p>You can include it only in contexts you need, or you can do it globally from <code>spec_helper</code> like you do usually include spec helpers.</p>
-
-<h2>Links</h2>
-
-<ul>
-<li>Gem: <a href="https://github.com/waterlink/contracts-rspec">https://github.com/waterlink/contracts-rspec</a></li>
-<li>contracts.ruby: <a href="https://github.com/egonSchiele/contracts.ruby">https://github.com/egonSchiele/contracts.ruby</a></li>
-<li>contracts.ruby chat: <a href="https://gitter.im/egonSchiele/contracts.ruby">https://gitter.im/egonSchiele/contracts.ruby</a></li>
-<li>Born from here: <a href="https://github.com/egonSchiele/contracts.ruby/issues/14">egonSchiele/contracts.ruby#14</a></li>
-<li><a href="http://waterlink.github.io/blog/2015/03/05/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></li>
-<li><a href="https://egonschiele.github.io/contracts.ruby/">Great contracts.ruby tutorial</a></li>
-</ul>
-
-
-<h2>Thanks!</h2>
-
-<p>If you have any questions, suggestions or just want to chat about how contracts.ruby is awesome, you can ping me on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues using <a href="https://github.com/egonSchiele/contracts.ruby">contracts.ruby</a> or <a href="https://github.com/waterlink/contracts-rspec">contracts-rspec</a> you can create issues on corresponding github project. Pull requests are welcome!</p>
-</div>
-  
-  
-
-
-<!-- Begin MailChimp Signup Form -->
-<div id="mc_embed_signup">
-<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div id="mc_embed_signup_scroll">
-	<h2>Stay Tuned!</h2>
-<div class="mc-field-group">
-  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
-	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
-  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
-</div>
-	<div id="mce-responses" class="clear">
-		<div class="response" id="mce-error-response" style="display:none"></div>
-		<div class="response" id="mce-success-response" style="display:none"></div>
-	</div>
-    </div>
-</form>
-</div>
-
-<!--End mc_embed_signup-->
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/8">&larr; Older</a>
@@ -806,6 +743,10 @@ image.</p>
       </li>
     
       <li class="post">
+        <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!</a>
       </li>
     
@@ -823,10 +764,6 @@ image.</p>
     
       <li class="post">
         <a href="/blog/2016/08/14/build-your-own-testing-framework-part-3/">Build Your Own Testing Framework. Part 3</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/08/10/tdd-screencast-number-6-continuous-integration-training/">TDD #6: Continuous Integration Training</a>
       </li>
     
   </ul>

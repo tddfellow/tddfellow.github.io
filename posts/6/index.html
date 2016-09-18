@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Test-Driven-Development Screencast #2 Feb 2nd, 2016 8:28 am Recommended to watch in a full-screen and on 720p or higher quality. List of all TDD &hellip;">
+  <meta name="description" content="TDD #3: Kind Sort Feb 4th, 2016 1:16 am Recommended to watch in a full-screen and on 720p or higher quality. Script Hello, hello! I am Oleksii &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -97,6 +97,99 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/02/04/tdd-number-3-kind-sort/">TDD #3: Kind Sort</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-02-04T01:16:18+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>1:16 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><iframe width="560" height="315" src="https://www.youtube.com/embed/TR2hKaR4zg8" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<h2>Script</h2>
+
+<p>Hello, hello! I am Oleksii Fedorov, and this is the third
+episode of TDD Screencast.</p>
+
+<p>In last episode we have implemented a sorting algorithm
+using TDD, without thinking about algorithm beforehand. As a
+result, bubble sort have emerged.</p>
+
+<p>We have noticed, that there is a small weird thing about
+this implementation: it has unspecified behavior - mutation
+of the original array.</p>
+
+<p>So we asked, which algorithm would emerge, if we were to ban
+such side-effects from our algorithm. Let&rsquo;s find out!</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>./watch.sh
+</span><span class='line'>vim           # implement sorting algorithm</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I think we are done here. If you look closely, it is a
+quicksort. It is not the most memory-efficient
+implementation, but that is something that is simple to
+optimize (instead of passing recursively arrays, pass
+original array and indexes). That optimization will involve
+actual mutation of the array in place, so if we want to stay
+true to our specification /show test for no-side-effects/.
+We will have to copy the array once, using some sort of
+wrapper function.</p>
+
+<p>Applying this optimization I leave as an exercise to you my
+users.</p>
+
+<p>In the next episode we will look into path-finding problem,
+and we will see, how these techniques apply there. See you
+next time! Have a nice day.</p>
+</div>
+  
+  
+
+
+<!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<h2>Stay Tuned!</h2>
+<div class="mc-field-group">
+  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
+	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
+  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
+</div>
+	<div id="mce-responses" class="clear">
+		<div class="response" id="mce-error-response" style="display:none"></div>
+		<div class="response" id="mce-success-response" style="display:none"></div>
+	</div>
+    </div>
+</form>
+</div>
+
+<!--End mc_embed_signup-->
+
+
+    </article>
   
   
     <article>
@@ -751,142 +844,6 @@ I will only be happy to learn and iterate over this article to improve it.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/09/08/intention-revealing-code/">Intention-revealing Code</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-09-08T21:24:52+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>9:24 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Lets start off with very simple code:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kd">func</span> <span class="nx">toJSON</span><span class="p">(</span><span class="nx">post</span> <span class="nx">Post</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span>
-</span><span class='line'>                <span class="s">`{&quot;post_title&quot;: &quot;%s&quot;, &quot;post_content&quot;: &quot;%s&quot;}`</span><span class="p">,</span>
-</span><span class='line'>                <span class="nx">post</span><span class="p">.</span><span class="nx">Title</span><span class="p">,</span>
-</span><span class='line'>                <span class="nx">post</span><span class="p">.</span><span class="nx">Content</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">)</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This is very simple code and it is easy to understand what it is doing and what
-it is doing wrong:</p>
-
-<ul>
-<li>It tries to marshal <code>post</code> struct to custom <code>JSON</code> representation.</li>
-<li>It fails when there are special characters in these strings.</li>
-<li>It does not use standard <code>MarshalJSON</code> interface.</li>
-</ul>
-
-
-<p>It can be fixed in a pretty simple way:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kd">func</span> <span class="p">(</span><span class="nx">post</span> <span class="nx">Post</span><span class="p">)</span> <span class="nx">MarshalJSON</span><span class="p">()</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">return</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}{</span>
-</span><span class='line'>                <span class="s">&quot;post_title&quot;</span><span class="p">:</span>   <span class="nx">post</span><span class="p">.</span><span class="nx">Title</span><span class="p">,</span>
-</span><span class='line'>                <span class="s">&quot;post_content&quot;</span><span class="p">:</span> <span class="nx">post</span><span class="p">.</span><span class="nx">Content</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">})</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And at the usage site, you can now just use standard <code>encoding/json</code> package
-capabilities:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">rawPost</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="nx">post</span><span class="p">)</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">return</span> <span class="nx">err</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// do stuff with rawPost</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And now you can notice that tests do not pass. And the place that failed is
-totally unrelevant.  Long story short. Name of the original method was not
-revealing any real intent: it was actually specific json representation for
-usage with external API, but normal <code>json.Marshal</code> is used by this same
-application for providing responses to its own HTTP clients.</p>
-
-<p>Were the name a bit more intention-revealing, nobody would waste their time
-on finding this out by trial and mistake:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// should probably even sit in different package</span>
-</span><span class='line'><span class="kd">func</span> <span class="nx">marshalToExternalAPIFormat</span><span class="p">(</span><span class="nx">post</span> <span class="nx">Post</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="c1">// ...</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And this is only a tip of the iceberg of how non-intention-revealing code can
-trip you over.</p>
-</div>
-  
-  
-
-
-<!-- Begin MailChimp Signup Form -->
-<div id="mc_embed_signup">
-<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div id="mc_embed_signup_scroll">
-	<h2>Stay Tuned!</h2>
-<div class="mc-field-group">
-  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
-	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
-  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
-</div>
-	<div id="mce-responses" class="clear">
-		<div class="response" id="mce-error-response" style="display:none"></div>
-		<div class="response" id="mce-success-response" style="display:none"></div>
-	</div>
-    </div>
-</form>
-</div>
-
-<!--End mc_embed_signup-->
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/7">&larr; Older</a>
@@ -912,6 +869,10 @@ trip you over.</p>
       </li>
     
       <li class="post">
+        <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!</a>
       </li>
     
@@ -929,10 +890,6 @@ trip you over.</p>
     
       <li class="post">
         <a href="/blog/2016/08/14/build-your-own-testing-framework-part-3/">Build Your Own Testing Framework. Part 3</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/08/10/tdd-screencast-number-6-continuous-integration-training/">TDD #6: Continuous Integration Training</a>
       </li>
     
   </ul>

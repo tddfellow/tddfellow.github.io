@@ -1,0 +1,1596 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Build Your Own Testing Framework. Part 4 - That TDD Fellow | Tech Blog | Screencasts</title>
+  <meta name="author" content="Oleksii Fedorov (waterlink)">
+
+  
+  <meta name="description" content="As you might have noticed, currently, our testing framework only outputs failures and nothing else. It is impossible to know if it actually runs any &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.tddfellow.com/blog/2016/09/17/build-your-own-testing-framework-part-4/">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="That TDD Fellow | Tech Blog | Screencasts" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
+
+<!-- MailChimp styles -->
+<link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+	#mc_embed_signup{clear:left;}
+  #mc_embed_signup h2{text-align: center;}
+  #mc_embed_signup #mce-EMAIL{width: 40%; margin: 0; padding: 0; margin-left: 20%; display: inline; height: 35px;}
+  #mc_embed_signup #mc-embedded-subscribe{width: 20%; padding: 0; height: 35px; display: inline;}
+  #mc_embed_signup .button{background-color: rgb(0, 160, 0);}
+  #mc_embed_signup .button:hover{background-color: rgb(0, 128, 0);}
+
+  @media (max-width: 900px) {
+    #mc_embed_signup #mce-EMAIL{width: 55%; margin-left: 0;}
+    #mc_embed_signup #mc-embedded-subscribe{width: 35%;}
+  }
+	/* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
+	   We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
+</style>
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@waterlink000">
+<meta name="twitter:creator" content="@waterlink000">
+<meta name="twitter:title" content="Build Your Own Testing Framework. Part 4">
+<meta name="twitter:description" content="As you might have noticed, currently, our testing framework only outputs failures and nothing else. It is impossible to know if it actually runs any tests when they all pass because there is no output. Today we will implement a simple reporter for our testing framework.">
+<meta name="twitter:image" content="http://www.tddfellow.com/images/logo.png">
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-73226470-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">That TDD Fellow | Tech Blog | Screencasts</a></h1>
+  
+    <h2>Let&#8217;s stop fearing our own creations and start being in control of them. Let&#8217;s be professional.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/categories/tdd-screencasts/">Screencasts</a></li>
+  <li><a href="/blog/categories/build-your-own-testing-framework/">Build Testing Framework</a></li>
+  <li><a href="/blog/categories/getting-stuck-while-doing-tdd/">Getting Stuck in TDD</a></li>
+  <li><a href="/about-me">About me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Build Your Own Testing Framework. Part 4</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-09-17T10:00:32+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>10:00 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Welcome back to the new issue of &ldquo;Build Your Own Testing Framework&rdquo; series! As you might have noticed, currently, our testing framework only outputs failures and nothing else. It is impossible to know if it actually runs any tests when they all pass because there is no output. Today we will implement a simple reporter for our testing framework. It will report the name of the test suite and names of the tests that are being executed, for example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SpyTest
+</span><span class='line'>    testIsNotCalledInitially
+</span><span class='line'>    testAssertNotCalledFailsWhenWasCalled
+</span><span class='line'>    testIsCalledAfterBeingCalled
+</span><span class='line'>    testAssertCalledFailsWhenWasNotCalled</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This article is the fourth one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
+
+<p>Shall we get started?</p>
+
+<h2>Render the name of the test suite</h2>
+
+<p>So where should the name of the test suite come from? Probably it should be a test suite class name. Currently, all of them are anonymous classes and therefore don&rsquo;t have a name:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">//         ^          ^</span>
+</span><span class='line'>  <span class="c1">//       - no name here -</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We would like all test suites to have that name, for example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="nx">SpyTest</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">//                 ^       ^</span>
+</span><span class='line'>  <span class="c1">//            - here is the name -</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We should write a test for this case:</p>
+
+<ol>
+<li>Create a test suite with the name</li>
+<li>Run the test suite with function <code>runTestSuite</code></li>
+<li>Assert that the test suite name is reported</li>
+</ol>
+
+
+<p>Let&rsquo;s try to write a test in a <code>RunTestSuiteTest.js</code> test suite for that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testItOutputsNameOfTheTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="nx">TestSuiteName</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{});</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// TODO: assert that the test suite name is reported</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now it is problematic: how are we going to assert that something is reported? Should we replace <code>console.log(message)</code> or <code>process.stdout.write(message)</code> with our own implementation, so that we can test it?:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">logged</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">oldConsoleLog</span> <span class="o">=</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">logged</span> <span class="o">=</span> <span class="nx">logged</span> <span class="o">+</span> <span class="nx">message</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And then we should be able to assert with: <code>t.assertTrue(logged.indexOf("TestSuiteName") &gt;= 0)</code>. Finally we will need to restore the old <code>console.log</code> function:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testItOutputsNameOfTheTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">logged</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">oldConsoleLog</span> <span class="o">=</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">logged</span> <span class="o">=</span> <span class="nx">logged</span> <span class="o">+</span> <span class="nx">message</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="nx">TestSuiteName</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{});</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">t</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span><span class="nx">logged</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;TestSuiteName&quot;</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="nx">oldConsoleLog</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>While this code works, it has multitude of problems:</p>
+
+<ul>
+<li>If the test fails then <code>oldConsoleLog</code> function is not restored;</li>
+<li>It has too much setup (which we could extract as a function);</li>
+<li>It has teardown (which would be nice to avoid if we could);</li>
+<li>It is hard to read because from 8 lines of code only 2 are delivering the core intent;</li>
+<li>And it is testing how exactly test suite name is being reported, which is basically a View-like concern.</li>
+</ul>
+
+
+<p>And fixing the last problem will actually fix everything else because this problem causes others. We can fix it by introducing some sort of <code>Reporter</code> type, that can respond to <code>reportTestSuite(name)</code> message:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testItOutputsNameOfTheTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="nx">TestSuiteName</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="p">},</span> <span class="p">{</span><span class="nx">reporter</span><span class="o">:</span> <span class="nx">reporter</span><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">t</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span><span class="nx">reporter</span><span class="p">.</span><span class="nx">hasReportedTestSuite</span><span class="p">(</span><span class="s2">&quot;TestSuiteName&quot;</span><span class="p">));</span>
+</span><span class='line'>  <span class="c1">// or even better:</span>
+</span><span class='line'>  <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span><span class="p">(</span><span class="s2">&quot;TestSuiteName&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>reporter</code> in this case is some sort of test double. And what are they? - Find out here: <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>.</p>
+
+<h2>Implementing the reporter spy</h2>
+
+<p>So our <code>reporter</code> object in the test seems terribly like a Spy Double to me, let&rsquo;s test-drive it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test/ReporterSpyTest.js</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">runTestSuite</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../src/TestingFramework&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">ReporterSpy</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./ReporterSpy&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="nx">ReporterSpy_BehaviorTest</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">reporter</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ReporterSpy</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Let&#39;s write our first test:</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">testAssertHasReportedTestSuite_whenFailing</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertThrow</span><span class="p">(</span>
+</span><span class='line'>      <span class="s2">&quot;Expected test suite &#39;HelloWorld&#39; to be reported&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span><span class="p">(</span><span class="s2">&quot;HelloWorld&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Cannot find module &#39;./ReporterSpy&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Create file test/ReporterSpy.js</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we are getting the following error:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">//     var reporter = new ReporterSpy(t);</span>
+</span><span class='line'><span class="c1">//                    ^</span>
+</span><span class='line'><span class="c1">//</span>
+</span><span class='line'><span class="c1">// TypeError: ReporterSpy is not a function</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We need to create ReporterSpy object now:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">ReporterSpy</span><span class="p">(</span><span class="nx">assertions</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we are getting:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Error: Expected to equal</span>
+</span><span class='line'><span class="c1">//   Expected test suite &#39;HelloWorld&#39; to be reported,</span>
+</span><span class='line'><span class="c1">// but got:</span>
+</span><span class='line'><span class="c1">//   reporter.assertHasReportedTestSuite is not a function</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we need to create a function <code>assertHasReportedTestSuite(name)</code> for out <code>ReporterSpy</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">expectedName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">assertions</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span>
+</span><span class='line'>    <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;Expected test suite &#39;HelloWorld&#39; to be reported&quot;</span>
+</span><span class='line'>  <span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Next we need to make sure, that <code>expectedName</code> is actually present in the error message by triangulating with different name:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAssertHasReportedTestSuite_whenFailing_withOtherName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">t</span><span class="p">.</span><span class="nx">assertThrow</span><span class="p">(</span><span class="s2">&quot;Expected test suite &#39;OtherTestSuite&#39; to be reported&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span><span class="p">(</span><span class="s2">&quot;OtherTestSuite&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected to equal</span>
+</span><span class='line'><span class="c1">//   Expected test suite &#39;OtherTestSuite&#39; to be reported,</span>
+</span><span class='line'><span class="c1">// but got:</span>
+</span><span class='line'><span class="c1">//   Expected test suite &#39;HelloWorld&#39; to be reported</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// And we need to change the respective string:</span>
+</span><span class='line'><span class="s2">&quot;Expected test suite &#39;&quot;</span> <span class="o">+</span> <span class="nx">expectedName</span> <span class="o">+</span> <span class="s2">&quot;&#39; to be reported&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then we need to make sure that we do succeed when the message is received:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAssertHasReportedTestSuite_whenSucceeding</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">t</span><span class="p">.</span><span class="nx">assertNotThrow</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTestSuite</span><span class="p">(</span><span class="s2">&quot;HelloWorld&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span><span class="p">(</span><span class="s2">&quot;HelloWorld&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error:</span>
+</span><span class='line'><span class="c1">//   Expected not to throw error,</span>
+</span><span class='line'><span class="c1">// but thrown</span>
+</span><span class='line'><span class="c1">//   &#39;reporter.reportTestSuite is not a function&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// So we need to define this function in ReporterSpy:</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">reportTestSuite</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error:</span>
+</span><span class='line'><span class="c1">//   Expected not to throw error,</span>
+</span><span class='line'><span class="c1">// but thrown</span>
+</span><span class='line'><span class="c1">//   &#39;Expected test suite &#39;HelloWorld&#39; to be reported&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Now we need to provide the simplest implementation we can,</span>
+</span><span class='line'><span class="c1">// we can do that by introducing the boolean variable:</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">ReporterSpy</span><span class="p">(</span><span class="nx">assertions</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// initially nothing is reported</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">hasReported</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">expectedName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">assertions</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span>
+</span><span class='line'>      <span class="c1">// we should fail only when nothing was reported</span>
+</span><span class='line'>      <span class="nx">hasReported</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;Expected test suite &#39;&quot;</span> <span class="o">+</span> <span class="nx">expectedName</span> <span class="o">+</span> <span class="s2">&quot;&#39; to be reported&quot;</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">reportTestSuite</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// and we mark it as reported when we do receive the message</span>
+</span><span class='line'>    <span class="nx">hasReported</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And all our tests pass. Now, when the wrong name is getting reported we should still fail:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAssertHasReportedTestSuite_whenReporting_andFailing</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">t</span><span class="p">.</span><span class="nx">assertThrow</span><span class="p">(</span><span class="s2">&quot;Expected test suite &#39;HelloWorld&#39; to be reported&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTestSuite</span><span class="p">(</span><span class="s2">&quot;OtherTestSuite&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span><span class="p">(</span><span class="s2">&quot;HelloWorld&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected to throw an error,</span>
+</span><span class='line'><span class="c1">// but nothing was thrown</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Now we need to actually store the name of reported test suite:</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">ReporterSpy</span><span class="p">(</span><span class="nx">assertions</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// initially, we didn&#39;t receive any reports</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">testSuiteName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">expectedName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">assertions</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span>
+</span><span class='line'>      <span class="c1">// we fail only if received testSuiteName is not right</span>
+</span><span class='line'>      <span class="nx">testSuiteName</span> <span class="o">===</span> <span class="s2">&quot;HelloWorld&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;Expected test suite &#39;&quot;</span> <span class="o">+</span> <span class="nx">expectedName</span> <span class="o">+</span> <span class="s2">&quot;&#39; to be reported&quot;</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">reportTestSuite</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// and we need to store the reported name</span>
+</span><span class='line'>    <span class="nx">testSuiteName</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And all tests pass again. Although, we should notice this weird condition:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">testSuiteName</span> <span class="o">===</span> <span class="s2">&quot;HelloWorld&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Looks like our current production code is not generic enough, it will work well only with the <code>expectedName</code> equal to <code>"HelloWorld"</code>. Let&rsquo;s fix that by triangulating over this parameter:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAssertHasReportedTestSuite_whenReporting_andFailingWithDifferentName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">t</span><span class="p">.</span><span class="nx">assertThrow</span><span class="p">(</span><span class="s2">&quot;Expected test suite &#39;OtherTestSuite&#39; to be reported&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTestSuite</span><span class="p">(</span><span class="s2">&quot;HelloWorld&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span><span class="p">(</span><span class="s2">&quot;OtherTestSuite&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected to throw an error,</span>
+</span><span class='line'><span class="c1">// but nothing was thrown</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// And we should fix it by actually using the `expectedName`:</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">assertions</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span>
+</span><span class='line'>  <span class="nx">testSuiteName</span> <span class="o">===</span> <span class="nx">expectedName</span><span class="p">,</span>
+</span><span class='line'>  <span class="c1">//               ^ fixed here ^</span>
+</span><span class='line'>  <span class="s2">&quot;Expected test suite &#39;&quot;</span> <span class="o">+</span> <span class="nx">expectedName</span> <span class="o">+</span> <span class="s2">&quot;&#39; to be reported&quot;</span>
+</span><span class='line'><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And all the tests pass. Now we can get back to our failing test for the <code>runTestSuite</code>:</p>
+
+<h2>Implementing rendering of the name of the test suite</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testItOutputsNameOfTheTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="nx">TestSuiteName</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="p">},</span> <span class="p">{</span><span class="nx">reporter</span><span class="o">:</span> <span class="nx">reporter</span><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span><span class="p">(</span><span class="s2">&quot;TestSuiteName&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To implement this, first we will need to accept <code>options</code> parameter with sane defaults:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">runTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">reporter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">reporter</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">SimpleReporter</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// We have to implement this, otherwise our test suite will fail</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">SimpleReporter</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">reportTestSuite</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">process</span><span class="p">.</span><span class="nx">stdout</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s2">&quot;\n&quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After making the failing test pass and triangulating over the name of the test suite:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">runTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">reporter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">reporter</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">SimpleReporter</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And all tests pass now. Unfortunately, this is the output that we see now:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yeah, empty lines. This is because <code>(function () {}).name</code> is equal to <code>""</code>. We need to give proper names to all our anonymous constructors for the test suites:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="nx">RunTestSuiteTest</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">});</span>
+</span><span class='line'><span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="nx">AssertEqualTest</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">});</span>
+</span><span class='line'><span class="c1">// .. and so on ..</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And now we should see the correct output:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">AssertEqualTest</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">AssertNotEqualTest</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">AssertNotThrowTest</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">AssertThrowTest</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">AssertTrueTest</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">FizzBuzzKataTest</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">..</span> <span class="nx">and</span> <span class="nx">so</span> <span class="nx">on</span> <span class="p">..</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Great, now we would like to render the name of the executed test:</p>
+
+<h2>Render the name of the executed test</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testItOutputsNameOfTheTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="nx">TestSuiteName</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">testSomeTestName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">testSomeOtherTestName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+</span><span class='line'>  <span class="p">},</span> <span class="p">{</span><span class="nx">reporter</span><span class="o">:</span> <span class="nx">reporter</span><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span><span class="p">(</span><span class="s2">&quot;TestSuiteName&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTest</span><span class="p">(</span><span class="s2">&quot;testSomeTestName&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTest</span><span class="p">(</span><span class="s2">&quot;testSomeOtherTestName&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Of course this fails, because we need to implement <code>assertHasReportedTest(name)</code> now for our <code>ReporterSpy</code>. Let&rsquo;s test-drive it:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test/ReporterSpyTest.js</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAssertHasReportedTest_whenFailing</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">t</span><span class="p">.</span><span class="nx">assertThrow</span><span class="p">(</span><span class="s2">&quot;Expected test &#39;testName&#39; to be reported&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTest</span><span class="p">(</span><span class="s2">&quot;testName&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected to equal</span>
+</span><span class='line'><span class="c1">//   Expected test &#39;testName&#39; to be reported,</span>
+</span><span class='line'><span class="c1">// but got:</span>
+</span><span class='line'><span class="c1">//   reporter.assertHasReportedTest is not a function</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// We need to define assertHasReportedTest(name) method:</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">assertHasReportedTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">expectedName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected to throw an error,</span>
+</span><span class='line'><span class="c1">// but nothing was thrown</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// We need to make it throw the expected error:</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">assertHasReportedTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">expectedName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">assertions</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span>
+</span><span class='line'>    <span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;Expected test &#39;testName&#39; to be reported&quot;</span>
+</span><span class='line'>  <span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// And the test passes. Message hard-codes `testName` -</span>
+</span><span class='line'><span class="c1">// we should triangulate over it:</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAssertHasReportedTest_whenFailing_withDifferentName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">t</span><span class="p">.</span><span class="nx">assertThrow</span><span class="p">(</span><span class="s2">&quot;Expected test &#39;testDifferentName&#39; to be reported&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTest</span><span class="p">(</span><span class="s2">&quot;testDifferentName&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected to equal</span>
+</span><span class='line'><span class="c1">//   Expected test &#39;testDifferentName&#39; to be reported,</span>
+</span><span class='line'><span class="c1">// but got:</span>
+</span><span class='line'><span class="c1">//   Expected test &#39;testName&#39; to be reported</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// And to fix it:</span>
+</span><span class='line'><span class="s2">&quot;Expected test &#39;&quot;</span> <span class="o">+</span> <span class="nx">expectedName</span> <span class="o">+</span> <span class="s2">&quot;&#39; to be reported&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Next test will force us to implement simple reportTest function:</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAssertHasReportedTest_whenSucceeding</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">t</span><span class="p">.</span><span class="nx">assertNotThrow</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTest</span><span class="p">(</span><span class="s2">&quot;testName&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTest</span><span class="p">(</span><span class="s2">&quot;testName&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: reporter.reportTest is not a function</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// After fixing this and triangulating a bit, we get:</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">ReporterSpy</span><span class="p">(</span><span class="nx">assertions</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">testName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">assertHasReportedTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">expectedName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">assertions</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span>
+</span><span class='line'>      <span class="nx">testName</span> <span class="o">===</span> <span class="nx">expectedName</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;Expected test &#39;&quot;</span> <span class="o">+</span> <span class="nx">expectedName</span> <span class="o">+</span> <span class="s2">&quot;&#39; to be reported&quot;</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">reportTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">testName</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Finally we need ability to report multiple tests:</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAssertHasReportedTest_whenSucceeding_withMultipleReports</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">t</span><span class="p">.</span><span class="nx">assertNotThrow</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTest</span><span class="p">(</span><span class="s2">&quot;testName&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTest</span><span class="p">(</span><span class="s2">&quot;testOtherName&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTest</span><span class="p">(</span><span class="s2">&quot;testName&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Error: Expected not to throw error,</span>
+</span><span class='line'><span class="c1">// but thrown &#39;Expected test &#39;testName&#39; to be reported&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// And to implement this:</span>
+</span><span class='line'><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">ReporterSpy</span><span class="p">(</span><span class="nx">assertions</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// we will store all reported names,</span>
+</span><span class='line'>  <span class="c1">// initially no names are reported</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">testNames</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">assertHasReportedTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">expectedName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">assertions</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span>
+</span><span class='line'>      <span class="c1">// check if expectedName was reported</span>
+</span><span class='line'>      <span class="nx">testNames</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">expectedName</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;Expected test &#39;&quot;</span> <span class="o">+</span> <span class="nx">expectedName</span> <span class="o">+</span> <span class="s2">&quot;&#39; to be reported&quot;</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">reportTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// store the reported test name</span>
+</span><span class='line'>    <span class="nx">testNames</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Unfortunately, this does not pass our tests, because this test fails now:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAssertHasReportedTest_whenReporting_andFailing</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">t</span><span class="p">.</span><span class="nx">assertThrow</span><span class="p">(</span><span class="s2">&quot;Expected test &#39;testName&#39; to be reported&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTest</span><span class="p">(</span><span class="s2">&quot;testOtherName&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTest</span><span class="p">(</span><span class="s2">&quot;testName&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After an investigation, it becomes clear, that this happens because we can not re-use <code>reporter</code> variable defined at the higher level since all tests share the same <code>testSuite</code> object at the moment. We will have to move the creation of the <code>reporter</code> variable inside of each test:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAssertHasReportedTest_whenReporting_andFailing</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">reporter</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ReporterSpy</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testAssertHasReportedTest_whenReporting_andFailing_withOtherName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">reporter</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ReporterSpy</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// .. and so on ..</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And this makes all our tests pass.</p>
+
+<h2>Stateless tests</h2>
+
+<p>This is quite a noticeable problem, that our users can be frustrated with, so we probably should make it easy on them and allow such variables to be fresh for every test. This can be achieved quite easy if we were to create a new <code>testSuite</code> for each test. Let&rsquo;s write a simple test to show the problem:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// test/StatelessTest.js</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">runTestSuite</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../src/TestingFramework&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="nx">StatelessTest</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">answer</span> <span class="o">=</span> <span class="mi">41</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">testItCanMutateVariable_andImmediatelyUseNewValue</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">answer</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="nx">answer</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">testItCanMutateVariableAgain_andGetTheSameResult</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">answer</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="nx">answer</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>  <span class="c1">// this fails as expected:</span>
+</span><span class='line'>  <span class="c1">// Error: Expected to equal 42, but got: 43</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And now let&rsquo;s implement it by creating the <code>testSuite</code> for every test:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">runTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">reporter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">reporter</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">SimpleReporter</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">testSuitePrototype</span> <span class="o">=</span> <span class="nx">createTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">// ^ we change this from `testSuite` to `testSuitePrototype`  ^</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">testName</span> <span class="k">in</span> <span class="nx">testSuitePrototype</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">testName</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/^test/</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">testSuite</span> <span class="o">=</span> <span class="nx">createTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">);</span>
+</span><span class='line'>            <span class="c1">// ^   and we create our testSuite every time here   ^</span>
+</span><span class='line'>      <span class="nx">testSuite</span><span class="p">[</span><span class="nx">testName</span><span class="p">]();</span>
+</span><span class='line'>    <span class="c1">// ^  and run test on it ^</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">createTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">new</span> <span class="nx">testSuiteConstructor</span><span class="p">(</span><span class="nx">assertions</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After doing this, we can move <code>var reporter = new ReporterSpy(t);</code> to the top level of the <code>ReporterSpyTest</code> suite again. And all the tests pass.</p>
+
+<h2>Implementation of the rendering of the test name</h2>
+
+<p>Finally, we need to make sure that the test suite, that we have written before will pass:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testItOutputsNameOfTheTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="nx">TestSuiteName</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">testSomeTestName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">testSomeOtherTestName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+</span><span class='line'>    <span class="p">},</span> <span class="p">{</span><span class="nx">reporter</span><span class="o">:</span> <span class="nx">reporter</span><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span><span class="p">(</span><span class="s2">&quot;TestSuiteName&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTest</span><span class="p">(</span><span class="s2">&quot;testSomeTestName&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTest</span><span class="p">(</span><span class="s2">&quot;testSomeOtherTestName&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As expected it fails with <code>Error: Expected test 'testSomeTestName' to be reported</code>. After fixing it and applying triangulation once, we would end up with the following implementation:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// src/TestingFramework.js in runTestSuite function:</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">testName</span> <span class="k">in</span> <span class="nx">testSuitePrototype</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">testName</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/^test/</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTest</span><span class="p">(</span><span class="nx">testName</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// ^  here is our implementation  ^</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">testSuite</span> <span class="o">=</span> <span class="nx">createTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">testSuite</span><span class="p">[</span><span class="nx">testName</span><span class="p">]();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">SimpleReporter</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'>    <span class="c1">// and we should not forget to implement it for real reporter</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">reportTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">process</span><span class="p">.</span><span class="nx">stdout</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="s2">&quot;\t&quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, it seems that both <code>ReporterSpy</code> and <code>SimpleReporter</code> are implementing the same Duck type - <code>Reporter</code>. What Duck Type is? - find out here: <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>.</p>
+
+<h2>Contract testing all Reporter duck types</h2>
+
+<p>So we should test all our ducks that their public API don&rsquo;t get out of sync:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">TestingFramework</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;../src/TestingFramework&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">runTestSuite</span> <span class="o">=</span> <span class="nx">TestingFramework</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">SimpleReporter</span> <span class="o">=</span> <span class="nx">TestingFramework</span><span class="p">.</span><span class="nx">SimpleReporter</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">ReporterSpy</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./ReporterSpy&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">const</span> <span class="nx">IMPLEMENTATIONS</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>    <span class="nx">SimpleReporter</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">ReporterSpy</span>
+</span><span class='line'><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">IMPLEMENTATIONS</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">ReporterImplementation</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">reporter</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ReporterImplementation</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">testDefines_reportTestSuite</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">reportTestSuite</span> <span class="o">=</span> <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTestSuite</span><span class="p">;</span>
+</span><span class='line'>      <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="k">typeof</span><span class="p">(</span><span class="nx">reportTestSuite</span><span class="p">));</span>
+</span><span class='line'>      <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">reportTestSuite</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">testDefines_reportTest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">reportTest</span> <span class="o">=</span> <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTest</span><span class="p">;</span>
+</span><span class='line'>      <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="k">typeof</span><span class="p">(</span><span class="nx">reportTest</span><span class="p">));</span>
+</span><span class='line'>      <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">reportTest</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>All the tests pass. Unfortunately, the output regarding this test suite looks weird:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>    <span class="nx">testDefines_reportTestSuite</span>
+</span><span class='line'>    <span class="nx">testDefines_reportTest</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">testDefines_reportTestSuite</span>
+</span><span class='line'>    <span class="nx">testDefines_reportTest</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The test suite name is empty. I think we need an ability to define a custom and dynamic test suite name:</p>
+
+<h2>Custom name for the test suite</h2>
+
+<p>We can achieve this by allowing any test suite to define special hook method, that will return its custom name, like <code>testSuite.getTestSuiteName()</code>. Let&rsquo;s write a test for this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testItCanHaveCustomNameOfTheTestSuite</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">getTestSuiteName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="s2">&quot;CustomNameOfTheTestSuite&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>  <span class="p">},</span> <span class="p">{</span><span class="nx">reporter</span><span class="o">:</span> <span class="nx">reporter</span><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">reporter</span><span class="p">.</span><span class="nx">assertHasReportedTestSuite</span><span class="p">(</span><span class="s2">&quot;CustomNameOfTheTestSuite&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After implementing it and triangulating over the name once the code looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">runTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">reporter</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">reporter</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">SimpleReporter</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">testSuitePrototype</span> <span class="o">=</span> <span class="nx">createTestSuite</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">reporter</span><span class="p">.</span><span class="nx">reportTestSuite</span><span class="p">(</span>
+</span><span class='line'>    <span class="nx">getTestSuiteName</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">,</span> <span class="nx">testSuitePrototype</span><span class="p">)</span>
+</span><span class='line'><span class="c1">// ^ this is the function that we introduced here to make it pass ^</span>
+</span><span class='line'>  <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">testName</span> <span class="k">in</span> <span class="nx">testSuitePrototype</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">getTestSuiteName</span><span class="p">(</span><span class="nx">testSuiteConstructor</span><span class="p">,</span> <span class="nx">testSuitePrototype</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="nx">testSuitePrototype</span><span class="p">.</span><span class="nx">getTestSuiteName</span><span class="p">)</span> <span class="o">!==</span> <span class="s2">&quot;function&quot;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">testSuiteConstructor</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">testSuitePrototype</span><span class="p">.</span><span class="nx">getTestSuiteName</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, if we were to use this feature in our duck type tests:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">IMPLEMENTATIONS</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">ReporterImplementation</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">getTestSuiteName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nx">ReporterImplementation</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;_ReporterTest&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then we are getting the proper output:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">SimpleReporter_ReporterTest</span>
+</span><span class='line'>    <span class="nx">testDefines_reportTestSuite</span>
+</span><span class='line'>    <span class="nx">testDefines_reportTest</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">ReporterSpy_ReporterTest</span>
+</span><span class='line'>    <span class="nx">testDefines_reportTestSuite</span>
+</span><span class='line'>    <span class="nx">testDefines_reportTest</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Bottom Line</h2>
+
+<p>I think we are done with implementing our first simple reporter. Now we can see that the tests are actually executing and passing. The code can be found here: <a href="https://github.com/waterlink/BuildYourOwnTestingFrameworkPart4">https://github.com/waterlink/BuildYourOwnTestingFrameworkPart4</a></p>
+
+<p>There is still a lot to go through. In a few next episodes we will:</p>
+
+<ul>
+<li>Make sure that first failure does not cause test suite to stop running;</li>
+<li>Make sure the exit code is right;</li>
+<li>Report OK and FAIL;</li>
+<li>Output carefully formatted failures to the STDERR.</li>
+</ul>
+
+
+<p>Stay tuned!</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+</div>
+
+
+<!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<h2>Stay Tuned!</h2>
+<div class="mc-field-group">
+  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
+	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
+  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
+</div>
+	<div id="mce-responses" class="clear">
+		<div class="response" id="mce-error-response" style="display:none"></div>
+		<div class="response" id="mce-success-response" style="display:none"></div>
+	</div>
+    </div>
+</form>
+</div>
+
+<!--End mc_embed_signup-->
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Oleksii Fedorov (waterlink)</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-09-17T10:00:32+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>10:00 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/build-your-own-testing-framework/'>build-your-own-testing-framework</a>, <a class='category' href='/blog/categories/duck-typing/'>duck-typing</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/test-doubles/'>test-doubles</a>, <a class='category' href='/blog/categories/test-driven-development/'>test-driven-development</a>, <a class='category' href='/blog/categories/testing/'>testing</a>, <a class='category' href='/blog/categories/xunit/'>xunit</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.tddfellow.com/blog/2016/09/17/build-your-own-testing-framework-part-4/" data-via="waterlink000" data-counturl="http://www.tddfellow.com/blog/2016/09/17/build-your-own-testing-framework-part-4/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/" title="Previous Post: Getting stuck while doing TDD. Part 3: Triangulation to the Rescue!">&laquo; Getting stuck while doing TDD. Part 3: Triangulation to the Rescue!</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2016/09/18/introducing-test-doubles/" title="Next Post: Introducing Test Doubles">Introducing Test Doubles &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Getting Stuck While Doing TDD. Part 1: Example</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/20/eliminating-if-statements-legacy-endpoint-primer/">Eliminating &#8216;if&#8217; Statements: Legacy Endpoint Primer</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/08/14/build-your-own-testing-framework-part-3/">Build Your Own Testing Framework. Part 3</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/waterlink">@waterlink</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'waterlink',
+            count: 7,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+    <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+  </a>
+  <br />
+  Except where otherwise noted, content on this site is licensed under a
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+  <br/>
+
+  Except where otherwise noted, code examples on this site are licensed under a
+  <a rel="license" href="https://github.com/waterlink/waterlink.github.io/tree/source/LICENSE">MIT License</a>.
+  <br/>
+
+  Copyright &copy; 2016 - Oleksii Fedorov (waterlink) -
+  <br/>
+
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

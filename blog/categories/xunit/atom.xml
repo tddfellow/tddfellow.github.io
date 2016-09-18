@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Xunit | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/xunit/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-18T16:44:45+02:00</updated>
+  <updated>2016-09-18T16:46:23+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,742 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Build Your Own Testing Framework. Part 4]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/09/17/build-your-own-testing-framework-part-4/"/>
+    <updated>2016-09-17T10:00:32+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/09/17/build-your-own-testing-framework-part-4</id>
+    <content type="html"><![CDATA[<p>Welcome back to the new issue of &ldquo;Build Your Own Testing Framework&rdquo; series! As you might have noticed, currently, our testing framework only outputs failures and nothing else. It is impossible to know if it actually runs any tests when they all pass because there is no output. Today we will implement a simple reporter for our testing framework. It will report the name of the test suite and names of the tests that are being executed, for example:</p>
+
+<pre><code>SpyTest
+    testIsNotCalledInitially
+    testAssertNotCalledFailsWhenWasCalled
+    testIsCalledAfterBeingCalled
+    testAssertCalledFailsWhenWasNotCalled
+</code></pre>
+
+<p>This article is the fourth one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
+
+<p>Shall we get started?</p>
+
+<h2>Render the name of the test suite</h2>
+
+<p>So where should the name of the test suite come from? Probably it should be a test suite class name. Currently, all of them are anonymous classes and therefore don&rsquo;t have a name:</p>
+
+<pre><code class="javascript">runTestSuite(function () {
+  //         ^          ^
+  //       - no name here -
+  // ...
+});
+</code></pre>
+
+<p>We would like all test suites to have that name, for example:</p>
+
+<pre><code class="javascript">runTestSuite(function SpyTest() {
+  //                 ^       ^
+  //            - here is the name -
+  // ...
+});
+</code></pre>
+
+<p>We should write a test for this case:</p>
+
+<ol>
+<li>Create a test suite with the name</li>
+<li>Run the test suite with function <code>runTestSuite</code></li>
+<li>Assert that the test suite name is reported</li>
+</ol>
+
+
+<p>Let&rsquo;s try to write a test in a <code>RunTestSuiteTest.js</code> test suite for that:</p>
+
+<pre><code class="javascript">this.testItOutputsNameOfTheTest = function () {
+  runTestSuite(function TestSuiteName(t) {});
+
+  // TODO: assert that the test suite name is reported
+};
+</code></pre>
+
+<p>Now it is problematic: how are we going to assert that something is reported? Should we replace <code>console.log(message)</code> or <code>process.stdout.write(message)</code> with our own implementation, so that we can test it?:</p>
+
+<pre><code class="javascript">var logged = "";
+var oldConsoleLog = console.log;
+
+console.log = function (message) {
+  logged = logged + message + "\n";
+};
+</code></pre>
+
+<p>And then we should be able to assert with: <code>t.assertTrue(logged.indexOf("TestSuiteName") &gt;= 0)</code>. Finally we will need to restore the old <code>console.log</code> function:</p>
+
+<pre><code class="javascript">this.testItOutputsNameOfTheTest = function () {
+  var logged = "";
+  var oldConsoleLog = console.log;
+
+  console.log = function (message) {
+    logged = logged + message + "\n";
+  };
+
+  runTestSuite(function TestSuiteName(t) {});
+
+  t.assertTrue(logged.indexOf("TestSuiteName" &gt;= 0));
+
+  console.log = oldConsoleLog;
+};
+</code></pre>
+
+<p>While this code works, it has multitude of problems:</p>
+
+<ul>
+<li>If the test fails then <code>oldConsoleLog</code> function is not restored;</li>
+<li>It has too much setup (which we could extract as a function);</li>
+<li>It has teardown (which would be nice to avoid if we could);</li>
+<li>It is hard to read because from 8 lines of code only 2 are delivering the core intent;</li>
+<li>And it is testing how exactly test suite name is being reported, which is basically a View-like concern.</li>
+</ul>
+
+
+<p>And fixing the last problem will actually fix everything else because this problem causes others. We can fix it by introducing some sort of <code>Reporter</code> type, that can respond to <code>reportTestSuite(name)</code> message:</p>
+
+<pre><code class="javascript">this.testItOutputsNameOfTheTest = function () {
+  runTestSuite(function TestSuiteName(t) {
+  }, {reporter: reporter});
+
+  t.assertTrue(reporter.hasReportedTestSuite("TestSuiteName"));
+  // or even better:
+  reporter.assertHasReportedTestSuite("TestSuiteName");
+};
+</code></pre>
+
+<p><code>reporter</code> in this case is some sort of test double. And what are they? - Find out here: <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>.</p>
+
+<h2>Implementing the reporter spy</h2>
+
+<p>So our <code>reporter</code> object in the test seems terribly like a Spy Double to me, let&rsquo;s test-drive it:</p>
+
+<pre><code class="javascript">// test/ReporterSpyTest.js
+var runTestSuite = require("../src/TestingFramework");
+var ReporterSpy = require("./ReporterSpy");
+
+runTestSuite(function ReporterSpy_BehaviorTest(t) {
+  var reporter = new ReporterSpy(t);
+
+  // Let's write our first test:
+  this.testAssertHasReportedTestSuite_whenFailing = function () {
+    t.assertThrow(
+      "Expected test suite 'HelloWorld' to be reported",
+      function () {
+        reporter.assertHasReportedTestSuite("HelloWorld");
+      }
+    );
+  };
+});
+
+// Error: Cannot find module './ReporterSpy'
+
+// Create file test/ReporterSpy.js
+</code></pre>
+
+<p>Now we are getting the following error:</p>
+
+<pre><code>//     var reporter = new ReporterSpy(t);
+//                    ^
+//
+// TypeError: ReporterSpy is not a function
+</code></pre>
+
+<p>We need to create ReporterSpy object now:</p>
+
+<pre><code class="javascript">module.exports = function ReporterSpy(assertions) {
+
+};
+</code></pre>
+
+<p>Now we are getting:</p>
+
+<pre><code>// Error: Expected to equal
+//   Expected test suite 'HelloWorld' to be reported,
+// but got:
+//   reporter.assertHasReportedTestSuite is not a function
+</code></pre>
+
+<p>Now we need to create a function <code>assertHasReportedTestSuite(name)</code> for out <code>ReporterSpy</code>:</p>
+
+<pre><code class="javascript">this.assertHasReportedTestSuite = function (expectedName) {
+  assertions.assertTrue(
+    false,
+    "Expected test suite 'HelloWorld' to be reported"
+  );
+};
+</code></pre>
+
+<p>Next we need to make sure, that <code>expectedName</code> is actually present in the error message by triangulating with different name:</p>
+
+<pre><code class="javascript">this.testAssertHasReportedTestSuite_whenFailing_withOtherName = function () {
+  t.assertThrow("Expected test suite 'OtherTestSuite' to be reported", function () {
+    reporter.assertHasReportedTestSuite("OtherTestSuite");
+  });
+};
+
+// Error: Expected to equal
+//   Expected test suite 'OtherTestSuite' to be reported,
+// but got:
+//   Expected test suite 'HelloWorld' to be reported
+
+// And we need to change the respective string:
+"Expected test suite '" + expectedName + "' to be reported"
+</code></pre>
+
+<p>Then we need to make sure that we do succeed when the message is received:</p>
+
+<pre><code class="javascript">this.testAssertHasReportedTestSuite_whenSucceeding = function () {
+  t.assertNotThrow(function () {
+    reporter.reportTestSuite("HelloWorld");
+    reporter.assertHasReportedTestSuite("HelloWorld");
+  });
+};
+
+// Error:
+//   Expected not to throw error,
+// but thrown
+//   'reporter.reportTestSuite is not a function'
+
+// So we need to define this function in ReporterSpy:
+this.reportTestSuite = function (name) {
+
+};
+
+// Error:
+//   Expected not to throw error,
+// but thrown
+//   'Expected test suite 'HelloWorld' to be reported'
+
+// Now we need to provide the simplest implementation we can,
+// we can do that by introducing the boolean variable:
+
+module.exports = function ReporterSpy(assertions) {
+  // initially nothing is reported
+  var hasReported = false;
+
+  this.assertHasReportedTestSuite = function (expectedName) {
+    assertions.assertTrue(
+      // we should fail only when nothing was reported
+      hasReported,
+      "Expected test suite '" + expectedName + "' to be reported"
+    );
+  };
+
+  this.reportTestSuite = function (name) {
+    // and we mark it as reported when we do receive the message
+    hasReported = true;
+  };
+};
+</code></pre>
+
+<p>And all our tests pass. Now, when the wrong name is getting reported we should still fail:</p>
+
+<pre><code class="javascript">this.testAssertHasReportedTestSuite_whenReporting_andFailing = function () {
+  t.assertThrow("Expected test suite 'HelloWorld' to be reported", function () {
+    reporter.reportTestSuite("OtherTestSuite");
+    reporter.assertHasReportedTestSuite("HelloWorld");
+  });
+};
+
+// Error: Expected to throw an error,
+// but nothing was thrown
+
+// Now we need to actually store the name of reported test suite:
+
+module.exports = function ReporterSpy(assertions) {
+  // initially, we didn't receive any reports
+  var testSuiteName = null;
+
+  this.assertHasReportedTestSuite = function (expectedName) {
+    assertions.assertTrue(
+      // we fail only if received testSuiteName is not right
+      testSuiteName === "HelloWorld",
+      "Expected test suite '" + expectedName + "' to be reported"
+    );
+  };
+
+  this.reportTestSuite = function (name) {
+    // and we need to store the reported name
+    testSuiteName = name;
+  };
+};
+</code></pre>
+
+<p>And all tests pass again. Although, we should notice this weird condition:</p>
+
+<pre><code class="javascript">testSuiteName === "HelloWorld"
+</code></pre>
+
+<p>Looks like our current production code is not generic enough, it will work well only with the <code>expectedName</code> equal to <code>"HelloWorld"</code>. Let&rsquo;s fix that by triangulating over this parameter:</p>
+
+<pre><code class="javascript">this.testAssertHasReportedTestSuite_whenReporting_andFailingWithDifferentName = function () {
+  t.assertThrow("Expected test suite 'OtherTestSuite' to be reported", function () {
+    reporter.reportTestSuite("HelloWorld");
+    reporter.assertHasReportedTestSuite("OtherTestSuite");
+  });
+};
+
+// Error: Expected to throw an error,
+// but nothing was thrown
+
+// And we should fix it by actually using the `expectedName`:
+
+assertions.assertTrue(
+  testSuiteName === expectedName,
+  //               ^ fixed here ^
+  "Expected test suite '" + expectedName + "' to be reported"
+);
+</code></pre>
+
+<p>And all the tests pass. Now we can get back to our failing test for the <code>runTestSuite</code>:</p>
+
+<h2>Implementing rendering of the name of the test suite</h2>
+
+<pre><code class="javascript">this.testItOutputsNameOfTheTest = function () {
+  runTestSuite(function TestSuiteName(t) {
+  }, {reporter: reporter});
+
+  reporter.assertHasReportedTestSuite("TestSuiteName");
+};
+</code></pre>
+
+<p>To implement this, first we will need to accept <code>options</code> parameter with sane defaults:</p>
+
+<pre><code class="javascript">function runTestSuite(testSuiteConstructor, options) {
+  options = options || {};
+  var reporter = options.reporter || new SimpleReporter();
+
+  // ...
+}
+
+// We have to implement this, otherwise our test suite will fail
+function SimpleReporter() {
+    this.reportTestSuite = function (name) {
+        process.stdout.write("\n" + name + "\n");
+    };
+}
+</code></pre>
+
+<p>After making the failing test pass and triangulating over the name of the test suite:</p>
+
+<pre><code class="javascript">function runTestSuite(testSuiteConstructor, options) {
+  options = options || {};
+  var reporter = options.reporter || new SimpleReporter();
+
+  reporter.reportTestSuite(testSuiteConstructor.name)
+
+  // ...
+}
+</code></pre>
+
+<p>And all tests pass now. Unfortunately, this is the output that we see now:</p>
+
+<pre><code></code></pre>
+
+<p>Yeah, empty lines. This is because <code>(function () {}).name</code> is equal to <code>""</code>. We need to give proper names to all our anonymous constructors for the test suites:</p>
+
+<pre><code class="javascript">runTestSuite(function RunTestSuiteTest(t) { ... });
+runTestSuite(function AssertEqualTest(t) { ... });
+// .. and so on ..
+</code></pre>
+
+<p>And now we should see the correct output:</p>
+
+<pre><code>AssertEqualTest
+
+AssertNotEqualTest
+
+AssertNotThrowTest
+
+AssertThrowTest
+
+AssertTrueTest
+
+FizzBuzzKataTest
+
+.. and so on ..
+</code></pre>
+
+<p>Great, now we would like to render the name of the executed test:</p>
+
+<h2>Render the name of the executed test</h2>
+
+<pre><code class="javascript">this.testItOutputsNameOfTheTest = function () {
+  runTestSuite(function TestSuiteName(t) {
+    this.testSomeTestName = function () {};
+    this.testSomeOtherTestName = function () {};
+  }, {reporter: reporter});
+
+  reporter.assertHasReportedTestSuite("TestSuiteName");
+  reporter.assertHasReportedTest("testSomeTestName");
+  reporter.assertHasReportedTest("testSomeOtherTestName");
+};
+</code></pre>
+
+<p>Of course this fails, because we need to implement <code>assertHasReportedTest(name)</code> now for our <code>ReporterSpy</code>. Let&rsquo;s test-drive it:</p>
+
+<pre><code class="javascript">// test/ReporterSpyTest.js
+this.testAssertHasReportedTest_whenFailing = function () {
+  t.assertThrow("Expected test 'testName' to be reported", function () {
+    reporter.assertHasReportedTest("testName");
+  });
+};
+
+// Error: Expected to equal
+//   Expected test 'testName' to be reported,
+// but got:
+//   reporter.assertHasReportedTest is not a function
+
+// We need to define assertHasReportedTest(name) method:
+this.assertHasReportedTest = function (expectedName) {
+
+};
+
+// Error: Expected to throw an error,
+// but nothing was thrown
+
+// We need to make it throw the expected error:
+this.assertHasReportedTest = function (expectedName) {
+  assertions.assertTrue(
+    false,
+    "Expected test 'testName' to be reported"
+  );
+};
+
+// And the test passes. Message hard-codes `testName` -
+// we should triangulate over it:
+
+this.testAssertHasReportedTest_whenFailing_withDifferentName = function () {
+  t.assertThrow("Expected test 'testDifferentName' to be reported", function () {
+    reporter.assertHasReportedTest("testDifferentName");
+  });
+};
+
+// Error: Expected to equal
+//   Expected test 'testDifferentName' to be reported,
+// but got:
+//   Expected test 'testName' to be reported
+
+// And to fix it:
+"Expected test '" + expectedName + "' to be reported"
+
+// Next test will force us to implement simple reportTest function:
+this.testAssertHasReportedTest_whenSucceeding = function () {
+  t.assertNotThrow(function () {
+    reporter.reportTest("testName");
+    reporter.assertHasReportedTest("testName");
+  });
+};
+
+// Error: reporter.reportTest is not a function
+
+// After fixing this and triangulating a bit, we get:
+
+module.exports = function ReporterSpy(assertions) {
+  var testName = null;
+  // ...
+  this.assertHasReportedTest = function (expectedName) {
+    assertions.assertTrue(
+      testName === expectedName,
+      "Expected test '" + expectedName + "' to be reported"
+    );
+  };
+  this.reportTest = function (name) {
+    testName = name;
+  };
+}
+
+// Finally we need ability to report multiple tests:
+
+this.testAssertHasReportedTest_whenSucceeding_withMultipleReports = function () {
+  t.assertNotThrow(function () {
+    reporter.reportTest("testName");
+    reporter.reportTest("testOtherName");
+    reporter.assertHasReportedTest("testName");
+  });
+};
+
+// Error: Expected not to throw error,
+// but thrown 'Expected test 'testName' to be reported'
+
+// And to implement this:
+module.exports = function ReporterSpy(assertions) {
+  // we will store all reported names,
+  // initially no names are reported
+  var testNames = [];
+  // ...
+  this.assertHasReportedTest = function (expectedName) {
+    assertions.assertTrue(
+      // check if expectedName was reported
+      testNames.indexOf(expectedName) &gt;= 0,
+      "Expected test '" + expectedName + "' to be reported"
+    );
+  };
+  this.reportTest = function (name) {
+    // store the reported test name
+    testNames.push(name);
+  };
+}
+</code></pre>
+
+<p>Unfortunately, this does not pass our tests, because this test fails now:</p>
+
+<pre><code class="javascript">this.testAssertHasReportedTest_whenReporting_andFailing = function () {
+  t.assertThrow("Expected test 'testName' to be reported", function () {
+    reporter.reportTest("testOtherName");
+    reporter.assertHasReportedTest("testName");
+  });
+};
+</code></pre>
+
+<p>After an investigation, it becomes clear, that this happens because we can not re-use <code>reporter</code> variable defined at the higher level since all tests share the same <code>testSuite</code> object at the moment. We will have to move the creation of the <code>reporter</code> variable inside of each test:</p>
+
+<pre><code class="javascript">this.testAssertHasReportedTest_whenReporting_andFailing = function () {
+  var reporter = new ReporterSpy(t);
+  // ...
+};
+
+this.testAssertHasReportedTest_whenReporting_andFailing_withOtherName = function () {
+  var reporter = new ReporterSpy(t);
+  // ...
+};
+
+// .. and so on ..
+</code></pre>
+
+<p>And this makes all our tests pass.</p>
+
+<h2>Stateless tests</h2>
+
+<p>This is quite a noticeable problem, that our users can be frustrated with, so we probably should make it easy on them and allow such variables to be fresh for every test. This can be achieved quite easy if we were to create a new <code>testSuite</code> for each test. Let&rsquo;s write a simple test to show the problem:</p>
+
+<pre><code class="javascript">// test/StatelessTest.js
+var runTestSuite = require("../src/TestingFramework");
+
+runTestSuite(function StatelessTest(t) {
+  var answer = 41;
+
+  this.testItCanMutateVariable_andImmediatelyUseNewValue = function () {
+    answer++;
+    t.assertEqual(42, answer);
+  };
+
+  this.testItCanMutateVariableAgain_andGetTheSameResult = function () {
+    answer++;
+    t.assertEqual(42, answer);
+  };
+  // this fails as expected:
+  // Error: Expected to equal 42, but got: 43
+});
+</code></pre>
+
+<p>And now let&rsquo;s implement it by creating the <code>testSuite</code> for every test:</p>
+
+<pre><code class="javascript">function runTestSuite(testSuiteConstructor, options) {
+  options = options || {};
+  var reporter = options.reporter || new SimpleReporter();
+
+    reporter.reportTestSuite(testSuiteConstructor.name);
+
+    var testSuitePrototype = createTestSuite(testSuiteConstructor);
+    // ^ we change this from `testSuite` to `testSuitePrototype`  ^
+
+  for (var testName in testSuitePrototype) {
+    if (testName.match(/^test/)) {
+      var testSuite = createTestSuite(testSuiteConstructor);
+            // ^   and we create our testSuite every time here   ^
+      testSuite[testName]();
+    // ^  and run test on it ^
+    }
+  }
+}
+
+function createTestSuite(testSuiteConstructor) {
+    return new testSuiteConstructor(assertions);
+}
+</code></pre>
+
+<p>After doing this, we can move <code>var reporter = new ReporterSpy(t);</code> to the top level of the <code>ReporterSpyTest</code> suite again. And all the tests pass.</p>
+
+<h2>Implementation of the rendering of the test name</h2>
+
+<p>Finally, we need to make sure that the test suite, that we have written before will pass:</p>
+
+<pre><code class="javascript">this.testItOutputsNameOfTheTest = function () {
+    runTestSuite(function TestSuiteName(t) {
+        this.testSomeTestName = function () {};
+        this.testSomeOtherTestName = function () {};
+    }, {reporter: reporter});
+
+    reporter.assertHasReportedTestSuite("TestSuiteName");
+    reporter.assertHasReportedTest("testSomeTestName");
+    reporter.assertHasReportedTest("testSomeOtherTestName");
+};
+</code></pre>
+
+<p>As expected it fails with <code>Error: Expected test 'testSomeTestName' to be reported</code>. After fixing it and applying triangulation once, we would end up with the following implementation:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js in runTestSuite function:
+for (var testName in testSuitePrototype) {
+    if (testName.match(/^test/)) {
+
+        reporter.reportTest(testName);
+// ^  here is our implementation  ^
+
+        var testSuite = createTestSuite(testSuiteConstructor);
+        testSuite[testName]();
+    }
+}
+
+function SimpleReporter() {
+    // ...
+    // and we should not forget to implement it for real reporter
+  this.reportTest = function (name) {
+    process.stdout.write("\t" + name + "\n");
+  };
+}
+</code></pre>
+
+<p>Now, it seems that both <code>ReporterSpy</code> and <code>SimpleReporter</code> are implementing the same Duck type - <code>Reporter</code>. What Duck Type is? - find out here: <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>.</p>
+
+<h2>Contract testing all Reporter duck types</h2>
+
+<p>So we should test all our ducks that their public API don&rsquo;t get out of sync:</p>
+
+<pre><code class="javascript">var TestingFramework = require("../src/TestingFramework");
+var runTestSuite = TestingFramework;
+var SimpleReporter = TestingFramework.SimpleReporter;
+
+var ReporterSpy = require("./ReporterSpy");
+
+const IMPLEMENTATIONS = [
+    SimpleReporter,
+    ReporterSpy
+];
+
+IMPLEMENTATIONS.forEach(function (ReporterImplementation) {
+  runTestSuite(function (t) {
+    var reporter = new ReporterImplementation();
+
+    this.testDefines_reportTestSuite = function () {
+      var reportTestSuite = reporter.reportTestSuite;
+      t.assertEqual("function", typeof(reportTestSuite));
+      t.assertEqual(1, reportTestSuite.length);
+    };
+
+    this.testDefines_reportTest = function () {
+      var reportTest = reporter.reportTest;
+      t.assertEqual("function", typeof(reportTest));
+      t.assertEqual(1, reportTest.length);
+    }
+  });
+});
+</code></pre>
+
+<p>All the tests pass. Unfortunately, the output regarding this test suite looks weird:</p>
+
+<pre><code>
+    testDefines_reportTestSuite
+    testDefines_reportTest
+
+
+    testDefines_reportTestSuite
+    testDefines_reportTest
+</code></pre>
+
+<p>The test suite name is empty. I think we need an ability to define a custom and dynamic test suite name:</p>
+
+<h2>Custom name for the test suite</h2>
+
+<p>We can achieve this by allowing any test suite to define special hook method, that will return its custom name, like <code>testSuite.getTestSuiteName()</code>. Let&rsquo;s write a test for this:</p>
+
+<pre><code class="javascript">this.testItCanHaveCustomNameOfTheTestSuite = function () {
+  runTestSuite(function (t) {
+    this.getTestSuiteName = function () {
+      return "CustomNameOfTheTestSuite";
+    };
+  }, {reporter: reporter});
+
+  reporter.assertHasReportedTestSuite("CustomNameOfTheTestSuite");
+};
+</code></pre>
+
+<p>After implementing it and triangulating over the name once the code looks like this:</p>
+
+<pre><code class="javascript">function runTestSuite(testSuiteConstructor, options) {
+  options = options || {};
+  var reporter = options.reporter || new SimpleReporter();
+
+  var testSuitePrototype = createTestSuite(testSuiteConstructor);
+
+  reporter.reportTestSuite(
+    getTestSuiteName(testSuiteConstructor, testSuitePrototype)
+// ^ this is the function that we introduced here to make it pass ^
+  );
+
+    for (var testName in testSuitePrototype) { ... }
+}
+
+function getTestSuiteName(testSuiteConstructor, testSuitePrototype) {
+    if (typeof(testSuitePrototype.getTestSuiteName) !== "function") {
+        return testSuiteConstructor.name;
+    }
+
+    return testSuitePrototype.getTestSuiteName();
+}
+</code></pre>
+
+<p>Now, if we were to use this feature in our duck type tests:</p>
+
+<pre><code class="javascript">IMPLEMENTATIONS.forEach(function (ReporterImplementation) {
+  runTestSuite(function (t) {
+    this.getTestSuiteName = function () {
+      return ReporterImplementation.name + "_ReporterTest";
+    };
+
+    // ...
+});
+</code></pre>
+
+<p>Then we are getting the proper output:</p>
+
+<pre><code>SimpleReporter_ReporterTest
+    testDefines_reportTestSuite
+    testDefines_reportTest
+
+ReporterSpy_ReporterTest
+    testDefines_reportTestSuite
+    testDefines_reportTest
+</code></pre>
+
+<h2>Bottom Line</h2>
+
+<p>I think we are done with implementing our first simple reporter. Now we can see that the tests are actually executing and passing. The code can be found here: <a href="https://github.com/waterlink/BuildYourOwnTestingFrameworkPart4">https://github.com/waterlink/BuildYourOwnTestingFrameworkPart4</a></p>
+
+<p>There is still a lot to go through. In a few next episodes we will:</p>
+
+<ul>
+<li>Make sure that first failure does not cause test suite to stop running;</li>
+<li>Make sure the exit code is right;</li>
+<li>Report OK and FAIL;</li>
+<li>Output carefully formatted failures to the STDERR.</li>
+</ul>
+
+
+<p>Stay tuned!</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Your Own Testing Framework. Part 3]]></title>
