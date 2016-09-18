@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Duck-typing | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/duck-typing/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2016-09-18T16:44:45+02:00</updated>
+  <id>http://www.tddfellow.com/</id>
+  <author>
+    <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Meet Duck Type]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/09/18/meet-duck-type/"/>
+    <updated>2016-09-18T16:37:33+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/09/18/meet-duck-type</id>
+    <content type="html"><![CDATA[<h2>Duck type</h2>
+
+<p>Duck type is the concept in the domain of the type safety that represents objects, that pass a so-called &ldquo;Duck Test&rdquo;:</p>
+
+<blockquote><p>If it looks like a duck, swims like a duck, and quacks like a duck, then it probably is a duck.</p></blockquote>
+
+<p>In terms of programming language, it might look like this:</p>
+
+<pre><code class="javascript">function Duck() {
+    this.swim = function (coordinates) { ... };
+    this.quack = function (sentence) { ... };
+}
+
+function RoboDuck() {
+    this.swim = function (coordinates) { ... };
+    this.quack = function (sentence) { ... };
+}
+
+// .. and so on ..
+</code></pre>
+
+<p>The point is that the public interface has methods <code>swim()</code> and <code>quack()</code>. This is how you identify the duck in a programming language. This concept is very similar to the concept of the <code>interface</code> in programming languages that have one, but it is not enforced in any way by the programming language.</p>
+
+<p>Duck typing is mostly natural in dynamic languages, where it is possible to send any message to any object and the check if that is something possible will happen at runtime. In static languages, it is still possible to use duck typing via some sort of Reflection.</p>
+
+<h3>Contract test for duck types</h3>
+
+<p>In a dynamic language, it is important to make it obvious, that something is implementing certain duck type by writing one test suite for all implementers and executing it against them. For example:</p>
+
+<pre><code class="javascript">[Duck, RoboDuck].forEach(function (duckType) {
+    runTestSuite(function (t) {
+        this.testItSwimsLikeADuck = function () {
+            var duck = new duckType();
+            duck.swim({x: 5, y: 7});
+            t.assertThat(duck).swamTo({x: 5, y: 7});
+        };
+
+        this.testItQuacksLikeADuck = function () {
+            var duck = new duckType();
+            duck.quack("hello world");
+            t.assertThat(duck).quacked("hello world");
+        };
+    });
+});
+</code></pre>
+
+<p>This test suite has to go only through the Duck type public interface. If it is not possible to test behavior through it, one should test at least the function signatures, for example:</p>
+
+<pre><code class="javascript">this.testItSwimsLikeADuck = function () {
+    var duck = new duckType();
+    var swim = duck.swim;
+    t.assertEqual("function", typeof(swim));
+    t.assertEqual(1, swim.length);
+};
+</code></pre>
+
+<p>Not doing contract tests for your ducks may result in a passing test suite and broken production code. For example, when one duck and its test suite have been updated, but others haven&rsquo;t.</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

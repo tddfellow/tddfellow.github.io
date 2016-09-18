@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://www.tddfellow.com/blog/2016/09/18/meet-duck-type/</loc>
+    <lastmod>2016-09-18T16:37:33+02:00</lastmod>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/2016/09/18/introducing-test-doubles/</loc>
+    <lastmod>2016-09-18T16:31:48+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/</loc>
     <lastmod>2016-08-31T02:35:32+02:00</lastmod>
   </url>
@@ -372,5 +380,11 @@
   </url>
   <url>
     <loc>http://www.tddfellow.com/blog/categories/getting-stuck-while-doing-tdd/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/test-doubles/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/duck-typing/</loc>
   </url>
 </urlset>

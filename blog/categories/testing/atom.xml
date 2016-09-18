@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-13T01:59:20+02:00</updated>
+  <updated>2016-09-18T16:44:45+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,284 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Meet Duck Type]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/09/18/meet-duck-type/"/>
+    <updated>2016-09-18T16:37:33+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/09/18/meet-duck-type</id>
+    <content type="html"><![CDATA[<h2>Duck type</h2>
+
+<p>Duck type is the concept in the domain of the type safety that represents objects, that pass a so-called &ldquo;Duck Test&rdquo;:</p>
+
+<blockquote><p>If it looks like a duck, swims like a duck, and quacks like a duck, then it probably is a duck.</p></blockquote>
+
+<p>In terms of programming language, it might look like this:</p>
+
+<pre><code class="javascript">function Duck() {
+    this.swim = function (coordinates) { ... };
+    this.quack = function (sentence) { ... };
+}
+
+function RoboDuck() {
+    this.swim = function (coordinates) { ... };
+    this.quack = function (sentence) { ... };
+}
+
+// .. and so on ..
+</code></pre>
+
+<p>The point is that the public interface has methods <code>swim()</code> and <code>quack()</code>. This is how you identify the duck in a programming language. This concept is very similar to the concept of the <code>interface</code> in programming languages that have one, but it is not enforced in any way by the programming language.</p>
+
+<p>Duck typing is mostly natural in dynamic languages, where it is possible to send any message to any object and the check if that is something possible will happen at runtime. In static languages, it is still possible to use duck typing via some sort of Reflection.</p>
+
+<h3>Contract test for duck types</h3>
+
+<p>In a dynamic language, it is important to make it obvious, that something is implementing certain duck type by writing one test suite for all implementers and executing it against them. For example:</p>
+
+<pre><code class="javascript">[Duck, RoboDuck].forEach(function (duckType) {
+    runTestSuite(function (t) {
+        this.testItSwimsLikeADuck = function () {
+            var duck = new duckType();
+            duck.swim({x: 5, y: 7});
+            t.assertThat(duck).swamTo({x: 5, y: 7});
+        };
+
+        this.testItQuacksLikeADuck = function () {
+            var duck = new duckType();
+            duck.quack("hello world");
+            t.assertThat(duck).quacked("hello world");
+        };
+    });
+});
+</code></pre>
+
+<p>This test suite has to go only through the Duck type public interface. If it is not possible to test behavior through it, one should test at least the function signatures, for example:</p>
+
+<pre><code class="javascript">this.testItSwimsLikeADuck = function () {
+    var duck = new duckType();
+    var swim = duck.swim;
+    t.assertEqual("function", typeof(swim));
+    t.assertEqual(1, swim.length);
+};
+</code></pre>
+
+<p>Not doing contract tests for your ducks may result in a passing test suite and broken production code. For example, when one duck and its test suite have been updated, but others haven&rsquo;t.</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Introducing Test Doubles]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/09/18/introducing-test-doubles/"/>
+    <updated>2016-09-18T16:31:48+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/09/18/introducing-test-doubles</id>
+    <content type="html"><![CDATA[<p>A test double is a test object or a test function, that looks and behaves like its production counterpart, but is actually a simplified version that reduces the complexity and enables simpler testing. One can represent all types of test double as an inheritance tree like this:</p>
+
+<p><img src='//g.gravizo.com/g?
+@startuml;
+object Double;
+object Dummy;
+object Stub;
+object Spy;
+object Mock;
+object Fake;
+Double <|-- Dummy;
+Double <|-- Fake;
+Dummy <|-- Stub;
+Stub <|-- Spy;
+Spy <|-- Mock;
+@enduml;
+'/></p>
+
+<p>Where <code>Double</code> is an abstract test double, which has no functionality - it is a general concept to talk about test doubles.</p>
+
+<p><code>Dummy</code> - is a test double, that is used to fill parameter lists, in cases where these parameters are not used by production code. Simplest <code>Dummy</code> would look like this:</p>
+
+<pre><code class="javascript">function ExampleDummyObject() {
+  this.doSomething = function () {};
+
+  this.getSomething = function () {
+    return null;
+  };
+}
+
+function exampleDummyFunction() {
+  return null;
+}
+
+// Usage example in test
+someObject.someMethod(dummyObject);
+someFunction(exampleDummyFunction);
+</code></pre>
+
+<p><code>Stub</code> - is a test dummy, additionally, providing an indirect input for the production code from the test. &ldquo;Indirect&rdquo; means here via a method call on the stub object or a call of the stub function. For example:</p>
+
+<pre><code class="javascript">function ExampleStubObject() {
+  var something = null;
+
+  this.getSomething = function () {
+    return something;
+  };
+
+  this.stubSomething = function(somethingValue) {
+    something = somethingValue;
+  };
+}
+
+var someValue = null;
+function exampleStubFunction() {
+  return someValue;
+}
+
+// Usage example in the test
+stubObject.stubSomething("a value from the test");
+anObject.aMethod(stubObject);
+
+someValue = "a value from the test";
+someFunction(exampleStubFunction);
+</code></pre>
+
+<p><code>Spy</code> - is a test stub, additionally, verifying an indirect output of the production code, by asserting afterward, without having defined the expectations before the production code is executed. For example:</p>
+
+<pre><code class="javascript">function ExampleSpyObject(assertions) {
+  var didSomethingWithName = null;
+  var somethingValue = null;
+
+  this.doSomethingWith = function (name) {
+    didSomethingWithName = name;
+    return somethingValue;
+  };
+
+  this.stubSomething = function (something) {
+    somethingValue = something;
+  };
+
+  this.assertDidSomethingWithName = function(expectedName) {
+    assertions.assertTrue(
+      didSomethingWithName === expectedName,
+      "Expected to do something with '" + expectedName + "'"
+    )
+  };
+}
+
+var withName = null;
+var exampleValue = null;
+function exampleSpyFunction(name) {
+  withName = name;
+  return exampleValue;
+}
+
+function verifyExampleSpyFunction(expectedName) {
+  t.assertTrue(
+    withName === expectedName,
+    "Expected to be called with '" + expectedName + "'"
+  )
+}
+
+// Usage in the test
+spyObject.stubSomething("a value from the test");
+anObject.aMethod(spyObject);
+spyObject.assertDidSomethingWithName("helloWorld");
+
+exampleValue = "a value from the test";
+someFunction(exampleSpyFunction);
+verifyExampleSpyFunction("helloWorld");
+</code></pre>
+
+<p><code>Mock</code> - is a stub, but the expectations are defined before the execution of the production code and it can verify itself after the execution. A simple example:</p>
+
+<pre><code class="javascript">function ExampleMockObject() {
+  var expectedName = null;
+  var fulfilled = false;
+  var somethingValue = null;
+
+  this.expectWillDoSomethingWithName = function (name) {
+    expectedName = name;
+  };
+
+  this.doSomething = function (name) {
+    assertions.assertTrue(
+      name === expectedName,
+      "Unexpected name '" + name + "',"
+        + " expecting: '" + expectedName + "'"
+    );
+
+    fulfilled = true;
+    return somethingValue;
+  };
+
+  this.stubSomething = function (value) {
+    somethingValue = value;
+  };
+
+  this.verify = function () {
+    assertions.assertTrue(
+      fulfilled,
+      "Expected to receive name '" + expectedName + "', "
+        + "but got nothing"
+    );
+  };
+}
+
+// And the usage from the test:
+mockObject.stubSomething("a value from the test");
+mockObject.expectWillDoSomethingWithName("helloWorld");
+anObject.aMethod(mockObject);
+mockObject.verify();
+</code></pre>
+
+<p>Mocks can be much more complex (verifying order of messages, allowing multiple messages to be sent, etc.). So it is recommended to either:</p>
+
+<ul>
+<li>avoid them and use simpler test doubles, or</li>
+<li>use a full-blown well-tested mocking framework.</li>
+</ul>
+
+
+<p>And if you do have to use your own custom mocks, please, write tests for them, since they can have a lot of logic inside of them.</p>
+
+<p>And, finally, <code>Fake</code> - is a test double providing a simpler implementation used in the tests instead of the real thing. A good example is an in-memory database gateway, that behaves the same way the real one would, but it stores all the data in the memory. A very simple example:</p>
+
+<pre><code class="javascript">function FakeDatabase() {
+  var objects = {};
+
+  this.save = function (id, object) {
+    objects[id] = object;
+  };
+
+  this.findById = function (id) {
+    return objects[id];
+  };
+
+  this.findByName = function (name) {
+    for (var id in objects) {
+      if (objects.hasOwnProperty(id)) {
+        if (objects[id].name === name) {
+          return objects[id];
+        }
+      }
+    }
+
+    return null;
+  };
+}
+</code></pre>
+
+<p>Obviously, fakes require full-blown testing for them. And if the real implementation is testable (even if it is slow), it is a good idea to have the same test suite for both: fake and real implementation. This way we can really be sure, that the fake behaves the same way as the real thing. And don&rsquo;t forget about the edge cases, for example, if the real thing can throw a <code>ConnectionError</code>, the fake should be able too (after being instructed to do so via a special method in the tests).</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Your Own Testing Framework. Part 3]]></title>
@@ -1792,87 +2070,6 @@ function fizzBuzz(number) {
 <p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
 
 <p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Why I Don't Use Mocking Frameworks Anymore]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/"/>
-    <updated>2016-06-21T08:04:10+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore</id>
-    <content type="html"><![CDATA[<p>Some time ago, I have discovered, that using your own custom test double classes, instead of a test framework makes my test code more readable and maintainable. Here is an example (pseudo-code):</p>
-
-<pre><code class="javascript">function test_password_revealer_when_toggled_reveals_password() {
-  passwordController = MockPasswordController.new()
-  passwordRevealer = PasswordRevealer.new(passwordController)
-
-  passwordRevealer.toggle()
-
-  expect(passwordController.isRevealed()).toBeTrue()
-}
-</code></pre>
-
-<p>The same test with mocking framework would look this way:</p>
-
-<pre><code class="javascript">function test_password_revealer_when_toggled_reveals_password() {
-  passwordController = MockFramework.Mock.new("PasswordController")
-  passwordRevealer = PasswordRevealer.new(passwordController)
-
-  spy = spyOn(passwordController.reveal())
-
-  passwordRevealer.toggle()
-
-  expect(spy.haveBeenCalled()).toBeTrue()
-}
-</code></pre>
-
-<p>If you take a closer look at the last example, and, specifically at these 2 lines:</p>
-
-<pre><code class="javascript">spy = spyOn(passwordController.reveal())
-
-expect(spy.haveBeenCalled()).toBeTrue()
-</code></pre>
-
-<p>They use a language, that is not relevant to the domain, therefore, they make the test less readable.</p>
-
-<p>Additionally, they have knowledge of which exactly method <code>PasswordRevealer#toggle()</code> should call on <code>passwordController</code>. If we were to rename <code>reveal</code> method, all tests for <code>PasswordRevealer</code> would fail.
-The same thing would happen if we were to extract methods/functions/objects out of the <code>PasswordRevealer</code>.</p>
-
-<p>Of course, creating such test doubles yourself will involve some boilerplate code - this is a trade-off. Example:</p>
-
-<pre><code class="javascript">class MockPasswordController() {
-  this.state = "hidden"
-
-  this.reveal() {
-    this.state = "revealed"
-  }
-
-  this.hide() {
-    this.state = "hidden"
-  }
-
-  this.isRevealed() {
-    return this.state == "revealed"
-  }
-}
-</code></pre>
-
-<p>Making this trade-off, will simplify the case when we were to change the name: we would change the name at 3 places:</p>
-
-<ul>
-<li>in test double class,</li>
-<li>in caller class,</li>
-<li>in &ldquo;real&rdquo; implementation class.</li>
-</ul>
-
-
-<p>Whereas with a mocking framework, we would have to hunt for all failing tests, and usually, it means hundreds of failing tests.</p>
-
-<h2>Thank you!</h2>
-
-<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
 ]]></content>
   </entry>
   

@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue! Aug 31st, 2016 2:35 am Welcome back to the &ldquo;Getting Stuck While Doing TDD& &hellip;">
+  <meta name="description" content="Meet Duck Type Sep 18th, 2016 4:37 pm Duck type Duck type is the concept in the domain of the type safety that represents objects, that pass a so- &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -97,6 +97,550 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-09-18T16:37:33+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>18</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>4:37 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Duck type</h2>
+
+<p>Duck type is the concept in the domain of the type safety that represents objects, that pass a so-called &ldquo;Duck Test&rdquo;:</p>
+
+<blockquote><p>If it looks like a duck, swims like a duck, and quacks like a duck, then it probably is a duck.</p></blockquote>
+
+<p>In terms of programming language, it might look like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">Duck</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">swim</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">coordinates</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">quack</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sentence</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">RoboDuck</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">swim</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">coordinates</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">quack</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sentence</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// .. and so on ..</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The point is that the public interface has methods <code>swim()</code> and <code>quack()</code>. This is how you identify the duck in a programming language. This concept is very similar to the concept of the <code>interface</code> in programming languages that have one, but it is not enforced in any way by the programming language.</p>
+
+<p>Duck typing is mostly natural in dynamic languages, where it is possible to send any message to any object and the check if that is something possible will happen at runtime. In static languages, it is still possible to use duck typing via some sort of Reflection.</p>
+
+<h3>Contract test for duck types</h3>
+
+<p>In a dynamic language, it is important to make it obvious, that something is implementing certain duck type by writing one test suite for all implementers and executing it against them. For example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">[</span><span class="nx">Duck</span><span class="p">,</span> <span class="nx">RoboDuck</span><span class="p">].</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">duckType</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">runTestSuite</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">testItSwimsLikeADuck</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">duck</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">duckType</span><span class="p">();</span>
+</span><span class='line'>            <span class="nx">duck</span><span class="p">.</span><span class="nx">swim</span><span class="p">({</span><span class="nx">x</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">7</span><span class="p">});</span>
+</span><span class='line'>            <span class="nx">t</span><span class="p">.</span><span class="nx">assertThat</span><span class="p">(</span><span class="nx">duck</span><span class="p">).</span><span class="nx">swamTo</span><span class="p">({</span><span class="nx">x</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">7</span><span class="p">});</span>
+</span><span class='line'>        <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">testItQuacksLikeADuck</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="kd">var</span> <span class="nx">duck</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">duckType</span><span class="p">();</span>
+</span><span class='line'>            <span class="nx">duck</span><span class="p">.</span><span class="nx">quack</span><span class="p">(</span><span class="s2">&quot;hello world&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="nx">t</span><span class="p">.</span><span class="nx">assertThat</span><span class="p">(</span><span class="nx">duck</span><span class="p">).</span><span class="nx">quacked</span><span class="p">(</span><span class="s2">&quot;hello world&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">};</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This test suite has to go only through the Duck type public interface. If it is not possible to test behavior through it, one should test at least the function signatures, for example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">testItSwimsLikeADuck</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">duck</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">duckType</span><span class="p">();</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">swim</span> <span class="o">=</span> <span class="nx">duck</span><span class="p">.</span><span class="nx">swim</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="k">typeof</span><span class="p">(</span><span class="nx">swim</span><span class="p">));</span>
+</span><span class='line'>    <span class="nx">t</span><span class="p">.</span><span class="nx">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">swim</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Not doing contract tests for your ducks may result in a passing test suite and broken production code. For example, when one duck and its test suite have been updated, but others haven&rsquo;t.</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+</div>
+  
+  
+
+
+<!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<h2>Stay Tuned!</h2>
+<div class="mc-field-group">
+  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
+	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
+  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
+</div>
+	<div id="mce-responses" class="clear">
+		<div class="response" id="mce-error-response" style="display:none"></div>
+		<div class="response" id="mce-success-response" style="display:none"></div>
+	</div>
+    </div>
+</form>
+</div>
+
+<!--End mc_embed_signup-->
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-09-18T16:31:48+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>18</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>4:31 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A test double is a test object or a test function, that looks and behaves like its production counterpart, but is actually a simplified version that reduces the complexity and enables simpler testing. One can represent all types of test double as an inheritance tree like this:</p>
+
+<p><img src='//g.gravizo.com/g?
+@startuml;
+object Double;
+object Dummy;
+object Stub;
+object Spy;
+object Mock;
+object Fake;
+Double <|-- Dummy;
+Double <|-- Fake;
+Dummy <|-- Stub;
+Stub <|-- Spy;
+Spy <|-- Mock;
+@enduml;
+'/></p>
+
+<p>Where <code>Double</code> is an abstract test double, which has no functionality - it is a general concept to talk about test doubles.</p>
+
+<p><code>Dummy</code> - is a test double, that is used to fill parameter lists, in cases where these parameters are not used by production code. Simplest <code>Dummy</code> would look like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">ExampleDummyObject</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">doSomething</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">getSomething</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">exampleDummyFunction</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Usage example in test</span>
+</span><span class='line'><span class="nx">someObject</span><span class="p">.</span><span class="nx">someMethod</span><span class="p">(</span><span class="nx">dummyObject</span><span class="p">);</span>
+</span><span class='line'><span class="nx">someFunction</span><span class="p">(</span><span class="nx">exampleDummyFunction</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>Stub</code> - is a test dummy, additionally, providing an indirect input for the production code from the test. &ldquo;Indirect&rdquo; means here via a method call on the stub object or a call of the stub function. For example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">ExampleStubObject</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">something</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">getSomething</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">something</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">stubSomething</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">somethingValue</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">something</span> <span class="o">=</span> <span class="nx">somethingValue</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">someValue</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">exampleStubFunction</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">someValue</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Usage example in the test</span>
+</span><span class='line'><span class="nx">stubObject</span><span class="p">.</span><span class="nx">stubSomething</span><span class="p">(</span><span class="s2">&quot;a value from the test&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">anObject</span><span class="p">.</span><span class="nx">aMethod</span><span class="p">(</span><span class="nx">stubObject</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">someValue</span> <span class="o">=</span> <span class="s2">&quot;a value from the test&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">someFunction</span><span class="p">(</span><span class="nx">exampleStubFunction</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>Spy</code> - is a test stub, additionally, verifying an indirect output of the production code, by asserting afterward, without having defined the expectations before the production code is executed. For example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">ExampleSpyObject</span><span class="p">(</span><span class="nx">assertions</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">didSomethingWithName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">somethingValue</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">doSomethingWith</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">didSomethingWithName</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">somethingValue</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">stubSomething</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">something</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">somethingValue</span> <span class="o">=</span> <span class="nx">something</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">assertDidSomethingWithName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">expectedName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">assertions</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span>
+</span><span class='line'>      <span class="nx">didSomethingWithName</span> <span class="o">===</span> <span class="nx">expectedName</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;Expected to do something with &#39;&quot;</span> <span class="o">+</span> <span class="nx">expectedName</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">withName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">exampleValue</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">exampleSpyFunction</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">withName</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">exampleValue</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">verifyExampleSpyFunction</span><span class="p">(</span><span class="nx">expectedName</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">t</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span>
+</span><span class='line'>    <span class="nx">withName</span> <span class="o">===</span> <span class="nx">expectedName</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;Expected to be called with &#39;&quot;</span> <span class="o">+</span> <span class="nx">expectedName</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+</span><span class='line'>  <span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Usage in the test</span>
+</span><span class='line'><span class="nx">spyObject</span><span class="p">.</span><span class="nx">stubSomething</span><span class="p">(</span><span class="s2">&quot;a value from the test&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">anObject</span><span class="p">.</span><span class="nx">aMethod</span><span class="p">(</span><span class="nx">spyObject</span><span class="p">);</span>
+</span><span class='line'><span class="nx">spyObject</span><span class="p">.</span><span class="nx">assertDidSomethingWithName</span><span class="p">(</span><span class="s2">&quot;helloWorld&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">exampleValue</span> <span class="o">=</span> <span class="s2">&quot;a value from the test&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">someFunction</span><span class="p">(</span><span class="nx">exampleSpyFunction</span><span class="p">);</span>
+</span><span class='line'><span class="nx">verifyExampleSpyFunction</span><span class="p">(</span><span class="s2">&quot;helloWorld&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>Mock</code> - is a stub, but the expectations are defined before the execution of the production code and it can verify itself after the execution. A simple example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">ExampleMockObject</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">expectedName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">fulfilled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">somethingValue</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">expectWillDoSomethingWithName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">expectedName</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">doSomething</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">assertions</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span>
+</span><span class='line'>      <span class="nx">name</span> <span class="o">===</span> <span class="nx">expectedName</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;Unexpected name &#39;&quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;&#39;,&quot;</span>
+</span><span class='line'>        <span class="o">+</span> <span class="s2">&quot; expecting: &#39;&quot;</span> <span class="o">+</span> <span class="nx">expectedName</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">fulfilled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">somethingValue</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">stubSomething</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">somethingValue</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">verify</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">assertions</span><span class="p">.</span><span class="nx">assertTrue</span><span class="p">(</span>
+</span><span class='line'>      <span class="nx">fulfilled</span><span class="p">,</span>
+</span><span class='line'>      <span class="s2">&quot;Expected to receive name &#39;&quot;</span> <span class="o">+</span> <span class="nx">expectedName</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &quot;</span>
+</span><span class='line'>        <span class="o">+</span> <span class="s2">&quot;but got nothing&quot;</span>
+</span><span class='line'>    <span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// And the usage from the test:</span>
+</span><span class='line'><span class="nx">mockObject</span><span class="p">.</span><span class="nx">stubSomething</span><span class="p">(</span><span class="s2">&quot;a value from the test&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">mockObject</span><span class="p">.</span><span class="nx">expectWillDoSomethingWithName</span><span class="p">(</span><span class="s2">&quot;helloWorld&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">anObject</span><span class="p">.</span><span class="nx">aMethod</span><span class="p">(</span><span class="nx">mockObject</span><span class="p">);</span>
+</span><span class='line'><span class="nx">mockObject</span><span class="p">.</span><span class="nx">verify</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Mocks can be much more complex (verifying order of messages, allowing multiple messages to be sent, etc.). So it is recommended to either:</p>
+
+<ul>
+<li>avoid them and use simpler test doubles, or</li>
+<li>use a full-blown well-tested mocking framework.</li>
+</ul>
+
+
+<p>And if you do have to use your own custom mocks, please, write tests for them, since they can have a lot of logic inside of them.</p>
+
+<p>And, finally, <code>Fake</code> - is a test double providing a simpler implementation used in the tests instead of the real thing. A good example is an in-memory database gateway, that behaves the same way the real one would, but it stores all the data in the memory. A very simple example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">FakeDatabase</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">objects</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">objects</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">object</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">findById</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">objects</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">findByName</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">id</span> <span class="k">in</span> <span class="nx">objects</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="nx">objects</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">objects</span><span class="p">[</span><span class="nx">id</span><span class="p">].</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="k">return</span> <span class="nx">objects</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Obviously, fakes require full-blown testing for them. And if the real implementation is testable (even if it is slow), it is a good idea to have the same test suite for both: fake and real implementation. This way we can really be sure, that the fake behaves the same way as the real thing. And don&rsquo;t forget about the edge cases, for example, if the real thing can throw a <code>ConnectionError</code>, the fake should be able too (after being instructed to do so via a special method in the tests).</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+</div>
+  
+  
+
+
+<!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div id="mc_embed_signup_scroll">
+	<h2>Stay Tuned!</h2>
+<div class="mc-field-group">
+  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
+	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
+  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
+</div>
+	<div id="mce-responses" class="clear">
+		<div class="response" id="mce-error-response" style="display:none"></div>
+		<div class="response" id="mce-success-response" style="display:none"></div>
+	</div>
+    </div>
+</form>
+</div>
+
+<!--End mc_embed_signup-->
+
+
+    </article>
   
   
     <article>
@@ -1626,1132 +2170,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Getting Stuck While Doing TDD. Part 1: Example</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2016-08-30T15:27:30+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>3:27 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Following 3 rules of TDD sounds really simple at first. In practice, there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called &ldquo;getting stuck&rdquo; in TDD. In this article, we will explore how exactly this happens and how to prevent that.</p>
-
-<p>Code examples today will be in Ruby programming language. The technique itself is, of course, language-agnostic.</p>
-
-<h2>TL;DR</h2>
-
-<p>&ldquo;Getting stuck&rdquo; happens for a couple of reasons:</p>
-
-<ul>
-<li>wrong order of tests</li>
-<li>production code is not getting more general with each test</li>
-</ul>
-
-
-<p>This is a series of articles:</p>
-
-<ol>
-<li>Part 1: Example (reading this)</li>
-<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
-<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
-</ol>
-
-
-<h2>&ldquo;Getting Stuck&rdquo; in TDD</h2>
-
-<p>Usually &ldquo;Getting Stuck&rdquo; follows this pattern:</p>
-
-<ul>
-<li>write some test and implement it via &ldquo;simplest thing that might possibly work&rdquo;,</li>
-<li>write another test and implement it again in a non-general manner,</li>
-<li>write some more tests in that fashion, while never addressing the fact that production code now looks completely wrong from what it should probably be looking like,</li>
-<li>write a new test, that forces us to completely rewrite production code in a complete algorithm just to make it pass.</li>
-</ul>
-
-
-<p>This last step usually takes minutes to hours depending on the complexity of the problem at hand. Additionally, the first few tests are basically wasted time since they did not produce any bits of knowledge in the production code that persisted in production code in the end. Even worse, chances are that the algorithm that we have just written is not fully covered by current tests, since we have written it in one go just to make current failing test pass - this is no longer correct TDD and can not guarantee high test coverage, and, therefore, can not guarantee high confidence anymore.</p>
-
-<p>Let&rsquo;s go through a small example on how one can get stuck in TDD:</p>
-
-<h2>Order Kind Validation - Getting Stuck</h2>
-
-<p>Let&rsquo;s define the problem at hand first. We have some sort of order request as an input to our system and we need to validate that its kind is correct:</p>
-
-<ul>
-<li>valid order kinds: <code>private</code>, <code>corporate</code>, <code>bundle</code>,</li>
-<li>order kinds can be combined,</li>
-<li><code>private</code> and <code>corporate</code> order kinds can not be combined, otherwise <code>InvalidOrderError</code> with message <code>Order kind can not be 'private' and 'corporate' at the same time</code>,</li>
-<li>either <code>private</code> or <code>corporate</code> should be always present, otherwise <code>InvalidOrderError</code> with message <code>Order kind should be 'private' or 'corporate'</code>,</li>
-<li>if order kind is not in the above list, then we need to raise <code>InvalidOrderError</code> with message <code>Order kind can be one of: 'private', 'corporate', 'bundle'</code>,</li>
-<li>if order kind is not present or an empty string, then we need to raise <code>InvalidOrderError</code> with message <code>Order kind can not be empty</code>.</li>
-</ul>
-
-
-<p>This is a fairly simple problem and it is easy to get stuck while doing TDD here. So let&rsquo;s write our first test: &ldquo;When order has no order_kind, then we should get InvalidOrderError with message &lsquo;Order kind can not be empty&rsquo;&rdquo;:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">RSpec</span><span class="o">.</span><span class="n">describe</span> <span class="no">OrderKindValidator</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">it</span> <span class="s2">&quot;fails with a message about order kind being empty when it is absent&quot;</span> <span class="k">do</span>
-</span><span class='line'>    <span class="n">validator</span> <span class="o">=</span> <span class="no">OrderKindValidator</span><span class="o">.</span><span class="n">new</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">expect</span> <span class="p">{</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">({</span> <span class="ss">items</span><span class="p">:</span> <span class="mi">42</span> <span class="p">})</span> <span class="p">}</span>
-</span><span class='line'>        <span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">InvalidOrderError</span><span class="p">,</span> <span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And the simplest implementation possible:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">OrderKindValidator</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">InvalidOrderError</span> <span class="o">&lt;</span> <span class="no">StandardError</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Next test is our next simplest edge case - when kind&rsquo;s value is <code>nil</code>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;fails with a message about order kind being empty when it is nil&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">validator</span> <span class="o">=</span> <span class="no">OrderKindValidator</span><span class="o">.</span><span class="n">new</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">expect</span> <span class="p">{</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">({</span><span class="ss">items</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="ss">kind</span><span class="p">:</span> <span class="kp">nil</span> <span class="p">})</span> <span class="p">}</span>
-</span><span class='line'>      <span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">InvalidOrderError</span><span class="p">,</span> <span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>It does not fail at all, so we don&rsquo;t have any reason to change the production code. We can already spot a little duplication - <code>validator</code> variable. Let&rsquo;s extract it as a named subject of the test suite:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">subject</span><span class="p">(</span><span class="ss">:validator</span><span class="p">)</span> <span class="p">{</span> <span class="no">OrderKindValidator</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And <code>OrderKindValidator</code> can be replaced with <code>described_class</code> (RSpec feature), so that we will not have to change too much in case we wanted to change name of the class:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">subject</span><span class="p">(</span><span class="ss">:validator</span><span class="p">)</span> <span class="p">{</span> <span class="n">described_class</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Next simplest edge case - when kind is an empty array:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;fails with a message about order kind being empty when it has zero elements&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span> <span class="p">{</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">({</span><span class="ss">items</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="ss">kind</span><span class="p">:</span> <span class="o">[]</span> <span class="p">})</span> <span class="p">}</span>
-</span><span class='line'>      <span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">InvalidOrderError</span><span class="p">,</span> <span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>I believe I am spotting annoying pattern now:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;fails with message MESSAGE when it is KIND_CASE&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">expect</span> <span class="p">{</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">({</span><span class="ss">items</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="ss">kind</span><span class="p">:</span> <span class="no">KIND_VALUE</span><span class="p">})</span> <span class="p">}</span>
-</span><span class='line'>    <span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">InvalidOrderError</span><span class="p">,</span> <span class="no">MESSAGE</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>It would be really nice to write it in this fashion:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is_absent</span>
-</span><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="kp">nil</span>
-</span><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="o">[]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And as another duplication piles up:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with_order_kind_not_empty</span> <span class="o">=</span> <span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">it_fails_with_order_kind_not_empty</span><span class="o">.</span><span class="n">when_order_kind_is_absent</span>
-</span><span class='line'><span class="n">it_fails_with_order_kind_not_empty</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="kp">nil</span>
-</span><span class='line'><span class="n">it_fails_with_order_kind_not_empty</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="o">[]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now the next tests look very easy and simple:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with_order_kind_not_empty</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="o">[</span><span class="kp">nil</span><span class="o">]</span>
-</span><span class='line'><span class="n">it_fails_with_order_kind_not_empty</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="o">[</span><span class="s2">&quot;&quot;</span><span class="o">]</span>
-</span><span class='line'><span class="n">it_fails_with_order_kind_not_empty</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="o">[</span><span class="kp">nil</span><span class="p">,</span> <span class="kp">nil</span><span class="o">]</span>
-</span><span class='line'><span class="n">it_fails_with_order_kind_not_empty</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="o">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">]</span>
-</span><span class='line'><span class="n">it_fails_with_order_kind_not_empty</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="o">[</span><span class="s2">&quot;private&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">]</span>
-</span><span class='line'><span class="n">it_fails_with_order_kind_not_empty</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="o">[</span><span class="s2">&quot;private&quot;</span><span class="p">,</span> <span class="kp">nil</span><span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And they all pass right from the go. The implementation for the <code>it_fails_with</code> is looking like this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">RSpec</span><span class="o">.</span><span class="n">describe</span> <span class="no">OrderKindValidator</span> <span class="k">do</span>
-</span><span class='line'>  <span class="k">class</span> <span class="nc">ItFailsWith</span>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">expected_message</span><span class="p">)</span>
-</span><span class='line'>      <span class="vi">@spec</span> <span class="o">=</span> <span class="n">spec</span>
-</span><span class='line'>      <span class="vi">@expected_message</span> <span class="o">=</span> <span class="n">expected_message</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">when_order_kind_is_absent</span>
-</span><span class='line'>      <span class="n">expect_failure</span><span class="p">(</span><span class="s2">&quot;absent&quot;</span><span class="p">,</span> <span class="p">{</span><span class="ss">items</span><span class="p">:</span> <span class="mi">42</span><span class="p">})</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">when_order_kind_is</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span class='line'>      <span class="n">expect_failure</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">inspect</span><span class="p">,</span> <span class="p">{</span><span class="ss">items</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="ss">kind</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="kp">private</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">expect_failure</span><span class="p">(</span><span class="n">feature</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">expected_message</span> <span class="o">=</span> <span class="vi">@expected_message</span><span class="p">)</span>
-</span><span class='line'>      <span class="vi">@spec</span><span class="o">.</span><span class="n">it</span><span class="p">(</span><span class="s2">&quot;fails with message </span><span class="si">#{</span><span class="n">expected_message</span><span class="o">.</span><span class="n">inspect</span><span class="si">}</span><span class="s2"> when order kind is </span><span class="si">#{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">do</span>
-</span><span class='line'>        <span class="n">expect</span> <span class="p">{</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span> <span class="p">}</span>
-</span><span class='line'>            <span class="o">.</span><span class="n">to</span> <span class="n">raise_error</span><span class="p">(</span><span class="no">InvalidOrderError</span><span class="p">,</span> <span class="n">expected_message</span><span class="p">)</span>
-</span><span class='line'>      <span class="k">end</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">it_fails_with</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span class='line'>    <span class="no">ItFailsWith</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So, let&rsquo;s write our next edge case - when order kind is invalid:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="o">.</span><span class="n">when_order_kind_is</span> <span class="o">[</span><span class="s2">&quot;invalid&quot;</span><span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Pretty neat! And oh, it fails:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">expected</span> <span class="no">InvalidOrderError</span> <span class="n">with</span>
-</span><span class='line'>  <span class="s2">&quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span><span class="p">,</span>
-</span><span class='line'><span class="n">got</span> <span class="c1">#&lt;InvalidOrderError: Order kind can not be empty&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And the fix:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">if</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span> <span class="o">==</span> <span class="o">[</span><span class="s2">&quot;invalid&quot;</span><span class="o">]</span>
-</span><span class='line'>    <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
-</span><span class='line'>        <span class="s2">&quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span>
-</span><span class='line'>    <span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Let&rsquo;s write our next test - when order kind is <code>private</code>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="o">[</span><span class="s2">&quot;private&quot;</span><span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This fails as expected with <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. And to make it pass we need to wrap second <code>raise</code> statement in the <code>if</code> condition:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span> <span class="o">!=</span> <span class="o">[</span><span class="s2">&quot;private&quot;</span><span class="o">]</span>
-</span><span class='line'>  <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The implementation for <code>it_does_not_fail</code> looks like that:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">ItDoesNotFail</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-</span><span class='line'>    <span class="vi">@spec</span> <span class="o">=</span> <span class="n">spec</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">when_order_kind_is</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span class='line'>    <span class="vi">@spec</span><span class="o">.</span><span class="n">it</span><span class="p">(</span><span class="s2">&quot;does not fail when order kind is </span><span class="si">#{</span><span class="n">value</span><span class="o">.</span><span class="n">inspect</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">do</span>
-</span><span class='line'>      <span class="n">expect</span> <span class="p">{</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">({</span><span class="ss">items</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="ss">kind</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span> <span class="p">}</span>
-</span><span class='line'>        <span class="o">.</span><span class="n">not_to</span> <span class="n">raise_error</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">it_does_not_fail</span>
-</span><span class='line'>  <span class="no">ItDoesNotFail</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Let&rsquo;s write our next test:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="o">[</span><span class="s2">&quot;corporate&quot;</span><span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And it fails with the expected error: <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. The fix is to amend our <code>if</code> condition with that case:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span> <span class="o">!=</span> <span class="o">[</span><span class="s2">&quot;private&quot;</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span> <span class="o">!=</span> <span class="o">[</span><span class="s2">&quot;corporate&quot;</span><span class="o">]</span>
-</span><span class='line'>                                <span class="c1"># ^  we have added this case  ^</span>
-</span><span class='line'>  <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And the tests pass. Our next business rule is that one of <code>private</code> and <code>corporate</code> should be always present:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind should be &#39;private&#39; or &#39;corporate&#39;&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="o">.</span><span class="n">when_order_kind_is</span> <span class="o">[</span><span class="s2">&quot;bundle&quot;</span><span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>As expected the test fails:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">expected</span> <span class="no">InvalidOrderError</span> <span class="n">with</span>
-</span><span class='line'>  <span class="s2">&quot;Order kind should be &#39;private&#39; or &#39;corporate&#39;&quot;</span><span class="p">,</span>
-</span><span class='line'><span class="n">got</span> <span class="c1">#&lt;InvalidOrderError: Order kind can not be empty&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And to fix it we just need to sprinkle another <code>if</code> statement in the middle of the function:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span> <span class="o">==</span> <span class="o">[</span><span class="s2">&quot;bundle&quot;</span><span class="o">]</span>
-</span><span class='line'>  <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Order kind should be &#39;private&#39; or &#39;corporate&#39;&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>As expected, the test passes. Now we should test the next business rule - order can not be of <code>private</code> and <code>corporate</code> kind at the same time:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_fails_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be &#39;private&#39; and &#39;corporate&#39; at the same time&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="o">.</span><span class="n">when_order_kind_is</span> <span class="sx">%w(private corporate)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This, as expected, fails with error message:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">expected</span> <span class="no">InvalidOrderError</span> <span class="n">with</span>
-</span><span class='line'>  <span class="s2">&quot;Order kind can not be &#39;private&#39; and &#39;corporate&#39; at the same time&quot;</span><span class="p">,</span>
-</span><span class='line'><span class="n">got</span> <span class="c1">#&lt;InvalidOrderError: Order kind can not be empty&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And easiest way to fix that is to add another <code>if</code> statement:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span> <span class="o">==</span> <span class="sx">%w(private corporate)</span>
-</span><span class='line'>  <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
-</span><span class='line'>      <span class="s2">&quot;Order kind can not be &#39;private&#39; and &#39;corporate&#39; at the same time&quot;</span>
-</span><span class='line'>  <span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And it passes. Let&rsquo;s test that we can combine <code>private</code> or <code>corporate</code> with <code>bundle</code> order kinds:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="sx">%w(private bundle)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And it fails with error: <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. To fix this we will have to amend our last <code>if</code> condition in the function even more:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span> <span class="o">!=</span> <span class="o">[</span><span class="s2">&quot;private&quot;</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span> <span class="o">!=</span> <span class="o">[</span><span class="s2">&quot;corporate&quot;</span><span class="o">]</span> <span class="o">&amp;&amp;</span>
-</span><span class='line'>    <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span> <span class="o">!=</span> <span class="sx">%w(private bundle)</span>
-</span><span class='line'>  <span class="c1"># ^    this is our new condition    ^</span>
-</span><span class='line'>  <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And the test passes. Let&rsquo;s refactor the code a bit:</p>
-
-<ul>
-<li>First, we should extract <code>order[:kind]</code> duplication to a local variable <code>kind</code></li>
-<li>Extract common parts of <code>raise</code> statement to the private method</li>
-</ul>
-
-
-<p>After this, <code>OrderKindValidator</code> will look a bit cleaner:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">OrderKindValidator</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">kind</span> <span class="o">=</span> <span class="n">order</span><span class="o">[</span><span class="ss">:kind</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="o">[</span><span class="s2">&quot;invalid&quot;</span><span class="o">]</span>
-</span><span class='line'>      <span class="n">fail_with</span><span class="p">(</span><span class="s2">&quot;Order kind can be one of: &#39;private&#39;, &#39;corporate&#39;, &#39;bundle&#39;&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="o">[</span><span class="s2">&quot;bundle&quot;</span><span class="o">]</span>
-</span><span class='line'>      <span class="n">fail_with</span><span class="p">(</span><span class="s2">&quot;Order kind should be &#39;private&#39; or &#39;corporate&#39;&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="sx">%w(private corporate)</span>
-</span><span class='line'>      <span class="n">fail_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be &#39;private&#39; and &#39;corporate&#39; at the same time&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">if</span> <span class="n">kind</span> <span class="o">!=</span> <span class="o">[</span><span class="s2">&quot;private&quot;</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="n">kind</span> <span class="o">!=</span> <span class="o">[</span><span class="s2">&quot;corporate&quot;</span><span class="o">]</span> <span class="o">&amp;&amp;</span>
-</span><span class='line'>        <span class="n">kind</span> <span class="o">!=</span> <span class="sx">%w(private bundle)</span>
-</span><span class='line'>      <span class="n">fail_with</span><span class="p">(</span><span class="s2">&quot;Order kind can not be empty&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="kp">private</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">fail_with</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">raise</span> <span class="no">InvalidOrderError</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Let&rsquo;s write our next test for the same business rule (now a corporate bundle):</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it_does_not_fail</span><span class="o">.</span><span class="n">when_order_kind_is</span> <span class="sx">%w(corporate bundle)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And it fails with error: <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. To fix this we need to add <code>&amp;&amp; kind != %w(corporate bundle)</code> to our last <code>if</code> condition again.</p>
-
-<p>The code can be found in GitHub repository in <a href="https://github.com/waterlink/order_kind_validator/pull/1/files">an open pull request here</a>.</p>
-
-<p>Now it seems that we have implemented all the business rules (we have all tests for them). Or did we?</p>
-
-<h2>Bottom Line</h2>
-
-<p>Buggy <code>if</code>-riddled code is what we&rsquo;ve got. We will see why in the next part of &ldquo;Getting Stuck While Doing TDD&rdquo; series. Stay tuned!</p>
-
-<p>This is a series of articles:</p>
-
-<ol>
-<li>Part 1: Example (reading this)</li>
-<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
-<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
-</ol>
-
-
-<p>Today we have implemented our not-so-complex problem at hand while following 3 rules of TDD. The result was not of the best quality and we will take a look why in further articles of these series. You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
-
-<ul>
-<li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD (these series),</li>
-<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
-<li>Open-Closed Principle - changing behavior by adding new code,</li>
-<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, Test-Driven Development screencasts and so much more!</li>
-</ul>
-
-
-<h2>Thanks!</h2>
-
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-</div>
-  
-  
-
-
-<!-- Begin MailChimp Signup Form -->
-<div id="mc_embed_signup">
-<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div id="mc_embed_signup_scroll">
-	<h2>Stay Tuned!</h2>
-<div class="mc-field-group">
-  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
-	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
-  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
-</div>
-	<div id="mce-responses" class="clear">
-		<div class="response" id="mce-error-response" style="display:none"></div>
-		<div class="response" id="mce-success-response" style="display:none"></div>
-	</div>
-    </div>
-</form>
-</div>
-
-<!--End mc_embed_signup-->
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/08/20/eliminating-if-statements-legacy-endpoint-primer/">Eliminating &#8216;if&#8217; Statements: Legacy Endpoint Primer</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2016-08-20T11:59:37+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>20</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>11:59 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><code>if</code> statements tend to duplicate throughout the code base. This may lead to subtle mistakes and bugs. One way to avoid that problem is to eliminate <code>if</code> statement completely. Today we are going to take a look at one example of such elimination. Code examples today will be in Kotlin.</p>
-
-<h2>Problem at hand</h2>
-
-<ul>
-<li>Our API has an endpoint for issuing some sort of <code>verification token</code> given <code>device id</code> and <code>phone number</code> of the user&rsquo;s mobile device.</li>
-<li>We need to integrate these <code>verification tokens</code> with 3rd party API.</li>
-<li>The format of <code>verification token</code> is fairly standardized.</li>
-<li>After initial research, it turned out that <code>issuer</code> field of <code>verification token</code> has to be URL of the API that has issued that token and 3rd party API in question validates this fact.</li>
-<li>Currently, <code>issuer</code> field gets generated as <code>com.tddfellow</code>. According to this standard, it has to be <code>https://tddfellow.com</code>.</li>
-<li>Additionally, we have to support old versions of mobile clients for next 6 months, that are validating <code>issuer</code> to be <code>com.tddfellow</code>, we can not change them as they are already installed on users&#8217; mobile devices.</li>
-</ul>
-
-
-<p>Solution: bump the version of our API from <code>v1</code> to <code>v2</code> and use <code>v1</code> for integration with old mobile clients and use <code>v2</code> for integration with 3rd party API and all new clients.</p>
-
-<h2>Current Relevant Code</h2>
-
-<p>Main program, containing routing information:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// Main.kt</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Array</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">val</span> <span class="py">secureTokenSource</span> <span class="p">=</span> <span class="n">SimpleSecureTokenSource</span><span class="p">()</span>
-</span><span class='line'>    <span class="k">val</span> <span class="py">verificationTokenGateway</span> <span class="p">=</span> <span class="n">DummyVerificationTokenGateway</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">val</span> <span class="py">issueVerificationTokenUseCase</span> <span class="p">=</span> <span class="n">UseCase</span><span class="p">(</span><span class="n">secureTokenSource</span><span class="p">,</span> <span class="n">verificationTokenGateway</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">val</span> <span class="py">issueVerificationTokenEndpoint</span> <span class="p">=</span> <span class="n">Endpoint</span><span class="p">(</span><span class="n">issueVerificationTokenUseCase</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">Spark</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="s">&quot;/api/v1/issueVerificationToken&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span> <span class="p">-&gt;</span>
-</span><span class='line'>        <span class="n">issueVerificationTokenEndpoint</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span>
-</span><span class='line'>                <span class="n">deviceId</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;deviceId&quot;</span><span class="p">),</span>
-</span><span class='line'>                <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;phoneNumber&quot;</span><span class="p">)</span>
-</span><span class='line'>        <span class="p">)</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Endpoint that issues verification token:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// ApiEndpoints/IssueVerificationToken/Endpoint.kt</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">Endpoint</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">useCase</span><span class="p">:</span> <span class="n">UseCase</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">fun</span> <span class="nf">issueVerificationToken</span><span class="p">(</span><span class="n">deviceId</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">phoneNumber</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">IssueVerificationTokenEndpointResponse</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">val</span> <span class="py">issueVerificationToken</span> <span class="p">=</span> <span class="n">useCase</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span><span class="n">deviceId</span><span class="p">,</span> <span class="n">phoneNumber</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="k">return</span> <span class="n">IssueVerificationTokenEndpointResponse</span><span class="p">(</span>
-</span><span class='line'>                <span class="n">issuer</span> <span class="p">=</span> <span class="n">issueVerificationToken</span><span class="p">.</span><span class="n">issuer</span><span class="p">,</span>
-</span><span class='line'>                <span class="n">token</span> <span class="p">=</span> <span class="n">issueVerificationToken</span><span class="p">.</span><span class="n">secureToken</span>
-</span><span class='line'>        <span class="p">)</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And the UseCase itself:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// IssueVerificationToken/UseCase.kt</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">open</span> <span class="k">class</span> <span class="nc">UseCase</span><span class="p">(</span><span class="k">private</span> <span class="k">val</span> <span class="py">secureTokenSource</span><span class="p">:</span> <span class="n">SecureTokenSource</span><span class="p">,</span>
-</span><span class='line'>                   <span class="k">private</span> <span class="k">val</span> <span class="py">verificationTokenGateway</span><span class="p">:</span> <span class="n">VerificationTokenGateway</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">open</span> <span class="k">fun</span> <span class="nf">issueVerificationToken</span><span class="p">(</span><span class="n">deviceId</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">phoneNumber</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">VerificationToken</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">val</span> <span class="py">verificationToken</span> <span class="p">=</span> <span class="n">VerificationToken</span><span class="p">(</span>
-</span><span class='line'>                <span class="n">issuer</span> <span class="p">=</span> <span class="s">&quot;com.tddfellow&quot;</span><span class="p">,</span>
-</span><span class='line'>                <span class="n">deviceId</span> <span class="p">=</span> <span class="n">deviceId</span><span class="p">,</span>
-</span><span class='line'>                <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">phoneNumber</span><span class="p">,</span>
-</span><span class='line'>                <span class="n">secureToken</span> <span class="p">=</span> <span class="n">secureTokenSource</span><span class="p">.</span><span class="n">generateToken</span><span class="p">()</span>
-</span><span class='line'>        <span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="n">verificationTokenGateway</span><span class="p">.</span><span class="n">persist</span><span class="p">(</span><span class="n">verificationToken</span><span class="p">)</span>
-</span><span class='line'>        <span class="k">return</span> <span class="n">verificationToken</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Code can be found <a href="https://github.com/waterlink/LegacyEndpointPrimer/">here</a>.</p>
-
-<h2>Solution With Awkward <code>if</code> Statement</h2>
-
-<p>Easiest solution using passed in <code>apiVersion</code> from the <code>Main</code> program and switch on it being old or new in the use case to determine which issuer to generate:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// Main.kt</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">Spark</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="s">&quot;/api/v1/issueVerificationToken&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span> <span class="p">-&gt;</span>
-</span><span class='line'>    <span class="n">issueVerificationTokenEndpoint</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span>
-</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;deviceId&quot;</span><span class="p">),</span>
-</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;phoneNumber&quot;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>            <span class="c1">// here we are passing &quot;old&quot; version to the endpoint</span>
-</span><span class='line'>            <span class="n">apiVersion</span> <span class="p">=</span> <span class="s">&quot;v1&quot;</span>
-</span><span class='line'>    <span class="p">)</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">Spark</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="s">&quot;/api/v2/issueVerificationToken&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span> <span class="p">-&gt;</span>
-</span><span class='line'>    <span class="n">issueVerificationTokenEndpoint</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span>
-</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;deviceId&quot;</span><span class="p">),</span>
-</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;phoneNumber&quot;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>            <span class="c1">// here we are passing &quot;new&quot; version to the endpoint</span>
-</span><span class='line'>            <span class="n">apiVersion</span> <span class="p">=</span> <span class="s">&quot;v2&quot;</span>
-</span><span class='line'>    <span class="p">)</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And the endpoint just passes this value through to the use case:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// ApiEndpoints/IssueVerificationToken/Endpoint.kt</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">fun</span> <span class="nf">issueVerificationToken</span><span class="p">(</span><span class="n">deviceId</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
-</span><span class='line'>                           <span class="n">phoneNumber</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
-</span><span class='line'>                           <span class="n">apiVersion</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">IssueVerificationTokenEndpointResponse</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">val</span> <span class="py">issueVerificationToken</span> <span class="p">=</span> <span class="n">useCase</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span>
-</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">deviceId</span><span class="p">,</span>
-</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">phoneNumber</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>            <span class="c1">// here we are passing API version through</span>
-</span><span class='line'>            <span class="n">apiVersion</span> <span class="p">=</span> <span class="n">apiVersion</span>
-</span><span class='line'>    <span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">return</span> <span class="n">IssueVerificationTokenEndpointResponse</span><span class="p">(</span>
-</span><span class='line'>            <span class="n">issuer</span> <span class="p">=</span> <span class="n">issueVerificationToken</span><span class="p">.</span><span class="n">issuer</span><span class="p">,</span>
-</span><span class='line'>            <span class="n">token</span> <span class="p">=</span> <span class="n">issueVerificationToken</span><span class="p">.</span><span class="n">secureToken</span>
-</span><span class='line'>    <span class="p">)</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And finally the <code>if</code> statement in the use case:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// IssueVerificationToken/UseCase.kt</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">private</span> <span class="k">val</span> <span class="py">OLD_ISSUER</span> <span class="p">=</span> <span class="s">&quot;com.tddfellow&quot;</span>
-</span><span class='line'><span class="k">private</span> <span class="k">val</span> <span class="py">NEW_ISSUER</span> <span class="p">=</span> <span class="s">&quot;https://tddfellow.com&quot;</span>
-</span><span class='line'><span class="k">private</span> <span class="k">val</span> <span class="py">OLD_API_VERSION</span> <span class="p">=</span> <span class="s">&quot;v1&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">fun</span> <span class="nf">issueVerificationToken</span><span class="p">(</span><span class="n">deviceId</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">phoneNumber</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">apiVersion</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">VerificationToken</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">val</span> <span class="py">verificationToken</span> <span class="p">=</span> <span class="n">VerificationToken</span><span class="p">(</span>
-</span><span class='line'>            <span class="n">issuer</span> <span class="p">=</span> <span class="n">getIssuerFor</span><span class="p">(</span><span class="n">apiVersion</span><span class="p">),</span>
-</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">deviceId</span><span class="p">,</span>
-</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">phoneNumber</span><span class="p">,</span>
-</span><span class='line'>            <span class="n">secureToken</span> <span class="p">=</span> <span class="n">secureTokenSource</span><span class="p">.</span><span class="n">generateToken</span><span class="p">()</span>
-</span><span class='line'>    <span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">verificationTokenGateway</span><span class="p">.</span><span class="n">persist</span><span class="p">(</span><span class="n">verificationToken</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">verificationToken</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">private</span> <span class="k">fun</span> <span class="nf">getIssuerFor</span><span class="p">(</span><span class="n">apiVersion</span><span class="p">:</span> <span class="n">String</span><span class="p">):</span> <span class="n">String</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">apiVersion</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">OLD_API_VERSION</span><span class="p">))</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">return</span> <span class="n">OLD_ISSUER</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">NEW_ISSUER</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The full code change available <a href="https://github.com/waterlink/LegacyEndpointPrimer/pull/1">here (via open Pull Request)</a>.</p>
-
-<p>This solution has quite a few problems:</p>
-
-<ul>
-<li><code>if</code> statement smells a bit</li>
-<li>use case probably should not have any knowledge of <code>apiVersion</code>, since APIs is not our domain, it is just a delivery mechanism</li>
-</ul>
-
-
-<p>If we were to pass some object, like <code>TokenIssuer</code>, it would probably be more appropriate to have use case know of it. Let&rsquo;s try to refactor:</p>
-
-<h2>Refactoring <code>if</code> Statement Using Polymorphism</h2>
-
-<p>First, let&rsquo;s start passing in the token issuer in the routing:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// Main.kt</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">Spark</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="s">&quot;/api/v1/issueVerificationToken&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span> <span class="p">-&gt;</span>
-</span><span class='line'>    <span class="n">issueVerificationTokenEndpoint</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span>
-</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;deviceId&quot;</span><span class="p">),</span>
-</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;phoneNumber&quot;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>            <span class="c1">// here we pass a specific object now for old token issuer:</span>
-</span><span class='line'>            <span class="n">tokenIssuer</span> <span class="p">=</span> <span class="n">OldTokenIssuer</span><span class="p">()</span>
-</span><span class='line'>    <span class="p">)</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">Spark</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="s">&quot;/api/v2/issueVerificationToken&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span> <span class="p">-&gt;</span>
-</span><span class='line'>    <span class="n">issueVerificationTokenEndpoint</span><span class="p">.</span><span class="n">issueVerificationToken</span><span class="p">(</span>
-</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;deviceId&quot;</span><span class="p">),</span>
-</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">queryParams</span><span class="p">(</span><span class="s">&quot;phoneNumber&quot;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>            <span class="c1">// here we pass an object that returns URL according to the standard</span>
-</span><span class='line'>            <span class="n">tokenIssuer</span> <span class="p">=</span> <span class="n">UrlTokenIssuer</span><span class="p">()</span>
-</span><span class='line'>    <span class="p">)</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And this is how <code>TokenIssuer</code> and its derivatives are looking like:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// IssueVerificationToken/TokenIssuer.kt</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">interface</span> <span class="n">TokenIssuer</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">fun</span> <span class="nf">getName</span><span class="p">():</span> <span class="n">String</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// IssueVerificationToken/OldTokenIssuer.kt</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">OldTokenIssuer</span> <span class="p">:</span> <span class="n">TokenIssuer</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getName</span><span class="p">()</span> <span class="p">=</span> <span class="s">&quot;com.tddfellow&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// IssueVerificationToken/UrlTokenIssuer.kt</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">UrlTokenIssuer</span> <span class="p">:</span> <span class="n">TokenIssuer</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getName</span><span class="p">()</span> <span class="p">=</span> <span class="s">&quot;https://tddfellow.com&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>As you might guess, endpoint just passes this object through to the use case. And the use case itself just calls <code>getName()</code> on it when generating issuer:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='kotlin'><span class='line'><span class="c1">// IssueVerificationToken/UseCase.kt</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">fun</span> <span class="nf">issueVerificationToken</span><span class="p">(</span><span class="n">deviceId</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">phoneNumber</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="n">tokenIssuer</span><span class="p">:</span> <span class="n">TokenIssuer</span><span class="p">):</span> <span class="n">VerificationToken</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">val</span> <span class="py">verificationToken</span> <span class="p">=</span> <span class="n">VerificationToken</span><span class="p">(</span>
-</span><span class='line'>
-</span><span class='line'>            <span class="c1">// here is how much simpler it becomes</span>
-</span><span class='line'>            <span class="n">issuer</span> <span class="p">=</span> <span class="n">tokenIssuer</span><span class="p">.</span><span class="n">getName</span><span class="p">(),</span>
-</span><span class='line'>
-</span><span class='line'>            <span class="n">deviceId</span> <span class="p">=</span> <span class="n">deviceId</span><span class="p">,</span>
-</span><span class='line'>            <span class="n">phoneNumber</span> <span class="p">=</span> <span class="n">phoneNumber</span><span class="p">,</span>
-</span><span class='line'>            <span class="n">secureToken</span> <span class="p">=</span> <span class="n">secureTokenSource</span><span class="p">.</span><span class="n">generateToken</span><span class="p">()</span>
-</span><span class='line'>    <span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">verificationTokenGateway</span><span class="p">.</span><span class="n">persist</span><span class="p">(</span><span class="n">verificationToken</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">verificationToken</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Full code change can be seen <a href="https://github.com/waterlink/LegacyEndpointPrimer/pull/2">here (in the Pull Request)</a>.</p>
-
-<h2>Bottom Line</h2>
-
-<p>This code may be refactored further so that even <code>Endpoint</code> class will not have to know about <code>tokenIssuer</code> and pass it through. I will leave that as an exercise to you, my dear reader.</p>
-
-<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
-
-<ul>
-<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
-<li>Open-Closed Principle - changing behavior by adding new code,</li>
-<li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD,</li>
-<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, Test-Driven Development screencasts and so much more!</li>
-</ul>
-
-
-<h2>Thanks!</h2>
-
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-</div>
-  
-  
-
-
-<!-- Begin MailChimp Signup Form -->
-<div id="mc_embed_signup">
-<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div id="mc_embed_signup_scroll">
-	<h2>Stay Tuned!</h2>
-<div class="mc-field-group">
-  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
-	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
-  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
-</div>
-	<div id="mce-responses" class="clear">
-		<div class="response" id="mce-error-response" style="display:none"></div>
-		<div class="response" id="mce-success-response" style="display:none"></div>
-	</div>
-    </div>
-</form>
-</div>
-
-<!--End mc_embed_signup-->
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/2">&larr; Older</a>
@@ -2765,6 +2183,14 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!</a>
@@ -2788,14 +2214,6 @@
     
       <li class="post">
         <a href="/blog/2016/08/10/tdd-screencast-number-6-continuous-integration-training/">TDD #6: Continuous Integration Training</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/07/31/parallel-change-refactoring/">Parallel Change Refactoring</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/07/23/build-your-own-testing-framework-part-2/">Build Your Own Testing Framework. Part 2</a>
       </li>
     
   </ul>
