@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Refactoring | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/refactoring/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-29T22:22:59+02:00</updated>
+  <updated>2016-09-29T22:37:08+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -30,6 +30,9 @@
 <p>This technique is tremendously useful when you have 3rd party clients for your API (open-source library, SaaS with REST API, etc). Also, it is as useful for normal application development because it allows such breaking changes to never break your test suite. It allows deploying your code in the middle of the refactoring, in fact, every few minutes (Continuous Integration + Continuous Deployment).</p>
 
 <p>This article contains code examples in a pseudo-code.</p>
+
+<!--more-->
+
 
 <h2><code>UserSearch</code></h2>
 

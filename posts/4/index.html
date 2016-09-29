@@ -9,7 +9,13 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="TL;DR on Sustainable Software Development Paper Oleksii Fedorov Jun 28th, 2016 2:22 am code-ownership, extreme-programming, grounded-theory, &hellip;">
+  <meta name="description" content="So, given simple example: 1
+2
+3
+4
+Contract Num, Num =&gt; Num
+def add(a, b) a + b
+end One can ask: &ldquo;But it is ruby, what about duck typing, I &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -103,7 +109,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper/">TL;DR on Sustainable Software Development Paper</a></h1>
+      <h1 class="entry-title"><a href="/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/">How Can contracts.ruby Be Used in the Community With Duck Typing Culture?</a></h1>
     
     
       <p class="meta">
@@ -125,12 +131,12 @@
 
 
 
-<time class='entry-date' datetime='2016-06-28T02:22:07+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>28</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>2:22 am</span></time>
+<time class='entry-date' datetime='2015-03-10T11:11:23+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:11 am</span></time>
         
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/code-ownership/'>code-ownership</a>, <a class='category' href='/blog/categories/extreme-programming/'>extreme-programming</a>, <a class='category' href='/blog/categories/grounded-theory/'>grounded-theory</a>, <a class='category' href='/blog/categories/sustainable-software-development/'>sustainable-software-development</a>, <a class='category' href='/blog/categories/tldr/'>tldr</a>, <a class='category' href='/blog/categories/white-paper/'>white-paper</a>
+    <a class='category' href='/blog/categories/contracts-dot-ruby/'>contracts.ruby</a>, <a class='category' href='/blog/categories/design-by-contract/'>design-by-contract</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
   
 </span>
 
@@ -141,130 +147,44 @@
   </header>
 
 
-  <div class="entry-content"><p>This is a TL;DR of a white paper <a href="https://www.researchgate.net/publication/304014117_Sustainable_Software_Development_through_Overlapping_Pair_Rotation">Sustainable Software Development through Overlapping Pair Rotation</a> that is created by Todd Sedano, Paul Ralph, and Cécile Péraire.</p>
+  <div class="entry-content"><p>So, given simple example:</p>
 
-<p><em>NOTE: this TL;DR includes a lot of compressed awesome information.</em></p>
-
-<h2>Theory of Sustainable Software Development</h2>
-
-<p>The paper introduces us to principles, policies, and practices, that are the results of applying of <a href="https://en.wikipedia.org/wiki/Grounded_theory#Constructivist_grounded_theory">Constructivist Grounded Theory</a> research method to the five projects at Pivotal Labs.</p>
-
-<h3>Principles</h3>
-
-<ol>
-<li>By <strong>Engendering Positive Attitudes Toward Disruption</strong> teams can transform a challenge of team disruption into a business opportunity:
-
-<ul>
-<li>team members rolling off from the project are replaced with new members,</li>
-<li>new members are viewed as a source of fresh perspective and as an opportunity,</li>
-<li>new members often questioned team&rsquo;s assumptions (challenging &ldquo;cargo culting&rdquo;).</li>
-</ul>
-</li>
-<li>Policies &amp; practices that <strong>Encourage Knowledge Sharing and Continuity</strong> mitigate the risk of significant knowledge loss for the project when the team is disrupted. Policies are:
-
-<ul>
-<li><strong>Team Code Ownership</strong>, and <strong>Shared Team Schedule</strong>. While practices are:</li>
-<li><strong>Continuous Pair Programming</strong>, <strong>Overlapping Pair Rotation</strong> and <strong>Knowledge Pollination</strong>.</li>
-</ul>
-</li>
-<li>Sustainable development is not possible if the team is incurring the technical debt. <strong>Caring about Code Quality</strong> is a way to mitigate this risk. Policy here is:
-
-<ul>
-<li><strong>Avoid Technical Debt</strong>, and practices are:</li>
-<li><strong>Test-Driven Development</strong> / <strong>Behavior-Driven Development</strong> and <strong>Continuous Refactoring</strong>.</li>
-</ul>
-</li>
-</ol>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">Num</span><span class="p">,</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<h3>Policies</h3>
+<p>One can ask: &ldquo;But it is ruby, what about duck typing, I want just pass two things that have certain methods defined on them&rdquo;</p>
 
-<ol>
-<li><strong>Team Code Ownership</strong>: every developer is empowered to work on and to refactor any part of the team&rsquo;s code.</li>
-<li><strong>Shared Schedule</strong>: every team member has agreed to a fixed schedule to achieve the benefits of Sustainable Software Development. Teams are, preferably, co-located.</li>
-<li><strong>Avoid Technical Debt</strong>: a pair creates well-crafted code without shortcuts and short-term fixes. Solutions are best and simplest for <strong>current present</strong> without over-engineering. When inherited a legacy code base, a team is actively paying down technical debt while delivering new features.</li>
-</ol>
+<p>And my answer, you can easily do that:</p>
 
-
-<h3>Removing Knowledge Silos Practices</h3>
-
-<ol>
-<li><strong>Continuous Pair Programming</strong>: two developers are collaborating to write software together as their normal mode of software development. It enables knowledge transfer, reduces knowledge silos and improves code quality. Developers always work in pairs, unless exceptional circumstances arise.</li>
-<li><strong>Overlapping Pair Rotation</strong>: one developer rolls off the track of work and another developer rolls on, keeping the continuity of one developer at each rotation. It results in knowledge continuity. There are three strategies for spreading the knowledge via pair rotation when fighting emerging knowledge silos:
-
-<ul>
-<li>Optimizing for people rotation: developers try to pair with the person they &ldquo;least recently paired with&rdquo;;</li>
-<li>Optimizing for personal preferences: developer pick with whom they will pair at each rotation, based on personal preferences;</li>
-<li>Optimizing for context sharing: a developer who has not been working on the track for the longest track is rotating onto the track. The goal each day is for the developer leaving the track next to empower the developer who will remain on the track.</li>
-</ul>
-</li>
-<li><strong>Knowledge Pollination</strong>:
-
-<ul>
-<li>Daily stand-ups create awareness of who is working on what.</li>
-<li>Using backlog to communicate information and status of stories.</li>
-<li>Osmotic communication: a developer overhears a discussion in other pair and offers their help.</li>
-<li>The pair can interrupt another pair, product manager or designer to gain the needed information.</li>
-<li>Calling out updates to the entire team.</li>
-<li>Interruptions are encouraged - it makes the team more efficient as knowledge pollinates across the team.</li>
-</ul>
-</li>
-</ol>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:save</span><span class="p">,</span> <span class="ss">:has_valid?</span><span class="o">]</span><span class="p">,</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:to_s</span><span class="o">]</span> <span class="o">=&gt;</span> <span class="no">Any</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">assign_user_a_default_email</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">default_email</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">default_email</span> <span class="k">unless</span> <span class="n">user</span><span class="o">.</span><span class="n">has_valid?</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">save</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<h3>Caretaking the Code Practices</h3>
+<p>This is a built-in <code>RespondTo</code> contract. You can get a list of all of them here: <a href="http://egonschiele.github.io/contracts.ruby/#built-in-contracts">http://egonschiele.github.io/contracts.ruby/#built-in-contracts</a></p>
 
-<ol>
-<li><strong>Test-Driven Development/Behavior-Driven Development</strong>: developers use BDD (to describe interactions between the user and the system) and TDD (at unit test level). Design emerges from the creation and exploration of the test cases. Teams use a variety of TDD strategies, including:
-
-<ul>
-<li>testing the responsibilities and interactions, or</li>
-<li>contract testing using mocks.</li>
-</ul>
-</li>
-<li><strong>Continuous Refactoring</strong>: developers do refactoring as part of implementing feature stories. Developers are encouraged to improve the code&rsquo;s design, make the code easier to read, understand, and increase the discoverability of a component based on its responsibility. The team prefers <strong>pre-refactoring</strong>, where the developer makes a complicated work to make the current story as simple and as easy as possible.</li>
-<li><strong>Live on Master</strong>: every pair merges their code to master many times a day. Developers may use branches to save &ldquo;spikes&rdquo; and to move work-in-progress between pairing stations when rotating.</li>
-</ol>
-
-
-<h2>Thanks!</h2>
-
-<p>This is where this TL;DR ends. If you are interested in the topic, go ahead and read the paper, it has the following:</p>
-
-<ul>
-<li>Detailed description of the research method, data collection, and analysis;</li>
-<li>Research context and one project case study;</li>
-<li>Detailed description of Principles, Policies, and Practices of Sustainable Software Development; also anti-patterns for each policy and practice;</li>
-<li>Theory evaluation and conclusions.</li>
-</ul>
-
-
-<p>Great thanks to the original authors of the paper, researchers, and all participants!</p>
+<p>If you have any questions, you can always ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a></p>
 </div>
   
   
 
 
-<!-- Begin MailChimp Signup Form -->
-<div id="mc_embed_signup">
-<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div id="mc_embed_signup_scroll">
-	<h2>Stay Tuned!</h2>
-<div class="mc-field-group">
-  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
-	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
-  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
-</div>
-	<div id="mce-responses" class="clear">
-		<div class="response" id="mce-error-response" style="display:none"></div>
-		<div class="response" id="mce-success-response" style="display:none"></div>
-	</div>
-    </div>
-</form>
-</div>
-
-<!--End mc_embed_signup-->
 
 
     </article>
@@ -274,7 +194,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/">Why I Don&#8217;t Use Mocking Frameworks Anymore</a></h1>
+      <h1 class="entry-title"><a href="/blog/2015/03/05/introduction-to-contracts-dot-ruby/">Introduction to contracts.ruby</a></h1>
     
     
       <p class="meta">
@@ -296,12 +216,12 @@
 
 
 
-<time class='entry-date' datetime='2016-06-21T08:04:10+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>21</span><span class='date-suffix'>st</span>, <span class='date-year'>2016</span></span> <span class='time'>8:04 am</span></time>
+<time class='entry-date' datetime='2015-03-05T23:55:40+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:55 pm</span></time>
         
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/architecture/'>architecture</a>, <a class='category' href='/blog/categories/clean-code/'>clean-code</a>, <a class='category' href='/blog/categories/mocking/'>mocking</a>, <a class='category' href='/blog/categories/pseudo-code/'>pseudo-code</a>, <a class='category' href='/blog/categories/testing/'>testing</a>
+    <a class='category' href='/blog/categories/design-by-contract/'>design by contract</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
   
 </span>
 
@@ -312,28 +232,29 @@
   </header>
 
 
-  <div class="entry-content"><p>Some time ago, I have discovered, that using your own custom test double classes, instead of a test framework makes my test code more readable and maintainable. Here is an example (pseudo-code):</p>
+  <div class="entry-content"><h2>Slides from my talk on RUG-B Mar 2015</h2>
+
+<p>A short introduction to a powerful Design by Contract technique and its implementation in ruby contracts.ruby.</p>
+
+<p>Design by Contract allows one to do defensive programming in very elegant fashion, allows to set contracts on methods (expectations on input - arguments; and on output - return result) and invariants on classes. This allows to reason about code much much better.</p>
+
+<iframe src="//www.slideshare.net/slideshow/embed_code/45498085" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+
+
+<h2>Classical defensive programming</h2>
+
+<p>Lets start from simple code example:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">test_password_revealer_when_toggled_reveals_password</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">passwordController</span> <span class="o">=</span> <span class="nx">MockPasswordController</span><span class="p">.</span><span class="k">new</span><span class="p">()</span>
-</span><span class='line'>  <span class="nx">passwordRevealer</span> <span class="o">=</span> <span class="nx">PasswordRevealer</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">passwordRevealer</span><span class="p">.</span><span class="nx">toggle</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">expect</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">isRevealed</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
-</span><span class='line'><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</span><span class='line'><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>The same test with mocking framework would look this way:</p>
+<p>If you want to be really confident in implementation and usage of this method, you would probably use something like that:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -345,36 +266,78 @@
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">test_password_revealer_when_toggled_reveals_password</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">passwordController</span> <span class="o">=</span> <span class="nx">MockFramework</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="s2">&quot;PasswordController&quot;</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">passwordRevealer</span> <span class="o">=</span> <span class="nx">PasswordRevealer</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">spy</span> <span class="o">=</span> <span class="nx">spyOn</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">reveal</span><span class="p">())</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">passwordRevealer</span><span class="p">.</span><span class="nx">toggle</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nx">expect</span><span class="p">(</span><span class="nx">spy</span><span class="p">.</span><span class="nx">haveBeenCalled</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
-</span><span class='line'><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">raise</span> <span class="s2">&quot;a should be Fixnum or Float&quot;</span> <span class="k">unless</span> <span class="n">a</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Fixnum</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>    <span class="n">a</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">Float</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">raise</span> <span class="s2">&quot;b should be Fixnum or Float&quot;</span> <span class="k">unless</span> <span class="n">b</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Fixnum</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>    <span class="n">b</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">Float</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">result</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</span><span class='line'>  <span class="k">raise</span> <span class="s2">&quot;result should be Fixnum or Float&quot;</span> <span class="k">unless</span> <span class="n">result</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="no">Fixnum</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>    <span class="n">result</span><span class="o">.</span><span class="n">is_a?</span><span class="p">(</span><span class="nb">Float</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">result</span>
+</span><span class='line'><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>If you take a closer look at the last example, and, specifically at these 2 lines:</p>
+<p>Which definitely provides guarantees for input and output values.</p>
+
+<p>But this code is extremely ugly, unmaintainable and unreadable. You can always extract <code>assert</code>-like helper methods, but it will not improve readability too much, you want to have just this simple <code>a + b</code> in the body of this method.</p>
+
+<h2><code>gem "contracts"</code></h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">spy</span> <span class="o">=</span> <span class="nx">spyOn</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">reveal</span><span class="p">())</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">expect</span><span class="p">(</span><span class="nx">spy</span><span class="p">.</span><span class="nx">haveBeenCalled</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">Num</span><span class="p">,</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</span><span class='line'><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>They use a language, that is not relevant to the domain, therefore, they make the test less readable.</p>
+<p>This code does the same thing, but readability at a totally different level. Developers who know haskell may find this notation quite familiar.</p>
 
-<p>Additionally, they have knowledge of which exactly method <code>PasswordRevealer#toggle()</code> should call on <code>passwordController</code>. If we were to rename <code>reveal</code> method, all tests for <code>PasswordRevealer</code> would fail.
-The same thing would happen if we were to extract methods/functions/objects out of the <code>PasswordRevealer</code>.</p>
+<h2>Design by contract</h2>
 
-<p>Of course, creating such test doubles yourself will involve some boilerplate code - this is a trade-off. Example:</p>
+<p>When applying design by contract technique to development of any system or service, it allows you to answer the following questions:</p>
+
+<ul>
+<li>What does it expect? - Restrictions on input data for the system.</li>
+<li>What does it guarantee? - Restrictions on output data (return value) of the system.</li>
+<li>What does it maintain? - Restrictions on the inner state of the system (if your system is stateful, of course).</li>
+</ul>
+
+
+<h2>Benefits</h2>
+
+<p>Benefits of being able to answer this questions and enforce them on a runtime level are:</p>
+
+<ul>
+<li>Clients of your system can be confident using its public APIs. They can be sure, that if they provide something wrong, then they will get a convenient error immediately. And they can be sure, that system returns the right value as a result.</li>
+<li>System or service itself can be confident in its own operations. Implementation of system, that is covered with contracts, can assume that all the data flowing through the system is right and expected, and don&rsquo;t waste time (and lines of code, and sanity of the developer/maintainer) on different checks, conversions and so on (ie on defensive programming), it can just do what it needs to do, in confident, concise and convenient way, right up to the point.</li>
+</ul>
+
+
+<h2><code>assert</code> on steroids. And it is not only about types</h2>
+
+<p>Up until now it may seem like some kind of runtime type-checking system. But it is not, it is way more powerful.</p>
+
+<p>You can check for exact value:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="mi">200</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="ss">:get</span> <span class="o">=&gt;</span> <span class="s2">&quot;ok&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can check for types:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">User</span><span class="p">,</span> <span class="no">Time</span> <span class="o">=&gt;</span> <span class="no">Or</span><span class="o">[</span><span class="no">TrueClass</span><span class="p">,</span> <span class="no">FalseClass</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can check for anything that is available to you at runtime:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -386,70 +349,449 @@ The same thing would happen if we were to extract methods/functions/objects out 
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">MockPasswordController</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">ActiveUser</span> <span class="o">=&gt;</span> <span class="no">Rating</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">rating_for</span><span class="p">(</span><span class="n">active_user</span><span class="p">)</span>
+</span><span class='line'>  <span class="c1"># .. calculate rating for active user ..</span>
+</span><span class='line'><span class="k">end</span>
 </span><span class='line'>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">reveal</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;revealed&quot;</span>
-</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">ActiveUser</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">valid?</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">user</span><span class="o">.</span><span class="n">last_activity</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">.</span><span class="n">weeks</span><span class="o">.</span><span class="n">ago</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you expect when contract check on <code>active_user</code> argument happens, it will just call <code>ActiveUser.valid?(active_user)</code> and in case of falsy result will raise contract violation error.</p>
+
+<h2>Very useful contract violation errors</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="ss">ContractError</span><span class="p">:</span> <span class="no">Contract</span> <span class="n">violation</span> <span class="k">for</span> <span class="n">argument</span> <span class="mi">1</span> <span class="n">of</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>    <span class="ss">Expected</span><span class="p">:</span> <span class="no">ActiveUser</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">Actual</span><span class="p">:</span> <span class="c1">#&lt;User:0x00000101059540&gt; {last_activity=27.11.2014}</span>
+</span><span class='line'>    <span class="no">Value</span> <span class="n">guarded</span> <span class="k">in</span><span class="p">:</span> <span class="no">Object</span><span class="o">::</span><span class="n">rating_for</span>
+</span><span class='line'>    <span class="no">With</span> <span class="ss">Contract</span><span class="p">:</span> <span class="no">ActiveUser</span> <span class="o">=&gt;</span> <span class="no">Rating</span>
+</span><span class='line'>    <span class="ss">At</span><span class="p">:</span> <span class="p">(</span><span class="n">irb</span><span class="p">):</span><span class="mi">10</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">.</span><span class="o">.</span> <span class="n">backtrace</span> <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This kind of errors tell you, what exactly you did wrong and where exactly you did it wrong. It is totally different from usual <code>NoMethodError :something for nil:NilClass</code>, because usually these kind of no-method errors can occur in totally different part of codebase comparing to where these errors actually were introduced. Contract violation will be issued exactly at the place where you passed invalid data into or out from your system. So that when you see a contract violation error, there is a high chance that you already know how to fix it.</p>
+
+<h2>Pattern matching, sorta..</h2>
+
+<p>You can say even method overloading. Very simple example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># factorial in classic way</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="mi">1</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>    <span class="n">n</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># factorial using pattern matching</span>
+</span><span class='line'><span class="no">Contract</span> <span class="mi">1</span> <span class="o">=&gt;</span> <span class="mi">1</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+</span><span class='line'>  <span class="mi">1</span>
+</span><span class='line'><span class="k">end</span>
 </span><span class='line'>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">hide</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span>
-</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="no">Contract</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">number</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When I saw this example, my first reaction was: &ldquo;Wow!&rdquo;. I was very excited about this feature.</p>
+
+<h2>Something useful with pattern matching</h2>
+
+<p>Last example was not particularly useful for our everyday development, but here you go.</p>
+
+<p>Imagine you have a concurrent evented system, that needs to make asynchronous requests to some external http service(s). You may eventually end up with handler functions like these:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Classical way</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">handle_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">200</span>
+</span><span class='line'>    <span class="n">transform_response</span><span class="p">(</span><span class="no">JSON</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>    <span class="n">wrap_in_error</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># And using pattern matching:</span>
+</span><span class='line'><span class="no">Contract</span> <span class="mi">200</span><span class="p">,</span> <span class="no">JsonString</span> <span class="o">=&gt;</span> <span class="no">JsonString</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">handle_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">transform_response</span><span class="p">(</span><span class="no">JSON</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
+</span><span class='line'><span class="k">end</span>
 </span><span class='line'>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">isRevealed</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">==</span> <span class="s2">&quot;revealed&quot;</span>
-</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="no">Contract</span> <span class="no">Fixnum</span><span class="p">,</span> <span class="nb">String</span> <span class="o">=&gt;</span> <span class="no">JsonString</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">handle_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">wrap_in_error</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Limitless benefits</h2>
+
+<ul>
+<li>All your input data is consistent</li>
+<li>All data flows inside of your system are consistent</li>
+<li>State of your system is consistent</li>
+<li>Output of your system is consistent (or it is a contract violation error)</li>
+<li>Blows up loudly on any logical error in your system</li>
+</ul>
+
+
+<p>Last point is extremely important, because sometimes logical errors in classical programs will not lead to any failure at all, they will just do the wrong thing. For example, transfer money to wrong bank account. In such mission critical systems it is really important to fail fast to not allow error to propagate throughout your system.</p>
+
+<h2>Caveats: Performance</h2>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">Benchmark</th>
+<th style="text-align:left;">Slowdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;"><code>a+b</code></td>
+<td style="text-align:left;">900% slowdown</td>
+</tr>
+<tr>
+<td style="text-align:left;">production system with network IO</td>
+<td style="text-align:left;">5-10% slowdown</td>
+</tr>
+<tr>
+<td style="text-align:left;"><code>NO_CONTRACTS=1</code></td>
+<td style="text-align:left;">0% slowdown</td>
+</tr>
+</tbody>
+</table>
+
+
+<p><p/></p>
+
+<p>First benchmark is simple comparision of <code>a + b</code> with and without contract. Since <code>a + b</code> itself is very fast, then the slowdown is huge. But if you try to benchmark any real world system, that actually does something useful (communicates to other services through network for example), then slowdown is very very small.</p>
+
+<p>And you have ability to disable contracts in production with <code>NO_CONTRACTS=1</code> environment variable. But beware, you lose extremely important benefit of blowing up on logical error immediately before letting error propagate. This benefit itself outweights these 5-10%, at least for me.</p>
+
+<h2>Useful links</h2>
+
+<ul>
+<li><a href="https://github.com/egonSchiele/contracts.ruby">Github</a></li>
+<li><a href="http://egonschiele.github.io/contracts.ruby">Nice tutorial</a></li>
+<li><a href="https://github.com/egonSchiele">Creator</a></li>
+<li><a href="https://github.com/waterlink">Me, co-maintainer</a></li>
+</ul>
+
+
+<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues with using <code>contracts.ruby</code>, you can always create an <a href="https://github.com/egonSchiele/contracts.ruby/issues">issue on github</a> and Pull Requests are welcome.</p>
+</div>
+  
+  
+
+
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/30/dismantling-effective-go-article/">Dismantling Effective Go Article</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2015-01-30T22:39:11+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:39 pm</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/go/'>go</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome.</p>
+
+<p>Article itself: <a href="https://golang.org/doc/effective_go.html">https://golang.org/doc/effective_go.html</a></p>
+
+<p>And here is a list of my thoughts.</p>
+
+<h2>Formatting</h2>
+
+<p>I generally like this approach, it is nice to have such feature in your language tools available right there and with already existing integrations to popular editors.</p>
+
+<p>Except one thing:</p>
+
+<blockquote><p>Parentheses</p>
+
+<p>Go needs fewer parentheses than C and Java: control structures (if, for, switch) do not have parentheses in their syntax. Also, the operator precedence hierarchy is shorter and clearer, so</p>
+
+<pre><code>x&lt;&lt;8 + y&lt;&lt;16
+</code></pre></blockquote>
+
+<p>So we kill parentheses and replace them with whitespace. I am not entirely sure it is better. How will this work then?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">x</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span> <span class="o">+</span> <span class="nx">y</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And what about this?</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">x</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span>    <span class="o">+</span>    <span class="nx">y</span>  <span class="o">&lt;&lt;</span>  <span class="mi">16</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Probably nobody will write it like that, but one space miss, and lots of minutes lost in debugging.</p>
+
+<h2>Semicolons</h2>
+
+<p>Oh, lexer inserting semicolons where it pleases? What can go wrong. Reminds me about javascript and its problems when you omit semicolons.</p>
+
+<p>And this example looked strange to me:</p>
+
+<blockquote><p>One consequence of the semicolon insertion rules is that you cannot put the opening brace of a control structure (if, for, switch, or select) on the next line. If you do, a semicolon will be inserted before the brace, which <strong>could cause unwanted effects</strong>. Write them like this</p>
+
+<pre><code> if i &lt; f() {
+     g()
+ }
+</code></pre>
+
+<p>not like this</p>
+
+<pre><code> if i &lt; f()  // wrong!
+ {           // wrong!
+      g()
+ }
+</code></pre></blockquote>
+
+<p>First I thought that it will accept this input, put a semicolon after if, compile successfully and always execute statement inside of block, especially because it said &ldquo;could cause unwanted effects&rdquo;. But turned out this code results in compilation error - so no problem here, but probably this should have been clarified in the article.</p>
+
+<h2>Control Structure</h2>
+
+<p>Mandatory block - looks good to me.</p>
+
+<p>But the last example worries me:</p>
+
+<blockquote><p>This is an example of a common situation where code must guard against a sequence of error conditions. The code reads well if the successful flow of control runs down the page, eliminating error cases as they arise. Since error cases tend to end in return statements, the resulting code needs no else statements.</p>
+
+<pre><code>f, err := os.Open(name)
+if err != nil {
+     return err
+}
+d, err := f.Stat()
+if err != nil {
+     f.Close()
+     return err
+}
+codeUsing(f, d)
+</code></pre></blockquote>
+
+<p>That code is definitely not narrative, I will put some comments with kind of operation that is done:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>   <span class="c1">// get input</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>           <span class="c1">// check errors, guard</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">err</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nx">d</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>        <span class="c1">// get additional input</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>           <span class="c1">// check for errors, again, guard</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>             <span class="c1">// cleanups</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">err</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>           <span class="c1">// do something</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This way it is hard to understand and reason about.</p>
+
+<p>Why not just:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>         <span class="c1">// get input</span>
+</span><span class='line'><span class="nx">d</span> <span class="p">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>              <span class="c1">// get input</span>
+</span><span class='line'><span class="nx">result</span> <span class="p">=</span> <span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>  <span class="c1">// do something</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">IsErorr</span><span class="p">()</span> <span class="p">{</span>     <span class="c1">// handle errors</span>
+</span><span class='line'>    <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>             <span class="c1">// cleanup</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Making this trade-off, will simplify the case when we were to change the name: we would change the name at 3 places:</p>
+<p>Of course <code>f</code>, <code>d</code> and <code>result</code> are just <code>Result</code>/<code>Either</code> monads, they can be either in normal or faulty state. Whenever you try to do anything on <code>Result</code> in faulty state, it will just return itself. But <code>Result</code> in normal state will proxy call to its contents and wrap it in another <code>Result</code> monad (normal or faulty - depends on if call was successful or not). Probably I am too critical about that, because here I used some patterns that are not part of the language itself, but yeah, I can&rsquo;t look at code that mixes guards and actions.</p>
 
-<ul>
-<li>in test double class,</li>
-<li>in caller class,</li>
-<li>in &ldquo;real&rdquo; implementation class.</li>
-</ul>
+<p>Probably, somebody out there in go-lang world can tell me, is it common to use patterns like <code>Maybe</code>, <code>Result</code>, <code>NullObject</code> and so on in go-lang? Or everybody just go with simple code without any magic behind the scenes, and just do it like in the article&rsquo;s example? Feel free to ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<h2>For</h2>
+
+<p>Lets move on..</p>
+
+<blockquote><p>For strings, the range does more work for you, breaking out individual Unicode code points by parsing the UTF-8. Erroneous encodings consume one byte and produce the replacement rune U+FFFD. (The name (with associated builtin type) rune is Go terminology for a single Unicode code point. See the language specification for details.)</p></blockquote>
+
+<p>I really like that a term for this &ldquo;unicode minimal entity&rdquo; was invented. And after some while the name actually makes a lot of sense. And it sounds good.</p>
+
+<h2>Switch</h2>
+
+<p>That surprised me. Feels like assembler:</p>
+
+<blockquote><p>Although they are not nearly as common in Go as some other C-like languages, break statements can be used to terminate a switch early. Sometimes, though, it&rsquo;s necessary to break out of a surrounding loop, not the switch, and in Go that can be accomplished by putting a label on the loop and &ldquo;breaking&rdquo; to that label. This example shows both uses.</p>
+
+<pre><code>Loop:
+    for n := 0; n &lt; len(src); n += size {
+        switch {
+            case src[n] &lt; sizeOne:
+                if validateOnly {
+                    break
+                }
+                size = 1
+                update(src[n])
+
+            case src[n] &lt; sizeTwo:
+                if n+1 &gt;= len(src) {
+                    err = errShortInput
+                    break Loop
+                }
+                if validateOnly {
+                    break
+                }
+                size = 2
+                update(src[n] + src[n+1]&lt;&lt;shift)
+            }
+        }
+</code></pre></blockquote>
+
+<p>Not exactly the original assembler label, one only use it to mark (aka tag) the loop itself and use it to break out of it. Interesting concept, but something clicks in my head when I look at this.</p>
+
+<h2>Type switch</h2>
+
+<p>Good one, &ldquo;Switching on Type&rdquo;, (usually) a code smell, builtin into language. But still it has its own uses when used carefully.</p>
+
+<h2>Multiple return values</h2>
+
+<p>Why not tuples? If you just introduce tuples and destructuring, then you don&rsquo;t need multiple return values, only one return value - tuple itself.</p>
+
+<h2>Defer</h2>
+
+<p>This is a nice one. Allows to simplify previous example with files even more:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>         <span class="c1">// get input</span>
+</span><span class='line'><span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>           <span class="c1">// deferred cleanup right after acquiring of `f`</span>
+</span><span class='line'><span class="nx">d</span> <span class="p">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>              <span class="c1">// get input</span>
+</span><span class='line'><span class="nx">result</span> <span class="p">=</span> <span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>  <span class="c1">// do something</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>Whereas with a mocking framework, we would have to hunt for all failing tests, and usually, it means hundreds of failing tests.</p>
+<p>Particularly interesting example with trace/untrace follows in the article.</p>
 
-<h2>Thank you!</h2>
+<hr />
 
-<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
+<p>To be continued&hellip;</p>
 </div>
   
   
 
 
-<!-- Begin MailChimp Signup Form -->
-<div id="mc_embed_signup">
-<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div id="mc_embed_signup_scroll">
-	<h2>Stay Tuned!</h2>
-<div class="mc-field-group">
-  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
-	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
-  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
-</div>
-	<div id="mce-responses" class="clear">
-		<div class="response" id="mce-error-response" style="display:none"></div>
-		<div class="response" id="mce-success-response" style="display:none"></div>
-	</div>
-    </div>
-</form>
-</div>
-
-<!--End mc_embed_signup-->
 
 
     </article>
@@ -459,7 +801,7 @@ The same thing would happen if we were to extract methods/functions/objects out 
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2016/06/19/tdd-number-5-english-numbers-kata/">TDD #5: English Numbers Kata</a></h1>
+      <h1 class="entry-title"><a href="/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/">RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro</a></h1>
     
     
       <p class="meta">
@@ -481,12 +823,12 @@ The same thing would happen if we were to extract methods/functions/objects out 
 
 
 
-<time class='entry-date' datetime='2016-06-19T18:41:39+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>19</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>6:41 pm</span></time>
+<time class='entry-date' datetime='2015-01-23T01:56:19+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>1:56 am</span></time>
         
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/baby-steps/'>baby-steps</a>, <a class='category' href='/blog/categories/divide-and-conquer/'>divide-and-conquer</a>, <a class='category' href='/blog/categories/iterative/'>iterative</a>, <a class='category' href='/blog/categories/kata/'>kata</a>, <a class='category' href='/blog/categories/problem-solving/'>problem-solving</a>, <a class='category' href='/blog/categories/screencast/'>screencast</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/tdd-as-if-you-meant-it/'>tdd-as-if-you-meant-it</a>, <a class='category' href='/blog/categories/tdd-screencasts/'>tdd-screencasts</a>, <a class='category' href='/blog/categories/test-driven-development/'>test-driven-development</a>
+    <a class='category' href='/blog/categories/api/'>api</a>, <a class='category' href='/blog/categories/json/'>json</a>, <a class='category' href='/blog/categories/rspec/'>rspec</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
   
 </span>
 
@@ -497,184 +839,110 @@ The same thing would happen if we were to extract methods/functions/objects out 
   </header>
 
 
-  <div class="entry-content"><iframe src="https://player.vimeo.com/video/171307899?color=c9ff23" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+  <div class="entry-content"><p><a href="https://github.com/waterlink/rspec-json_expectations">rspec-json_expectations</a> library provides powerful <code>include_json</code> matcher for your RSpec suites. It allows to match string with JSON or already parsed ruby <code>Hash</code> against other ruby <code>Hash</code>, which is very convenient and creates very readable spec code. Lets jump to some examples.</p>
+
+<p>It can handle some plain json:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has basic info about user&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
+</span><span class='line'>    <span class="nb">id</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">email</span><span class="p">:</span> <span class="s2">&quot;john.smith@example.com&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span>
+</span><span class='line'>  <span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p><a href="https://vimeo.com/171307899">Test-Driven Development Screencast #5: English Numbers Kata</a></p>
+<p>And nested json:</p>
 
-<p><em>(Recommended to watch full-screen and HD: 720p or more)</em></p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has gamification info for user&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
+</span><span class='line'>    <span class="ss">code</span><span class="p">:</span> <span class="s2">&quot;7wxMw32&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">gamification</span><span class="p">:</span> <span class="p">{</span>
+</span><span class='line'>      <span class="ss">rating</span><span class="p">:</span> <span class="mi">93</span><span class="p">,</span>
+</span><span class='line'>      <span class="ss">score</span><span class="p">:</span> <span class="mi">355</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
 
-<p>This screencast was born from my previous blog post: <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">Iterative Divide &amp; Conquer or How to solve problems</a>.</p>
+<p>You can even do some regex matching:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has basic info about user&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
+</span><span class='line'>    <span class="ss">code</span><span class="p">:</span> <span class="sr">/^[a-z0-9]{10}$/</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">url</span><span class="p">:</span> <span class="sr">%r{api/v5/users/[a-z0-9]{10}.json}</span>
+</span><span class='line'>  <span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Most can agree, that this method of specifying JSON responses in ruby is very readable, but what about failure messages? How helpful they are?</p>
+
+<p>For example with failure in nested JSON things can become tricky, but this gem solves them quite nice:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>             json atom at path "gamification/score" is not equal to expected value:
+</span><span class='line'>
+</span><span class='line'>               expected: 355
+</span><span class='line'>                    got: 397</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you match with nested Arrays you will get numbers in your JSON path within failure message, for example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>             json atom at path "results/2/badges/0" is not equal to expected value:
+</span><span class='line'>
+</span><span class='line'>               expected: "first flight"
+</span><span class='line'>                    got: "day & night"
+</span><span class='line'>
+</span><span class='line'>             json atom at path "results/3" is missing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For further reading and instructions: <a href="https://github.com/waterlink/rspec-json_expectations">github</a> and <a href="http://www.relishapp.com/waterlink/rspec-json-expectations/docs/json-expectations">cucumber generated documentation</a>.</p>
+
+<p>Feedback is highly appreciated, contact me on twitter (<a href="https://twitter.com/waterlink000">@waterlink000</a>) or on <a href="https://github.com/waterlink/rspec-json_expectations/issues">github issues</a>.</p>
 </div>
   
   
 
 
-<!-- Begin MailChimp Signup Form -->
-<div id="mc_embed_signup">
-<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div id="mc_embed_signup_scroll">
-	<h2>Stay Tuned!</h2>
-<div class="mc-field-group">
-  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
-	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
-  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
-</div>
-	<div id="mce-responses" class="clear">
-		<div class="response" id="mce-error-response" style="display:none"></div>
-		<div class="response" id="mce-success-response" style="display:none"></div>
-	</div>
-    </div>
-</form>
-</div>
-
-<!--End mc_embed_signup-->
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/06/13/tdd-as-an-enabling-practice-or-how-to-be-faster-with-tdd/">TDD as an Enabling Practice or How to Be Faster With TDD</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-
-  
-  <span class="byline author vcard"><span class="fn">
-    
-      <a href="/about-me">Oleksii Fedorov</a>
-    
-  </span></span>
-
-
-        
-
-
-
-
-<time class='entry-date' datetime='2016-06-13T07:52:56+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>13</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>7:52 am</span></time>
-        
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/agile/'>agile</a>, <a class='category' href='/blog/categories/continuous-delivery/'>continuous-delivery</a>, <a class='category' href='/blog/categories/continuous-integration/'>continuous-integration</a>, <a class='category' href='/blog/categories/dreyfus-model/'>dreyfus-model</a>, <a class='category' href='/blog/categories/enabling-practices/'>enabling-practices</a>, <a class='category' href='/blog/categories/exploitative-practices/'>exploitative-practices</a>, <a class='category' href='/blog/categories/pair-programming/'>pair-programming</a>, <a class='category' href='/blog/categories/practices/'>practices</a>, <a class='category' href='/blog/categories/professionalism/'>professionalism</a>, <a class='category' href='/blog/categories/skills/'>skills</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/xp/'>xp</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Recently I had a lot of conversations with so many different programmers, with different backgrounds, contexts of work and opinions. What stroke me the most, is that majority feel that TDD is slower than simple automated testing, i.e., <code>TestFirst</code> is slower than <code>TestAfter</code>.</p>
-
-<p>While digging deeper in their context of work, I could only agree with them: &ldquo;True, in that context it will be about 50% slower&rdquo;.</p>
-
-<p>Most of the time, though, the context is somewhat looking like this:</p>
-
-<ul>
-<li>We have some company <code>ACME</code>, that does some sort of Agile Software Development (probably Scrum);</li>
-<li>The company <code>ACME</code> focuses only on the business parts of Agile Software Development;</li>
-<li>The company <code>ACME</code> tried to introduce TDD as a development practice;</li>
-<li>Everything took much longer to be done.</li>
-</ul>
-
-
-<h2>Enabling practice</h2>
-
-<p>Now, let us dive into the development practices of Agile Software Development: development practices are usually coming from Extreme Programming (XP). In XP there are 2 terms: <code>EnablingPractice</code> and <code>ExploitativePractice</code>.</p>
-
-<p>Exploitative practice gives direct benefit to the team, e.g.: speed boost and quicker feedback from users and stakeholders.</p>
-
-<p>Enabling practice is required for certain other exploitative practice(s) to work.</p>
-
-<p>A good example of exploitative practice is Continuous Delivery. It requires Continuous Integration, Pair-Programming, and Testing to be in place. These 3 are enabling practices.</p>
-
-<h2>Removing slow practices</h2>
-
-<p>Additionally to allowing usage of practices, that make a team go faster and deliver at the higher quality level, enabling practices allow removal of practices, that make a team go slower. For example, Pair-Programming together with TDD allows removal of code review. On most of the teams (especially, of bigger size), this makes for an instant productivity boost.</p>
-
-<p>Pair-Programming, TDD and Continuous Integration, additionally to enabling the team to do Continuous Delivery, also allows replacing feature-branch VCS flow with a trunk-based flow. This allows for smaller iterations and faster user feedback.</p>
-
-<h2>Pair-Programming Done Right</h2>
-
-<p>It is worth noting, that removal of code review and introducing of Continuous Delivery is only possible, if Pair-Programming is done right:</p>
-
-<ul>
-<li>in no case, two beginners should be working in the pair;</li>
-<li>beginners should work together with advanced beginners/competents and proficients/experts;</li>
-<li>advanced beginners/competents should split their time in half between working with beginners and working with proficient/experts.</li>
-</ul>
-
-
-<p>Terminology <code>Beginner</code>, <code>AdvancedBeginner</code>, <code>Competent</code>, <code>Proficient</code> and <code>Expert</code> is from Dreyfus Skill Acquisition Model.</p>
-
-<p>That allows for a good trust and mentorship models in your team(s). It enables quick growth and knowledge sharing for every member of the team.</p>
-
-<p>There is another enabling practice which speeds up the knowledge sharing, it is Pair Rotation, that should be done from 1 to 2 times per day, so that for small and middle-sized teams, the bigger the feature is, the higher chance, that everyone on the team have participated in its development, and therefore have enough knowledge about it.</p>
-
-<p>Additionally, Pair Rotation allows for Code Detachment and removal of Code Silos. This in turn, together with TDD, enables Ruthless Refactoring, because you are not afraid:</p>
-
-<ul>
-<li>to break the code, thanks to TDD,</li>
-<li>to upset an owner of the Code Silo, because there is no owner, thanks to Pair Rotation.</li>
-</ul>
-
-
-<h2>Bottomline</h2>
-
-<p>I think I can go on like this forever, but I believe the idea should be clear. I will be following up with more articles in details on each technique in the future. Stay tuned!</p>
-
-<h2>Thank you for reading!</h2>
-
-<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
-</div>
-  
-  
-
-
-<!-- Begin MailChimp Signup Form -->
-<div id="mc_embed_signup">
-<form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div id="mc_embed_signup_scroll">
-	<h2>Stay Tuned!</h2>
-<div class="mc-field-group">
-  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
-	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Enter your email">
-  <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
-</div>
-	<div id="mce-responses" class="clear">
-		<div class="response" id="mce-error-response" style="display:none"></div>
-		<div class="response" id="mce-success-response" style="display:none"></div>
-	</div>
-    </div>
-</form>
-</div>
-
-<!--End mc_embed_signup-->
 
 
     </article>
   
   <div class="pagination">
-    
-      <a class="prev" href="/posts/5">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     

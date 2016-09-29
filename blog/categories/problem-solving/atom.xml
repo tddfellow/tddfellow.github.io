@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Problem-solving | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/problem-solving/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-29T22:22:59+02:00</updated>
+  <updated>2016-09-29T22:37:08+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -29,6 +29,9 @@
 
 <p>After implementing one business rule (with Red-Green-Refactor) make sure to find all &ldquo;weirdnesses&rdquo; or non-generalities in the production code and one-by-one eliminate them by writing a test, that proves such non-generality, and then making it pass while removing non-generality. This is the third cycle of TDD - Mini Cycle.</p></li>
 </ul>
+
+
+<!--more-->
 
 
 <p>This is a series of articles:</p>
@@ -611,6 +614,9 @@ end
 
 <p>Finally, do not forget to remove redundant tests if any.</p>
 
+<!--more-->
+
+
 <p>This is a series of articles:</p>
 
 <ol>
@@ -925,6 +931,9 @@ end
 <li>wrong order of tests</li>
 <li>production code is not getting more general with each test</li>
 </ul>
+
+
+<!--more-->
 
 
 <p>This is a series of articles:</p>

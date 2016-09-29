@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Javascript | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-29T22:22:59+02:00</updated>
+  <updated>2016-09-29T22:37:08+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -38,6 +38,9 @@ function RoboDuck() {
 
 // .. and so on ..
 </code></pre>
+
+<!--more-->
+
 
 <p>The point is that the public interface has methods <code>swim()</code> and <code>quack()</code>. This is how you identify the duck in a programming language. This concept is very similar to the concept of the <code>interface</code> in programming languages that have one, but it is not enforced in any way by the programming language.</p>
 
@@ -108,6 +111,9 @@ Spy <|-- Mock;
 '/></p>
 
 <p>Where <code>Double</code> is an abstract test double, which has no functionality - it is a general concept to talk about test doubles.</p>
+
+<!--more-->
+
 
 <p><code>Dummy</code> - is a test double, that is used to fill parameter lists, in cases where these parameters are not used by production code. Simplest <code>Dummy</code> would look like this:</p>
 
@@ -308,6 +314,9 @@ mockObject.verify();
 <p>This article is the fourth one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
 
 <p>Shall we get started?</p>
+
+<!--more-->
+
 
 <h2>Render the name of the test suite</h2>
 
@@ -1037,6 +1046,9 @@ ReporterSpy_ReporterTest
 <p>This article is the third one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
 
 <p>Shall we get started?</p>
+
+<!--more-->
+
 
 <h2>Testing existing code</h2>
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Test-doubles | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/test-doubles/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-29T22:22:59+02:00</updated>
+  <updated>2016-09-29T22:37:08+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -37,6 +37,9 @@ Spy <|-- Mock;
 '/></p>
 
 <p>Where <code>Double</code> is an abstract test double, which has no functionality - it is a general concept to talk about test doubles.</p>
+
+<!--more-->
+
 
 <p><code>Dummy</code> - is a test double, that is used to fill parameter lists, in cases where these parameters are not used by production code. Simplest <code>Dummy</code> would look like this:</p>
 
@@ -237,6 +240,9 @@ mockObject.verify();
 <p>This article is the fourth one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
 
 <p>Shall we get started?</p>
+
+<!--more-->
+
 
 <h2>Render the name of the test suite</h2>
 

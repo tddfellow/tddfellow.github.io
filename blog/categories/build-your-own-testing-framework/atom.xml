@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Build-your-own-testing-framework | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-29T22:22:59+02:00</updated>
+  <updated>2016-09-29T22:37:08+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -30,6 +30,9 @@
 <p>This article is the fourth one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
 
 <p>Shall we get started?</p>
+
+<!--more-->
+
 
 <h2>Render the name of the test suite</h2>
 
@@ -759,6 +762,9 @@ ReporterSpy_ReporterTest
 <p>This article is the third one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
 
 <p>Shall we get started?</p>
+
+<!--more-->
+
 
 <h2>Testing existing code</h2>
 

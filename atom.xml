@@ -4,7 +4,7 @@
   <title><![CDATA[That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-29T22:22:59+02:00</updated>
+  <updated>2016-09-29T22:37:08+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -49,6 +49,11 @@
 </span><span class='line'>
 </span><span class='line'><span class="c1">// .. and so on ..</span>
 </span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<!--more-->
 
 
 <p>The point is that the public interface has methods <code>swim()</code> and <code>quack()</code>. This is how you identify the duck in a programming language. This concept is very similar to the concept of the <code>interface</code> in programming languages that have one, but it is not enforced in any way by the programming language.</p>
@@ -143,6 +148,9 @@ Spy <|-- Mock;
 '/></p>
 
 <p>Where <code>Double</code> is an abstract test double, which has no functionality - it is a general concept to talk about test doubles.</p>
+
+<!--more-->
+
 
 <p><code>Dummy</code> - is a test double, that is used to fill parameter lists, in cases where these parameters are not used by production code. Simplest <code>Dummy</code> would look like this:</p>
 
@@ -495,6 +503,9 @@ Spy <|-- Mock;
 <p>This article is the fourth one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found <a href="http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/">here</a>.</p>
 
 <p>Shall we get started?</p>
+
+<!--more-->
+
 
 <h2>Render the name of the test suite</h2>
 
@@ -1772,6 +1783,9 @@ Spy <|-- Mock;
 </ul>
 
 
+<!--more-->
+
+
 <p>This is a series of articles:</p>
 
 <ol>
@@ -2729,6 +2743,9 @@ Spy <|-- Mock;
 
 <p>Finally, do not forget to remove redundant tests if any.</p>
 
+<!--more-->
+
+
 <p>This is a series of articles:</p>
 
 <ol>
@@ -3215,6 +3232,9 @@ Spy <|-- Mock;
 <li>wrong order of tests</li>
 <li>production code is not getting more general with each test</li>
 </ul>
+
+
+<!--more-->
 
 
 <p>This is a series of articles:</p>
@@ -3787,6 +3807,9 @@ Spy <|-- Mock;
     <id>http://www.tddfellow.com/blog/2016/08/20/eliminating-if-statements-legacy-endpoint-primer</id>
     <content type="html"><![CDATA[<p><code>if</code> statements tend to duplicate throughout the code base. This may lead to subtle mistakes and bugs. One way to avoid that problem is to eliminate <code>if</code> statement completely. Today we are going to take a look at one example of such elimination. Code examples today will be in Kotlin.</p>
 
+<!--more-->
+
+
 <h2>Problem at hand</h2>
 
 <ul>
@@ -4250,6 +4273,9 @@ Spy <|-- Mock;
 <p>This article is the third one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found <a href="http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/">here</a>.</p>
 
 <p>Shall we get started?</p>
+
+<!--more-->
+
 
 <h2>Testing existing code</h2>
 
@@ -4864,6 +4890,9 @@ Spy <|-- Mock;
 <p>This technique is tremendously useful when you have 3rd party clients for your API (open-source library, SaaS with REST API, etc). Also, it is as useful for normal application development because it allows such breaking changes to never break your test suite. It allows deploying your code in the middle of the refactoring, in fact, every few minutes (Continuous Integration + Continuous Deployment).</p>
 
 <p>This article contains code examples in a pseudo-code.</p>
+
+<!--more-->
+
 
 <h2><code>UserSearch</code></h2>
 

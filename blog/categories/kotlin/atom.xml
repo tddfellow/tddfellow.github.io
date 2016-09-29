@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Kotlin | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/kotlin/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-29T22:22:59+02:00</updated>
+  <updated>2016-09-29T22:37:08+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -19,6 +19,9 @@
     <updated>2016-08-20T11:59:37+02:00</updated>
     <id>http://www.tddfellow.com/blog/2016/08/20/eliminating-if-statements-legacy-endpoint-primer</id>
     <content type="html"><![CDATA[<p><code>if</code> statements tend to duplicate throughout the code base. This may lead to subtle mistakes and bugs. One way to avoid that problem is to eliminate <code>if</code> statement completely. Today we are going to take a look at one example of such elimination. Code examples today will be in Kotlin.</p>
+
+<!--more-->
+
 
 <h2>Problem at hand</h2>
 
