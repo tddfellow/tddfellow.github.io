@@ -7,8 +7,10 @@ single: true
 <article class="hentry" role="article">
   {% include article.html %}
   <footer>
+    {% include post/author_expanded.html %}
+
     <p class="meta">
-      {% include post/author.html %}
+      <span class="byline author vcard"></span>
       {% include post/date.html %}{{ time }}{% if updated %} {{ updated }}{% endif %}
       {% include post/categories.html %}
     </p>

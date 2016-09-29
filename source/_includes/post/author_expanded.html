@@ -1,0 +1,18 @@
+{% if post.author_key %}
+  {% assign author_key = post.author_key %}
+{% elsif page.author_key %}
+  {% assign author_key = page.author_key %}
+{% elsif site.author_key %}
+  {% assign author_key = site.author_key %}
+{% endif %}
+
+{% if author_key %}
+  {% assign author = site.authors[author_key].name %}
+  <div class="expanded-author-card">
+    {% if site.authors[author_key].photo %}
+      <img class="author-photo" src="{{site.authors[author_key].photo}}" />
+    {% endif %}
+
+    <div class="author-bio">{{ site.authors[author_key].bio }}</div>
+  </div>
+{% endif %}

@@ -106,11 +106,13 @@ authors:
   oleksii-fedorov:
     name: Oleksii Fedorov
     nick: waterlink
-    photo: //www.gravatar.com/userimage/26702135/afa84af9503d1f768ed43820a0674e73.jpg?size=256
+    photo: /about-me/oleksii-fedorov__small.jpg
     url: /about-me
+    bio: "Oleksii Fedorov is an Experienced Software Engineer, Software Craftsperson, Polyglot, Public Speaker, likes Test-Driven Development, Pair-Programming and LEAN."
   ilona-demidenko:
     name: Ilona Demidenko
     nick: ilonade
     photo: //www.gravatar.com/avatar/?d=identicon
+    bio: "Ilona Demidenko is a Junior Software Engineer. Frontend & Backend Engineer. Likes Javascript and Ruby."
 
 author_key: oleksii-fedorov

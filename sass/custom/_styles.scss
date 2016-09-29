@@ -111,5 +111,21 @@ article header {
 
 #mc_embed_signup .seats-are-limited {
   margin-top: 20px;
+  margin-bottom: 20px;
   text-align: center;
+}
+
+.expanded-author-card {
+  margin-bottom: 50px;
+
+  .author-photo {
+    border: none;
+    width: 64px;
+    float: left;
+    margin-right: 20px;
+  }
+
+  .author-bio {
+
+  }
 }
