@@ -40,3 +40,11 @@ aside.sidebar {
   text-shadow: 0px 1px $sidebar-shadow-color;
   border-top: 1px solid $sidebar-shadow-color;
 }
+
+article header p.meta {
+  position: relative;
+}
+
+article header {
+  padding-top: 0;
+}

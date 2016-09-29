@@ -8,15 +8,11 @@
 
 {% if author_key %}
   {% assign author = site.authors[author_key].name %}
-
-{% elsif post.author %}
-  {% assign author = post.author %}
-{% elsif page.author %}
-  {% assign author = page.author %}
-{% elsif site.author %}
-  {% assign author = site.author %}
-{% endif %}
-
-{% if author %}
-  <span class="byline author vcard">Posted by <span class="fn">{{ author }}</span></span>
+  <span class="byline author vcard"><span class="fn">
+    {% if site.authors[author_key].url %}
+      <a href="{{ site.authors[author_key].url }}">{{ author }}</a>
+    {% else %}
+      {{ author }}
+    {% endif %}
+  </span></span>
 {% endif %}
