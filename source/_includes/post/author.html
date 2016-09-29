@@ -1,8 +1,22 @@
-{% if post.author %}
+{% if post.author_key %}
+  {% assign author_key = post.author_key %}
+{% elsif page.author_key %}
+  {% assign author_key = page.author_key %}
+{% elsif site.author_key %}
+  {% assign author_key = site.author_key %}
+{% endif %}
+
+{% if author_key %}
+  {% assign author = site.authors[author_key].name %}
+
+{% elsif post.author %}
   {% assign author = post.author %}
 {% elsif page.author %}
   {% assign author = page.author %}
-{% else %}
+{% elsif site.author %}
   {% assign author = site.author %}
 {% endif %}
-{% if author %}<span class="byline author vcard">Posted by <span class="fn">{{ author }}</span></span>{% endif %}
+
+{% if author %}
+  <span class="byline author vcard">Posted by <span class="fn">{{ author }}</span></span>
+{% endif %}
