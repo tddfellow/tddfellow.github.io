@@ -12,6 +12,11 @@ single: true
       {% include post/date.html %}{{ time }}{% if updated %} {{ updated }}{% endif %}
       {% include post/categories.html %}
     </p>
+
+    {% unless index %}
+      {% include subscribe_form.html %}
+    {% endunless %}
+
     {% unless page.sharing == false %}
       {% include post/sharing.html %}
     {% endunless %}
