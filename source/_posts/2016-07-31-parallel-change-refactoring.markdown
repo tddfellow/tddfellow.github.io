@@ -21,6 +21,8 @@ This technique is tremendously useful when you have 3rd party clients for your A
 
 This article contains code examples in a pseudo-code.
 
+<!--more-->
+
 ## `UserSearch`
 
 Let's imagine, that we have some class, that is used to search `User` by id:

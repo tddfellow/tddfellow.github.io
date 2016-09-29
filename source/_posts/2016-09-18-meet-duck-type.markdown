@@ -32,6 +32,8 @@ function RoboDuck() {
 // .. and so on ..
 ```
 
+<!--more-->
+
 The point is that the public interface has methods `swim()` and `quack()`. This is how you identify the duck in a programming language. This concept is very similar to the concept of the `interface` in programming languages that have one, but it is not enforced in any way by the programming language.
 
 Duck typing is mostly natural in dynamic languages, where it is possible to send any message to any object and the check if that is something possible will happen at runtime. In static languages, it is still possible to use duck typing via some sort of Reflection.

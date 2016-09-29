@@ -24,6 +24,8 @@ Code examples today will be in Ruby programming language. The technique itself i
 - wrong order of tests
 - production code is not getting more general with each test
 
+<!--more-->
+
 This is a series of articles:
 
 1. Part 1: Example (reading this)

@@ -19,6 +19,8 @@ This article is the third one of the series "Build Your Own Testing Framework", 
 
 Shall we get started?
 
+<!--more-->
+
 ## Testing existing code
 
 Let's take another look at the `runTestSuite` function:

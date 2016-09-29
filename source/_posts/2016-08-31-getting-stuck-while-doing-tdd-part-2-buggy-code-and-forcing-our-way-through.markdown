@@ -29,6 +29,8 @@ Ways to avoid this outcome:
 
 Finally, do not forget to remove redundant tests if any.
 
+<!--more-->
+
 This is a series of articles:
 
 1. [Part 1: Example](/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/)

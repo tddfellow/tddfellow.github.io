@@ -30,6 +30,8 @@ Spy <|-- Mock;
 
 Where `Double` is an abstract test double, which has no functionality - it is a general concept to talk about test doubles.
 
+<!--more-->
+
 `Dummy` - is a test double, that is used to fill parameter lists, in cases where these parameters are not used by production code. Simplest `Dummy` would look like this:
 
 ```javascript

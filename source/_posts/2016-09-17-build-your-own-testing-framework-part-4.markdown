@@ -29,6 +29,8 @@ This article is the fourth one of the series "Build Your Own Testing Framework",
 
 Shall we get started?
 
+<!--more-->
+
 ## Render the name of the test suite
 
 So where should the name of the test suite come from? Probably it should be a test suite class name. Currently, all of them are anonymous classes and therefore don't have a name:

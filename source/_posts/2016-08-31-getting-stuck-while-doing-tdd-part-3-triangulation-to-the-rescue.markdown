@@ -23,6 +23,8 @@ Welcome back to the "Getting Stuck While Doing TDD" series. Today we are going t
 
   After implementing one business rule (with Red-Green-Refactor) make sure to find all "weirdnesses" or non-generalities in the production code and one-by-one eliminate them by writing a test, that proves such non-generality, and then making it pass while removing non-generality. This is the third cycle of TDD - Mini Cycle.
 
+<!--more-->
+
 This is a series of articles:
 
 1. [Part 1: Example](/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/)

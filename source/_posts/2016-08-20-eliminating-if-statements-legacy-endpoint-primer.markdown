@@ -12,6 +12,8 @@ categories:
 
 `if` statements tend to duplicate throughout the code base. This may lead to subtle mistakes and bugs. One way to avoid that problem is to eliminate `if` statement completely. Today we are going to take a look at one example of such elimination. Code examples today will be in Kotlin.
 
+<!--more-->
+
 ## Problem at hand
 
 - Our API has an endpoint for issuing some sort of `verification token` given `device id` and `phone number` of the user's mobile device.
