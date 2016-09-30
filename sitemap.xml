@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://www.tddfellow.com/blog/2016/09/30/highscore-kata/</loc>
+    <lastmod>2016-09-30T18:23:21+02:00</lastmod>
+  </url>
+  <url>
     <loc>http://www.tddfellow.com/blog/2016/09/18/meet-duck-type/</loc>
     <lastmod>2016-09-18T16:37:33+02:00</lastmod>
   </url>
@@ -390,6 +394,9 @@
   </url>
   <url>
     <loc>http://www.tddfellow.com/blog/categories/test-doubles/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/clean-architecture/</loc>
   </url>
   <url>
     <loc>http://www.tddfellow.com/posts/2/</loc>

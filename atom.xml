@@ -4,7 +4,7 @@
   <title><![CDATA[That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-30T00:29:56+02:00</updated>
+  <updated>2016-09-30T22:59:02+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,119 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[HighScore Kata]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/09/30/highscore-kata/"/>
+    <updated>2016-09-30T18:23:21+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/09/30/highscore-kata</id>
+    <content type="html"><![CDATA[<p>Hello, everyone. Today we will take a look into a little problem involving high scores in some sort of game. The game has only one high score and when current game&rsquo;s score exceeds that number, it gets updated. Example acceptance test would read like this:</p>
+
+<p><strong>Given</strong> high score is <code>174</code><br/>
+<strong>When</strong> player scores <code>191</code><br/>
+<strong>Then</strong> high score is <code>191</code></p>
+
+<!--more-->
+
+
+<p>Current implementation stores high score in the web browser&rsquo;s local storage. This detail does not change the purpose of this Kata very much since any other platform and language can have its own analog of local storage (file system, in-memory or local database, application settings, etc.). <code>HighScore</code> object looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">Highscore</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// initially, load high score value from the local storage</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">load</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Highscore</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">updateHighscore</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">score</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// check if we need to update high score</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">score</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">highscore</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">highscore</span> <span class="o">=</span> <span class="nx">score</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// render the high score in the</span>
+</span><span class='line'>    <span class="c1">// id=&quot;highscore&quot; element in the browser</span>
+</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#highscore&quot;</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="s2">&quot;HIGHSCORE: &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">highscore</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Highscore</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// localStorage is storing everything as strings,</span>
+</span><span class='line'>    <span class="c1">// so we need to convert it to number</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">highscore</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">highscore</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Highscore</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">save</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">localStorage</span><span class="p">.</span><span class="nx">highscore</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">highscore</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Task for the Kata:</p>
+
+<ul>
+<li>Write tests for this class.</li>
+<li>Fix the bug: when a game is launched on the new client (without the high score stored), it renders <code>HIGHSCORE: NaN</code>. (<code>NaN</code> is javascript&rsquo;s abbreviation for &ldquo;not a number&rdquo;). <code>parseFloat</code> most probably is a culprit for this.</li>
+<li>Extract storing mechanisms, so that class can be re-used with different storage mechanisms (for example local database, or external REST API).</li>
+<li>Make all tests runnable outside of the context of the browser (for example, on <code>nodejs</code>).</li>
+</ul>
+
+
+<p>The focus of this Kata is on architectural boundaries, that this little innocent class spans.</p>
+
+<p>Questions to ask yourself:</p>
+
+<ul>
+<li>How much distinct responsibilities this class has?</li>
+<li>What architectural boundaries should I draw through this class?
+
+<ul>
+<li>How do I split this class according to these boundaries?</li>
+</ul>
+</li>
+<li>What is the easiest way and what is the proper way to make tests runnable outside of the context of the browser?</li>
+<li>How would this code look like in different kinds of languages? (static, dynamic, object-oriented, functional, strong-typed, etc.).
+
+<ul>
+<li>And how the solution for the Kata will look like for these?</li>
+</ul>
+</li>
+</ul>
+
+
+<p>Next time we will take a look at one possible solution for this Kata. Try to solve it on your own, my dear reader, and please share the code and insights!</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Meet Duck Type]]></title>
@@ -8649,172 +8762,6 @@ episodes.</p>
 <p>This was pretty easy to make a DFS algorithm to emerge on its own, by driving
 it with the specification. Lets see if it is possible to do the same with
 shortest path problem.. Next time, on the TDD Screencast. Have a nice day.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Why Are You Slow?]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/02/05/why-are-you-slow/"/>
-    <updated>2016-02-05T17:09:47+01:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/02/05/why-are-you-slow</id>
-    <content type="html"><![CDATA[<blockquote><p>We are slow because we have the worst codebase!</p></blockquote>
-
-<h2>So why don&rsquo;t you clean it?</h2>
-
-<blockquote><p>Because we have to go fast!</p></blockquote>
-
-<p>I will let you figure out logical inconsistency there.</p>
-
-<p>Ask yourself a question: how much times in your career you were slowed down by
-a horrible, dirty, untested code? It doesn&rsquo;t matter who have written it,
-usually, it is already there and already a fact you have to deal with.</p>
-
-<p>If your answer was: &ldquo;Once.. or twice..&rdquo; (and your career is sufficiently long)
-- you can freely stop reading this post and simply be a happy developer.</p>
-
-<p>I was slowed down by bad code horrible amount of times. I come to be sick of
-it. I don&rsquo;t want to be slow, because I am trying to go fast. I want my tool to
-be clean, I want my creations to be manageable, and I don&rsquo;t want to fear the
-code, I have created, or anyone else have created. And I want to go fast while
-enjoying it!</p>
-
-<p>Trust me, I met lots of developers during my career. Not as much as heroes of
-our industry have met, but <strong>enough</strong> to be able to tell you, that <strong>every
-single</strong> one of them, who has any reasonable length of the career, had same
-problems.</p>
-
-<p>And that is totally not normal. Do you understand, that from the outside world,
-we, as an industry, are perceived as very non-professional, because of that?
-Business even came to a conclusion, that they can&rsquo;t trust us to deliver working
-software - and that is how QA role was born.</p>
-
-<p>I will ask again.</p>
-
-<h2>So why don&rsquo;t you clean it?</h2>
-
-<blockquote><p>My company pays me for features, not for &lt;<em>insert your statement here</em>></p></blockquote>
-
-<p>That is very common response. And, in essence, it is the truth.</p>
-
-<p>OK, now, let&rsquo;s think. As time passes by, after certain threshold on every
-codebase, that is not clean, adding next feature costs more time, even if the
-features are of roughly the same size. After 1 year of such development,
-features can literally become 2-4 times more expensive. Couple of years in, and
-it, practically, becomes impossible to develop anything except &ldquo;Change the
-color of this button&rdquo; (or provide your own example).</p>
-
-<h2>What does that mean?</h2>
-
-<p>One would say: &ldquo;Features become more expensive over time&rdquo;. Business usually
-sees it as: &ldquo;Arrgh, our programmers slower and slower with each month&rdquo;. So from
-the business perspective, after <strong>perceived</strong> effectiveness of developers drops
-by 2-4 times, why would business be willing to pay these developers the same
-salary? You should be afraid of this question.</p>
-
-<h2>Now imagine land of unicorns!</h2>
-
-<p>Now imagine, that you started a bit slower in the beginning (like 8% slower),
-but you have kept your effectiveness over time either at roughly same level, or
-even have increased it over time. How hard do you think it would be to ask for
-a raise, after 2 years of loyal work?</p>
-
-<p>Not hard at all. And probably business will be doing just great (if the
-business idea itself was sustainable to begin with, of course), and will be
-capable of satisfying the request.</p>
-
-<h2>Why such a thing happens?</h2>
-
-<p>Because at the moment we are not perceived as professionals, nor as experts of
-our field. We are perceived as just some coding monkeys, who you always need to
-ask: &ldquo;Can this be delivered on Friday&rdquo; with intimidating tone. And we gladly
-reply through our teeth: &ldquo;I will try&rdquo;, meaning &ldquo;Just go already&rdquo;; ending up on
-Friday evening with: &ldquo;I tried&rdquo; - &ldquo;You have tried not enough!&rdquo;.</p>
-
-<h2>Clean your code already!</h2>
-
-<p>Believe me, investing 15-45 minutes every single day into increasing test code
-coverage and some little refactorings will not make you any slower (you
-probably already very slow, so that it will not make any perceivable
-difference). Rather, over time, you (and your fellow programmers) will start to
-actually being bit-by-bit faster, as long as your application (or applications)
-get cleaner and cleaner.</p>
-
-<p>It goes without saying, that you should be using proper XP (pair-programming
-and TDD) techniques, while writing any new piece of code (read: new class,
-module, library, package, etc.). Because it will be extremely easy to unit-test
-it with near-100% test coverage. Believe me, that is easy and fun.</p>
-
-<p>Refactoring and covering old and messy parts of an application is not fun,
-though. You have to face the truth. Consider it as a chore, like the one you do
-to your apartment, when you clean it on a regular basis. And as we all know,
-the more you wait to clean an apartment, the harder it would be to do it. And
-the function is not linear..</p>
-
-<p>If you have a really big legacy application, you are probably in doing that
-sort of thing for 2-3 years, before you can proudly call this application clean
-again.</p>
-
-<p>There is one important trick though: prioritize cleaning of parts of
-application, that change often. If some part changes once half a year, you
-should probably clean it once half a year too.</p>
-
-<h2>You are hired for your expertise!</h2>
-
-<p>Believe me, you do have all the knowledge, required to make it.</p>
-
-<p>The only thing that stops you is your inability to say &ldquo;No&rdquo;, when &ldquo;No&rdquo; is the
-correct answer from your experience and expertise point of view.</p>
-
-<h2>Parallel example</h2>
-
-<p>Do you know that surgeon, before any surgery, washes his hands. You not just
-know, it is your expectation! In some countries if he doesn&rsquo;t, he can easily
-end up in jail.</p>
-
-<h3>Do you know, how surgeon washes his hands?</h3>
-
-<p>He rubs each finger from 4 different sides 10 times. That is stated in Doctors&#8217;
-code of ethics. And they have to follow it, since it has power of law.</p>
-
-<p>Why 10 times? Wouldn&rsquo;t 7 be enough, or maybe 14 should be a minimum? It doesn&rsquo;t
-matter. It is a discipline, that is to be followed to the letter, and there are
-no exceptions.</p>
-
-<p>Well, he probably can rub 11 times, without getting in jail..</p>
-
-<p>Nobody will ever ask surgeon, why he does it. Everyone expects him to do it.</p>
-
-<h2>Back to our universe</h2>
-
-<p>You are surgeons!</p>
-
-<p>You are surgeons, that operate on a heart of the business.</p>
-
-<p>With your wrong move, with your mistake, the whole business can go out of
-business overnight.</p>
-
-<p>With your wrong move, with your mistake, thousands of people can die (if you
-are in certain domains).</p>
-
-<p>So why increasing a chance of your own mistakes (and everybody else on a team)
-by not cleaning the code?</p>
-
-<p>Even if you are not in such critical domain, you are part of industry, and you
-should be a great professional, just to be an example for others, who might end
-up working in such crucial business domain in the future.</p>
-
-<p>And I know, you can pull it off. And you do know it yourself.</p>
-
-<p>So now go, and be professional, be professional for everyone around you.</p>
-
-<h2>Thanks!</h2>
-
-<p>This article might be a bit too rough - I believe that is the truth we face
-now, as an industry. And let us be the ones fixing it!</p>
-
-<p>I recommend reading this: <a href="http://acm.org/about/se-code">Software Engineering Code of Ethics</a>
-by ACM organization (originally, created in 1999, why are we all still not
-using it?!).</p>
 ]]></content>
   </entry>
   
