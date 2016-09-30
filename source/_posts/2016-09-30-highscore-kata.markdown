@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "HighScore Kata"
-description: ""
+description: "Today we will take a look into a little problem involving high scores in some sort of game. The game has only one high score and when current game's score exceeds that number, it gets updated. Example acceptance test would read like this..."
 date: 2016-09-30 18:23:21 +0200
 comments: true
 categories:
