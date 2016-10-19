@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tdd | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/tdd/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-09-30T23:14:37+02:00</updated>
+  <updated>2016-10-19T23:36:47+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,108 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Do More With Baby-Steps TDD]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/10/19/do-more-with-baby-steps-tdd/"/>
+    <updated>2016-10-19T23:15:12+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/10/19/do-more-with-baby-steps-tdd</id>
+    <content type="html"><![CDATA[<p>Hello everyone! I&rsquo;m usually advocating for the Baby-Steps Test-Driven Development with Triangulation. On the first encounter, this technique seems very verbose and everybody wonders how can it possibly work and why I am very productive with it. Let me tell you about that. First, let&rsquo;s quickly recap both techniques:</p>
+
+<h2>Baby-Steps TDD</h2>
+
+<p>In Baby-Steps TDD the basic strategy is to get to the green state ASAP. If you can pass all tests with <code>return 42</code>, you should! While the benefit of the approach is not directly obvious exploring the alternative shows its value. One possible alternative is to write a bunch of tests for the software and then make them all pass. This results in a lot of changes made to the software under the test while tests are failing (are in red state). This provides very slow feedback and high risks because with every decision in the code complexity grows exponentially and problems are hard to find when you only know that software worked 1 hour ago and there is one mistake in a whole 1 hour worth of work. The same effect can be seen if the most complex test is written first so that it forces the engineer to implement the whole solution or big part of it in one go.</p>
+
+<p>Baby-Steps TDD mitigates the issue by ensuring everything worked one or two minutes ago. At least to the extent the software is specified by currently written tests. So if something does not work as expected it is most probably a mistake in these last 2-3 lines of code that we have written. And we can even discard them entirely with &ldquo;undo&rdquo; command and start over from the green state without losing much work and saving a whole lot of time debugging.</p>
+
+<p>Baby-Steps TDD provides faster feedback and fewer risks for the cost of a bit more overall effort. Let&rsquo;s take a look into the triangulation technique:</p>
+
+<h2>Triangulation Technique</h2>
+
+<p>In essence, Triangulation Technique takes ideas of Baby-Steps TDD further and reduces step size even further. For example, when usually with Baby-Steps TDD you would need one test to introduce the correct <code>if</code> statement, with Triangulation Technique and Baby-Steps TDD combined you would use multiple tests for this:</p>
+
+<ul>
+<li>The first test for the most degenerated case which requires one to write a simple <code>return CONSTANT</code> statement to pass:</li>
+</ul>
+
+
+<pre><code class="javascript">return 1
+</code></pre>
+
+<ul>
+<li>The second test for the same case where the result will be different which requires one to promote <code>CONSTANT</code> to some sort of calculation (variable, formula or function call):</li>
+</ul>
+
+
+<pre><code class="javascript">return n
+</code></pre>
+
+<ul>
+<li>The third test for the other case which requires one to write a specific <code>if (argument == SPECIFIC_VALUE)</code> with another <code>return ANOTHER_CONSTANT</code>:</li>
+</ul>
+
+
+<pre><code class="javascript">if (n == 7)
+  return 42
+
+return n
+</code></pre>
+
+<ul>
+<li>The fourth test for the same case where the result will be different which requires one to promote <code>ANOTHER_CONSTANT</code> to some sort of calculation (variable, formula or function call):</li>
+</ul>
+
+
+<pre><code class="javascript">if (n == 7)
+  return m * 6
+
+return n
+</code></pre>
+
+<ul>
+<li>The fifth test for the same case where the condition has to be different which requires one to promote specific condition to the proper one:</li>
+</ul>
+
+
+<pre><code class="javascript">if (n &gt;= 7)
+  return m * 6
+
+return n
+</code></pre>
+
+<p>In normal Baby-Steps TDD that would probably have been only 2 or 3 test cases. With Triangulation it is 5 and to make every one of them pass requires a simple transformation of the production code.</p>
+
+<p>Now let&rsquo;s see why these techniques combined make me more productive.</p>
+
+<h2>Willpower Depletion</h2>
+
+<p>Did you know that every decision you make costs you some willpower? For example: choosing what to wear in the morning, refusing to eat this tasty cake or to make a design choice in your code. This phenomenon is known as Ego Depletion (<a href="https://en.wikipedia.org/wiki/Ego_depletion">see in wiki</a>) and it has an experimental evidence. According to this phenomenon self-control and willpower both draw upon a limited pool of mental resources and it can be used up. Usually, these resources are recovered greatly during good night&rsquo;s sleep or slightly after consuming food. Cost per each made decision differs also and even for the same kind of decision can depend on various factors:</p>
+
+<ul>
+<li>perceived complexity of the problem,</li>
+<li>mood, physical state and perceived fatigue of the person (tired, angry, confused, happy, energized, etc.),</li>
+<li>required effort to make and execute the decision,</li>
+<li>blood glucose levels.</li>
+</ul>
+
+
+<p>Baby-Steps TDD combined with Triangulation technique optimize for &ldquo;perceived complexity of the problem&rdquo; so that every decision is nearly obvious to make and the effort required to make it and execute on it is stupidly small. While this increases the amount of decisions that I need to make it also decreases the complexity and willpower cost of each decision to the point, where after completing the same amount of work I still have plenty of energy and willpower to make any other decisions at work and outside of it.</p>
+
+<p>It is worth noting that these techniques need to be practiced quite a bit to enable this effect - with such incremental design it is important to <a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">avoid getting stuck</a>. Definitely, try it out and see if it works for you!</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<h2>Acknowledgements</h2>
+
+<p>Thanks to David Völkel for the great presentation about Baby-Steps TDD. Slides can be found <a href="http://www.slideshare.net/davidvoelkel/baby-steps-tdd-approaches">here</a>.</p>
+
+<p>Thanks to Stephen Guise for the great book <a href="http://minihabits.com/">&ldquo;Mini Habits&rdquo;</a> that has opened my eyes to the reasons why I like these techniques so much and why I love designing software in tiny increments.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Your Own Testing Framework. Part 4]]></title>
@@ -2033,358 +2135,6 @@ end
 <li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, Test-Driven Development screencasts and so much more!</li>
 </ul>
 
-
-<h2>Thanks!</h2>
-
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Build Your Own Testing Framework. Part 3]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/08/14/build-your-own-testing-framework-part-3/"/>
-    <updated>2016-08-14T13:55:17+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/08/14/build-your-own-testing-framework-part-3</id>
-    <content type="html"><![CDATA[<p>Welcome back to the new issue of &ldquo;Build Your Own Testing Framework&rdquo; series! Today we are going to unit-test <code>runTestSuite</code> function of our testing framework. Currently, only its happy path is implicitly tested via every test of the system. Additionally, this function&rsquo;s unhappy paths are, in fact, untestable at the moment.</p>
-
-<p>This article is the third one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
-
-<p>Shall we get started?</p>
-
-<!--more-->
-
-
-<h2>Testing existing code</h2>
-
-<p>Let&rsquo;s take another look at the <code>runTestSuite</code> function:</p>
-
-<pre><code class="javascript">function runTestSuite(testSuiteConstructor) {
-    var testSuite = new testSuiteConstructor(assertions);
-
-    for (var testName in testSuite) {
-        if (testName.match(/^test/)) {
-            testSuite[testName]();
-        }
-    }
-}
-</code></pre>
-
-<p>This function currently:</p>
-
-<ol>
-<li>Creates a new test suite from the passed in function-constructor.</li>
-<li>Finds every method that starts with the string <code>test</code>.</li>
-<li>And calls every such method.</li>
-</ol>
-
-
-<h3>Test that it calls at least one test method</h3>
-
-<pre><code class="javascript">var runTestSuite = require("../src/TestingFramework");
-
-runTestSuite(function (t) {
-    this.testItCallsOneTestMethod = function () {
-        var called = false;
-
-        runTestSuite(function (t) {
-            this.testSomeInterestingFunction = function () {
-                called = true;
-            };
-        });
-
-        t.assertTrue(called);
-    };
-});
-</code></pre>
-
-<p>And this test passes. To be sure, that we are actually testing anything, let&rsquo;s make sure that <code>testSomeInterestingFunction</code> is not being called:</p>
-
-<pre><code class="javascript">if (testName.match(/^test/) &amp;&amp;
-    testName != "testSomeInterestingFunction") {
-//  ^   make sure our method is not called  ^
-    testSuite[testName]();
-}
-</code></pre>
-
-<p>This fails as expected: <code>Error: Expected to be true, but got false</code>. Undoing this mutation causes the test to pass again. This is good, since we have seen this test fail when we expect it to fail. This proves the semantic stability of our test.</p>
-
-<p>So, what will happen if we replace the whole <code>if</code> condition with <code>true</code>?</p>
-
-<pre><code class="javascript">if (true) {
-    testSuite[testName]();
-}
-</code></pre>
-
-<p>As expected, all tests will pass. Seems that we need to add a new test here:</p>
-
-<h3>Test that it does not call non-test methods</h3>
-
-<pre><code class="javascript">this.testItDoesNotCallMethodThatDoesNotStartWithTestPrefix = function () {
-    var called = false;
-
-    runTestSuite(function (t) {
-        this.someFunction = function () {
-            called = true;
-        };
-    });
-
-    t.assertTrue(!called);
-};
-</code></pre>
-
-<p>And this fails as expected. This makes our test suite semantically stable against this sort of mutation. Undoing the mutation should make the test suite pass. And it does.</p>
-
-<p>There is another surviving mutant that I can come up with:</p>
-
-<pre><code class="javascript">for (var testName in testSuite) {
-    if (testName.match(/^test/)) {
-        testSuite[testName]();
-    }
-    break; // &lt;- surviving mutant
-}
-</code></pre>
-
-<p>This means, that only first function will only ever run. Since all our tests are currently verifying that only one function is called or not we will need another test to defeat this mutant:</p>
-
-<h3>Test that it calls all provided test methods</h3>
-
-<pre><code class="javascript">this.testItCallsAllTestMethods = function () {
-    var calledOne = false;
-    var calledTwo = false;
-    var calledThree = false;
-
-    runTestSuite(function (t) {
-        this.testFunctionOne = function () {
-            calledOne = true;
-        };
-
-        this.testFunctionTwo = function () {
-            calledTwo = true;
-        };
-
-        this.testFunctionThree = function () {
-            calledThree = true;
-        };
-    });
-
-    t.assertTrue(calledOne);
-    t.assertTrue(calledTwo);
-    t.assertTrue(calledThree);
-};
-</code></pre>
-
-<p>Careful here: <code>testItCallsAllTestMethods</code> has to be the first test in the test suite for it to be ever called with the current mutation. As expected this test fails and undoing the mutation makes it pass.</p>
-
-<p><code>testItCallsAllTestMethods</code> is superior to the <code>testItCallsOneTestMethod</code>, so we can remove the latter.</p>
-
-<p>The amount of duplication in this code does not make me happy. Seems like we are missing the ability to verify if a certain function was called or not. Let&rsquo;s try to extract this abstraction:</p>
-
-<pre><code class="javascript">function spy() {
-    function that() {
-        that.called = true;
-    }
-
-    that.called = false;
-
-    return that;
-};
-</code></pre>
-
-<p>And then the usage would look like that:</p>
-
-<pre><code class="javascript">this.testItCallsAllTestMethods = function () {
-    var spyOne = spy();
-    var spyTwo = spy();
-    var spyThree = spy();
-
-    runTestSuite(function (t) {
-        this.testFunctionOne = spyOne;
-        this.testFunctionTwo = spyTwo;
-        this.testFunctionThree = spyThree;
-    });
-
-    t.assertTrue(spyOne.called);
-    t.assertTrue(spyTwo.called);
-    t.assertTrue(spyThree.called);
-};
-
-this.testItDoesNotCallMethodThatDoesNotStartWithTestPrefix = function () {
-    var aSpy = spy();
-
-    runTestSuite(function (t) {
-        this.someFunction = aSpy;
-    });
-
-    t.assertTrue(!aSpy.called);
-};
-</code></pre>
-
-<h2>Testing <code>assertions.spy()</code></h2>
-
-<p>It seems, that having <code>t.spy()</code> available for the users of our testing framework might be very useful! Let&rsquo;s test-drive it:</p>
-
-<pre><code class="javascript">// Initially, it should not be called
-this.testIsNotCalledInitially = function () {
-    t.assertTrue(!t.spy().called);
-};
-
-// TypeError: t.spy is not a function
-
-// Implementation in `assertions object`:
-spy: function () {
-    return {
-        called: false
-    }
-}
-
-// Let's check that it can be called as a function
-this.testItCanBeCalledAsFunction = function () {
-    t.spy()();
-};
-
-// TypeError: t.spy(...) is not a function
-
-// Simplest implementation:
-spy: function () {
-    return function () {};
-}
-
-// Let's check that after being called it has correct `.called` value
-this.testIsCalledAfterBeingCalled = function () {
-    var aSpy = t.spy();
-    aSpy();
-    t.assertTrue(aSpy.called);
-};
-
-// Error: Expected to be true, but got false
-
-// And final implementation:
-spy: function () {
-    return function that() {
-        that.called = true;
-    };
-}
-</code></pre>
-
-<p>Test <code>testItCanBeCalledAsFunction</code> is inferior to <code>testIsCalledAfterBeingCalled</code>, so we can remove it.</p>
-
-<p>To make the assertion more fluent we might want to have <code>aSpy.assertCalled()</code> and <code>aSpy.assertNotCalled()</code>:</p>
-
-<pre><code class="javascript">// Let's replace our first test's `assertTrue(!...)` with `.assertNotCalled()`
-this.testIsNotCalledInitially = function () {
-    t.spy().assertNotCalled();
-};
-
-// TypeError: t.spy(...).assertNotCalled is not a function
-
-// And the stupid implementation:
-spy: function () {
-    function that() {
-        that.called = true;
-    }
-
-    that.assertNotCalled = function () {};
-
-    return that;
-}
-
-// This needs some triangulation:
-this.testAssertNotCalledFailsWhenWasCalled = function () {
-    var aSpy = t.spy();
-    aSpy();
-
-    t.assertThrow("Expected not to be called", function () {
-        aSpy.assertNotCalled();
-    });
-};
-
-// Error: Expected to throw an error, but nothing was thrown
-
-// And to make it pass:
-that.assertNotCalled = function () {
-    assertions.assertTrue(!that.called, "Expected not to be called");
-};
-</code></pre>
-
-<p>Let&rsquo;s do the same with the other test:</p>
-
-<pre><code class="javascript">// Replace `assertTrue` in the second test with `assertCalled`:
-this.testIsCalledAfterBeingCalled = function () {
-    var aSpy = t.spy();
-    aSpy();
-    aSpy.assertCalled();
-};
-
-// TypeError: aSpy.assertCalled is not a function
-
-// And the stupid implementation:
-that.assertCalled = function () {};
-
-// Let's triangulate it a bit:
-this.testAssertCalledFailsWhenWasNotCalled = function () {
-    t.assertThrow("Expected to be called", function () {
-        t.spy().assertCalled();
-    });
-};
-
-// Error: Expected to throw an error, but nothing was thrown
-
-// And the implementation:
-that.assertCalled = function () {
-    assertions.assertTrue(that.called, "Expected to be called");
-};
-</code></pre>
-
-<p>And the full implementation of <code>spy()</code> function:</p>
-
-<pre><code class="javascript">spy: function () {
-    function that() {
-        that.called = true;
-    }
-
-    that.assertNotCalled = function () {
-        assertions.assertTrue(!that.called, "Expected not to be called");
-    };
-
-    that.assertCalled = function () {
-        assertions.assertTrue(that.called, "Expected to be called");
-    };
-
-    return that;
-}
-</code></pre>
-
-<h2>Bottom Line</h2>
-
-<p>Today we have tested all the existing behavior of the <code>runTestSuite</code> function. That has driven us to implement very simple spies for our testing framework.</p>
-
-<p>We have successfully applied manual Mutational Testing to the existing functionality to derive Semantically Stable tests for it. We did some Triangulation too today. Generally speaking, in TDD Triangulation technique is something that is used on a daily basis, when TDD is practiced properly. Future articles will expand on Triangulation, Mutational Testing, and Semantic Stability in more detail, so stay tuned!</p>
-
-<p>There are only a few problems left, that bother me:</p>
-
-<ul>
-<li>We often do <code>t.assertTrue(!condition)</code>, seems that we lack <code>t.assertFalse(condition)</code> assertion.</li>
-<li>We often call functions without any assertions to do an implicit assertion, that the call is not throwing any exception. This can be confusing: it is better to make that assertion explicitly - seems like we need <code>t.assertNotThrow</code>.</li>
-<li>Seems that it is useful to have <code>NOT</code> version of every assertion. Even though we don&rsquo;t need <code>t.assertNotEqual</code> right now, from my experience with testing it is often very useful.</li>
-</ul>
-
-
-<p>Creating these assertions I will leave as an exercise to the reader. From now on, we will assume they are implemented and we will use them where appropriate. Code is available on GitHub: <a href="https://github.com/waterlink/BuildYourOwnTestingFrameworkPart3">https://github.com/waterlink/BuildYourOwnTestingFrameworkPart3</a></p>
-
-<p>Next time we will add more requirements for our <code>runTestSuite</code> function, such as:</p>
-
-<ul>
-<li>Continue running tests after the first failure.</li>
-<li>Report successfully passed tests.</li>
-<li>Report failures.</li>
-<li>Report test run stats (counts of successful and failed tests).</li>
-<li>Avoid shared state between tests of the same test suite.</li>
-</ul>
-
-
-<p>Stay tuned!</p>
 
 <h2>Thanks!</h2>
 
