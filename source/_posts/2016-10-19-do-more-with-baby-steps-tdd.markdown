@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Do More With Baby-Steps TDD"
-description: "I'm usually advocating for the Baby-Steps Test-Driven Development with Triangulation. On the first encounter, this technique seems very verbose and everybody wonders how can it possibly work and why I am very productive with it. Let me tell you about that. First let's quickly recap both techniques..."
+description: "I'm usually advocating for the Baby-Steps Test-Driven Development with Triangulation. On the first encounter, this technique seems very verbose and everybody wonders how can it possibly work and why I am very productive with it. Let me tell you about that. First, let's quickly recap both techniques..."
 date: 2016-10-19 23:15:12 +0200
 comments: true
 categories:
@@ -12,7 +12,7 @@ categories:
 - willpower
 ---
 
-Hello everyone! I'm usually advocating for the Baby-Steps Test-Driven Development with Triangulation. On the first encounter, this technique seems very verbose and everybody wonders how can it possibly work and why I am very productive with it. Let me tell you about that. First let's quickly recap both techniques:
+Hello everyone! I'm usually advocating for the Baby-Steps Test-Driven Development with Triangulation. On the first encounter, this technique seems very verbose and everybody wonders how can it possibly work and why I am very productive with it. Let me tell you about that. First, let's quickly recap both techniques:
 
 ## Baby-Steps TDD
 
