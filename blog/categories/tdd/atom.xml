@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tdd | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/tdd/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-10-19T23:36:47+02:00</updated>
+  <updated>2016-10-19T23:37:38+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -19,6 +19,9 @@
     <updated>2016-10-19T23:15:12+02:00</updated>
     <id>http://www.tddfellow.com/blog/2016/10/19/do-more-with-baby-steps-tdd</id>
     <content type="html"><![CDATA[<p>Hello everyone! I&rsquo;m usually advocating for the Baby-Steps Test-Driven Development with Triangulation. On the first encounter, this technique seems very verbose and everybody wonders how can it possibly work and why I am very productive with it. Let me tell you about that. First, let&rsquo;s quickly recap both techniques:</p>
+
+<!--more-->
+
 
 <h2>Baby-Steps TDD</h2>
 
