@@ -28,42 +28,42 @@ In essence, Triangulation Technique takes ideas of Baby-Steps TDD further and re
 
 - The first test for the most degenerated case which requires one to write a simple `return CONSTANT` statement to pass:
 
-  ```
-  return 1
-  ```
+```javascript
+return 1
+```
 
 - The second test for the same case where the result will be different which requires one to promote `CONSTANT` to some sort of calculation (variable, formula or function call):
 
-  ```
-  return n
-  ```
+```javascript
+return n
+```
 
 - The third test for the other case which requires one to write a specific `if (argument == SPECIFIC_VALUE)` with another `return ANOTHER_CONSTANT`:
 
-  ```
-  if (n == 7)
-    return 42
+```javascript
+if (n == 7)
+  return 42
 
-  return n
-  ```
+return n
+```
 
 - The fourth test for the same case where the result will be different which requires one to promote `ANOTHER_CONSTANT` to some sort of calculation (variable, formula or function call):
 
-  ```
-  if (n == 7)
-    return m * 6
+```javascript
+if (n == 7)
+  return m * 6
 
-  return n
-  ```
+return n
+```
 
 - The fifth test for the same case where the condition has to be different which requires one to promote specific condition to the proper one:
 
-  ```
-  if (n >= 7)
-    return m * 6
+```javascript
+if (n >= 7)
+  return m * 6
 
-  return n
-  ```
+return n
+```
 
 In normal Baby-Steps TDD that would probably have been only 2 or 3 test cases. With Triangulation it is 5 and to make every one of them pass requires a simple transformation of the production code.
 
