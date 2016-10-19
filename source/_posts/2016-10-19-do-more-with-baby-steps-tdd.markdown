@@ -14,6 +14,8 @@ categories:
 
 Hello everyone! I'm usually advocating for the Baby-Steps Test-Driven Development with Triangulation. On the first encounter, this technique seems very verbose and everybody wonders how can it possibly work and why I am very productive with it. Let me tell you about that. First, let's quickly recap both techniques:
 
+<!--more-->
+
 ## Baby-Steps TDD
 
 In Baby-Steps TDD the basic strategy is to get to the green state ASAP. If you can pass all tests with `return 42`, you should! While the benefit of the approach is not directly obvious exploring the alternative shows its value. One possible alternative is to write a bunch of tests for the software and then make them all pass. This results in a lot of changes made to the software under the test while tests are failing (are in red state). This provides very slow feedback and high risks because with every decision in the code complexity grows exponentially and problems are hard to find when you only know that software worked 1 hour ago and there is one mistake in a whole 1 hour worth of work. The same effect can be seen if the most complex test is written first so that it forces the engineer to implement the whole solution or big part of it in one go.
