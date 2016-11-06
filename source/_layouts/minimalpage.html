@@ -35,12 +35,3 @@ layout: minimal
     </em><a href="/">Back to my blog: https://www.tddfellow.com</a></em>
   </section>
 </div>
-{% unless page.sidebar == false %}
-<aside class="sidebar">
-  {% if site.page_asides.size %}
-    {% include_array page_asides %}
-  {% else %}
-    {% include_array default_asides %}
-  {% endif %}
-</aside>
-{% endunless %}
