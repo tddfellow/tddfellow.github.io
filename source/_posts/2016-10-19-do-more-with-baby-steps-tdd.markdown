@@ -96,4 +96,6 @@ If you have any questions or feedback for me, don't hesitate to reach me out on 
 
 Thanks to David Völkel for the great presentation about Baby-Steps TDD. Slides can be found [here](http://www.slideshare.net/davidvoelkel/baby-steps-tdd-approaches).
 
-Thanks to Stephen Guise for the great book ["Mini Habits"](http://minihabits.com/) that has opened my eyes to the reasons why I like these techniques so much and why I love designing software in tiny increments.
+Thanks to Stephen Guise for the great book "Mini Habits" that has opened my eyes to the reasons why I like these techniques so much and why I love designing software in tiny increments.
+
+<a target="_blank"  href="https://www.amazon.com/gp/product/1494882272/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=1494882272&linkCode=as2&tag=tddfellow-20&linkId=acc11b87f4487fb0e318cc49d8d8302d"><img border="0" src="//ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&MarketPlace=US&ASIN=1494882272&ServiceVersion=20070822&ID=AsinImage&WS=1&Format=_SL250_&tag=tddfellow-20" ></a>
