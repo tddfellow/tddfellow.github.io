@@ -3,10 +3,16 @@ layout: default
 single: true
 ---
 
-<div>
+{% include v2/sidebar-non-mobile.html %}
+
+<div class="v2-blog-post">
 <article class="hentry" role="article">
   {% include article.html %}
   <footer>
+    {% unless index %}
+      {% include subscribe_form.html %}
+    {% endunless %}
+
     {% include post/author_expanded.html %}
 
     <p class="meta">
@@ -15,13 +21,10 @@ single: true
       {% include post/categories.html %}
     </p>
 
-    {% unless index %}
-      {% include subscribe_form.html %}
-    {% endunless %}
-
     {% unless page.sharing == false %}
       {% include post/sharing.html %}
     {% endunless %}
+
     <p class="meta">
       {% if page.previous.url %}
         <a class="basic-alignment left" href="{{page.previous.url}}" title="Previous Post: {{page.previous.title}}">&laquo; {{page.previous.title}}</a>

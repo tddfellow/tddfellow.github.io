@@ -80,6 +80,8 @@ someValue = "a value from the test";
 someFunction(exampleStubFunction);
 ```
 
+{% include v2/subscribe-inline.html %}
+
 `Spy` - is a test stub, additionally, verifying an indirect output of the production code, by asserting afterward, without having defined the expectations before the production code is executed. For example:
 
 ```javascript

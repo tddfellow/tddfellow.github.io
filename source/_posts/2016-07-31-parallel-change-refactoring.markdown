@@ -93,6 +93,8 @@ class UserSearch {
 
 At this point, we are going to deploy this new code.
 
+{% include v2/subscribe-inline.html %}
+
 ### Migrate
 
 Second, we need to add a deprecation warning to old interface, and, in fact, old functions can be rewritten via new one:

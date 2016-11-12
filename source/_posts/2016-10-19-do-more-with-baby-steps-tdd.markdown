@@ -24,6 +24,8 @@ Baby-Steps TDD mitigates the issue by ensuring everything worked one or two minu
 
 Baby-Steps TDD provides faster feedback and fewer risks for the cost of a bit more overall effort. Let's take a look into the triangulation technique:
 
+{% include v2/subscribe-inline.html %}
+
 ## Triangulation Technique
 
 In essence, Triangulation Technique takes ideas of Baby-Steps TDD further and reduces step size even further. For example, when usually with Baby-Steps TDD you would need one test to introduce the correct `if` statement, with Triangulation Technique and Baby-Steps TDD combined you would use multiple tests for this:
