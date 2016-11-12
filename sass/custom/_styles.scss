@@ -235,3 +235,44 @@ article header {
     display: block;
   }
 }
+
+.v2-header {
+  position: fixed;
+  z-index: 1000000;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  background-color: $v2-header-bg;
+  color: $v2-header-color;
+  padding: 0.7em;
+
+  a, a:visited, a:hover {
+    color: $v2-header-color;
+  }
+
+  h1 {
+    font-size: 1em;
+    font-weight: 900;
+  }
+}
+
+.v2-header__navigation {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  max-width: 20em;
+
+  li {
+    flex: 2;
+  }
+
+  .v2-header__navigation__logo {
+    flex: 3;
+  }
+
+  a {
+    text-decoration: none;
+  }
+}
