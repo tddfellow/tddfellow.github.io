@@ -98,6 +98,8 @@ end
 
 Have you noticed, that from the test suite side we had to "prove" that some knowledge in the system is important and had to be used? This technique is called Triangulation.
 
+{% include v2/subscribe-inline.html %}
+
 ## Triangulation Technique
 
 In the essence, Triangulation technique has a very simple idea at its core:
