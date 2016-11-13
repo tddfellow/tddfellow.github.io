@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Issues with RSpec mocks Lets start from example: 1
+  <meta name="description" content="TL;DR: .kitchen.yml1
 2
 3
 4
@@ -17,7 +17,12 @@
 6
 7
 8
-class Example include Contracts Contract Something =&gt; Any def do_something( &hellip;">
+9
+10
+11
+# .kitchen.yml
+---
+driver: name: docker use_sudo: false # this depends if you need to do `sudo` to run ` &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -88,7 +93,15 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
     <div id="content" class="v2-content">
       <aside class="v2-sidebar v2-sidebar--mobile v2-sidebar--mobile--top">
   <div class="v2-sidebar__subscribe-form v2-sidebar__item--mobile--top-only">
-	<div class="mc_embed_signup">
+	
+
+
+
+
+  
+
+
+<div class="mc_embed_signup">
   <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
     <div class="mc_embed_signup_scroll">
       <h3>Want more articles like this delivered to your inbox?</h3>
@@ -98,10 +111,13 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
         <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
         <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
       </div>
-      <em>(we respect your privacy, unsubscribe at any time)</em>
+      <div class="">
+        <em>(we respect your privacy, unsubscribe at any time)</em>
+      </div>
     </div>
   </form>
 </div>
+
 
 </div>
 
@@ -109,6 +125,10 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
 	<section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/10/19/do-more-with-baby-steps-tdd/">Do More With Baby-Steps TDD</a>
@@ -136,10 +156,6 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
     
       <li class="post">
         <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Getting Stuck While Doing TDD. Part 1: Example</a>
       </li>
     
   </ul>
@@ -151,7 +167,13 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
 
 <aside class="v2-sidebar v2-sidebar--non-mobile">
   <div class="v2-sidebar__subscribe-form v2-sidebar__item--mobile--top-only">
-	<div class="mc_embed_signup">
+	
+
+
+
+
+
+<div class="mc_embed_signup">
   <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
     <div class="mc_embed_signup_scroll">
       <h3>Want more articles like this delivered to your inbox?</h3>
@@ -161,10 +183,13 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
         <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
         <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
       </div>
-      <em>(we respect your privacy, unsubscribe at any time)</em>
+      <div class="">
+        <em>(we respect your privacy, unsubscribe at any time)</em>
+      </div>
     </div>
   </form>
 </div>
+
 
 </div>
 
@@ -172,6 +197,10 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
 	<section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/10/19/do-more-with-baby-steps-tdd/">Do More With Baby-Steps TDD</a>
@@ -199,10 +228,6 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
     
       <li class="post">
         <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Getting Stuck While Doing TDD. Part 1: Example</a>
       </li>
     
   </ul>
@@ -216,6 +241,88 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
 
 <div class="blog-index v2-blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/">Running Kitchen-docker Tests With Upstart</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2015-08-05T19:10:36+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>7:10 pm</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/chef/'>chef</a>, <a class='category' href='/blog/categories/docker/'>docker</a>, <a class='category' href='/blog/categories/kitchen-docker/'>kitchen-docker</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/test-kitchen/'>test-kitchen</a>, <a class='category' href='/blog/categories/ubuntu/'>ubuntu</a>, <a class='category' href='/blog/categories/upstart/'>upstart</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>TL;DR:</p>
+
+<figure class='code'><figcaption><span>.kitchen.yml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="c1"># .kitchen.yml</span>
+</span><span class='line'><span class="nn">---</span>
+</span><span class='line'><span class="l-Scalar-Plain">driver</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">docker</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">use_sudo</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>              <span class="c1"># this depends if you need to do `sudo` to run `docker` command or not</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">disable_upstart</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">image</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu-upstart:14.04</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">run_command</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/sbin/init</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">platforms</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu-14.04</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It is possible because there is this official base image specifically for upstart: <a href="https://registry.hub.docker.com/_/ubuntu-upstart/.">https://registry.hub.docker.com/_/ubuntu-upstart/.</a></p>
+
+<p>After making your <code>.kitchen.yml</code> look like this, just use <code>kitchen</code> as you would normally would.</p>
+
+<p>Happy coding! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1649,7 +1756,13 @@ codeUsing(f, d)
 
 <aside class="v2-sidebar v2-sidebar--mobile v2-sidebar--mobile--bottom">
   <div class="v2-sidebar__subscribe-form v2-sidebar__item--mobile--top-only">
-	<div class="mc_embed_signup">
+	
+
+
+
+
+
+<div class="mc_embed_signup">
   <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
     <div class="mc_embed_signup_scroll">
       <h3>Want more articles like this delivered to your inbox?</h3>
@@ -1659,10 +1772,13 @@ codeUsing(f, d)
         <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
         <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
       </div>
-      <em>(we respect your privacy, unsubscribe at any time)</em>
+      <div class="">
+        <em>(we respect your privacy, unsubscribe at any time)</em>
+      </div>
     </div>
   </form>
 </div>
+
 
 </div>
 
@@ -1670,6 +1786,10 @@ codeUsing(f, d)
 	<section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/10/19/do-more-with-baby-steps-tdd/">Do More With Baby-Steps TDD</a>
@@ -1697,10 +1817,6 @@ codeUsing(f, d)
     
       <li class="post">
         <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Getting Stuck While Doing TDD. Part 1: Example</a>
       </li>
     
   </ul>

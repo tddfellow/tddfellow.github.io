@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Xunit | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/xunit/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-11-13T00:30:49+01:00</updated>
+  <updated>2016-11-13T13:28:17+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,426 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Build Your Own Testing Framework. Part 5]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/11/13/build-your-own-testing-framework-part-5/"/>
+    <updated>2016-11-13T12:50:51+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/11/13/build-your-own-testing-framework-part-5</id>
+    <content type="html"><![CDATA[<p>Welcome back to the new issue of &ldquo;Build Your Own Testing Framework&rdquo; series! Did you notice, that out testing framework quits on the first failure? It probably should run all tests, collect all failures and present them nicely. This is what we are going to accomplish today:</p>
+
+<ul>
+<li>Make sure all tests run even when there is a failure.</li>
+<li>Make sure exit code is correct.</li>
+</ul>
+
+
+<!-- more -->
+
+
+<p>This article is the fifth one of the series “Build Your Own Testing Framework” so make sure to stick around for next parts! Find all posts of these series can <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
+
+<p>Shall we get started?</p>
+
+<h2>Catch and report a test failure</h2>
+
+<p>Our test suite should no longer bubble up any exceptions. We can achieve that by making an appropriate assertion. And also we should verify that other tests execute after the failure:</p>
+
+<pre><code class="javascript">runTestSuite(function FailureTest(t) {
+    this.testItDoesNotBubbleUpExceptions = function () {
+        var aSpy = t.spy();
+
+        t.assertNotThrow(function () {
+            runTestSuite(function (t) {
+                this.testFailure = function () {
+                    t.assertTrue(false);
+                };
+
+                this.testSomething = aSpy;
+            });
+        });
+
+        aSpy.assertCalled();
+    };
+});
+</code></pre>
+
+<p>As expected, this fails with an appropriate error <code>Error: Expected not to throw error, but thrown 'Expected to be true, but got false'</code> indicating that we are bubbling up all errors at the moment. Also, notice how the execution of the whole test suite stops at that point, and it just exits the program with error code <code>1</code>. A simple <code>try .. catch</code> block will fix the issue:</p>
+
+<pre><code class="javascript">// in runTestSuite function
+    for (var testName in testSuitePrototype) {
+        if (testName.match(/^test/)) {
+            reporter.reportTest(testName);
+            var testSuite = createTestSuite(testSuiteConstructor);
+
+            try {
+                testSuite[testName]();
+            } catch (error) {
+                // do nothing, for now
+            }
+        }
+    }
+</code></pre>
+
+<p>All tests now run successfully. This code is starting to become unreadable, so it is a good point to refactor. We will:</p>
+
+<ul>
+<li>Extract whole <code>try .. catch</code> as a function <code>runTest</code>. Its current responsibility is only to run the test and ignore any failure;</li>
+<li>Extract contents of <code>if</code> statement that matches the test name as a function <code>handleTest</code>. Its responsibility is to report the test, create a fresh testSuite and kick off <code>runTest</code>;</li>
+<li>Extract the whole <code>for</code> statement as <code>runAllTests</code>.</li>
+</ul>
+
+
+<p>Here is the final snippet of code:</p>
+
+<pre><code class="javascript">function runTest(testSuite, testName) {
+    try {
+        testSuite[testName]();
+    } catch (error) {
+        // do nothing, for now
+    }
+}
+
+function handleTest(reporter, testName, testSuiteConstructor) {
+    reporter.reportTest(testName);
+    runTest(createTestSuite(testSuiteConstructor), testName);
+}
+
+function runAllTests(reporter, testSuitePrototype, testSuiteConstructor) {
+    for (var testName in testSuitePrototype) {
+        if (testName.match(/^test/)) {
+            handleTest(reporter, testName, testSuiteConstructor);
+        }
+    }
+}
+
+function runTestSuite(testSuiteConstructor, options) {
+    options = options || {};
+    var reporter = options.reporter || new SimpleReporter();
+
+    var testSuitePrototype = createTestSuite(testSuiteConstructor);
+
+    reporter.reportTestSuite(
+        getTestSuiteName(testSuiteConstructor, testSuitePrototype)
+    );
+
+    runAllTests(reporter, testSuitePrototype, testSuiteConstructor);
+}
+</code></pre>
+
+<h2>Exit with code 1</h2>
+
+<p>Now, when at least one test fails in a suite of tests, the whole suite should fail (after running the rest of its tests). And the indicator of such failure should be an exit code of the process. Let&rsquo;s write a test:</p>
+
+<pre><code class="javascript">runTestSuite(function FailureTest(t) {
+    // ...
+
+    this.testItExitsWithProcessCodeOne = function () {
+        var processSpy = new ProcessSpy();
+
+        runTestSuite(function (t) {
+            this.testFailure = function () {
+                t.assertTrue(false);
+            };
+        }, {process: processSpy});
+
+        t.assertEqual(1, processSpy.hasExitedWithCode);
+    };
+});
+</code></pre>
+
+<p>As you might guess, we will need another object. It will be responsible for interaction with our process, i.e.: something that we can ask to &ldquo;exit with code 1.&rdquo; Because we can not ask our process to exit within the test run, we will have to create a spy. And we shall test-drive its functionality. There is something interesting that we should worry about before that - our test suite is passing currently.. but it shouldn&rsquo;t be!</p>
+
+<p>Let&rsquo;s step back and think what just happened: clearly, we are writing the test, that can not possibly pass because we do not have <code>ProcessSpy</code> yet. So we are expecting a failure - we are expecting a thrown exception. That expectation is an important part of test-driven development: at all times we expect a very specific failure or we expect our tests to pass; if we do not receive a failure when expected and receive an unexpected failure, we should stop right there and think which part of our thinking and our assumptions is incorrect.</p>
+
+<p><div class="v2-subscribe--inline">
+  
+  
+  
+  
+  
+  
+
+
+<div class="mc_embed_signup">
+  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=6b61a409a5" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div class="mc_embed_signup_scroll">
+      <h3>Would You Like to Watch a Screencast with Me Implementing This?</h3>
+      <div class="mc-field-group">
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_6b61a409a5" tabindex="-1" value=""></div>
+        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
+        <input type="submit" value="Claim video" name="subscribe" class="button mc-embedded-subscribe">
+      </div>
+      <div class="">
+        <em>(we respect your privacy, unsubscribe at any time)</em>
+      </div>
+    </div>
+  </form>
+</div>
+
+</div>
+</p>
+
+<p>Right now, tests do not fail, because we are ignoring all exceptions in our <code>try .. catch</code> that we introduced a couple of minutes ago. If we want to see failures again, let&rsquo;s modify <code>catch</code> block to just log all errors it receives:</p>
+
+<pre><code class="javascript">function runTest(testSuite, testName) {
+    try {
+        testSuite[testName]();
+    } catch (error) {
+        console.log(error);
+    }
+}
+</code></pre>
+
+<p>Now our test suite outputs an expected error: <code>ReferenceError: ProcessSpy is not defined</code>. Also, it outputs some other failures that happen in our nested <code>runTestSuite</code> calls - we should fix them by providing <code>silenceFailures</code> option for nested <code>runTestSuite</code> call. We can focus now on the <code>ProcessSpy</code> failure and test-drive it:</p>
+
+<pre><code class="javascript">runTestSuite(function ProcessSpy_BehaviorTest(t) {
+    var processSpy = new ProcessSpy();
+});
+// =&gt; ReferenceError: ProcessSpy is not defined
+
+function ProcessSpy() {}
+// =&gt; PASS
+
+    this.testHasExitedWithCode_initiallyIsNull = function () {
+        t.assertEqual(null, processSpy.hasExitedWithCode);
+    };
+// =&gt; Error: Expected to equal null, but got: undefined
+
+function ProcessSpy() {
+    this.hasExitedWithCode = null;
+}
+// =&gt; PASS
+
+    this.testHasExitedWithCode_isZero_afterExitZeroCall = function () {
+        processSpy.exit(0);
+        t.assertEqual(0, processSpy.hasExitedWithCode);
+    };
+// =&gt; TypeError: processSpy.exit is not a function
+
+// in ProcessSpy
+    this.exit = function (code) {
+        this.hasExitedWithCode = 0;
+    };
+// =&gt; PASS
+
+    this.testHasExitedWithCode_isOne_afterExitOneCall = function () {
+        processSpy.exit(1);
+        t.assertEqual(1, processSpy.hasExitedWithCode);
+    };
+// =&gt; Error: Expected to equal 1, but got: 0
+
+// in ProcessSpy
+    this.exit = function (code) {
+        this.hasExitedWithCode = code;
+        // changed 0 to code      ^here^
+    };
+</code></pre>
+
+<p>I think we have finished test-driving the functionality of <code>ProcessSpy</code>. It is time to get back to our failing test for a failure resulting in an exit with code 1. When we run this test suite, we are getting the following error message: <code>Error: Expected to equal 1, but got: null</code>.&lsquo; To pass this test, we will need to store the fact that we had a failure somewhere and at the end of the test suite run we can trigger exit with code 1 or 0, respectively. We could pass around a <code>status</code> object with boolean property <code>status.failed</code> and set it to <code>true</code> in our <code>catch</code> block:</p>
+
+<pre><code class="javascript">    } catch (error) {
+        if (!silenceFailures) console.log(error);
+        status.failed = true;
+    }
+</code></pre>
+
+<p>And at the end of <code>runTestSuite</code> function we could call <code>process.exit(1)</code> if <code>status.failed</code> was <code>true</code>:</p>
+
+<pre><code class="javascript">function runTestSuite(testSuiteConstructor, options) {
+    // ...
+
+    if (status.failed) {
+        process.exit(1);
+    }
+}
+</code></pre>
+
+<p>While this works (as in &ldquo;tests pass after providing <code>fakeProcess</code> where needed for nested failing <code>runTestSuite</code> calls&rdquo;) state changes in this code are starting to be hard to follow and function signatures remind me of some horror movie:</p>
+
+<pre><code class="javascript">function getTestSuiteName(testSuiteConstructor, testSuitePrototype)
+function runTest(testSuite, testName, silenceFailures, status)
+function handleTest(reporter, testName, testSuiteConstructor, silenceFailures, status)
+function runAllTests(reporter, testSuitePrototype, testSuiteConstructor, silenceFailures, status)
+</code></pre>
+
+<p>These signatures smell like objects are hiding there in these functions. Let&rsquo;s find them!</p>
+
+<h2>Quest for hidden objects</h2>
+
+<p>First, let&rsquo;s extract the method object from the function <code>runTestSuite</code>. We will give it a name <code>TestSuiteRunContext</code>:</p>
+
+<pre><code class="javascript">function TestSuiteRunContext(testSuiteConstructor, options) {
+    options = options || {};
+    var reporter = options.reporter || new SimpleReporter();
+    var process = options.process || global.process;
+    var silenceFailures = options.silenceFailures || false;
+
+    var status = {failed: false};
+
+    var testSuitePrototype = createTestSuite(testSuiteConstructor);
+
+    this.invoke = function () {
+        reporter.reportTestSuite(
+            getTestSuiteName(testSuiteConstructor, testSuitePrototype)
+        );
+
+        runAllTests(
+            reporter,
+            testSuitePrototype,
+            testSuiteConstructor,
+            silenceFailures,
+            status
+        );
+
+        if (status.failed) {
+            process.exit(1);
+        }
+    };
+}
+
+function runTestSuite(testSuiteConstructor, options) {
+    new TestSuiteRunContext(testSuiteConstructor, options).invoke();
+}
+</code></pre>
+
+<p>Now, if we were to move function <code>runAllTests</code> inside of this class, we would not need all these arguments (and all other functions we call):</p>
+
+<pre><code class="javascript">    this.invoke = function () {
+        reportTestSuite();
+        runAllTests();
+        finishTestRun();
+    };
+
+    function reportTestSuite() {
+        reporter.reportTestSuite(getTestSuiteName());
+    }
+
+    function getTestSuiteName() {
+        if (typeof(createTestSuite().getTestSuiteName) !== "function") {
+            return testSuiteConstructor.name;
+        }
+
+        return createTestSuite().getTestSuiteName();
+    }
+
+    function createTestSuite() {
+        return new testSuiteConstructor(assertions);
+    }
+
+    function runAllTests() {
+        for (var testName in createTestSuite()) {
+            if (testName.match(/^test/)) {
+                handleTest(testName);
+            }
+        }
+    }
+
+    function handleTest(testName) {
+        reportTest(testName);
+        runTest(createTestSuite(), testName);
+    }
+
+    function reportTest(testName) {
+        reporter.reportTest(testName);
+    }
+
+    function runTest(testSuite, testName) {
+        try {
+            testSuite[testName]();
+        } catch (error) {
+            if (!silenceFailures) console.log(error);
+            status.failed = true;
+        }
+    }
+
+    function finishTestRun() {
+        if (status.failed) {
+            process.exit(1);
+        }
+    }
+</code></pre>
+
+<p>It already looks very nice. The only thing that I do not like about this object yet is that it has stateful properties and stateless properties. I like to have my objects separated by this concern. Let&rsquo;s extract <code>status</code> mutable property as a proper <code>TestSuiteRunStatus</code> object:</p>
+
+<pre><code class="javascript">function TestSuiteRunStatus() {
+    var failed = false;
+
+    this.markAsFailed = function () {
+        failed = true;
+    };
+
+    this.hasFailed = function () {
+        return failed;
+    };
+}
+
+function TestSuiteRunContext(testSuiteConstructor, options) {
+  // ...
+  var status = new TestSuiteRunStatus();
+
+  // ...
+  function runTest(testSuite, testName) {
+        try {
+            testSuite[testName]();
+        } catch (error) {
+            if (!silenceFailures) console.log(error);
+            status.markAsFailed();
+        }
+    }
+
+    function finishTestRun() {
+        if (status.hasFailed()) {
+            process.exit(1);
+        }
+    }
+}
+</code></pre>
+
+<p>I think we have finished the refactoring. Now we should verify that test suite exits with the code 0 when everything passes:</p>
+
+<pre><code class="javascript">    this.testItExitsWithProcessCodeZero_onSuccess = function () {
+        runTestSuite(function (t) {
+            this.testFailure = function () {
+                t.assertTrue(true);
+            };
+        }, {process: processSpy, silenceFailures: true});
+
+        t.assertEqual(0, processSpy.hasExitedWithCode);
+    };
+// =&gt; Error: Expected to equal 0, but got: null
+
+    function finishTestRun() {
+        if (status.hasFailed()) return process.exit(1);
+        process.exit(0);
+    }
+// =&gt; PASS
+</code></pre>
+
+<h2>Bottom Line</h2>
+
+<p>I think we have finished implementing exit code reporting. The code can be found here: <a href="https://github.com/waterlink/BuildYourOwnTestingFrameworkPart5">https://github.com/waterlink/BuildYourOwnTestingFrameworkPart5</a></p>
+
+<p>There is still a lot to go through. In a few next episodes we will:</p>
+
+<ul>
+<li>Report OK and FAIL for each test;</li>
+<li>Output carefully formatted failures to the STDERR;</li>
+<li>Enable our testing framework to run multiple test suite files at once;</li>
+<li>Enable our testing framework to run in a browser (it is javascript after all).</li>
+</ul>
+
+
+<p>Stay tuned!</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Your Own Testing Framework. Part 4]]></title>
