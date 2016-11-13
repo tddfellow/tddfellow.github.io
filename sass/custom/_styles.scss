@@ -156,6 +156,7 @@ article header {
 
   .v2-sidebar {
     flex: 1;
+    min-width: 0;
     padding-top: 2em;
 
     a {
@@ -189,6 +190,7 @@ article header {
 
   .v2-blog-index, .v2-blog-post {
     flex: 4;
+    min-width: 0;
   }
 }
 
