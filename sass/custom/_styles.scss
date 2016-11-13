@@ -141,13 +141,8 @@ article header {
     flex-direction: row;
   }
 
-  padding-left: 18px;
-  padding-right: 18px;
-
-  @media only screen and (min-width: 480px) {
-    padding-left: 25px;
-    padding-right: 25px;
-  }
+  padding-left: 0;
+  padding-right: 0;
 
   @media only screen and (min-width: 768px) {
     padding-left: 35px;

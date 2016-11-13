@@ -1,14 +1,5 @@
-<div class="mc_embed_signup">
-  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div class="mc_embed_signup_scroll">
-      <h3>Want more articles like this delivered to your inbox?</h3>
-      <div class="mc-field-group">
-        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_7f9f94015a" tabindex="-1" value=""></div>
-        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
-        <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
-      </div>
-      <em>(we respect your privacy, unsubscribe at any time)</em>
-    </div>
-  </form>
-</div>
+{% assign subscribe_title = "Want more articles like this delivered to your inbox?" %}
+{% assign subscribe_cta = "Subscribe" %}
+{% assign mc_user_id = "535a10a8c0274c9a7ebac4f34" %}
+{% assign mc_list_id = "7f9f94015a" %}
+{% include v2/generic-subscribe.html %}
