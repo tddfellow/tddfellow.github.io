@@ -437,6 +437,8 @@ end
 
 Structure and logic of the function did not change at all, but now all the dependencies are injectable and can be used to test it nicely. That concludes the first step - narrow & isolate. Now it is time to select a group of knowledge bits that we would like to cover with tests. Since we want to change how `followed_notification` is behaving, we might as well start checking there.
 
+{% include v2/subscribe-inline.html %}
+
 ### Trying to Understand & Writing 1st Test
 
 The group of knowledge bits that are related to `followed_notification` looks like this:
