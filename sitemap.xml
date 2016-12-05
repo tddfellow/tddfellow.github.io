@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://www.tddfellow.com/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/</loc>
+    <lastmod>2016-12-05T23:23:36+01:00</lastmod>
+  </url>
+  <url>
     <loc>http://www.tddfellow.com/blog/2016/11/13/build-your-own-testing-framework-part-5/</loc>
     <lastmod>2016-11-13T12:50:51+01:00</lastmod>
   </url>
@@ -411,6 +415,9 @@
   </url>
   <url>
     <loc>http://www.tddfellow.com/blog/categories/willpower/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/legacy-code/</loc>
   </url>
   <url>
     <loc>http://www.tddfellow.com/posts/2/</loc>

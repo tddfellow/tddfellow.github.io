@@ -4,7 +4,7 @@
   <title><![CDATA[That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-11-13T19:52:00+01:00</updated>
+  <updated>2016-12-05T23:44:53+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,1073 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Understanding Legacy Code Using Explorative Test-Driven Development Technique]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/"/>
+    <updated>2016-12-05T23:23:36+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique</id>
+    <content type="html"><![CDATA[<p>Today we are going to learn how to eliminate the fear of changing legacy code. We will learn how to confidently and in small iterations understand the legacy code better while increasing the test coverage in the process. While code examples are in Ruby programming language, the technique applied is language-agnostic.</p>
+
+<!-- more -->
+
+
+<p>For this article, we will need to define what Legacy Code means.</p>
+
+<h2>Legacy Code</h2>
+
+<p>Legacy code is challenging to understand when reading. Such code has no or close to no tests. Also, any legacy code brings the value to the business and customers.</p>
+
+<p>Let&rsquo;s give an outline of what we will be going through today:</p>
+
+<ul>
+<li>We will define &ldquo;Knowledge&rdquo; and &ldquo;Mutation&rdquo; concepts in the context of the production code.</li>
+<li>We will take a look into the relation between the production system and its test suite. While the connection from test suite to the production system is simple, the reverse connection is subtle and have some unusual and unexpected properties.</li>
+<li>We will dismantle different test coverage metrics and outline the most valuable and useful one.</li>
+<li>We will explore existing technique called Mutational Testing, that is simple to apply to the untested code to increase its test coverage.</li>
+<li>We will introduce the technique called Explorative Test-Driven Development, that is an improvement of Mutational Testing method, which allows us to increase understanding of the legacy code in small steps - confidently and incrementally.</li>
+<li>We will look at the example legacy code and apply Explorative TDD to it.</li>
+<li>We will see the opportunities to use Explorative TDD technique outside the context of the Legacy Code.</li>
+</ul>
+
+
+<p>Shall we get the ball rolling?</p>
+
+<h2>Knowledge in Production Code</h2>
+
+<p>&ldquo;Knowledge in Production Code&rdquo; is any small bit of functionality that represents any part of the business rule or underlying infrastructure rule. Example bits of knowledge in production code:</p>
+
+<ul>
+<li>a variable assignment (or binding): <code>a_variable = ...</code>,</li>
+<li>the presence of the <code>if</code> statement: <code>if ... end</code>,</li>
+<li>an <code>if</code> condition: <code>if has_certain_property()</code>,</li>
+<li>an <code>if</code> body: <code>if ...  do_something_interesting  end</code>,</li>
+<li>the presence of the <code>else</code> clause: <code>if ... else ... end</code>,</li>
+<li>an <code>else</code> body: <code>if ... else  do_something_different  end</code>,</li>
+<li>function (or method) call: <code>a_function(arguments)</code>, <code>receiver.a_method(arguments)</code>,</li>
+<li>every argument of the function (or method) call (including receiver),</li>
+<li>a constant: <code>42</code>,</li>
+<li>the fact that function (or method) returns early: <code>if ...  return 42  end</code>,</li>
+<li>what the function (or method) returns,</li>
+<li>the presence of the iteration: <code>...each do |x| ... end</code>,</li>
+<li>what we iterate through: <code>list.each do ...</code>,</li>
+<li>and how we are iterating: <code>...each do |x|  do_something_with(x)  end</code>,</li>
+<li>and so on.</li>
+</ul>
+
+
+<p>I think the idea &ldquo;Knowledge in Production Code&rdquo; should be more or less precise. More interesting is what we can do with knowledge in our system: we can re-organize knowledge differently keeping all the behaviors of the system - everyone calls this Refactoring nowadays; or do the opposite: change bits of knowledge without modifying the structure of the code - we will call one such change a Mutation:</p>
+
+<h2>Mutation</h2>
+
+<p>Mutation - granular change of the knowledge in the system that changes the behavior of the application. Let&rsquo;s take a look at the simple example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="n">cell_is_alive</span>
+</span><span class='line'>  <span class="n">do_this</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'>  <span class="n">do_some_other_thing</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This code is maybe a part of some cell organism simulation (like Game Of Life or similar). Let&rsquo;s see which different mutations can be applied here:</p>
+
+<ul>
+<li>change the <code>if</code> condition always to be <code>true</code>: <code>if true ...</code>,</li>
+<li>change the <code>if</code> condition always to be <code>false</code>: <code>if false ...</code>,</li>
+<li>invert the <code>if</code> condition: <code>if !cell_is_alive</code>,</li>
+<li>commenting out the <code>if</code> body: <code># do_this</code>,</li>
+<li>commenting out the <code>else</code> body: <code># do_some_other_thing</code>.</li>
+</ul>
+
+
+<p>With that done, let&rsquo;s take a look at how production code and its test suite relate to each other.</p>
+
+<h2>Code and Test Suite Relationship</h2>
+
+<p>So, how does the test suite affect production code? First, it makes sure the production code is correct. Also, good test suite enables quick and ruthless refactoring by eliminating (or minimizing) the risks of breaking it. Well-crafted test suite gives us the power and courage to introduce changes. Also, test code always couples to the production code it is testing in one way or another.</p>
+
+<p>Okay, how does the production system affect its test suite? As tests couple to the production code they test, the changes in production system may cause ripple effects on its test suite. Practically speaking, a mutation should always lead to a test failure if the test suite is good enough because its test suite should verify every tiny bit of knowledge in the production code (except, maybe, some configuration).</p>
+
+<p>Such knowledge change is an act of assertion about the presence of the test. When information is covered by test suite well, there should be a test failure. If, after the introduction of the mutation, there is no test failure, this is a failed assertion about test presence or correctness. So one might say:</p>
+
+<blockquote><p>Knowledge Change is a Test for the Test</p></blockquote>
+
+<p>That is a fascinating idea since it implies we can use production code can as a test suite for its test suite, which may enable TDD-like iterative development of the test suite that does not exist.</p>
+
+<p>So far, we have covered the idea of knowledge in the production code, explored ways of modifying this information in a way that changes the behavior - we call it a mutation, and also we explored the mirror-like relation between production code and its test suite. We have still much ground to cover, let&rsquo;s dive in:</p>
+
+<h2>Most Useful Coverage Metric</h2>
+
+<p>There is a few well-known test coverage metrics that are being used quite often by software engineering teams, such as:</p>
+
+<ul>
+<li>Line coverage, and</li>
+<li>Branch coverage.</li>
+</ul>
+
+
+<p>There is another one, called Path coverage - it is about coverage of all possible code paths in the system, which quickly becomes impractical as the application size grows because of the exponential growth of the amount of these different code paths.</p>
+
+<p>Line coverage and Branch coverage (also, path coverage) all share one major problem - covered line/branch/path does not mean test suite verifies it - only executes it. Great example: remove all the assertions from your tests and the coverage metric will stay the same.</p>
+
+<p>So, what if we could introduce all possible and sane mutations to our code and count how much of them cause test failure? - We will get the knowledge coverage metric. Another name for it is Test Semantic Stability, and it can range from 0% to 100%. Even 100% line/path coverage can easily yield 0% Test Semantic Stability. This metric proves that code is, indeed well-tested and verified (although, it does not say anything about tests&#8217; design and cleanliness): make one assertion incorrect, or not precise enough and the metric will go down by a few mutations.</p>
+
+<p>That makes Test Semantic Stability the most useful coverage metric.</p>
+
+<p>So, how do we check if our test(s) cover well some bit of knowledge in the system? We break it! - Introduce a tiny granular breaking change to that bit of knowledge. The test suite should fail. If it does not - information is not covered well enough. That leads us to the technique that allows us to keep Semantic Test Stability up high:</p>
+
+<h2>Mutational Testing</h2>
+
+<ol>
+<li>Narrow the scope of work to a single granular piece of knowledge.</li>
+<li>Break this knowledge (introduce simple granular breaking change - mutation).</li>
+<li>Make sure there is a test suite failure.</li>
+<li>Restore the knowledge to its original state (CTRL+Z, ideally).</li>
+</ol>
+
+
+<p>Let&rsquo;s see it in action:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="n">cell_is_alive</span>
+</span><span class='line'>  <span class="n">do_this</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'>  <span class="n">do_some_other_thing</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>First, we need to narrow our scope to a single bit of knowledge. For example, the <code>if</code> condition: <code>if cell_is_alive</code>. Then we need to introduce the mutation <code>if true,</code> and we need to make sure that there is a test failure. Let&rsquo;s run the test suite:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="err">$</span> <span class="n">rake</span> <span class="nb">test</span>
+</span><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">.</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Finished</span> <span class="k">in</span> <span class="mi">0</span><span class="o">.</span><span class="mo">02343</span> <span class="n">seconds</span> <span class="p">(</span><span class="n">files</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mi">11584</span> <span class="n">seconds</span> <span class="n">to</span> <span class="nb">load</span><span class="p">)</span>
+</span><span class='line'><span class="mi">4</span> <span class="n">examples</span><span class="p">,</span> <span class="mi">0</span> <span class="n">failures</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Oh no! It did not fail anywhere! That means that we have a &ldquo;failing test&rdquo; for our test suite. In this case, we need to add the test for the negative case:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">cell_is_alive</span> <span class="o">=</span> <span class="kp">false</span>
+</span><span class='line'><span class="n">expect</span><span class="p">(</span><span class="n">did_some_other_thing</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="kp">true</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When we run the test suite:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="err">$</span> <span class="n">rake</span> <span class="nb">test</span>
+</span><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">.F</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Finished</span> <span class="k">in</span> <span class="mi">0</span><span class="o">.</span><span class="mo">02343</span> <span class="n">seconds</span> <span class="p">(</span><span class="n">files</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mi">11584</span> <span class="n">seconds</span> <span class="n">to</span> <span class="nb">load</span><span class="p">)</span>
+</span><span class='line'><span class="mi">5</span> <span class="n">examples</span><span class="p">,</span> <span class="mi">1</span> <span class="n">failure</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It fails! Great - that means that our test for the test suite is passing now. As the last step of this mutational testing iteration we have to return the code to its original state:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="n">cell_is_alive</span>
+</span><span class='line'>  <span class="n">do_this</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'>  <span class="n">do_some_other_thing</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After doing this, our tests should pass!:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="err">$</span> <span class="n">rake</span> <span class="nb">test</span>
+</span><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Finished</span> <span class="k">in</span> <span class="mi">0</span><span class="o">.</span><span class="mo">02343</span> <span class="n">seconds</span> <span class="p">(</span><span class="n">files</span> <span class="n">took</span> <span class="mi">0</span><span class="o">.</span><span class="mi">11584</span> <span class="n">seconds</span> <span class="n">to</span> <span class="nb">load</span><span class="p">)</span>
+</span><span class='line'><span class="mi">5</span> <span class="n">examples</span><span class="p">,</span> <span class="mi">0</span> <span class="n">failures</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>They do. That concludes one iteration of the mutational testing. Usually, to accomplish any useful behavior we would like to combine many bits of knowledge. If we want to understand better how the system works, we need to focus on groups of bits of knowledge. This is what Explorative TDD technique is about:</p>
+
+<h2>Explorative Test-Driven Development</h2>
+
+<p>The technique used to increase our understanding of the Legacy Code while enhancing its Test Semantic Stability (the most useful coverage metric). The process roughly looks like that:</p>
+
+<ol>
+<li>Narrow scope to some manageable knowledge and isolate it (manageable knowledge = method/function/class/module).</li>
+<li>Read, try to understand, pick a granular piece of knowledge, and make an assumption to which behavior it contributes and how.</li>
+<li>Write a test to verify this assumption.</li>
+<li>Make sure test passes (by altering the assumption or fixing production code (bugs)). PS: be careful with bugs, since they might be weird behaviors that are bringing someone tremendous value. When finding one of these, consult with stakeholders if that is a bug or a feature.</li>
+<li>Apply Mutational Testing to each related granular piece of knowledge to verify that the understanding (and the test) is correct (this may introduce more tests).</li>
+<li>Go back to 2</li>
+</ol>
+
+
+<p>At this point, a nice example would help understand that technique:</p>
+
+<h2>Step-by-Step Example</h2>
+
+<p>Let&rsquo;s imagine that we have some legacy system, that is a social network and allows for users to receive notifications on things that happened. You need to change slightly what &ldquo;Followed&rdquo; notification means. The code looks like this, and it does not have any tests:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">User</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">notifications</span>
+</span><span class='line'>    <span class="n">notifications</span> <span class="o">=</span> <span class="no">Database</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="s2">&quot;notifications&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">x</span><span class="o">|</span>
+</span><span class='line'>        <span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;followed_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">]</span> <span class="o">==</span> <span class="nb">id</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>        <span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;favorited_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="no">StatusUpdate</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">)</span><span class="o">.</span><span class="n">owner_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>        <span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;replied_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="no">StatusUpdate</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">)</span><span class="o">.</span><span class="n">owner_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>        <span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;reposted_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="no">StatusUpdate</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">)</span><span class="o">.</span><span class="n">owner_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">end</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">row</span><span class="o">|</span>
+</span><span class='line'>        <span class="nb">id</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">row</span>
+</span><span class='line'>        <span class="n">kind</span> <span class="o">=</span> <span class="n">values</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;followed_notification&quot;</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>            <span class="ss">kind</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span>
+</span><span class='line'>            <span class="ss">follower</span><span class="p">:</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>            <span class="ss">user</span><span class="p">:</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>        <span class="k">elsif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;favorited_notification&quot;</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>            <span class="ss">kind</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span>
+</span><span class='line'>            <span class="ss">favoriter</span><span class="p">:</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>            <span class="ss">status_update</span><span class="p">:</span> <span class="no">StatusUpdate</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>        <span class="k">elsif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;replied_notification&quot;</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>            <span class="ss">kind</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span>
+</span><span class='line'>            <span class="ss">sender</span><span class="p">:</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>            <span class="ss">status_update</span><span class="p">:</span> <span class="no">StatusUpdate</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>            <span class="ss">reply</span><span class="p">:</span> <span class="no">StatusUpdate</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">3</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>        <span class="k">elsif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;reposted_notification&quot;</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>            <span class="ss">kind</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span>
+</span><span class='line'>            <span class="ss">reposter</span><span class="p">:</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>            <span class="ss">status_update</span><span class="p">:</span> <span class="no">StatusUpdate</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="no">Analytics</span><span class="o">.</span><span class="n">tag</span><span class="p">({</span><span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;fetch_notifications&quot;</span><span class="p">,</span> <span class="ss">count</span><span class="p">:</span> <span class="n">notifications</span><span class="o">.</span><span class="n">count</span><span class="p">})</span>
+</span><span class='line'>    <span class="n">notifications</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Narrow &amp; Isolate</h3>
+
+<p>The first step is to isolate this code and make it testable. For this we need to find a low-risk way to refactor all dependencies that this code has:</p>
+
+<ul>
+<li><code>Database.where</code>,</li>
+<li><code>StatusUpdate.find</code>,</li>
+<li><code>User.find</code>, and</li>
+<li><code>Analytics.tag</code>.</li>
+</ul>
+
+
+<p>We can promote these things to the following roles:</p>
+
+<ul>
+<li><code>Database.where</code> => <code>@table_reader.where</code>,</li>
+<li><code>StatusUpdate.find</code> => <code>@status_update_finder.where</code>,</li>
+<li><code>User.find</code> => <code>@user_finder.find</code>, and</li>
+<li><code>Analytics.tag</code> => <code>@event_tagger.tag</code>.</li>
+</ul>
+
+
+<p>We should be able to have these default to their original values and also allow to substitute different implementation from the test. Also, it is helpful to pull out this method into the clean environment, where accessing a dependency, without us substituting it - is not possible, for example in a separate code-base, so that we can write a test &ldquo;it works&rdquo; and see what fails. The first failure is, of course, all our referenced classes are missing. Let&rsquo;s define all of them without any implementation and make them fail at runtime if we ever call them from our testing environment:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Database</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">where</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">fail</span> <span class="s2">&quot;Database:nope&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Analytics</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">tag</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">fail</span> <span class="s2">&quot;Analytics:nope&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">StatusUpdate</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">find</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">fail</span> <span class="s2">&quot;StatusUpdate:nope&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">User</span>
+</span><span class='line'>  <span class="c1"># .. def notifications ..</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">find</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">fail</span> <span class="s2">&quot;User:nope&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In our tests, we need to implement our substitutes. For now, they all should be just simple double/stubs:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">FakeTableReader</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">where</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">filter</span><span class="p">)</span>
+</span><span class='line'>    <span class="o">[[</span><span class="kp">nil</span><span class="p">,</span> <span class="o">[</span><span class="s2">&quot;favorited_notification&quot;</span><span class="o">]]]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">FakeEventTagger</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">FakeUserFinder</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="no">User</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">FakeStatusUpdateFinder</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="no">StatusUpdate</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then, we should write the simplest test, that sets up the stage and substitutes all the collaborators and runs the function under the test (no assertion, we are just verifying that we indeed replaced everything right):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;works&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">fake_table_reader</span> <span class="o">=</span> <span class="no">FakeTableReader</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="n">fake_event_tagger</span> <span class="o">=</span> <span class="no">FakeEventTagger</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="n">fake_user_finder</span> <span class="o">=</span> <span class="no">FakeUserFinder</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>  <span class="n">fake_status_update_finder</span> <span class="o">=</span> <span class="no">FakeStatusUpdateFinder</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>             <span class="o">.</span><span class="n">with_table_reader</span><span class="p">(</span><span class="n">fake_table_reader</span><span class="p">)</span>
+</span><span class='line'>             <span class="o">.</span><span class="n">with_event_tagger</span><span class="p">(</span><span class="n">fake_event_tagger</span><span class="p">)</span>
+</span><span class='line'>             <span class="o">.</span><span class="n">with_user_finder</span><span class="p">(</span><span class="n">fake_user_finder</span><span class="p">)</span>
+</span><span class='line'>             <span class="o">.</span><span class="n">with_status_update_finder</span><span class="p">(</span><span class="n">fake_status_update_finder</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">notifications</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Since we have not defined all the <code>with_*</code> methods yet, let&rsquo;s define them now and also define getters for particular instance variables (properties):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">User</span>
+</span><span class='line'>  <span class="c1"># ...</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">table_reader</span>
+</span><span class='line'>    <span class="vi">@table_reader</span> <span class="o">||=</span> <span class="no">Database</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">event_tagger</span>
+</span><span class='line'>    <span class="vi">@event_tagger</span> <span class="o">||=</span> <span class="no">Analytics</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">user_finder</span>
+</span><span class='line'>    <span class="vi">@user_finder</span> <span class="o">||</span> <span class="no">User</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">status_update_finder</span>
+</span><span class='line'>    <span class="vi">@status_update_finder</span> <span class="o">||</span> <span class="no">StatusUpdate</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">with_table_reader</span><span class="p">(</span><span class="n">table_reader</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@table_reader</span> <span class="o">=</span> <span class="n">table_reader</span>
+</span><span class='line'>    <span class="nb">self</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">with_event_tagger</span><span class="p">(</span><span class="n">event_tagger</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@event_tagger</span> <span class="o">=</span> <span class="n">event_tagger</span>
+</span><span class='line'>    <span class="nb">self</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">with_user_finder</span><span class="p">(</span><span class="n">user_finder</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@user_finder</span> <span class="o">=</span> <span class="n">user_finder</span>
+</span><span class='line'>    <span class="nb">self</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">with_status_update_finder</span><span class="p">(</span><span class="n">status_update_finder</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@status_update_finder</span> <span class="o">=</span> <span class="n">status_update_finder</span>
+</span><span class='line'>    <span class="nb">self</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run our test, it should fail with <code>RuntimeError: Database:nope</code> in here:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">notifications</span>
+</span><span class='line'>  <span class="n">notifications</span> <span class="o">=</span> <span class="no">Database</span>            <span class="c1"># &lt;&lt;&lt;&lt;&lt;&lt;</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="s2">&quot;notifications&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">x</span><span class="o">|</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To fix that, we will need to replace <code>Database</code> with <code>table_reader</code> getter. That will correct the current error, and we will get the next one: <code>RuntimeError User:nope</code>. Following all these failures and replacing direct dependencies with getters we will finally get a Green Bar (passing the test). Our function under the test will look like that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">User</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">notifications</span>
+</span><span class='line'>    <span class="n">notifications</span> <span class="o">=</span> <span class="n">table_reader</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="s2">&quot;notifications&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">x</span><span class="o">|</span>
+</span><span class='line'>        <span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;followed_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">]</span> <span class="o">==</span> <span class="nb">id</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>            <span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;favorited_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">status_update_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">)</span><span class="o">.</span><span class="n">owner_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>            <span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;replied_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">status_update_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">)</span><span class="o">.</span><span class="n">owner_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>            <span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;reposted_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">status_update_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">)</span><span class="o">.</span><span class="n">owner_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">end</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">row</span><span class="o">|</span>
+</span><span class='line'>        <span class="nb">id</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">row</span>
+</span><span class='line'>        <span class="n">kind</span> <span class="o">=</span> <span class="n">values</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;followed_notification&quot;</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>              <span class="ss">kind</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span>
+</span><span class='line'>              <span class="ss">follower</span><span class="p">:</span> <span class="n">user_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>              <span class="ss">user</span><span class="p">:</span> <span class="n">user_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>        <span class="k">elsif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;favorited_notification&quot;</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>              <span class="ss">kind</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span>
+</span><span class='line'>              <span class="ss">favoriter</span><span class="p">:</span> <span class="n">user_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>              <span class="ss">status_update</span><span class="p">:</span> <span class="n">status_update_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>        <span class="k">elsif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;replied_notification&quot;</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>              <span class="ss">kind</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span>
+</span><span class='line'>              <span class="ss">sender</span><span class="p">:</span> <span class="n">user_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>              <span class="ss">status_update</span><span class="p">:</span> <span class="n">status_update_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>              <span class="ss">reply</span><span class="p">:</span> <span class="n">status_update_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">3</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>        <span class="k">elsif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;reposted_notification&quot;</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>              <span class="ss">kind</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span>
+</span><span class='line'>              <span class="ss">reposter</span><span class="p">:</span> <span class="n">user_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>              <span class="ss">status_update</span><span class="p">:</span> <span class="n">status_update_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">event_tagger</span><span class="o">.</span><span class="n">tag</span><span class="p">({</span><span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;fetch_notifications&quot;</span><span class="p">,</span> <span class="ss">count</span><span class="p">:</span> <span class="n">notifications</span><span class="o">.</span><span class="n">count</span><span class="p">})</span>
+</span><span class='line'>    <span class="n">notifications</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># ...</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Structure and logic of the function did not change at all, but now all the dependencies are injectable and can be used to test it nicely. That concludes the first step - narrow &amp; isolate. Now it is time to select a group of knowledge bits that we would like to cover with tests. Since we want to change how <code>followed_notification</code> is behaving, we might as well start checking there.</p>
+
+<div class="v2-subscribe--inline">
+  
+
+
+
+
+  
+
+
+<div class="mc_embed_signup">
+  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div class="mc_embed_signup_scroll">
+      <h3>Want more articles like this delivered to your inbox?</h3>
+      <div class="mc-field-group">
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_7f9f94015a" tabindex="-1" value=""></div>
+        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
+        <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
+      </div>
+      <div class="">
+        <em>(we respect your privacy, unsubscribe at any time)</em>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+</div>
+
+
+<h3>Trying to Understand &amp; Writing 1st Test</h3>
+
+<p>The group of knowledge bits that are related to <code>followed_notification</code> looks like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">notifications</span> <span class="o">=</span> <span class="n">table_reader</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="s2">&quot;notifications&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">x</span><span class="o">|</span>
+</span><span class='line'>    <span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;followed_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">]</span> <span class="o">==</span> <span class="nb">id</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span> <span class="o">||</span>
+</span><span class='line'>    <span class="c1"># ...</span>
+</span><span class='line'>  <span class="k">end</span><span class="o">.</span><span class="n">map</span> <span class="k">do</span> <span class="o">|</span><span class="n">row</span><span class="o">|</span>
+</span><span class='line'>    <span class="nb">id</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">row</span>
+</span><span class='line'>    <span class="n">kind</span> <span class="o">=</span> <span class="n">values</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;followed_notification&quot;</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="ss">kind</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span>
+</span><span class='line'>          <span class="ss">follower</span><span class="p">:</span> <span class="n">user_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>          <span class="ss">user</span><span class="p">:</span> <span class="n">user_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="k">elsif</span> <span class="c1">#...</span>
+</span><span class='line'>      <span class="c1"># ...</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># ...</span>
+</span><span class='line'><span class="n">notifications</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we want to write a test. At the first thought, something like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;obtains followed notifications for the user&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="c1"># first create a user with all fakes (extracted to a helper method)</span>
+</span><span class='line'>  <span class="n">user</span> <span class="o">=</span> <span class="n">create_user_with_fakes</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># then instruct our table reader fake to return prepared data</span>
+</span><span class='line'>  <span class="n">fake_table_reader</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s2">&quot;notifications&quot;</span><span class="p">,</span>
+</span><span class='line'>              <span class="o">[</span><span class="mi">1001</span><span class="p">,</span> <span class="o">[</span><span class="s2">&quot;followed_notification&quot;</span><span class="p">,</span> <span class="mi">2001</span><span class="p">,</span> <span class="mi">3001</span><span class="o">]]</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># and expect that we have exactly one notification</span>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">notifications</span><span class="o">.</span><span class="n">count</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">create_user_with_fakes</span>
+</span><span class='line'>  <span class="no">User</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">567</span><span class="p">)</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">with_table_reader</span><span class="p">(</span><span class="n">fake_table_reader</span><span class="p">)</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">with_event_tagger</span><span class="p">(</span><span class="n">fake_event_tagger</span><span class="p">)</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">with_user_finder</span><span class="p">(</span><span class="n">fake_user_finder</span><span class="p">)</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">with_status_update_finder</span><span class="p">(</span><span class="n">fake_status_update_finder</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">FakeTableReader</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">tables</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">row</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">tables</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@tables</span> <span class="o">||=</span> <span class="p">{}</span>
+</span><span class='line'>    <span class="vi">@tables</span><span class="o">[</span><span class="n">table_name</span><span class="o">]</span> <span class="o">||=</span> <span class="o">[]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">where</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">filter</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">tables</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="o">&amp;</span><span class="n">filter</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Making It Pass</h3>
+
+<p>This test fails right away - we don&rsquo;t have any notifications. This is strange. Let&rsquo;s take a closer look on the filtering that we are doing:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;followed_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">]</span> <span class="o">==</span> <span class="nb">id</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span> <span class="o">||</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I believe, we have satisfied the first part of this condition, but not the second one. The user id is not the same as the 3rd element of this row. Let&rsquo;s make them same:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">fake_table_reader</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s2">&quot;notifications&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="o">[</span><span class="mi">1001</span><span class="p">,</span> <span class="o">[</span><span class="s2">&quot;followed_notification&quot;</span><span class="p">,</span> <span class="mi">2001</span><span class="p">,</span> <span class="mi">567</span><span class="o">]]</span><span class="p">)</span>
+</span><span class='line'>                                               <span class="c1"># ^ here ^</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This fails again! This code just keeps proving our assumptions wrong. I think we need to take a careful look at that <code>it.to_s</code>. <code>.to_s</code> is a conversion to string, so the foreign key is stored as a string (who could have thought?). Let&rsquo;s try to make it work:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">fake_table_reader</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s2">&quot;notifications&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="o">[</span><span class="mi">1001</span><span class="p">,</span> <span class="o">[</span><span class="s2">&quot;followed_notification&quot;</span><span class="p">,</span> <span class="mi">2001</span><span class="p">,</span> <span class="s2">&quot;567&quot;</span><span class="o">]]</span><span class="p">)</span>
+</span><span class='line'>                                                <span class="c1"># ^ here ^</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Applying Mutational Testing</h3>
+
+<p>If we run our tests, they pass! Great, now we know that this function is capable of obtaining some followed notifications. Of course, our coverage right now is super small. Let&rsquo;s apply mutational testing to it. We should start from the condition:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;followed_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">]</span> <span class="o">==</span> <span class="nb">id</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span> <span class="o">||</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>First, let&rsquo;s replace the whole thing with <code>false</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="kp">false</span> <span class="o">||</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The test fails - mutant does not survive - our tests are covering for this mutation. Let&rsquo;s try another one: replace the whole thing with <code>true</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="kp">true</span> <span class="o">||</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Our tests pass - mutant survives - this is a failing test for our tests. In this case, it is reasonable to write a new test for a case, when the full filtering expression should yield <code>false</code> - when we have notifications of an invalid kind:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;ignores notifications of an invalid kind&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">user</span> <span class="o">=</span> <span class="n">create_user_with_fakes</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">fake_table_reader</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s2">&quot;notifications&quot;</span><span class="p">,</span>
+</span><span class='line'>              <span class="o">[</span><span class="mi">1001</span><span class="p">,</span> <span class="o">[</span><span class="s2">&quot;invalid&quot;</span><span class="p">,</span> <span class="mi">2001</span><span class="p">,</span> <span class="s2">&quot;567&quot;</span><span class="o">]]</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">notifications</span><span class="o">.</span><span class="n">count</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As a result, we should not get any notifications. After running, we see that our test fail. Great! This mutant no longer survives. Let&rsquo;s see if our tests will pass when we undo the mutation:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;followed_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">]</span> <span class="o">==</span> <span class="nb">id</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span> <span class="o">||</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And they all pass! Next mutation is inverting the whole condition:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">!</span> <span class="p">(</span><span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="s2">&quot;followed_notification&quot;</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">]</span> <span class="o">==</span> <span class="nb">id</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span> <span class="o">||</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>All our tests are RED. Which means that this mutant does not survive and the test for our test is green. Now, we should dig deeper into the parts of the condition itself:</p>
+
+<ul>
+<li><code>x[1][0] == "followed_notification"</code>: replacing with <code>true</code>, <code>false</code>, and inverting it; also, changing numeric and string constants; These all changes did not produce any surviving mutants, so we do not need to introduce new tests.</li>
+<li><code>x[1][2] == id.to_s</code>: replacing with <code>true</code>, <code>false</code> and inverting it; also, changing numeric constants.</li>
+</ul>
+
+
+<p>Replacing <code>x[1][2] == id.to_s</code> with <code>true</code>, apparently, leaves all our tests passing - a mutant that survives - a failing test for our test suite. It is time to add this test - when we have notifications of some different user:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;ignores notifications of different user&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">user</span> <span class="o">=</span> <span class="n">create_user_with_fakes</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">fake_table_reader</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s2">&quot;notifications&quot;</span><span class="p">,</span>
+</span><span class='line'>              <span class="o">[</span><span class="mi">1001</span><span class="p">,</span> <span class="o">[</span><span class="s2">&quot;followed_notification&quot;</span><span class="p">,</span> <span class="mi">2001</span><span class="p">,</span> <span class="s2">&quot;other user&quot;</span><span class="o">]]</span><span class="p">)</span>
+</span><span class='line'>                                                   <span class="c1"># ^   here   ^</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">notifications</span><span class="o">.</span><span class="n">count</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see, having a record with the different user id (in this case, even nonsensical user id) makes our test fail, which means that this mutant no longer survives. Let&rsquo;s see if undoing the mutation will turn our tests GREEN:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">(</span><span class="o">.</span><span class="n">.</span><span class="o">.</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">2</span><span class="o">]</span> <span class="o">==</span> <span class="nb">id</span><span class="o">.</span><span class="n">to_s</span><span class="p">)</span> <span class="o">||</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>All our tests pass again. I think we have finished testing the condition in the filter. I would not touch the conditions that are related to different kinds of notifications, as we want to introduce changes only to &ldquo;Followed&rdquo; notifications. So we can dig further into the logic of our group of knowledge bits:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">id</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">row</span>
+</span><span class='line'><span class="n">kind</span> <span class="o">=</span> <span class="n">values</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;followed_notification&quot;</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="ss">kind</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span>
+</span><span class='line'>      <span class="ss">follower</span><span class="p">:</span> <span class="n">user_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>      <span class="ss">user</span><span class="p">:</span> <span class="n">user_finder</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">values</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">to_i</span><span class="p">),</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="k">elsif</span> <span class="c1">#...</span>
+</span><span class='line'>  <span class="c1"># ...</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So, we can see that we split the row into its <code>id</code> and all the other values of the notification record. Apparently, the first value is responsible for the kind, where we are switching on it to construct correct object (in this case just a lump of data - hash map). So let&rsquo;s try to mutate the numeric constant in <code>kind = values[0]</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">kind</span> <span class="o">=</span> <span class="n">values</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
+</span><span class='line'>          <span class="c1">#  ^^^</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>All our tests still pass. That is a failing test for our test suite. We ought to write a new test now. Where we should verify that it constructs correct lumps of data:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;constructs correct followed notification&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">user</span> <span class="o">=</span> <span class="n">create_user_with_fakes</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">fake_table_reader</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s2">&quot;notifications&quot;</span><span class="p">,</span>
+</span><span class='line'>              <span class="o">[</span><span class="mi">1001</span><span class="p">,</span> <span class="o">[</span><span class="s2">&quot;followed_notification&quot;</span><span class="p">,</span> <span class="mi">2001</span><span class="p">,</span> <span class="s2">&quot;567&quot;</span><span class="o">]]</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">notifications</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="ss">:kind</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="s2">&quot;followed_notification&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This test fails, because our <code>user.notifications[0]</code> Is <code>nil</code>, because none of <code>if</code> or <code>elsif</code> matched the <code>kind</code> variable and in Ruby, by default any function returns a <code>nil</code> value. This failing test means that we no longer have surviving mutant and let&rsquo;s see if undoing that mutation will make our tests pass:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">kind</span> <span class="o">=</span> <span class="n">values</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
+</span><span class='line'>          <span class="c1">#  ^^^</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It does, all our tests are green now. We should continue like this until we understand code enough and have enough confidence in our tests so that we can make our desired change to the system. When we think we have finished, we should integrate isolated code back to the legacy system, leaving all the fakes and injection capabilities in place. We were separating this code only to make sure, that we are not calling any dependencies on accident (while they just work silently). While integrating it back we, of course, get rid of <code>fail "NAME:nope"</code> implementations of collaborators. With such approach, integrating the code back should be as simple as copy-pasting the test suite code and production code (function under the test, and injecting facilities) without copying always-failing collaborators.</p>
+
+<p>We will have to wrap up the example, and if you, my reader, would like to continue applying Explorative TDD to this code, you can find the code here: <a href="https://github.com/waterlink/explorative-tdd-blog-post">https://github.com/waterlink/explorative-tdd-blog-post</a> (specifically, <code>spec/user_spec.rb</code>). The function originates from this example project: <a href="https://github.com/waterlink/lemon">https://github.com/waterlink/lemon</a></p>
+
+<h2>Can Explorative TDD Help Me Outside of Legacy Code?</h2>
+
+<p>The answer is yes! I use Explorative TDD (as well as mutational testing) in following cases:</p>
+
+<ul>
+<li>During big refactorings, such as Extract class/module/package. The technique helps you quickly understand which tests have to be moved as well to the new test suite (only if you want to transfer them).</li>
+<li>When refactoring tests. The technique helps you to verify if your tests are still working as they are intended to and if they are still semantically stable (they catch a majority of mutants).</li>
+<li>To measure rigidity of test-to-code coupling. If a single mutation leads to half of your test suite failing (even irrelevant tests) - tests need refactoring.</li>
+</ul>
+
+
+<h2>Bottom Line</h2>
+
+<p>Today we have learned about concepts like &ldquo;Knowledge in production code&rdquo; and &ldquo;Mutation.&rdquo; Also, we learned what Test Semantic Stability is the best code coverage metric. We have seen Mutational Testing and Explorative TDD techniques at work. We could start applying these techniques (after some practice) to stop fearing the legacy code and just handle it as some tedious routine operation.</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Your Own Testing Framework. Part 5]]></title>
@@ -8900,142 +9967,6 @@ The same thing would happen if we were to extract methods/functions/objects out 
 <p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
 
 <p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Automating Manual Checks or How to Save Time and Get Rapid Feedback]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/"/>
-    <updated>2016-06-05T12:37:22+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback</id>
-    <content type="html"><![CDATA[<p><em>It is tedious, slow and error-prone to test correctness of program manually. This article is an introduction, how to make this process as simple as a hit of one button, very fast and precise.</em></p>
-
-<p>In the last issue <a href="http://www.tddfellow.com/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">about Iterative Divide &amp; Conquer</a> we have found out, how it is tedious to manually check that our program works correctly.</p>
-
-<p>We have concluded, that it is tedious and slow to manually check that the output of our <code>print</code> statements is correct. Additionally, it is really easy to make a mistake and to oversee incorrect lines of the output, especially, when we have tons of them. As well, this applies to any other form of manual testing, including testing the application as an End User (via clicking/tapping for UI applications, via executing tons of commands for CLI applications).</p>
-
-<h2>Mitigating human error-proneness via automation</h2>
-
-<p>Let&rsquo;s get back to our example from the previous issue:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>    <span class="c1"># twenty</span>
-</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span>    <span class="c1"># twenty-seven</span>
-</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>    <span class="c1"># forty-two</span>
-</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">70</span><span class="p">)</span>    <span class="c1"># seventy</span>
-</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">99</span><span class="p">)</span>    <span class="c1"># ninety-nine</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>What if we could ask our computer to run <code>english_integer_in_tens</code> function with provided arguments and check that the output is exactly what we provided in a comment?</p>
-
-<p>Let&rsquo;s try to put it in pseudo-code:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer_in_tens</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="s2">&quot;twenty&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer_in_tens</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="s2">&quot;forty-two&quot;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If we run that code, of course, we will get some sort of compilation error, or runtime error (depending on the programming language), because function <code>equal</code> is not defined yet. Let&rsquo;s define it! Presumably, it should be comparing left argument with right argument and printing something useful on the screen.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">equal</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">left</span> <span class="o">!=</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">print</span><span class="p">(</span><span class="s2">&quot;Failure: &quot;</span> <span class="o">+</span> <span class="nx">left</span> <span class="o">+</span> <span class="s2">&quot; should be equal to &quot;</span> <span class="o">+</span> <span class="nx">right</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">print</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If we run the program after defining this function we will get:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
-</span><span class='line'><span class="nx">OK</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If we were to break the function <code>english_integer_in_tens</code>&rsquo;s implementation, we might get something like:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
-</span><span class='line'><span class="nx">Failure</span><span class="o">:</span> <span class="nx">twenty</span> <span class="nx">should</span> <span class="nx">be</span> <span class="nx">equal</span> <span class="nx">to</span> <span class="nx">forty</span><span class="o">-</span><span class="nx">two</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Making automation nicer</h2>
-
-<p>Having all this output every time we import our small library in any application going to the standard output would be annoying to say the least. How about separating the test automation from the library?</p>
-
-<p>Let&rsquo;s extract all our testing <code>print</code>-s into the separate file, import original file from it and replace all <code>print</code>-s with <code>equal</code>-s:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">import</span> <span class="nx">english_integer</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">function</span> <span class="nx">equal</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_number</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;zero&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_number</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;one&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="p">...</span>
-</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer</span><span class="p">(</span><span class="mi">43</span><span class="p">),</span> <span class="s2">&quot;forty-three&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">97</span><span class="p">),</span> <span class="s2">&quot;minus ninety-seven&quot;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Running only this separate file will produce expected output:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
-</span><span class='line'><span class="nx">OK</span>
-</span><span class='line'><span class="p">...</span>
-</span><span class='line'><span class="nx">OK</span>
-</span><span class='line'><span class="nx">OK</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Importing or running directly our original library will not produce any output. This is much nicer.</p>
-
-<h2>Thank you for reading!</h2>
-
-<p>Today we have made our testing:</p>
-
-<ul>
-<li>easier: hit of one button, or one command on the terminal;</li>
-<li>faster: from minutes of manual verification to milliseconds of automated checks;</li>
-<li>preciser: automated checks can&rsquo;t make a mistake, if we have something except <code>OK</code> - we have an error, if everything is <code>OK</code> - the program is working correctly;</li>
-<li>better feedback cycle: we can see if our change is correct in the matter of 1-2 seconds after making this change.</li>
-</ul>
-
-
-<p>Next time we will build a fully-functional mini testing framework. Stay tuned!</p>
 ]]></content>
   </entry>
   

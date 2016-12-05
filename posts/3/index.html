@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Let&rsquo;s imagine a beginner programmer, who have learned a programming language basics, can write programs and can read someone else&rsquo;s &hellip;">
+  <meta name="description" content="It is tedious, slow and error-prone to test correctness of program manually. This article is an introduction, how to make this process as simple as a &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -114,6 +114,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
       </li>
     
@@ -139,10 +143,6 @@
     
       <li class="post">
         <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through</a>
       </li>
     
   </ul>
@@ -186,6 +186,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
       </li>
     
@@ -213,10 +217,6 @@
         <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -228,6 +228,184 @@
 
 <div class="blog-index v2-blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/06/05/automating-manual-checks-or-how-to-save-time-and-get-rapid-feedback/">Automating Manual Checks or How to Save Time and Get Rapid Feedback</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2016-06-05T12:37:22+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>12:37 pm</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/automation/'>automation</a>, <a class='category' href='/blog/categories/programming/'>programming</a>, <a class='category' href='/blog/categories/pseudo-code/'>pseudo-code</a>, <a class='category' href='/blog/categories/tests/'>tests</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><em>It is tedious, slow and error-prone to test correctness of program manually. This article is an introduction, how to make this process as simple as a hit of one button, very fast and precise.</em></p>
+
+<p>In the last issue <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">about Iterative Divide &amp; Conquer</a> we have found out, how it is tedious to manually check that our program works correctly.</p>
+
+<p>We have concluded, that it is tedious and slow to manually check that the output of our <code>print</code> statements is correct. Additionally, it is really easy to make a mistake and to oversee incorrect lines of the output, especially, when we have tons of them. As well, this applies to any other form of manual testing, including testing the application as an End User (via clicking/tapping for UI applications, via executing tons of commands for CLI applications).</p>
+
+<h2>Mitigating human error-proneness via automation</h2>
+
+<p>Let&rsquo;s get back to our example from the previous issue:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>    <span class="c1"># twenty</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">27</span><span class="p">)</span>    <span class="c1"># twenty-seven</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>    <span class="c1"># forty-two</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">70</span><span class="p">)</span>    <span class="c1"># seventy</span>
+</span><span class='line'><span class="nb">print</span> <span class="n">english_integer_in_tens</span><span class="p">(</span><span class="mi">99</span><span class="p">)</span>    <span class="c1"># ninety-nine</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What if we could ask our computer to run <code>english_integer_in_tens</code> function with provided arguments and check that the output is exactly what we provided in a comment?</p>
+
+<p>Let&rsquo;s try to put it in pseudo-code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer_in_tens</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="s2">&quot;twenty&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer_in_tens</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="s2">&quot;forty-two&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run that code, of course, we will get some sort of compilation error, or runtime error (depending on the programming language), because function <code>equal</code> is not defined yet. Let&rsquo;s define it! Presumably, it should be comparing left argument with right argument and printing something useful on the screen.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">equal</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">left</span> <span class="o">!=</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">print</span><span class="p">(</span><span class="s2">&quot;Failure: &quot;</span> <span class="o">+</span> <span class="nx">left</span> <span class="o">+</span> <span class="s2">&quot; should be equal to &quot;</span> <span class="o">+</span> <span class="nx">right</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">print</span><span class="p">(</span><span class="s2">&quot;OK&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run the program after defining this function we will get:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="nx">OK</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we were to break the function <code>english_integer_in_tens</code>&rsquo;s implementation, we might get something like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="nx">Failure</span><span class="o">:</span> <span class="nx">twenty</span> <span class="nx">should</span> <span class="nx">be</span> <span class="nx">equal</span> <span class="nx">to</span> <span class="nx">forty</span><span class="o">-</span><span class="nx">two</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Making automation nicer</h2>
+
+<p>Having all this output every time we import our small library in any application going to the standard output would be annoying to say the least. How about separating the test automation from the library?</p>
+
+<p>Let&rsquo;s extract all our testing <code>print</code>-s into the separate file, import original file from it and replace all <code>print</code>-s with <code>equal</code>-s:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">import</span> <span class="nx">english_integer</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">equal</span><span class="p">(</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_number</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;zero&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_number</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;one&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="p">...</span>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer</span><span class="p">(</span><span class="mi">43</span><span class="p">),</span> <span class="s2">&quot;forty-three&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">equal</span><span class="p">(</span><span class="nx">english_integer</span><span class="p">(</span><span class="o">-</span><span class="mi">97</span><span class="p">),</span> <span class="s2">&quot;minus ninety-seven&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Running only this separate file will produce expected output:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="p">...</span>
+</span><span class='line'><span class="nx">OK</span>
+</span><span class='line'><span class="nx">OK</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Importing or running directly our original library will not produce any output. This is much nicer.</p>
+
+<h2>Thank you for reading!</h2>
+
+<p>Today we have made our testing:</p>
+
+<ul>
+<li>easier: hit of one button, or one command on the terminal;</li>
+<li>faster: from minutes of manual verification to milliseconds of automated checks;</li>
+<li>preciser: automated checks can&rsquo;t make a mistake, if we have something except <code>OK</code> - we have an error, if everything is <code>OK</code> - the program is working correctly;</li>
+<li>better feedback cycle: we can see if our change is correct in the matter of 1-2 seconds after making this change.</li>
+</ul>
+
+
+<p>Next time we will build a fully-functional mini testing framework. Stay tuned!</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2199,286 +2377,6 @@ issues on corresponding github project. Pull requests are welcome!</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/08/31/docker-machine-guide-virtualbox-mac-os-x/">Docker Machine Guide (VirtualBox on Mac OS X)</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-
-  
-  <span class="byline author vcard"><span class="fn">
-    
-      <a href="/about-me">Oleksii Fedorov</a>
-    
-  </span></span>
-
-
-        
-
-
-
-
-<time class='entry-date' datetime='2015-08-31T10:21:06+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>10:21 am</span></time>
-        
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/docker/'>docker</a>, <a class='category' href='/blog/categories/docker-machine/'>docker-machine</a>, <a class='category' href='/blog/categories/guide/'>guide</a>, <a class='category' href='/blog/categories/macosx/'>macosx</a>, <a class='category' href='/blog/categories/virtualbox/'>virtualbox</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><em>(VirtualBox on Mac OS X)</em></p>
-
-<p>This guide is a combination of official docs and usage experience.</p>
-
-<h2>Installation</h2>
-
-<p><em>Install virtualbox first
-<a href="https://www.virtualbox.org/wiki/Downloads">virtualbox downloads</a>.</em></p>
-
-<p>Look at this page: <a href="https://github.com/docker/machine/releases/">https://github.com/docker/machine/releases/</a> and pick latest
-release. At the time of writing this is <code>v0.4.1</code>.</p>
-
-<p>Now, assign version number to an environment variable, together with your
-architecture:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">DOCKER_MACHINE_VERSION</span><span class="o">=</span>v0.4.1
-</span><span class='line'><span class="nv">DOCKER_MACHINE_ARCH</span><span class="o">=</span>darwin-amd64
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now download <code>docker-machine</code> binary and put it onto your <code>PATH</code> (recommended
-is <code>~/bin/</code>):</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir -p ~/bin
-</span><span class='line'><span class="nv">URL</span><span class="o">=</span>https://github.com/docker/machine/releases/download/<span class="k">${</span><span class="nv">DOCKER_MACHINE_VERSION</span><span class="k">}</span>/docker-machine_<span class="k">${</span><span class="nv">DOCKER_MACHINE_ARCH</span><span class="k">}</span>
-</span><span class='line'><span class="nv">OUTPUT</span><span class="o">=</span>~/bin/docker-machine
-</span><span class='line'>curl -L <span class="k">${</span><span class="nv">URL</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
-</span><span class='line'>chmod +x <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you still haven&rsquo;t yet, put <code>~/bin/</code> on your <code>PATH</code> with <code>export
-PATH=$PATH:$HOME/bin</code> into your <code>.bashrc</code> or <code>.zshrc</code> (or whatever shell you
-use).</p>
-
-<h2>Installing docker client</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">URL</span><span class="o">=</span>https://get.docker.com/builds/Darwin/x86_64/docker-latest
-</span><span class='line'><span class="nv">OUTPUT</span><span class="o">=</span>~/bin/docker
-</span><span class='line'>curl -L <span class="k">${</span><span class="nv">URL</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
-</span><span class='line'>chmod +x <span class="k">${</span><span class="nv">OUTPUT</span><span class="k">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Creating your first docker machine</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine create -d virtualbox dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This is how you create docker machine with name <code>dev</code> having virtualbox as a
-backend.</p>
-
-<p>But after some time you will encounter a problem of running out of memory. So
-my recommended command to create your primary development docker machine is
-this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine create -d virtualbox dev --virtualbox-memory <span class="s2">&quot;5120&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This will create virtualbox VM with enough memory to run low-to-moderate size
-clusters with <code>docker-compose</code>. Which should be enough for development.</p>
-
-<p>This should be your primary docker machine that is always activated and used.
-There is no need to destroy and re-create this <code>dev</code> machine unless you are
-testing some edge-cases. And better to use additional docker machine with
-different name for this.</p>
-
-<h2>Connecting to your <code>dev</code> docker machine</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">eval</span> <span class="k">$(</span>docker-machine env dev<span class="k">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After this command, you will have everything you need to run <code>docker</code> in the same terminal:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Using alpine image here because it is only ~5 MB</span>
-</span><span class='line'>docker run -it --rm alpine <span class="nb">echo</span> <span class="s1">&#39;hello world&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You should see:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># .. pulling alpine image here .. and:</span>
-</span><span class='line'>hello world
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>It might be annoying to run <code>eval $(docker-machine env dev)</code> each time you open
-new terminal. So feel free to put this line into your <code>.bashrc</code> or <code>.zshrc</code> or
-whatever shell you use:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># in .bashrc:</span>
-</span><span class='line'><span class="nb">eval</span> <span class="k">$(</span>docker-machine env dev<span class="k">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>If you have just powered on your Mac (or just stopped your docker machine) you
-will experience this error:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>Error: Host does not exist: dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In that case just start it with:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine start dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And re-open your terminal.</p>
-
-<h2>Dealing with docker machine&rsquo;s IP address</h2>
-
-<p>Fact: docker machine&rsquo;s IP address stays the same, usually 192.168.99.100,
-unless:</p>
-
-<ul>
-<li>you destroy your docker machine <code>dev</code>, create another VirtualBox VM and
-create docker machine <code>dev</code> afterwards, or</li>
-<li>you have custom VirtualBox configuration.</li>
-</ul>
-
-
-<p>Given that docker machine&rsquo;s IP address stays the same or changes very rarely,
-you can simply put its IP address in your <code>/etc/hosts</code>.</p>
-
-<p>First, figure out current docker machine&rsquo;s IP address:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine ip dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And put it in <code>/etc/hosts</code>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># in /etc/hosts</span>
-</span><span class='line'>
-</span><span class='line'><span class="c"># Put IP address previous command has returned here:</span>
-</span><span class='line'>192.168.99.100 docker-dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>To test that it works correclty try to run:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker run -it --rm -p 80:80 nginx
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And now reach <code>http://docker-dev</code> in your browser - you should see default
-Nginx page.</p>
-
-<p>If you want to refer docker machine <code>dev</code> in your scripts, it is better to use
-<code>$(docker-machine ip dev)</code> capabilities for that. For example, <code>curl</code>-ing the
-page we have seen in browser just now:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>curl <span class="k">$(</span>docker-machine ip dev<span class="k">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>For teams it would make sense to agree on the same name for primary development
-docker machine. <code>dev</code> works just great!</p>
-
-<p><em>NOTE: personally, I use both <code>docker-dev</code> and just <code>dev</code> as a hostname to type
-less, but that might clash with something else, so <code>docker-dev</code> it is.</em></p>
-
-<h2>Upgrading</h2>
-
-<p>To upgrade <code>docker-machine</code> or <code>docker</code> binaries, just follow <code>Installation</code>
-instructions again.</p>
-
-<p>To upgrade <code>docker</code> server inside of already running docker machine, use:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine upgrade dev
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This will update to the latest version of <code>docker</code> server and <code>boot2docker</code>
-image.</p>
-
-<h2>Re-creating a fresh <code>dev</code> docker machine</h2>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>docker-machine rm dev
-</span><span class='line'>docker-machine create -d virtualbox dev --virtualbox-memory <span class="s2">&quot;5120&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>Further reading</h2>
-
-<ul>
-<li><a href="https://docs.docker.com/machine/">Overview of Docker Machine</a></li>
-<li><a href="https://docs.docker.com/machine/get-started/">Get started with Docker Machine and a local VM</a></li>
-</ul>
-
-
-<p>Comments on <a href="https://news.ycombinator.com/item?id=10146082">hackernews</a>.</p>
-
-<p>Happy hacking! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/4">&larr; Older</a>
@@ -2524,6 +2422,10 @@ image.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
       </li>
     
@@ -2549,10 +2451,6 @@ image.</p>
     
       <li class="post">
         <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through</a>
       </li>
     
   </ul>

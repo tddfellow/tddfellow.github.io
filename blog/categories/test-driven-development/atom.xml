@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Test-driven-development | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/test-driven-development/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-11-13T19:52:00+01:00</updated>
+  <updated>2016-12-05T23:44:53+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,701 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Understanding Legacy Code Using Explorative Test-Driven Development Technique]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/"/>
+    <updated>2016-12-05T23:23:36+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique</id>
+    <content type="html"><![CDATA[<p>Today we are going to learn how to eliminate the fear of changing legacy code. We will learn how to confidently and in small iterations understand the legacy code better while increasing the test coverage in the process. While code examples are in Ruby programming language, the technique applied is language-agnostic.</p>
+
+<!-- more -->
+
+
+<p>For this article, we will need to define what Legacy Code means.</p>
+
+<h2>Legacy Code</h2>
+
+<p>Legacy code is challenging to understand when reading. Such code has no or close to no tests. Also, any legacy code brings the value to the business and customers.</p>
+
+<p>Let&rsquo;s give an outline of what we will be going through today:</p>
+
+<ul>
+<li>We will define &ldquo;Knowledge&rdquo; and &ldquo;Mutation&rdquo; concepts in the context of the production code.</li>
+<li>We will take a look into the relation between the production system and its test suite. While the connection from test suite to the production system is simple, the reverse connection is subtle and have some unusual and unexpected properties.</li>
+<li>We will dismantle different test coverage metrics and outline the most valuable and useful one.</li>
+<li>We will explore existing technique called Mutational Testing, that is simple to apply to the untested code to increase its test coverage.</li>
+<li>We will introduce the technique called Explorative Test-Driven Development, that is an improvement of Mutational Testing method, which allows us to increase understanding of the legacy code in small steps - confidently and incrementally.</li>
+<li>We will look at the example legacy code and apply Explorative TDD to it.</li>
+<li>We will see the opportunities to use Explorative TDD technique outside the context of the Legacy Code.</li>
+</ul>
+
+
+<p>Shall we get the ball rolling?</p>
+
+<h2>Knowledge in Production Code</h2>
+
+<p>&ldquo;Knowledge in Production Code&rdquo; is any small bit of functionality that represents any part of the business rule or underlying infrastructure rule. Example bits of knowledge in production code:</p>
+
+<ul>
+<li>a variable assignment (or binding): <code>a_variable = ...</code>,</li>
+<li>the presence of the <code>if</code> statement: <code>if ... end</code>,</li>
+<li>an <code>if</code> condition: <code>if has_certain_property()</code>,</li>
+<li>an <code>if</code> body: <code>if ...  do_something_interesting  end</code>,</li>
+<li>the presence of the <code>else</code> clause: <code>if ... else ... end</code>,</li>
+<li>an <code>else</code> body: <code>if ... else  do_something_different  end</code>,</li>
+<li>function (or method) call: <code>a_function(arguments)</code>, <code>receiver.a_method(arguments)</code>,</li>
+<li>every argument of the function (or method) call (including receiver),</li>
+<li>a constant: <code>42</code>,</li>
+<li>the fact that function (or method) returns early: <code>if ...  return 42  end</code>,</li>
+<li>what the function (or method) returns,</li>
+<li>the presence of the iteration: <code>...each do |x| ... end</code>,</li>
+<li>what we iterate through: <code>list.each do ...</code>,</li>
+<li>and how we are iterating: <code>...each do |x|  do_something_with(x)  end</code>,</li>
+<li>and so on.</li>
+</ul>
+
+
+<p>I think the idea &ldquo;Knowledge in Production Code&rdquo; should be more or less precise. More interesting is what we can do with knowledge in our system: we can re-organize knowledge differently keeping all the behaviors of the system - everyone calls this Refactoring nowadays; or do the opposite: change bits of knowledge without modifying the structure of the code - we will call one such change a Mutation:</p>
+
+<h2>Mutation</h2>
+
+<p>Mutation - granular change of the knowledge in the system that changes the behavior of the application. Let&rsquo;s take a look at the simple example:</p>
+
+<pre><code class="ruby">if cell_is_alive
+  do_this
+else
+  do_some_other_thing
+end
+</code></pre>
+
+<p>This code is maybe a part of some cell organism simulation (like Game Of Life or similar). Let&rsquo;s see which different mutations can be applied here:</p>
+
+<ul>
+<li>change the <code>if</code> condition always to be <code>true</code>: <code>if true ...</code>,</li>
+<li>change the <code>if</code> condition always to be <code>false</code>: <code>if false ...</code>,</li>
+<li>invert the <code>if</code> condition: <code>if !cell_is_alive</code>,</li>
+<li>commenting out the <code>if</code> body: <code># do_this</code>,</li>
+<li>commenting out the <code>else</code> body: <code># do_some_other_thing</code>.</li>
+</ul>
+
+
+<p>With that done, let&rsquo;s take a look at how production code and its test suite relate to each other.</p>
+
+<h2>Code and Test Suite Relationship</h2>
+
+<p>So, how does the test suite affect production code? First, it makes sure the production code is correct. Also, good test suite enables quick and ruthless refactoring by eliminating (or minimizing) the risks of breaking it. Well-crafted test suite gives us the power and courage to introduce changes. Also, test code always couples to the production code it is testing in one way or another.</p>
+
+<p>Okay, how does the production system affect its test suite? As tests couple to the production code they test, the changes in production system may cause ripple effects on its test suite. Practically speaking, a mutation should always lead to a test failure if the test suite is good enough because its test suite should verify every tiny bit of knowledge in the production code (except, maybe, some configuration).</p>
+
+<p>Such knowledge change is an act of assertion about the presence of the test. When information is covered by test suite well, there should be a test failure. If, after the introduction of the mutation, there is no test failure, this is a failed assertion about test presence or correctness. So one might say:</p>
+
+<blockquote><p>Knowledge Change is a Test for the Test</p></blockquote>
+
+<p>That is a fascinating idea since it implies we can use production code can as a test suite for its test suite, which may enable TDD-like iterative development of the test suite that does not exist.</p>
+
+<p>So far, we have covered the idea of knowledge in the production code, explored ways of modifying this information in a way that changes the behavior - we call it a mutation, and also we explored the mirror-like relation between production code and its test suite. We have still much ground to cover, let&rsquo;s dive in:</p>
+
+<h2>Most Useful Coverage Metric</h2>
+
+<p>There is a few well-known test coverage metrics that are being used quite often by software engineering teams, such as:</p>
+
+<ul>
+<li>Line coverage, and</li>
+<li>Branch coverage.</li>
+</ul>
+
+
+<p>There is another one, called Path coverage - it is about coverage of all possible code paths in the system, which quickly becomes impractical as the application size grows because of the exponential growth of the amount of these different code paths.</p>
+
+<p>Line coverage and Branch coverage (also, path coverage) all share one major problem - covered line/branch/path does not mean test suite verifies it - only executes it. Great example: remove all the assertions from your tests and the coverage metric will stay the same.</p>
+
+<p>So, what if we could introduce all possible and sane mutations to our code and count how much of them cause test failure? - We will get the knowledge coverage metric. Another name for it is Test Semantic Stability, and it can range from 0% to 100%. Even 100% line/path coverage can easily yield 0% Test Semantic Stability. This metric proves that code is, indeed well-tested and verified (although, it does not say anything about tests&#8217; design and cleanliness): make one assertion incorrect, or not precise enough and the metric will go down by a few mutations.</p>
+
+<p>That makes Test Semantic Stability the most useful coverage metric.</p>
+
+<p>So, how do we check if our test(s) cover well some bit of knowledge in the system? We break it! - Introduce a tiny granular breaking change to that bit of knowledge. The test suite should fail. If it does not - information is not covered well enough. That leads us to the technique that allows us to keep Semantic Test Stability up high:</p>
+
+<h2>Mutational Testing</h2>
+
+<ol>
+<li>Narrow the scope of work to a single granular piece of knowledge.</li>
+<li>Break this knowledge (introduce simple granular breaking change - mutation).</li>
+<li>Make sure there is a test suite failure.</li>
+<li>Restore the knowledge to its original state (CTRL+Z, ideally).</li>
+</ol>
+
+
+<p>Let&rsquo;s see it in action:</p>
+
+<pre><code class="ruby">if cell_is_alive
+  do_this
+else
+  do_some_other_thing
+end
+</code></pre>
+
+<p>First, we need to narrow our scope to a single bit of knowledge. For example, the <code>if</code> condition: <code>if cell_is_alive</code>. Then we need to introduce the mutation <code>if true,</code> and we need to make sure that there is a test failure. Let&rsquo;s run the test suite:</p>
+
+<pre><code>$ rake test
+....
+
+Finished in 0.02343 seconds (files took 0.11584 seconds to load)
+4 examples, 0 failures
+</code></pre>
+
+<p>Oh no! It did not fail anywhere! That means that we have a &ldquo;failing test&rdquo; for our test suite. In this case, we need to add the test for the negative case:</p>
+
+<pre><code class="ruby">cell_is_alive = false
+expect(did_some_other_thing).to eq(true)
+</code></pre>
+
+<p>When we run the test suite:</p>
+
+<pre><code>$ rake test
+....F
+
+Finished in 0.02343 seconds (files took 0.11584 seconds to load)
+5 examples, 1 failure
+</code></pre>
+
+<p>It fails! Great - that means that our test for the test suite is passing now. As the last step of this mutational testing iteration we have to return the code to its original state:</p>
+
+<pre><code class="ruby">if cell_is_alive
+  do_this
+else
+  do_some_other_thing
+end
+</code></pre>
+
+<p>After doing this, our tests should pass!:</p>
+
+<pre><code>$ rake test
+.....
+
+Finished in 0.02343 seconds (files took 0.11584 seconds to load)
+5 examples, 0 failures
+</code></pre>
+
+<p>They do. That concludes one iteration of the mutational testing. Usually, to accomplish any useful behavior we would like to combine many bits of knowledge. If we want to understand better how the system works, we need to focus on groups of bits of knowledge. This is what Explorative TDD technique is about:</p>
+
+<h2>Explorative Test-Driven Development</h2>
+
+<p>The technique used to increase our understanding of the Legacy Code while enhancing its Test Semantic Stability (the most useful coverage metric). The process roughly looks like that:</p>
+
+<ol>
+<li>Narrow scope to some manageable knowledge and isolate it (manageable knowledge = method/function/class/module).</li>
+<li>Read, try to understand, pick a granular piece of knowledge, and make an assumption to which behavior it contributes and how.</li>
+<li>Write a test to verify this assumption.</li>
+<li>Make sure test passes (by altering the assumption or fixing production code (bugs)). PS: be careful with bugs, since they might be weird behaviors that are bringing someone tremendous value. When finding one of these, consult with stakeholders if that is a bug or a feature.</li>
+<li>Apply Mutational Testing to each related granular piece of knowledge to verify that the understanding (and the test) is correct (this may introduce more tests).</li>
+<li>Go back to 2</li>
+</ol>
+
+
+<p>At this point, a nice example would help understand that technique:</p>
+
+<h2>Step-by-Step Example</h2>
+
+<p>Let&rsquo;s imagine that we have some legacy system, that is a social network and allows for users to receive notifications on things that happened. You need to change slightly what &ldquo;Followed&rdquo; notification means. The code looks like this, and it does not have any tests:</p>
+
+<pre><code class="ruby">class User
+  def notifications
+    notifications = Database
+      .where("notifications") do |x|
+        (x[1][0] == "followed_notification" &amp;&amp; x[1][2] == id.to_s) ||
+        (x[1][0] == "favorited_notification" &amp;&amp; StatusUpdate.find(x[1][2].to_i).owner_id == id) ||
+        (x[1][0] == "replied_notification" &amp;&amp; StatusUpdate.find(x[1][2].to_i).owner_id == id) ||
+        (x[1][0] == "reposted_notification" &amp;&amp; StatusUpdate.find(x[1][2].to_i).owner_id == id)
+      end.map do |row|
+        id, values = row
+        kind = values[0]
+
+        if kind == "followed_notification"
+          {
+            kind: kind,
+            follower: User.find(values[1].to_i),
+            user: User.find(values[2].to_i),
+          }
+        elsif kind == "favorited_notification"
+          {
+            kind: kind,
+            favoriter: User.find(values[1].to_i),
+            status_update: StatusUpdate.find(values[2].to_i),
+          }
+        elsif kind == "replied_notification"
+          {
+            kind: kind,
+            sender: User.find(values[1].to_i),
+            status_update: StatusUpdate.find(values[2].to_i),
+            reply: StatusUpdate.find(values[3].to_i),
+          }
+        elsif kind == "reposted_notification"
+          {
+            kind: kind,
+            reposter: User.find(values[1].to_i),
+            status_update: StatusUpdate.find(values[2].to_i),
+          }
+        end
+      end
+
+    Analytics.tag({name: "fetch_notifications", count: notifications.count})
+    notifications
+  end
+end
+</code></pre>
+
+<h3>Narrow &amp; Isolate</h3>
+
+<p>The first step is to isolate this code and make it testable. For this we need to find a low-risk way to refactor all dependencies that this code has:</p>
+
+<ul>
+<li><code>Database.where</code>,</li>
+<li><code>StatusUpdate.find</code>,</li>
+<li><code>User.find</code>, and</li>
+<li><code>Analytics.tag</code>.</li>
+</ul>
+
+
+<p>We can promote these things to the following roles:</p>
+
+<ul>
+<li><code>Database.where</code> => <code>@table_reader.where</code>,</li>
+<li><code>StatusUpdate.find</code> => <code>@status_update_finder.where</code>,</li>
+<li><code>User.find</code> => <code>@user_finder.find</code>, and</li>
+<li><code>Analytics.tag</code> => <code>@event_tagger.tag</code>.</li>
+</ul>
+
+
+<p>We should be able to have these default to their original values and also allow to substitute different implementation from the test. Also, it is helpful to pull out this method into the clean environment, where accessing a dependency, without us substituting it - is not possible, for example in a separate code-base, so that we can write a test &ldquo;it works&rdquo; and see what fails. The first failure is, of course, all our referenced classes are missing. Let&rsquo;s define all of them without any implementation and make them fail at runtime if we ever call them from our testing environment:</p>
+
+<pre><code class="ruby">class Database
+  def self.where(table_name)
+    fail "Database:nope"
+  end
+end
+
+class Analytics
+  def self.tag(event)
+    fail "Analytics:nope"
+  end
+end
+
+class StatusUpdate
+  def self.find(id)
+    fail "StatusUpdate:nope"
+  end
+end
+
+class User
+  # .. def notifications ..
+
+  def self.find(id)
+    fail "User:nope"
+  end
+end
+</code></pre>
+
+<p>In our tests, we need to implement our substitutes. For now, they all should be just simple double/stubs:</p>
+
+<pre><code class="ruby">class FakeTableReader
+  def where(table_name, &amp;filter)
+    [[nil, ["favorited_notification"]]]
+  end
+end
+
+class FakeEventTagger
+  def tag(event)
+
+  end
+end
+
+class FakeUserFinder
+  def find(id)
+    User.new
+  end
+end
+
+class FakeStatusUpdateFinder
+  def find(id)
+    StatusUpdate.new
+  end
+end
+</code></pre>
+
+<p>Then, we should write the simplest test, that sets up the stage and substitutes all the collaborators and runs the function under the test (no assertion, we are just verifying that we indeed replaced everything right):</p>
+
+<pre><code class="ruby">it "works" do
+  fake_table_reader = FakeTableReader.new
+  fake_event_tagger = FakeEventTagger.new
+  fake_user_finder = FakeUserFinder.new
+  fake_status_update_finder = FakeStatusUpdateFinder.new
+
+  user = User.new
+             .with_table_reader(fake_table_reader)
+             .with_event_tagger(fake_event_tagger)
+             .with_user_finder(fake_user_finder)
+             .with_status_update_finder(fake_status_update_finder)
+
+  user.notifications
+end
+</code></pre>
+
+<p>Since we have not defined all the <code>with_*</code> methods yet, let&rsquo;s define them now and also define getters for particular instance variables (properties):</p>
+
+<pre><code class="ruby">class User
+  # ...
+
+  def table_reader
+    @table_reader ||= Database
+  end
+
+  def event_tagger
+    @event_tagger ||= Analytics
+  end
+
+  def user_finder
+    @user_finder || User
+  end
+
+  def status_update_finder
+    @status_update_finder || StatusUpdate
+  end
+
+  def with_table_reader(table_reader)
+    @table_reader = table_reader
+    self
+  end
+
+  def with_event_tagger(event_tagger)
+    @event_tagger = event_tagger
+    self
+  end
+
+  def with_user_finder(user_finder)
+    @user_finder = user_finder
+    self
+  end
+
+  def with_status_update_finder(status_update_finder)
+    @status_update_finder = status_update_finder
+    self
+  end
+end
+</code></pre>
+
+<p>If we run our test, it should fail with <code>RuntimeError: Database:nope</code> in here:</p>
+
+<pre><code class="ruby">def notifications
+  notifications = Database            # &lt;&lt;&lt;&lt;&lt;&lt;
+    .where("notifications") do |x|
+</code></pre>
+
+<p>To fix that, we will need to replace <code>Database</code> with <code>table_reader</code> getter. That will correct the current error, and we will get the next one: <code>RuntimeError User:nope</code>. Following all these failures and replacing direct dependencies with getters we will finally get a Green Bar (passing the test). Our function under the test will look like that:</p>
+
+<pre><code class="ruby">class User
+  def notifications
+    notifications = table_reader
+      .where("notifications") do |x|
+        (x[1][0] == "followed_notification" &amp;&amp; x[1][2] == id.to_s) ||
+            (x[1][0] == "favorited_notification" &amp;&amp; status_update_finder.find(x[1][2].to_i).owner_id == id) ||
+            (x[1][0] == "replied_notification" &amp;&amp; status_update_finder.find(x[1][2].to_i).owner_id == id) ||
+            (x[1][0] == "reposted_notification" &amp;&amp; status_update_finder.find(x[1][2].to_i).owner_id == id)
+      end.map do |row|
+        id, values = row
+        kind = values[0]
+
+        if kind == "followed_notification"
+          {
+              kind: kind,
+              follower: user_finder.find(values[1].to_i),
+              user: user_finder.find(values[2].to_i),
+          }
+        elsif kind == "favorited_notification"
+          {
+              kind: kind,
+              favoriter: user_finder.find(values[1].to_i),
+              status_update: status_update_finder.find(values[2].to_i),
+          }
+        elsif kind == "replied_notification"
+          {
+              kind: kind,
+              sender: user_finder.find(values[1].to_i),
+              status_update: status_update_finder.find(values[2].to_i),
+              reply: status_update_finder.find(values[3].to_i),
+          }
+        elsif kind == "reposted_notification"
+          {
+              kind: kind,
+              reposter: user_finder.find(values[1].to_i),
+              status_update: status_update_finder.find(values[2].to_i),
+          }
+        end
+      end
+
+    event_tagger.tag({name: "fetch_notifications", count: notifications.count})
+    notifications
+  end
+
+  # ...
+end
+</code></pre>
+
+<p>Structure and logic of the function did not change at all, but now all the dependencies are injectable and can be used to test it nicely. That concludes the first step - narrow &amp; isolate. Now it is time to select a group of knowledge bits that we would like to cover with tests. Since we want to change how <code>followed_notification</code> is behaving, we might as well start checking there.</p>
+
+<p><div class="v2-subscribe--inline">
+  
+
+
+
+
+  
+
+
+<div class="mc_embed_signup">
+  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div class="mc_embed_signup_scroll">
+      <h3>Want more articles like this delivered to your inbox?</h3>
+      <div class="mc-field-group">
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_7f9f94015a" tabindex="-1" value=""></div>
+        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
+        <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
+      </div>
+      <div class="">
+        <em>(we respect your privacy, unsubscribe at any time)</em>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+</div>
+</p>
+
+<h3>Trying to Understand &amp; Writing 1st Test</h3>
+
+<p>The group of knowledge bits that are related to <code>followed_notification</code> looks like this:</p>
+
+<pre><code class="ruby">    notifications = table_reader
+      .where("notifications") do |x|
+        (x[1][0] == "followed_notification" &amp;&amp; x[1][2] == id.to_s) ||
+        # ...
+      end.map do |row|
+        id, values = row
+        kind = values[0]
+
+        if kind == "followed_notification"
+          {
+              kind: kind,
+              follower: user_finder.find(values[1].to_i),
+              user: user_finder.find(values[2].to_i),
+          }
+        elsif #...
+          # ...
+        end
+      end
+
+    # ...
+    notifications
+</code></pre>
+
+<p>Now we want to write a test. At the first thought, something like:</p>
+
+<pre><code class="ruby">it "obtains followed notifications for the user" do
+  # first create a user with all fakes (extracted to a helper method)
+  user = create_user_with_fakes
+
+  # then instruct our table reader fake to return prepared data
+  fake_table_reader
+      .insert("notifications",
+              [1001, ["followed_notification", 2001, 3001]])
+
+  # and expect that we have exactly one notification
+  expect(user.notifications.count).to eq(1)
+end
+
+def create_user_with_fakes
+  User.new(567)
+      .with_table_reader(fake_table_reader)
+      .with_event_tagger(fake_event_tagger)
+      .with_user_finder(fake_user_finder)
+      .with_status_update_finder(fake_status_update_finder)
+end
+
+class FakeTableReader
+  def insert(table_name, row)
+    tables(table_name) &lt;&lt; row
+  end
+
+  def tables(table_name)
+    @tables ||= {}
+    @tables[table_name] ||= []
+  end
+
+  def where(table_name, &amp;filter)
+    tables(table_name).select(&amp;filter)
+  end
+end
+</code></pre>
+
+<h3>Making It Pass</h3>
+
+<p>This test fails right away - we don&rsquo;t have any notifications. This is strange. Let&rsquo;s take a closer look on the filtering that we are doing:</p>
+
+<pre><code class="ruby">(x[1][0] == "followed_notification" &amp;&amp; x[1][2] == id.to_s) ||
+</code></pre>
+
+<p>I believe, we have satisfied the first part of this condition, but not the second one. The user id is not the same as the 3rd element of this row. Let&rsquo;s make them same:</p>
+
+<pre><code class="ruby">fake_table_reader
+    .insert("notifications",
+            [1001, ["followed_notification", 2001, 567]])
+                                               # ^ here ^
+</code></pre>
+
+<p>This fails again! This code just keeps proving our assumptions wrong. I think we need to take a careful look at that <code>it.to_s</code>. <code>.to_s</code> is a conversion to string, so the foreign key is stored as a string (who could have thought?). Let&rsquo;s try to make it work:</p>
+
+<pre><code class="ruby">fake_table_reader
+    .insert("notifications",
+            [1001, ["followed_notification", 2001, "567"]])
+                                                # ^ here ^
+</code></pre>
+
+<h3>Applying Mutational Testing</h3>
+
+<p>If we run our tests, they pass! Great, now we know that this function is capable of obtaining some followed notifications. Of course, our coverage right now is super small. Let&rsquo;s apply mutational testing to it. We should start from the condition:</p>
+
+<pre><code class="ruby">(x[1][0] == "followed_notification" &amp;&amp; x[1][2] == id.to_s) ||
+</code></pre>
+
+<p>First, let&rsquo;s replace the whole thing with <code>false</code>:</p>
+
+<pre><code class="ruby">false ||
+</code></pre>
+
+<p>The test fails - mutant does not survive - our tests are covering for this mutation. Let&rsquo;s try another one: replace the whole thing with <code>true</code>:</p>
+
+<pre><code class="ruby">true ||
+</code></pre>
+
+<p>Our tests pass - mutant survives - this is a failing test for our tests. In this case, it is reasonable to write a new test for a case, when the full filtering expression should yield <code>false</code> - when we have notifications of an invalid kind:</p>
+
+<pre><code class="ruby">it "ignores notifications of an invalid kind" do
+  user = create_user_with_fakes
+
+  fake_table_reader
+      .insert("notifications",
+              [1001, ["invalid", 2001, "567"]])
+
+  expect(user.notifications.count).to eq(0)
+end
+</code></pre>
+
+<p>As a result, we should not get any notifications. After running, we see that our test fail. Great! This mutant no longer survives. Let&rsquo;s see if our tests will pass when we undo the mutation:</p>
+
+<pre><code class="ruby">(x[1][0] == "followed_notification" &amp;&amp; x[1][2] == id.to_s) ||
+</code></pre>
+
+<p>And they all pass! Next mutation is inverting the whole condition:</p>
+
+<pre><code class="ruby">! (x[1][0] == "followed_notification" &amp;&amp; x[1][2] == id.to_s) ||
+</code></pre>
+
+<p>All our tests are RED. Which means that this mutant does not survive and the test for our test is green. Now, we should dig deeper into the parts of the condition itself:</p>
+
+<ul>
+<li><code>x[1][0] == "followed_notification"</code>: replacing with <code>true</code>, <code>false</code>, and inverting it; also, changing numeric and string constants; These all changes did not produce any surviving mutants, so we do not need to introduce new tests.</li>
+<li><code>x[1][2] == id.to_s</code>: replacing with <code>true</code>, <code>false</code> and inverting it; also, changing numeric constants.</li>
+</ul>
+
+
+<p>Replacing <code>x[1][2] == id.to_s</code> with <code>true</code>, apparently, leaves all our tests passing - a mutant that survives - a failing test for our test suite. It is time to add this test - when we have notifications of some different user:</p>
+
+<pre><code class="ruby">it "ignores notifications of different user" do
+  user = create_user_with_fakes
+
+  fake_table_reader
+      .insert("notifications",
+              [1001, ["followed_notification", 2001, "other user"]])
+                                                   # ^   here   ^
+
+  expect(user.notifications.count).to eq(0)
+end
+</code></pre>
+
+<p>As you can see, having a record with the different user id (in this case, even nonsensical user id) makes our test fail, which means that this mutant no longer survives. Let&rsquo;s see if undoing the mutation will turn our tests GREEN:</p>
+
+<pre><code class="ruby">(... &amp;&amp; x[1][2] == id.to_s) ||
+</code></pre>
+
+<p>All our tests pass again. I think we have finished testing the condition in the filter. I would not touch the conditions that are related to different kinds of notifications, as we want to introduce changes only to &ldquo;Followed&rdquo; notifications. So we can dig further into the logic of our group of knowledge bits:</p>
+
+<pre><code class="ruby">id, values = row
+kind = values[0]
+
+if kind == "followed_notification"
+  {
+      kind: kind,
+      follower: user_finder.find(values[1].to_i),
+      user: user_finder.find(values[2].to_i),
+  }
+elsif #...
+  # ...
+end
+</code></pre>
+
+<p>So, we can see that we split the row into its <code>id</code> and all the other values of the notification record. Apparently, the first value is responsible for the kind, where we are switching on it to construct correct object (in this case just a lump of data - hash map). So let&rsquo;s try to mutate the numeric constant in <code>kind = values[0]</code>:</p>
+
+<pre><code class="ruby">kind = values[1]
+          #  ^^^
+</code></pre>
+
+<p>All our tests still pass. That is a failing test for our test suite. We ought to write a new test now. Where we should verify that it constructs correct lumps of data:</p>
+
+<pre><code class="ruby">it "constructs correct followed notification" do
+  user = create_user_with_fakes
+
+  fake_table_reader
+      .insert("notifications",
+              [1001, ["followed_notification", 2001, "567"]])
+
+  expect(user.notifications[0][:kind]).to eq("followed_notification")
+end
+</code></pre>
+
+<p>This test fails, because our <code>user.notifications[0]</code> Is <code>nil</code>, because none of <code>if</code> or <code>elsif</code> matched the <code>kind</code> variable and in Ruby, by default any function returns a <code>nil</code> value. This failing test means that we no longer have surviving mutant and let&rsquo;s see if undoing that mutation will make our tests pass:</p>
+
+<pre><code class="ruby">kind = values[0]
+          #  ^^^
+</code></pre>
+
+<p>It does, all our tests are green now. We should continue like this until we understand code enough and have enough confidence in our tests so that we can make our desired change to the system. When we think we have finished, we should integrate isolated code back to the legacy system, leaving all the fakes and injection capabilities in place. We were separating this code only to make sure, that we are not calling any dependencies on accident (while they just work silently). While integrating it back we, of course, get rid of <code>fail "NAME:nope"</code> implementations of collaborators. With such approach, integrating the code back should be as simple as copy-pasting the test suite code and production code (function under the test, and injecting facilities) without copying always-failing collaborators.</p>
+
+<p>We will have to wrap up the example, and if you, my reader, would like to continue applying Explorative TDD to this code, you can find the code here: <a href="https://github.com/waterlink/explorative-tdd-blog-post">https://github.com/waterlink/explorative-tdd-blog-post</a> (specifically, <code>spec/user_spec.rb</code>). The function originates from this example project: <a href="https://github.com/waterlink/lemon">https://github.com/waterlink/lemon</a></p>
+
+<h2>Can Explorative TDD Help Me Outside of Legacy Code?</h2>
+
+<p>The answer is yes! I use Explorative TDD (as well as mutational testing) in following cases:</p>
+
+<ul>
+<li>During big refactorings, such as Extract class/module/package. The technique helps you quickly understand which tests have to be moved as well to the new test suite (only if you want to transfer them).</li>
+<li>When refactoring tests. The technique helps you to verify if your tests are still working as they are intended to and if they are still semantically stable (they catch a majority of mutants).</li>
+<li>To measure rigidity of test-to-code coupling. If a single mutation leads to half of your test suite failing (even irrelevant tests) - tests need refactoring.</li>
+</ul>
+
+
+<h2>Bottom Line</h2>
+
+<p>Today we have learned about concepts like &ldquo;Knowledge in production code&rdquo; and &ldquo;Mutation.&rdquo; Also, we learned what Test Semantic Stability is the best code coverage metric. We have seen Mutational Testing and Explorative TDD techniques at work. We could start applying these techniques (after some practice) to stop fearing the legacy code and just handle it as some tedious routine operation.</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Your Own Testing Framework. Part 5]]></title>
@@ -150,8 +845,6 @@ function runTestSuite(testSuiteConstructor, options) {
   
   
   
-  
-
 
 <div class="mc_embed_signup">
   <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=6b61a409a5" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
@@ -2084,395 +2777,6 @@ end
 
 
 <p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
-
-<ul>
-<li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD (these series),</li>
-<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
-<li>Open-Closed Principle - changing behavior by adding new code,</li>
-<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, Test-Driven Development screencasts and so much more!</li>
-</ul>
-
-
-<h2>Thanks!</h2>
-
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Getting Stuck While Doing TDD. Part 1: Example]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/"/>
-    <updated>2016-08-30T15:27:30+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example</id>
-    <content type="html"><![CDATA[<p>Following 3 rules of TDD sounds really simple at first. In practice, there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called &ldquo;getting stuck&rdquo; in TDD. In this article, we will explore how exactly this happens and how to prevent that.</p>
-
-<p>Code examples today will be in Ruby programming language. The technique itself is, of course, language-agnostic.</p>
-
-<h2>TL;DR</h2>
-
-<p>&ldquo;Getting stuck&rdquo; happens for a couple of reasons:</p>
-
-<ul>
-<li>wrong order of tests</li>
-<li>production code is not getting more general with each test</li>
-</ul>
-
-
-<!--more-->
-
-
-<p>This is a series of articles:</p>
-
-<ol>
-<li>Part 1: Example (reading this)</li>
-<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
-<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
-</ol>
-
-
-<h2>&ldquo;Getting Stuck&rdquo; in TDD</h2>
-
-<p>Usually &ldquo;Getting Stuck&rdquo; follows this pattern:</p>
-
-<ul>
-<li>write some test and implement it via &ldquo;simplest thing that might possibly work&rdquo;,</li>
-<li>write another test and implement it again in a non-general manner,</li>
-<li>write some more tests in that fashion, while never addressing the fact that production code now looks completely wrong from what it should probably be looking like,</li>
-<li>write a new test, that forces us to completely rewrite production code in a complete algorithm just to make it pass.</li>
-</ul>
-
-
-<p>This last step usually takes minutes to hours depending on the complexity of the problem at hand. Additionally, the first few tests are basically wasted time since they did not produce any bits of knowledge in the production code that persisted in production code in the end. Even worse, chances are that the algorithm that we have just written is not fully covered by current tests, since we have written it in one go just to make current failing test pass - this is no longer correct TDD and can not guarantee high test coverage, and, therefore, can not guarantee high confidence anymore.</p>
-
-<p>Let&rsquo;s go through a small example on how one can get stuck in TDD:</p>
-
-<h2>Order Kind Validation - Getting Stuck</h2>
-
-<p>Let&rsquo;s define the problem at hand first. We have some sort of order request as an input to our system and we need to validate that its kind is correct:</p>
-
-<ul>
-<li>valid order kinds: <code>private</code>, <code>corporate</code>, <code>bundle</code>,</li>
-<li>order kinds can be combined,</li>
-<li><code>private</code> and <code>corporate</code> order kinds can not be combined, otherwise <code>InvalidOrderError</code> with message <code>Order kind can not be 'private' and 'corporate' at the same time</code>,</li>
-<li>either <code>private</code> or <code>corporate</code> should be always present, otherwise <code>InvalidOrderError</code> with message <code>Order kind should be 'private' or 'corporate'</code>,</li>
-<li>if order kind is not in the above list, then we need to raise <code>InvalidOrderError</code> with message <code>Order kind can be one of: 'private', 'corporate', 'bundle'</code>,</li>
-<li>if order kind is not present or an empty string, then we need to raise <code>InvalidOrderError</code> with message <code>Order kind can not be empty</code>.</li>
-</ul>
-
-
-<p>This is a fairly simple problem and it is easy to get stuck while doing TDD here. So let&rsquo;s write our first test: &ldquo;When order has no order_kind, then we should get InvalidOrderError with message &lsquo;Order kind can not be empty&rsquo;&rdquo;:</p>
-
-<pre><code class="ruby">RSpec.describe OrderKindValidator do
-  it "fails with a message about order kind being empty when it is absent" do
-    validator = OrderKindValidator.new
-
-    expect { validator.validate({ items: 42 }) }
-        .to raise_error(InvalidOrderError, "Order kind can not be empty")
-  end
-end
-</code></pre>
-
-<p>And the simplest implementation possible:</p>
-
-<pre><code class="ruby">class OrderKindValidator
-  def validate(order)
-    raise InvalidOrderError.new("Order kind can not be empty")
-  end
-end
-
-class InvalidOrderError &lt; StandardError
-end
-</code></pre>
-
-<p>Next test is our next simplest edge case - when kind&rsquo;s value is <code>nil</code>:</p>
-
-<pre><code class="ruby">it "fails with a message about order kind being empty when it is nil" do
-  validator = OrderKindValidator.new
-
-  expect { validator.validate({items: 42, kind: nil }) }
-      .to raise_error(InvalidOrderError, "Order kind can not be empty")
-end
-</code></pre>
-
-<p>It does not fail at all, so we don&rsquo;t have any reason to change the production code. We can already spot a little duplication - <code>validator</code> variable. Let&rsquo;s extract it as a named subject of the test suite:</p>
-
-<pre><code class="ruby">subject(:validator) { OrderKindValidator.new }
-</code></pre>
-
-<p>And <code>OrderKindValidator</code> can be replaced with <code>described_class</code> (RSpec feature), so that we will not have to change too much in case we wanted to change name of the class:</p>
-
-<pre><code class="ruby">subject(:validator) { described_class.new }
-</code></pre>
-
-<p>Next simplest edge case - when kind is an empty array:</p>
-
-<pre><code class="ruby">it "fails with a message about order kind being empty when it has zero elements" do
-  expect { validator.validate({items: 42, kind: [] }) }
-      .to raise_error(InvalidOrderError, "Order kind can not be empty")
-end
-</code></pre>
-
-<p>I believe I am spotting annoying pattern now:</p>
-
-<pre><code class="ruby">it "fails with message MESSAGE when it is KIND_CASE" do
-  expect { validator.validate({items: 42, kind: KIND_VALUE}) }
-    .to raise_error(InvalidOrderError, MESSAGE)
-end
-</code></pre>
-
-<p>It would be really nice to write it in this fashion:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can not be empty").when_order_kind_is_absent
-it_fails_with("Order kind can not be empty").when_order_kind_is nil
-it_fails_with("Order kind can not be empty").when_order_kind_is []
-</code></pre>
-
-<p>And as another duplication piles up:</p>
-
-<pre><code class="ruby">it_fails_with_order_kind_not_empty = it_fails_with("Order kind can not be empty")
-
-it_fails_with_order_kind_not_empty.when_order_kind_is_absent
-it_fails_with_order_kind_not_empty.when_order_kind_is nil
-it_fails_with_order_kind_not_empty.when_order_kind_is []
-</code></pre>
-
-<p>Now the next tests look very easy and simple:</p>
-
-<pre><code class="ruby">it_fails_with_order_kind_not_empty.when_order_kind_is [nil]
-it_fails_with_order_kind_not_empty.when_order_kind_is [""]
-it_fails_with_order_kind_not_empty.when_order_kind_is [nil, nil]
-it_fails_with_order_kind_not_empty.when_order_kind_is ["", ""]
-it_fails_with_order_kind_not_empty.when_order_kind_is ["private", ""]
-it_fails_with_order_kind_not_empty.when_order_kind_is ["private", nil]
-</code></pre>
-
-<p>And they all pass right from the go. The implementation for the <code>it_fails_with</code> is looking like this:</p>
-
-<pre><code class="ruby">RSpec.describe OrderKindValidator do
-  class ItFailsWith
-    def initialize(spec, expected_message)
-      @spec = spec
-      @expected_message = expected_message
-    end
-
-    def when_order_kind_is_absent
-      expect_failure("absent", {items: 42})
-    end
-
-    def when_order_kind_is(value)
-      expect_failure(value.inspect, {items: 42, kind: value})
-    end
-
-    private
-
-    def expect_failure(feature, order, expected_message = @expected_message)
-      @spec.it("fails with message #{expected_message.inspect} when order kind is #{feature}") do
-        expect { validator.validate(order) }
-            .to raise_error(InvalidOrderError, expected_message)
-      end
-    end
-  end
-
-  def self.it_fails_with(message)
-    ItFailsWith.new(self, message)
-  end
-end
-</code></pre>
-
-<p>So, let&rsquo;s write our next edge case - when order kind is invalid:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
-    .when_order_kind_is ["invalid"]
-</code></pre>
-
-<p>Pretty neat! And oh, it fails:</p>
-
-<pre><code>expected InvalidOrderError with
-  "Order kind can be one of: 'private', 'corporate', 'bundle'",
-got #&lt;InvalidOrderError: Order kind can not be empty&gt;
-</code></pre>
-
-<p>And the fix:</p>
-
-<pre><code class="ruby">def validate(order)
-  if order[:kind] == ["invalid"]
-    raise InvalidOrderError.new(
-        "Order kind can be one of: 'private', 'corporate', 'bundle'"
-    )
-  end
-
-  raise InvalidOrderError.new("Order kind can not be empty")
-end
-</code></pre>
-
-<p>Let&rsquo;s write our next test - when order kind is <code>private</code>:</p>
-
-<pre><code class="ruby">it_does_not_fail.when_order_kind_is ["private"]
-</code></pre>
-
-<p>This fails as expected with <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. And to make it pass we need to wrap second <code>raise</code> statement in the <code>if</code> condition:</p>
-
-<pre><code class="ruby">if order[:kind] != ["private"]
-  raise InvalidOrderError.new("Order kind can not be empty")
-end
-</code></pre>
-
-<p>The implementation for <code>it_does_not_fail</code> looks like that:</p>
-
-<pre><code class="ruby">class ItDoesNotFail
-  def initialize(spec)
-    @spec = spec
-  end
-
-  def when_order_kind_is(value)
-    @spec.it("does not fail when order kind is #{value.inspect}") do
-      expect { validator.validate({items: 42, kind: value}) }
-        .not_to raise_error
-    end
-  end
-end
-
-def self.it_does_not_fail
-  ItDoesNotFail.new(self)
-end
-</code></pre>
-
-<p>Let&rsquo;s write our next test:</p>
-
-<pre><code class="ruby">it_does_not_fail.when_order_kind_is ["corporate"]
-</code></pre>
-
-<p>And it fails with the expected error: <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. The fix is to amend our <code>if</code> condition with that case:</p>
-
-<pre><code class="ruby">if order[:kind] != ["private"] &amp;&amp; order[:kind] != ["corporate"]
-                                # ^  we have added this case  ^
-  raise InvalidOrderError.new("Order kind can not be empty")
-end
-</code></pre>
-
-<p>And the tests pass. Our next business rule is that one of <code>private</code> and <code>corporate</code> should be always present:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind should be 'private' or 'corporate'")
-    .when_order_kind_is ["bundle"]
-</code></pre>
-
-<p>As expected the test fails:</p>
-
-<pre><code>expected InvalidOrderError with
-  "Order kind should be 'private' or 'corporate'",
-got #&lt;InvalidOrderError: Order kind can not be empty&gt;
-</code></pre>
-
-<p>And to fix it we just need to sprinkle another <code>if</code> statement in the middle of the function:</p>
-
-<pre><code class="ruby">if order[:kind] == ["bundle"]
-  raise InvalidOrderError.new("Order kind should be 'private' or 'corporate'")
-end
-</code></pre>
-
-<p>As expected, the test passes. Now we should test the next business rule - order can not be of <code>private</code> and <code>corporate</code> kind at the same time:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
-    .when_order_kind_is %w(private corporate)
-</code></pre>
-
-<p>This, as expected, fails with error message:</p>
-
-<pre><code>expected InvalidOrderError with
-  "Order kind can not be 'private' and 'corporate' at the same time",
-got #&lt;InvalidOrderError: Order kind can not be empty&gt;
-</code></pre>
-
-<p>And easiest way to fix that is to add another <code>if</code> statement:</p>
-
-<pre><code class="ruby">if order[:kind] == %w(private corporate)
-  raise InvalidOrderError.new(
-      "Order kind can not be 'private' and 'corporate' at the same time"
-  )
-end
-</code></pre>
-
-<p>And it passes. Let&rsquo;s test that we can combine <code>private</code> or <code>corporate</code> with <code>bundle</code> order kinds:</p>
-
-<pre><code class="ruby">it_does_not_fail.when_order_kind_is %w(private bundle)
-</code></pre>
-
-<p>And it fails with error: <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. To fix this we will have to amend our last <code>if</code> condition in the function even more:</p>
-
-<pre><code class="ruby">if order[:kind] != ["private"] &amp;&amp; order[:kind] != ["corporate"] &amp;&amp;
-    order[:kind] != %w(private bundle)
-  # ^    this is our new condition    ^
-  raise InvalidOrderError.new("Order kind can not be empty")
-end
-</code></pre>
-
-<p>And the test passes. Let&rsquo;s refactor the code a bit:</p>
-
-<ul>
-<li>First, we should extract <code>order[:kind]</code> duplication to a local variable <code>kind</code></li>
-<li>Extract common parts of <code>raise</code> statement to the private method</li>
-</ul>
-
-
-<p>After this, <code>OrderKindValidator</code> will look a bit cleaner:</p>
-
-<pre><code class="ruby">class OrderKindValidator
-  def validate(order)
-    kind = order[:kind]
-
-    if kind == ["invalid"]
-      fail_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
-    end
-
-    if kind == ["bundle"]
-      fail_with("Order kind should be 'private' or 'corporate'")
-    end
-
-    if kind == %w(private corporate)
-      fail_with("Order kind can not be 'private' and 'corporate' at the same time")
-    end
-
-    if kind != ["private"] &amp;&amp; kind != ["corporate"] &amp;&amp;
-        kind != %w(private bundle)
-      fail_with("Order kind can not be empty")
-    end
-  end
-
-  private
-
-  def fail_with(message)
-    raise InvalidOrderError.new(message)
-  end
-end
-</code></pre>
-
-<p>Let&rsquo;s write our next test for the same business rule (now a corporate bundle):</p>
-
-<pre><code class="ruby">it_does_not_fail.when_order_kind_is %w(corporate bundle)
-</code></pre>
-
-<p>And it fails with error: <code>expected no Exception, got #&lt;InvalidOrderError: Order kind can not be empty&gt;</code>. To fix this we need to add <code>&amp;&amp; kind != %w(corporate bundle)</code> to our last <code>if</code> condition again.</p>
-
-<p>The code can be found in GitHub repository in <a href="https://github.com/waterlink/order_kind_validator/pull/1/files">an open pull request here</a>.</p>
-
-<p>Now it seems that we have implemented all the business rules (we have all tests for them). Or did we?</p>
-
-<h2>Bottom Line</h2>
-
-<p>Buggy <code>if</code>-riddled code is what we&rsquo;ve got. We will see why in the next part of &ldquo;Getting Stuck While Doing TDD&rdquo; series. Stay tuned!</p>
-
-<p>This is a series of articles:</p>
-
-<ol>
-<li>Part 1: Example (reading this)</li>
-<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
-<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
-</ol>
-
-
-<p>Today we have implemented our not-so-complex problem at hand while following 3 rules of TDD. The result was not of the best quality and we will take a look why in further articles of these series. You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
 
 <ul>
 <li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD (these series),</li>
