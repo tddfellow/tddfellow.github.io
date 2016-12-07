@@ -2,9 +2,14 @@
 <link href='http://fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
 
 <!-- Twitter Cards -->
+{% if page.twitter_image %}
+  {% assign twitter_image = page.twitter_image %}
+{% else %}
+  {% assign twitter_image = "/images/logo.png" %}
+{% endif %}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@waterlink000">
 <meta name="twitter:creator" content="@waterlink000">
 <meta name="twitter:title" content="{{ page.title }}">
 <meta name="twitter:description" content="{{ page.description }}">
-<meta name="twitter:image" content="http://www.tddfellow.com/images/logo.png">
+<meta name="twitter:image" content="{{ site.url }}{{ twitter_image }}">
