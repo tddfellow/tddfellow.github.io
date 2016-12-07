@@ -1,0 +1,480 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Mobile Waterfall. Being Agile Again - That TDD Fellow | Tech Blog | Screencasts</title>
+  <meta name="author" content="Oleksii Fedorov (waterlink)">
+
+  
+  <meta name="description" content="Have you ever worked with mobile platforms, such as Apple Store or Google Play? How much time it takes to release a new version of the application? &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.tddfellow.com/blog/2016/12/07/mobile-waterfall-being-agile-again/">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="That TDD Fellow | Tech Blog | Screencasts" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
+
+<!-- Twitter Cards -->
+
+  
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@waterlink000">
+<meta name="twitter:creator" content="@waterlink000">
+<meta name="twitter:title" content="Mobile Waterfall. Being Agile Again">
+<meta name="twitter:description" content="Have you ever worked with mobile platforms, such as Apple Store or Google Play? How much time it takes to release a new version of the application? They have ~2-4 days manual review of your mobile application. What do you think that means? - You can release your application to production no often than two times a week...">
+<meta name="twitter:image" content="http://www.tddfellow.com/images/waterfall.jpg">
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-73226470-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+<body  class="no-sidebar">
+  <header role="banner"><hgroup class="v2-header">
+  <ul class="v2-header__navigation">
+    <li class="v2-header__navigation__logo">
+      <h1><a href="/">TDD Fellow</a></h1>
+    </li>
+    <li><a href="/blog/archives">Archives</a></li>
+<li><a href="/about-me">About me</a></li>
+
+  </ul>
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/blog/categories/tdd-screencasts/">Screencasts</a></li>
+  <li><a href="/blog/categories/build-your-own-testing-framework/">Build Testing Framework</a></li>
+  <li><a href="/blog/categories/getting-stuck-while-doing-tdd/">Getting Stuck in TDD</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content" class="v2-content">
+      <aside class="v2-sidebar v2-sidebar--non-mobile">
+  <div class="v2-sidebar__subscribe-form v2-sidebar__item--mobile--top-only">
+	
+
+
+
+
+  
+
+
+<div class="mc_embed_signup">
+  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div class="mc_embed_signup_scroll">
+      <h3>Want more articles like this delivered to your inbox?</h3>
+      <div class="mc-field-group">
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_7f9f94015a" tabindex="-1" value=""></div>
+        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
+        <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
+      </div>
+      <div class="">
+        <em>(we respect your privacy, unsubscribe at any time)</em>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+</div>
+
+<div class="v2-sidebar__recent-posts v2-sidebar__item--mobile--bottom-only">
+	<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/10/19/do-more-with-baby-steps-tdd/">Do More With Baby-Steps TDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/30/highscore-kata/">HighScore Kata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
+      </li>
+    
+  </ul>
+</section>
+
+</div>
+
+</aside>
+
+
+<div class="v2-blog-post">
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Mobile Waterfall. Being Agile Again</h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2016-12-07T19:54:07+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>7</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>7:54 pm</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/agile/'>agile</a>, <a class='category' href='/blog/categories/android/'>android</a>, <a class='category' href='/blog/categories/dsl/'>dsl</a>, <a class='category' href='/blog/categories/ios/'>ios</a>, <a class='category' href='/blog/categories/microservices/'>microservices</a>, <a class='category' href='/blog/categories/mobile/'>mobile</a>, <a class='category' href='/blog/categories/waterfall/'>waterfall</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Have you ever worked with mobile platforms, such as Apple Store or Google Play? How much time it takes to release a new version of the application? They have ~2-4 days manual review of your mobile application. What do you think that means? - You can release your application to production no often than two times a week. It became much better around this year - before it was 1-1.5 weeks.</p>
+
+<p><img src="/images/waterfall.jpg" alt="waterfall" /></p>
+
+<!-- more -->
+
+
+<p>Would you like to deploy a bug fix? - Half a week. Unless it makes your application crash all the time. Then you can get it going in half a day or one day. Which is still pretty slow.</p>
+
+<p>Would you like to make a canary release to 1% of your users and test an assumption quickly using your analytics tools? - Forget it. Waiting for three days to get results on your assumption negates the benefits of the Canary release. You should be getting your feedback in minutes, not days!</p>
+
+<p>At such disadvantage deploy takes half a week and makes software development teams switch to much more defensive mode:</p>
+
+<ul>
+<li>more extensive end-to-end testing (slow), and</li>
+<li>more extensive manual QA before the release.</li>
+</ul>
+
+
+<p>That is Waterfall. Right there.</p>
+
+<h2>Being Agile Again</h2>
+
+<p>In that environment, how could we get our quick feedback back? - What if we had the ability to send logic in the form of Domain-Specific Language (DSL) from our server, that we can deploy to whenever we wish to? What if our mobile application could have interpreted this DSL and could have updated itself every time user starts the application while connected to the Internet?</p>
+
+<p>We would be able to get a quick feedback! It would make fast deploys possible and also it would allow us to do canary releases, which can enable us to be LEAN again - To be Agile again.</p>
+
+<p>This approach has a few problems:</p>
+
+<ul>
+<li>Reviewer can reject the application release. In this case, the developer has to negotiate with reviewers and explain that their business process requires such capabilities for their application to be quickly deployable. Exchange of few email and you can be Agile again.</li>
+<li>You would have to implement that DSL. Both: design the DSL and write the interpreter on the mobile application side. That is quite a significant investment of time. It is reasonable to implement only tiny part of such DSL and apply it only in places that need to be often changed, such as UI and business logic that everyone tries to fiddle with to optimize the KPIs of the mobile application.</li>
+<li>The approach does not guarantee quick deployability of 100% of the changes you need to make. Some changes will require an extension of DSL, and its interpreter, and native bindings. Surely, such change will have to be deployed via regular submit -> review -> wait four days -> release cycle. The tricky challenge is to balance what gets implemented in a DSL and what gets implemented in the native bindings for that DSL to achieve high enough portion of changes to be quickly deployable: about 90-95%; and keeping
+the DSL and interpreter complexity as low as you can.</li>
+</ul>
+
+
+<p>If you take the idea of such DSl and the interpreter to the extreme, you will wound up with the programming language. There is already such programming language and platform that has the same characteristics - Javascript + React Native. Nowadays, application stores allow to download javascript code updates from your server, but you have to deploy all native bindings via application store with a manual review; also, one can not change the essence of their application.</p>
+
+<p>Why would you want to go with your DSL instead of React Native?:</p>
+
+<ul>
+<li>You already have a native mobile application, and you have identified places that change just too often.</li>
+<li>The performance of the application is critical.</li>
+</ul>
+
+
+<h2>Example of the DSL</h2>
+
+<p>DSL might be as simple as Abstract Syntax Tree represented in JSON. Let&rsquo;s imagine that we have an application, where users can buy some items and now we want to contact the recommendation service and present them a NEW view with the list of recommendations. Normally, you would have to do a full development and full deployment via application store. With DSL you might end up just writing some JSON:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// chunk of logic A</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;subscribe&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="s2">&quot;event&quot;</span><span class="o">:</span> <span class="s2">&quot;user_has_liked_item&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;actions&quot;</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>        <span class="s2">&quot;request&quot;</span><span class="o">:</span> <span class="s2">&quot;/api/v1/recommendations/${event.item_id}&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;publish&quot;</span><span class="o">:</span> <span class="s2">&quot;received_recommendations&quot;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">]</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// chunk of logic B</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;subscribe&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="s2">&quot;event&quot;</span><span class="o">:</span> <span class="s2">&quot;received_recommendations&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;actions&quot;</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>        <span class="s2">&quot;render&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>          <span class="s2">&quot;view&quot;</span><span class="o">:</span> <span class="s2">&quot;item_list&quot;</span><span class="p">,</span>
+</span><span class='line'>          <span class="s2">&quot;data&quot;</span><span class="o">:</span> <span class="s2">&quot;${event.response.items}&quot;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">]</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Of course, parser and interpreter for this JSON, and actions (such as: <code>request</code> and <code>render</code>) are written in the native code and, therefore, have to be deployed via application store every time you change them or add a new capability. One can implement views in the native code, or represent them in DSL (aka simplified HTML + CSS).</p>
+
+<h2>Bottom Line</h2>
+
+<p>As an industry, we understand why different application store vendors want to review every release of every application:</p>
+
+<ul>
+<li>To maintain quality of the applications and avoid possible malware, and</li>
+<li>To preserve their revenue streams intact (paid application payments have to go through vendors, so they will be able to take a commission).</li>
+</ul>
+
+
+<p>Nevertheless, we need to reject manual review as a bad practice and aim for fully automated deployments; that deliver our new application releases to users in minutes. As an industry, we need to push companies running application stores to improve their process to enable us to do that.</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+</div>
+
+
+  <footer>
+    
+      <div class="v2-subscribe--inline">
+	
+	
+	
+	
+	
+	
+	
+
+<div class="mc_embed_signup">
+  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div class="mc_embed_signup_scroll">
+      <h3>Free Access to My Test-Driven Development Workshop!</h3>
+      <div class="mc-field-group">
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
+        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
+        <input type="submit" value="Claim" name="subscribe" class="button mc-embedded-subscribe">
+      </div>
+      <div class="seats-are-limited">
+        <em>Only first 20 subscribers get free seat. Everyone else gets 50% discount!</em>
+      </div>
+    </div>
+  </form>
+</div>
+
+</div>
+
+    
+
+    
+  
+
+
+
+  
+  <div class="expanded-author-card">
+    
+      <img class="author-photo" src="/about-me/oleksii-fedorov__small.jpg" />
+    
+
+    <div class="author-bio">Oleksii Fedorov is an Experienced Software Engineer, Software Craftsperson, Mentor, Polyglot, Public Speaker, Test-Driven Development, Pair-Programming and LEAN Practitioner.</div>
+  </div>
+
+
+
+    <p class="meta">
+      <span class="byline author vcard"></span>
+      
+
+
+
+
+<time class='entry-date' datetime='2016-12-07T19:54:07+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>7</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>7:54 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/agile/'>agile</a>, <a class='category' href='/blog/categories/android/'>android</a>, <a class='category' href='/blog/categories/dsl/'>dsl</a>, <a class='category' href='/blog/categories/ios/'>ios</a>, <a class='category' href='/blog/categories/microservices/'>microservices</a>, <a class='category' href='/blog/categories/mobile/'>mobile</a>, <a class='category' href='/blog/categories/waterfall/'>waterfall</a>
+  
+</span>
+
+
+    </p>
+
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.tddfellow.com/blog/2016/12/07/mobile-waterfall-being-agile-again/" data-via="waterlink000" data-counturl="http://www.tddfellow.com/blog/2016/12/07/mobile-waterfall-being-agile-again/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/" title="Previous Post: Understanding Legacy Code Using Explorative Test-Driven Development Technique">&laquo; Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+    <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+  </a>
+  <br />
+  Except where otherwise noted, content on this site is licensed under a
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+  <br/>
+
+  Except where otherwise noted, code examples on this site are licensed under a
+  <a rel="license" href="https://github.com/waterlink/waterlink.github.io/tree/source/LICENSE">MIT License</a>.
+  <br/>
+
+  Copyright &copy; 2016 - Oleksii Fedorov (waterlink) -
+  <br/>
+
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+
+  <br/>
+
+  <em>Deployed from tddfellow org</em>
+</p>
+
+</footer>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

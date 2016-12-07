@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://www.tddfellow.com/blog/2016/12/07/mobile-waterfall-being-agile-again/</loc>
+    <lastmod>2016-12-07T19:54:07+01:00</lastmod>
+  </url>
+  <url>
     <loc>http://www.tddfellow.com/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/</loc>
     <lastmod>2016-12-05T23:23:36+01:00</lastmod>
   </url>
@@ -420,12 +424,21 @@
     <loc>http://www.tddfellow.com/blog/categories/legacy-code/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/posts/2/</loc>
+    <loc>http://www.tddfellow.com/blog/categories/microservices/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/posts/3/</loc>
+    <loc>http://www.tddfellow.com/blog/categories/mobile/</loc>
   </url>
   <url>
-    <loc>http://www.tddfellow.com/posts/4/</loc>
+    <loc>http://www.tddfellow.com/blog/categories/ios/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/android/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/dsl/</loc>
+  </url>
+  <url>
+    <loc>http://www.tddfellow.com/blog/categories/waterfall/</loc>
   </url>
 </urlset>

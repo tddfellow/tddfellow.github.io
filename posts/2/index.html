@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="if statements tend to duplicate throughout the code base. This may lead to subtle mistakes and bugs. One way to avoid that problem is to eliminate if &hellip;">
+  <meta name="description" content="Following 3 rules of TDD sounds really simple at first. In practice, there is a moment when one has to implement the whole algorithm at once to make &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -29,6 +29,9 @@
 <link href='http://fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
 
 <!-- Twitter Cards -->
+
+  
+
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@waterlink000">
 <meta name="twitter:creator" content="@waterlink000">
@@ -114,6 +117,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
       </li>
     
@@ -139,10 +146,6 @@
     
       <li class="post">
         <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!</a>
       </li>
     
   </ul>
@@ -186,6 +189,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
       </li>
     
@@ -213,10 +220,6 @@
         <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -228,6 +231,74 @@
 
 <div class="blog-index v2-blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Getting Stuck While Doing TDD. Part 1: Example</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2016-08-30T15:27:30+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>3:27 pm</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/getting-stuck-while-doing-tdd/'>getting-stuck-while-doing-tdd</a>, <a class='category' href='/blog/categories/problem-solving/'>problem-solving</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/test-driven-development/'>test-driven-development</a>, <a class='category' href='/blog/categories/triangulation/'>triangulation</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Following 3 rules of TDD sounds really simple at first. In practice, there is a moment when one has to implement the whole algorithm at once to make currently failing test pass. This is called &ldquo;getting stuck&rdquo; in TDD. In this article, we will explore how exactly this happens and how to prevent that.</p>
+
+<p>Code examples today will be in Ruby programming language. The technique itself is, of course, language-agnostic.</p>
+
+<h2>TL;DR</h2>
+
+<p>&ldquo;Getting stuck&rdquo; happens for a couple of reasons:</p>
+
+<ul>
+<li>wrong order of tests</li>
+<li>production code is not getting more general with each test</li>
+</ul>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -3329,120 +3400,6 @@ The same thing would happen if we were to extract methods/functions/objects out 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/06/13/tdd-as-an-enabling-practice-or-how-to-be-faster-with-tdd/">TDD as an Enabling Practice or How to Be Faster With TDD</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-
-  
-  <span class="byline author vcard"><span class="fn">
-    
-      <a href="/about-me">Oleksii Fedorov</a>
-    
-  </span></span>
-
-
-        
-
-
-
-
-<time class='entry-date' datetime='2016-06-13T07:52:56+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>13</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>7:52 am</span></time>
-        
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/agile/'>agile</a>, <a class='category' href='/blog/categories/continuous-delivery/'>continuous-delivery</a>, <a class='category' href='/blog/categories/continuous-integration/'>continuous-integration</a>, <a class='category' href='/blog/categories/dreyfus-model/'>dreyfus-model</a>, <a class='category' href='/blog/categories/enabling-practices/'>enabling-practices</a>, <a class='category' href='/blog/categories/exploitative-practices/'>exploitative-practices</a>, <a class='category' href='/blog/categories/pair-programming/'>pair-programming</a>, <a class='category' href='/blog/categories/practices/'>practices</a>, <a class='category' href='/blog/categories/professionalism/'>professionalism</a>, <a class='category' href='/blog/categories/skills/'>skills</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/xp/'>xp</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Recently I had a lot of conversations with so many different programmers, with different backgrounds, contexts of work and opinions. What stroke me the most, is that majority feel that TDD is slower than simple automated testing, i.e., <code>TestFirst</code> is slower than <code>TestAfter</code>.</p>
-
-<p>While digging deeper in their context of work, I could only agree with them: &ldquo;True, in that context it will be about 50% slower&rdquo;.</p>
-
-<p>Most of the time, though, the context is somewhat looking like this:</p>
-
-<ul>
-<li>We have some company <code>ACME</code>, that does some sort of Agile Software Development (probably Scrum);</li>
-<li>The company <code>ACME</code> focuses only on the business parts of Agile Software Development;</li>
-<li>The company <code>ACME</code> tried to introduce TDD as a development practice;</li>
-<li>Everything took much longer to be done.</li>
-</ul>
-
-
-<h2>Enabling practice</h2>
-
-<p>Now, let us dive into the development practices of Agile Software Development: development practices are usually coming from Extreme Programming (XP). In XP there are 2 terms: <code>EnablingPractice</code> and <code>ExploitativePractice</code>.</p>
-
-<p>Exploitative practice gives direct benefit to the team, e.g.: speed boost and quicker feedback from users and stakeholders.</p>
-
-<p>Enabling practice is required for certain other exploitative practice(s) to work.</p>
-
-<p>A good example of exploitative practice is Continuous Delivery. It requires Continuous Integration, Pair-Programming, and Testing to be in place. These 3 are enabling practices.</p>
-
-<h2>Removing slow practices</h2>
-
-<p>Additionally to allowing usage of practices, that make a team go faster and deliver at the higher quality level, enabling practices allow removal of practices, that make a team go slower. For example, Pair-Programming together with TDD allows removal of code review. On most of the teams (especially, of bigger size), this makes for an instant productivity boost.</p>
-
-<p>Pair-Programming, TDD and Continuous Integration, additionally to enabling the team to do Continuous Delivery, also allows replacing feature-branch VCS flow with a trunk-based flow. This allows for smaller iterations and faster user feedback.</p>
-
-<h2>Pair-Programming Done Right</h2>
-
-<p>It is worth noting, that removal of code review and introducing of Continuous Delivery is only possible, if Pair-Programming is done right:</p>
-
-<ul>
-<li>in no case, two beginners should be working in the pair;</li>
-<li>beginners should work together with advanced beginners/competents and proficients/experts;</li>
-<li>advanced beginners/competents should split their time in half between working with beginners and working with proficient/experts.</li>
-</ul>
-
-
-<p>Terminology <code>Beginner</code>, <code>AdvancedBeginner</code>, <code>Competent</code>, <code>Proficient</code> and <code>Expert</code> is from Dreyfus Skill Acquisition Model.</p>
-
-<p>That allows for a good trust and mentorship models in your team(s). It enables quick growth and knowledge sharing for every member of the team.</p>
-
-<p>There is another enabling practice which speeds up the knowledge sharing, it is Pair Rotation, that should be done from 1 to 2 times per day, so that for small and middle-sized teams, the bigger the feature is, the higher chance, that everyone on the team have participated in its development, and therefore have enough knowledge about it.</p>
-
-<p>Additionally, Pair Rotation allows for Code Detachment and removal of Code Silos. This in turn, together with TDD, enables Ruthless Refactoring, because you are not afraid:</p>
-
-<ul>
-<li>to break the code, thanks to TDD,</li>
-<li>to upset an owner of the Code Silo, because there is no owner, thanks to Pair Rotation.</li>
-</ul>
-
-
-<h2>Bottomline</h2>
-
-<p>I think I can go on like this forever, but I believe the idea should be clear. I will be following up with more articles in details on each technique in the future. Stay tuned!</p>
-
-<h2>Thank you for reading!</h2>
-
-<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/3">&larr; Older</a>
@@ -3488,6 +3445,10 @@ The same thing would happen if we were to extract methods/functions/objects out 
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
       </li>
     
@@ -3513,10 +3474,6 @@ The same thing would happen if we were to extract methods/functions/objects out 
     
       <li class="post">
         <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!</a>
       </li>
     
   </ul>
