@@ -307,3 +307,653 @@ Going a bit back to our user story scenarios: have you noticed the connection be
 1. Write tests and implement functions on `Arithmetics` module: `subtract`, `multiply` and `divide`.
 2. Inline Arrange, Act and Assert in one-liner. Can you still recognize implicit Arrange, Act and Assert sections in that one line? Is it more or less readable? Is there a middle ground between two versions? Why would you choose one or the other?
 3. Classify parts of the free-form story for the user log in from before as Arrange, Act and Assert. Was it easier, than classifying formal Given-When-Then form? Was it harder? Or maybe the same? How would it be if you never saw Given-When-Then version of that free-form story?
+
+## Writing our First End-to-End Test
+
+Now that we know approximately, how to arrange the steps of our scenario into the test, let's give it a shot. We will start by creating a new test file for our login feature called `LoginFeatureSpec.js`. Don't forget to put an appropriate script tag in the `SpecRunner.html`. We will start by writing the skeleton of our test suite: `describe` and `it` inside of it. Next we will put scenario steps as comments to our test and we will split them in three sections: Arrange, Act and Assert. It will look like this:
+
+```javascript
+// spec/LoginFeatureSpec.js
+
+describe("Login Feature", function () {
+
+  it("allows to login with correct credentials", function () {
+    // ARRANGE
+    // Given User with email ‘john@example.org’ and password ‘welcome’ exists
+    // And I am at the login page
+
+    // ACT
+    // When I enter ‘john@example.org’ in the email field
+    // And I enter ‘welcome’ in the password field
+    // And I click on the submit button
+
+    // ASSERT
+    // Then I see the profile page
+    // And I see my name as the title of the profile page
+  });
+
+});
+```
+
+Next step would be to change the first **Given** comment to the function call. We should give a good readable name to that function. One straightforward option would be `givenUserExists(email, password)`. Another good option is `addUser({email: email, password: password})`. While they are not that different, I prefer `addUser` for its higher conceptual flexibility - we will likely need that function in some different scenario step in the future. While I prefer that, we should not do that yet, because we might never need the function like that, and `givenUserExists` will do us more good right now since it resembles the scenario step so much. When we will need this flexibility we'll perform a refactoring. So for now, let's create an empty function with that name in a new file `spec/FeatureSteps.js` and load this file from our `SpecRunner.html`.
+
+This empty function on itself doesn't do us much good because all our tests will pass. If we continue replacing our steps in comments with such functions, we will end up with one big failure at the Assert section, and we will have to write a lot of code at once to fix that. To drive ourselves to implement the function `givenUserExists` properly right now, we should write an assertion right after the call. This assertion is not part of Assert section, it is part of test-driving the functionality of our feature steps. A good assertion here will be to ask our user storage mechanism if such user exists right after we created that user. Also, it would be a good idea to check that user does not exist, before we created it. Also, we will extract variables `email` and `password` because we have to repeat them all over the place already. Let's see how it will look like:
+
+```javascript
+// spec/LoginFeatureSpec.js
+
+describe("Login Feature", function () {
+
+  it("allows to login with correct credentials", function () {
+    // ARRANGE
+
+    // Given User with email ‘john@example.org’ and password ‘welcome’ exists
+    var email = "john@example.org";
+    var password = "welcome";
+    expect(Users.exists(email, password)).toEqual(false);
+    givenUserExists(email, password);
+    expect(Users.exists(email, password)).toEqual(true);
+
+    // ...
+  });
+
+});
+```
+
+When we run our tests, the breadcrumbs of test failures will drive us to create this basic functionality. First, we will create `Users.js` with empty `Users` module and import it from `SpecRunner.html`. Then, next failure will drive us to add method `exists(email, password)` on `Users` module, that will always return `false`. Next, make function `givenUserExists(email, password)` call `Users.add(email, password)`, which in turn will make us create a function `Users.add(email, password)`, that will store email-password pair to the list of users in the memory. And, finally, make `Users.exists` to search for the email-password pair in that in-memory list. And finally our test will pass. Let's take a look at how these steps will look in our code:
+
+```javascript
+// => Error: Users is undefined
+// in src/Users.js:
+var Users = {};
+
+// => Error: Users.exists is not a function
+// in src/Users.js:
+var Users = {
+  exists: function (email, password) {}
+};
+
+// => Error: expected undefined to equal false
+// in src/Users.js:
+var Users = {
+  exists: function (email, password) {
+    return false;
+  }
+};
+
+// => Error: expected false to equal true
+// in the (second assertion)
+// in spec/FeatureSteps.js:
+function givenUserExists(email, password) {
+  Users.add(email, password);
+}
+
+// => Error: Users.add is not a function
+// in src/Users.js:
+var Users = {
+  users: [],
+
+  exists: function (email, password) { ... },
+
+  add: function (email, password) {
+    this.users.push({email: email, password: password});
+  }
+}
+
+// this still fails with:
+// => Error: expected false to equal true
+// because we need to implement Users.exists "properly"
+// in src/Users.js:
+var Users = {
+  users: [],
+
+  exists: function (email, password) {
+    return this.users.length > 0;
+  },
+
+  add: function (email, password) { ... }
+}
+
+// => All tests PASS
+```
+
+It is pretty funny, how simple `Users.exists(email, password)` function is. It basically verifies, that we have at least one user. While, generally, this is not a correct code, this is good enough for our current test. As we know that this code is not completely correct, we need to remember to write the test(s) to prove it incorrect, so that we can make it proper with confidence. Since we want to first finish the current test, we should simply add a to-do list item to write such test. We have two edge cases here, that will not work with our implementation: when we have only one user in the system and the credentials we provided do not match and when we have multiple users in the system and we provide correct credentials for the second one:
+
+```javascript
+xdescribe("when user has different credentials", function () {
+  it("does not allow to login with wrong credentials", function () {
+
+  });
+});
+
+xdescribe("when there are more than one user", function () {
+  it("allows to login with correct credentials", function () {
+
+  });
+});
+```
+
+Have you noticed `xdescribe`? It is a special form of the `describe`, that allows to mark the whole context as pending. It won't run the tests inside and it will mark them as pending in the test run report. This is the ultimate way to maintain a Test-Driven TODO List. As we test-drive our code we will find more of these. In the report they look like this:
+
+![pending jasmine tests](/images/learning-tdd-with-js/jasmine-e2e-pending-tests.png)
+
+Let's finish continue implementing our steps. The comment `And I am at the login page` transparently becomes a function `givenIAmAtTheLoginPage()`. As we already have seen, it doesn't do us any good to just replace comment with a function call, that does nothing - so we should surround it with proper assertions. We know that login page should have some sort of a text input for email and another password field for password, and we will need a button to confirm user's intent to log in. Also, because we are developing a single page application, we would need some sort of container for the currently active page. Let's say we need these things:
+
+- Initially, we will have only one container with `id="page"` and no content. We probably ought to define it in our HTML file.
+- When we render our login page, we should have:
+  - email text input field with `id="email"`,
+  - password input field with `id="password"`,
+  - and button with `id="do_login"`.
+
+Now that we have spelt this out, it is fairly straightforward to write assertions surrounding the `givenIAmAtTheLoginPage()` call:
+
+```javascript
+// Initially, we will have only one container with `id="page"`
+var container = document.querySelector("#page");
+expect(container).not.toEqual(null);
+// and no content
+expect(container.innerHTML).toEqual("");
+```
+
+This fails, because we don't have such element in our HTML. We need to create it both in our `SpecRunner.html`. Also, now it will be important to move all our `<script>` tags from the `<head>` to the `<body>` below the container that we have just created. `SpecRunner.html` should look this way after that:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Jasmine Spec Runner v2.5.2</title>
+
+    <link rel="shortcut icon" type="image/png" href="lib/jasmine-2.5.2/jasmine_favicon.png">
+    <link rel="stylesheet" href="lib/jasmine-2.5.2/jasmine.css">
+</head>
+
+<body>
+
+    <div id="page"></div>
+
+    <script src="lib/jasmine-2.5.2/jasmine.js"></script>
+    <script src="lib/jasmine-2.5.2/jasmine-html.js"></script>
+    <script src="lib/jasmine-2.5.2/boot.js"></script>
+
+    <!-- include source files here... -->
+    <script src="src/Arithmetics.js"></script>
+    <script src="src/Users.js"></script>
+
+    <!-- include spec files here... -->
+    <script src="spec/JasmineWorksSpec.js"></script>
+    <script src="spec/ArithmeticsSpec.js"></script>
+    <script src="spec/FeatureSteps.js"></script>
+    <script src="spec/LoginFeatureSpec.js"></script>
+
+</body>
+</html>
+```
+
+Now, our next failure is that `givenIAmAtTheLoginPage()` function is not defined. We can define it as empty function in our `spec/FeatureSteps.js` file for now. This will turn our tests green again. We still haven't made our assertions about the state of the UI after the call to `givenIAmAtTheLoginPage` - let's do this now:
+
+```javascript
+var emailInput = container.querySelector("#email");
+expect(emailInput.tagName).toEqual("input");
+expect(emailInput.type).toEqual("email");
+```
+
+This fails with the error `Cannot read property tagName of null`, which means that we don't have `#email` element inside of the `#page` container. Simplest thing to do would be to add that element to the `#page` container in our `SpecRunner.html`. And it won't work! Because we have an assertion that verifies, that before calling to the `givenIAmAtTheLoginPage` we do not have anything in the `#page` container. This is great - that means, that we actually need to do something useful in the function `givenIAmAtTheLoginPage`. For example, we can call `LoginPage.render()`. Which does not exist yet and we will need to create it in the file `src/LoginPage.js` and load it from our `SpecRunner.html`. To fix current failure we will need to create a `#email` element there and append it to our `#page` container:
+
+```javascript
+// spec/FeatureSteps.js
+function givenIAmAtTheLoginPage() {
+  LoginPage.render();
+}
+
+// src/LoginPage.js
+var LoginPage = {
+  render: function () {
+    var emailInput = document.createElement("div");
+    emailInput.id = "email";
+
+    var container = document.querySelector("#page");
+    container.appendChild(emailInput);
+  }
+};
+```
+
+This makes the current test failure go away, but we have two more: `Expected 'DIV' to equal 'input'.` and `Expected undefined to equal 'email'.`. To make these pass, we would need to change `document.createElement(...)` call to use `input` tag name and also we will need to set the input type to `email`. And as we see, the tag name stored in `emailInput.tagName` is all-caps, so we will have to fix our assertion to also expect that:
+
+```javascript
+// first we'll fix the assertion:
+// in spec/LoginFeatureSpec.js
+expect(emailInput.tagName).toEqual("INPUT");
+
+// and then we will fix the emailInput creation:
+// in src/LoginPage.js
+var emailInput = document.createElement("input");
+emailInput.id = "email";
+emailInput.type = "email";
+```
+
+And if we run our tests, they all pass. Great! We should now do the same for our password input field and the login button:
+
+```javascript
+// in spec/LoginFeatureSpec.js
+var passwordInput = container.querySelector("#password");
+expect(passwordInput.tagName).toEqual("INPUT");
+expect(passwordInput.type).toEqual("password");
+var loginButton = container.querySelector("#do_login");
+expect(loginButton.tagName).toEqual("BUTTON");
+expect(loginButton.textContent).toEqual("Login");
+
+// in src/LoginPage.js
+var passwordInput = document.createElement("input");
+passwordInput.id = "password";
+passwordInput.type = "password";
+container.appendChild(passwordInput);
+
+var loginButton = document.createElement("button");
+loginButton.id = "do_login";
+loginButton.textContent = "Login";
+container.appendChild(loginButton);
+```
+
+And all tests pass again. Let's take another look at how our test looks like. It is quite complex and it has so much stuff, that is very-very detailed and specific, that it is not possible to see a user story scenario there anymore. One possible solution to that problem is to push the assertions that are related to the feature scenario step to the respective step functions. This looks much better, we should use the same concept for all our further steps. After refactoring test code looks like this:
+
+```javascript
+// in spec/LoginFeatureSpec.js
+it("allows to login with correct credentials", function () {
+  // ARRANGE
+  var email = "john@example.org";
+  var password = "welcome";
+  givenUserExists(email, password);
+  givenIAmAtTheLoginPage();
+
+  // ACT
+  // When I enter ‘john@example.org’ in the email field
+  // And I enter ‘welcome’ in the password field
+  // And I click on the submit button
+
+  // ASSERT
+  // Then I see the profile page
+  // And I see my name as the title of the profile page
+});
+
+// in spec/FeatureSteps.js
+function givenUserExists(email, password) {
+    expect(Users.exists(email, password)).toEqual(false);
+
+    Users.add(email, password);
+
+    expect(Users.exists(email, password)).toEqual(true);
+}
+
+function givenIAmAtTheLoginPage() {
+    var container = document.querySelector("#page");
+    expect(container).not.toEqual(null);
+    expect(container.innerHTML).toEqual("");
+
+    LoginPage.render();
+
+    var emailInput = container.querySelector("#email");
+    expect(emailInput.tagName).toEqual("INPUT");
+    expect(emailInput.type).toEqual("email");
+
+    var passwordInput = container.querySelector("#password");
+    expect(passwordInput.tagName).toEqual("INPUT");
+    expect(passwordInput.type).toEqual("password");
+
+    var loginButton = container.querySelector("#do_login");
+    expect(loginButton.tagName).toEqual("BUTTON");
+    expect(loginButton.textContent).toEqual("Login");
+}
+```
+
+Now, let's follow the same pattern for our Act section. First we will deal with `When I enter ‘john@example.org’ in the email field`. This seems to be a call to a function `whenIEnterInTheField("#email", email)` - we will implement it using Javascript's APIs. We will do the same for the `And I enter ‘welcome’ in the password field`, which will use the same function `whenIEnterInTheField("#password", password)`. Finally, we will implement `whenIClickOn("#do_login")` as a replacement for the comment `And I click on the submit button`. We will also sprinkle assertions inside of the steps to make sure that we are using the Javascript APIs correctly. The code will look like this:
+
+```javascript
+// in spec/LoginFeatureSpec.js
+it("allows to login with correct credentials", function () {
+    // ARRANGE
+    var email = "john@example.org";
+    var password = "welcome";
+    givenUserExists(email, password);
+    givenIAmAtTheLoginPage();
+
+    // ACT
+    whenIEnterInTheField("#email", email);
+    whenIEnterInTheField("#password", password);
+    whenIClickOn("#do_login");
+
+    // ASSERT
+    // Then I see the profile page
+    // And I see my name as the title of the profile page
+});
+
+// in spec/FeatureSteps.js
+function whenIEnterInTheField(selector, value) {
+    var element = document.querySelector(selector);
+    expect(element).not.toEqual(null);
+    expect(element.value).toEqual("");
+
+    element.value = value;
+
+    var elementAfterChange = document.querySelector(selector);
+    expect(element.value).toEqual(value);
+}
+
+function whenIClickOn(selector) {
+    var element = document.querySelector(selector);
+    expect(element).not.toEqual(null);
+
+    element.click();
+}
+```
+
+Now comes the most interesting part of writing this feature test - Assert section. So far, Arrange and Act sections were driving us to create an infrastructure-like code of our application. Now, with Assert section we will have to implement more of our domain logic. Let's start from the `Then I see the profile page`. Let's try to figure our what that could mean:
+
+- We no longer have login page in our `#page` container.
+- `#page` container should somehow indicate that we are on the `Profile` page:
+  - this could be achieved by adding a sub-container with `id="profile_page"` to it.
+- We don't know much more about what the profile page is. What we do know is:
+  - profile page has name of the user as the title of the page.
+
+Interesting, so far, we didn't have a concept of the Name of the User. I guess it is time to create one in our arrange block, with all the changes and additional assertions in our feature steps that we have to do:
+
+```javascript
+// in spec/LoginFeatureSpec.js
+// ARRANGE
+var email = "john@example.org";
+var password = "welcome";
+var name = "John Smith";
+givenUserExists(email, password, name);
+
+// in spec/FeatureSteps.js
+function givenUserExists(email, password, name) {
+  expect(Users.exists(email, password)).toEqual(false);
+
+  Users.add(email, password, name);            // <=
+
+  expect(Users.exists(email, password)).toEqual(true);
+
+  expect(Users.nameOf(email)).toEqual(name);   // <=
+}
+
+// also we need to add name field to the user data
+// and implement nameOf(email) function
+// in src/Users.js
+add: function (email, password, name) {
+  this.users.push({
+    email: email,
+    password: password,
+    name: name
+  });
+},
+
+nameOf: function (email) {
+  return this.users[0].name;
+}
+```
+
+And the tests will pass again. And now we have a tested concept of the name in our code. Tested - to the extent required for this test, where we have only one user in the system. Now we can replace the comment `Then I see the profile page` with the scenario step function call `thenISeeTheProfilePage()` and the implementation of it will verify that `#email`, `#password` and `#do_login` are no longer present on the page and it will verify that container `#page-profile` is present and it has `#title` element in it. Making it pass will require us to add a `click` event listener to the `loginButton` in the `LoginPage`, that will remove contents of the `#page` container and will call to `ProfilePage.render()` following the analogy of `LoginPage`. This will drive us to create this module and its `render()` function. According to our next test failure, this function should create `#profile_page` sub-container in `#page` container, so we do that. Finally, we have one last failure, that drives us to create `#title` element in `ProfilePage.render()` function. And all tests are green again. Let's take a look at these changes:
+
+```javascript
+// in spec/LoginFeatureSpec.js
+// ASSERT
+// Then I see the profile page
+thenISeeTheProfilePage();
+
+// in spec/FeatureSteps.js
+function thenISeeTheProfilePage() {
+  // assert login page is gone
+  expect(document.querySelector("#email")).toEqual(null);
+  expect(document.querySelector("#password")).toEqual(null);
+  expect(document.querySelector("#do_login")).toEqual(null);
+
+  // assert profile page is present
+  expect(document.querySelector("#page #profile_page")).not.toEqual(null);
+  expect(document.querySelector("#profile_page #title")).not.toEqual(null);
+}
+
+// in src/LoginPage.js at the end of render() function:
+render: function() {
+  // ...
+
+  loginButton.addEventListener("click", LoginPage.onLogin);
+},
+
+onLogin: function () {
+  container.innerHTML = "";
+  ProfilePage.render();
+}
+
+// in src/ProfilePage.js
+var ProfilePage = {
+  render: function () {
+    var profileContainer = document.createElement("div");
+    profileContainer.id = "profile_page";
+    container.appendChild(profileContainer);
+
+    var title = document.createElement("h1");
+    title.id = "title";
+    profileContainer.appendChild(title);
+  }
+};
+```
+
+At last, we can implement the last step - `And I see my name as the title of the profile page`. A good guess for the step name would be `thenISeeTextAt("#title", name)`. The function will simply select element `#title` and verify its `element.textContent`. As expected, it fails with the error `Expected '' to equal 'John Smith'` and we should fix that within the `ProfilePage.render()` function by assigning `title.textContent` to the `Users.currentUser().name`. This fails because we didn't define `Users.currentUser()` function and this is simple to do for our current test - just return the first user. After that all our tests pass. The code will look like this:
+
+```javascript
+// in spec/LoginFeatureSpec.js
+thenISeeTextAt("#title", name);
+
+// in spec/FeatureSteps.js
+function thenISeeTextAt(selector, text) {
+  var element = document.querySelector(selector);
+  expect(element.textContent).toEqual(text);
+}
+
+// in src/ProfilePage.js
+title.textContent = Users.currentUser().name;
+
+// in src/Users.js
+currentUser: function () {
+    return this.users[0];
+}
+```
+
+We have finally, implemented our first feature test. That was quite some work. Also the functionality of `Users` module is way incomplete - we need to write more tests to cover different cases. That is how our test code and production code looks like:
+
+```javascript
+// spec/LoginFeatureSpec.js
+describe("Login Feature", function () {
+
+    it("allows to login with correct credentials", function () {
+        // ARRANGE
+        var email = "john@example.org";
+        var password = "welcome";
+        var name = "John Smith";
+        givenUserExists(email, password, name);
+        givenIAmAtTheLoginPage();
+
+        // ACT
+        whenIEnterInTheField("#email", email);
+        whenIEnterInTheField("#password", password);
+        whenIClickOn("#do_login");
+
+        // ASSERT
+        thenISeeTheProfilePage();
+        thenISeeTextAt("#title", name);
+    });
+
+    xdescribe("when user has different credentials", function () {
+        it("does not allow to login with wrong credentials", function () {
+
+        });
+    });
+
+    xdescribe("when there are more than one user", function () {
+        it("allows to login with correct credentials", function () {
+
+        });
+    });
+
+});
+```
+
+```javascript
+// spec/FeatureSteps.js
+function givenUserExists(email, password, name) {
+    expect(Users.exists(email, password)).toEqual(false);
+
+    Users.add(email, password, name);
+
+    expect(Users.exists(email, password)).toEqual(true);
+    expect(Users.nameOf(email)).toEqual(name);
+}
+
+function givenIAmAtTheLoginPage() {
+    var container = document.querySelector("#page");
+    expect(container).not.toEqual(null);
+    expect(container.innerHTML).toEqual("");
+
+    LoginPage.render();
+
+    var emailInput = container.querySelector("#email");
+    expect(emailInput.tagName).toEqual("INPUT");
+    expect(emailInput.type).toEqual("email");
+
+    var passwordInput = container.querySelector("#password");
+    expect(passwordInput.tagName).toEqual("INPUT");
+    expect(passwordInput.type).toEqual("password");
+
+    var loginButton = container.querySelector("#do_login");
+    expect(loginButton.tagName).toEqual("BUTTON");
+    expect(loginButton.textContent).toEqual("Login");
+}
+
+function whenIEnterInTheField(selector, value) {
+    var element = document.querySelector(selector);
+    expect(element).not.toEqual(null);
+    expect(element.value).toEqual("");
+
+    element.value = value;
+
+    var elementAfterChange = document.querySelector(selector);
+    expect(element.value).toEqual(value);
+}
+
+function whenIClickOn(selector) {
+    var element = document.querySelector(selector);
+    expect(element).not.toEqual(null);
+
+    element.click();
+}
+
+function thenISeeTheProfilePage() {
+    // assert login page is gone
+    expect(document.querySelector("#email")).toEqual(null);
+    expect(document.querySelector("#password")).toEqual(null);
+    expect(document.querySelector("#do_login")).toEqual(null);
+
+    // assert profile page is present
+    expect(document.querySelector("#page #profile_page")).not.toEqual(null);
+    expect(document.querySelector("#profile_page #title")).not.toEqual(null);
+}
+
+function thenISeeTextAt(selector, text) {
+    var element = document.querySelector(selector);
+    expect(element.textContent).toEqual(text);
+}
+```
+
+```javascript
+// src/Users.js
+var Users = {
+    users: [],
+
+    exists: function (email, password) {
+        return this.users.length > 0;
+    },
+
+    add: function (email, password, name) {
+        this.users.push({
+            email: email,
+            password: password,
+            name: name
+        });
+    },
+
+    nameOf: function (email) {
+        return this.users[0].name;
+    },
+
+    currentUser: function () {
+        return this.users[0];
+    }
+};
+```
+
+```javascript
+// src/LoginPage.js
+var container = document.querySelector("#page");
+
+var LoginPage = {
+    render: function () {
+        var emailInput = document.createElement("input");
+        emailInput.id = "email";
+        emailInput.type = "email";
+        container.appendChild(emailInput);
+
+        var passwordInput = document.createElement("input");
+        passwordInput.id = "password";
+        passwordInput.type = "password";
+        container.appendChild(passwordInput);
+
+        var loginButton = document.createElement("button");
+        loginButton.id = "do_login";
+        loginButton.textContent = "Login";
+        container.appendChild(loginButton);
+
+        loginButton.addEventListener("click", LoginPage.onLogin);
+    },
+
+    onLogin: function () {
+        container.innerHTML = "";
+        ProfilePage.render();
+    }
+};
+```
+
+```javascript
+// src/ProfilePage.js
+var ProfilePage = {
+    render: function () {
+        var profileContainer = document.createElement("div");
+        profileContainer.id = "profile_page";
+        container.appendChild(profileContainer);
+
+        var title = document.createElement("h1");
+        title.id = "title";
+        title.textContent = Users.currentUser().name;
+        profileContainer.appendChild(title);
+    }
+};
+```
+
+Now we could add `<div id="page">` to our `index.html`, and load our `src/*` scripts after it, and add `<script>Users.add("john@example.org", "welcome", "John Smith"); LoginPage.render();</script>` at the end to start our application. Enjoy the application that implements one happy path of our feature (we still have quite a few different paths to cover). Also, it might be a good idea to style the application slightly better, than plain inputs and buttons, but we are not going to cover that in these series. This single feature test takes a lot of time to write because it is the first feature test in the empty application. Essentially, it has driven a lot of different architectural decisions, that don't necessary need to be done the way they were done in this article. Writing a second test for the same feature is much easier and third one and all consecutive are also easier.
+
+### Exercises
+
+1. Remove `x` prefix from the `xdescribe` tests and implement them using techniques described in this article - write a user story scenario, translate it to the test code and make sure to fix all the test failures one feature step at a time.
+2. Discover more interesting edge cases. Make the tests for them and make them all pass.
+3. Write sign-up feature's user story and implement it with feature tests.
+
+## Bottom Line
+
+Today we have learned how to write tests for the whole application, that imitate real user interaction. We have seen how, test-driving the functionality can help discovering new user story scenarios. Essentially, every time we write simple, but not so correct code that makes our test pass, we need to think what would be the scenario to prove that code wrong, and add that scenario on our to-do list, which is represented by pending tests, that have only their descriptions.
+
+In the next article of the series we will dig deeper on what exactly we did today, what it really means to Test-Drive the code, what are the laws, rules, tips and tricks of Test-Driven Development. Next article of the series assumes, that login and sign-up features are fully test-driven and implemented. We will be implementing a brand new feature of our application.
+
+## Thanks
+
+Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: [@waterlink000](https://twitter.com/waterlink000).
+
+If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: [@waterlink000](https://twitter.com/waterlink000).
