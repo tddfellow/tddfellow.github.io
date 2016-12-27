@@ -283,3 +283,11 @@ article header {
     vertical-align: text-top;
   }
 }
+
+.next-table-is-top-aligned + table {
+  margin-bottom: 1.5em;
+
+  th, td {
+    vertical-align: text-top;
+  }
+}

@@ -12,7 +12,7 @@ categories:
 
 **Level: Beginner.**
 
-"Learning TDD with Javascript" is the series of articles where we learn basics of automated testing and test-driven development. While language of choice for the code examples is Javascript, all described concepts are language-agnostic and can be applied in various technological stacks. In these articles reader is expected to do small exercises after each major topic to make sure that theoretical knowledge is reinforced with practice. Also, reader might want to get their feedback on these exercises, so don't hesitate to send the results my way: oleksii@tddfellow.com - feedback on the practice is quite important as it helps to improve quicker, when you know what is well and what can be improved and how. Also, don't hesitate to send any questions and feedback regarding the content of these articles. Your questions, feedback and your practical results will help authors shape this content better.
+"Learning TDD with Javascript" is the series of articles where we learn basics of automated testing and test-driven development. While language of choice for the code examples is Javascript, all described concepts are language-agnostic and can be applied in various technological stacks. In these articles reader is expected to do small exercises after each major topic to make sure that theoretical knowledge is reinforced with practice. Some of these exercises are practical and will involve coding, or simple writing; others will be a food for a thought. Also, reader might want to get their feedback on these exercises, so don't hesitate to send the results my way: oleksii@tddfellow.com - feedback on the practice is quite important as it helps to improve quicker, when you know what is well and what can be improved and how. Also, don't hesitate to send any questions and feedback regarding the content of these articles. Your questions, feedback and your practical results will help authors shape this content better.
 
 Today we are going to learn how to write tests for the whole application, that imitate real user interaction. We are going to build a small web application using Vanilla Javascript. Vanilla Javascript is a plain Javascript without any framework or library. Such tests, that imitate real user interaction via User Interface (UI) are called End-to-End Tests. These tests are the most simple to write, because we only need to think about our application in the same way user does:
 
@@ -210,4 +210,100 @@ testing framework works
   Expected 4 to equal 5.
 ```
 
-And we ought to make it pass by fixing our incorrect assertion: `expect(2 + 2).toEqual(4);`. And if we run the test suite again (by reloading the page in the browser) all the test should pass.
+And we ought to make it pass by fixing our incorrect assertion: `expect(2 + 2).toEqual(4);`. And if we run the test suite again, by reloading the page in the browser, all the test should pass.
+
+## Writing our First Simple Tests
+
+Now we can write some real tests to practice usage of `describe`, `it` and `expect(...).toEqual`: let's create `ArithmeticsSpec.js` and write some tests for behavior of `add` function:
+
+```javascript
+// spec/ArithmeticsSpec.js
+
+describe("Arithmetics", function () {
+
+  describe("#add(a, b)", function () {
+    it("calculates the sum of two numbers", function () {
+      // ARRANGE
+      var a = 3;
+      var b = 4;
+      var expected = 7;
+
+      // ACT
+      var actual = Arithmetics.add(a, b);
+
+      // ASSERT
+      expect(actual).toEqual(expected);
+    });
+  });
+
+});
+```
+
+Don't forget to add the `<script src="spec/ArithmeticsSpec.js"></script>` to the `SpecRunner.html`. This test will fail first because `Arithmetics` module is not defined. We will define it as an empty object. Next failure is because `Arithmetics.add` is not a function - it is not defined. We will define that function with two arguments inside of the `Arithmetics` object. Finally, test will fail, because we expect the result to be seven, but it was undefined. We will make the simplest thing we can do to pass the failing test - return seven. This will make the test pass. The code will be in `src/Arithmetics.js`, which we include in our `SpecRunner.html`, and will look like that:
+
+```javascript
+// src/Arithmetics.js
+
+var Arithmetics = {
+  add: function (a, b) {
+    return 7;
+  }
+};
+```
+
+That, of course, is not correct implementation, so we need another test to drive out the correct implementation - test with different inputs and different result. To make it pass we will have to use `a + b`:
+
+```javascript
+// spec/ArithmeticsSpec.js
+describe("Arithmetics", function () {
+
+  describe("#add(a, b)", function () {
+    it("calculates the sum of two numbers", function () { ... });
+
+    it("calculates the sum of two other numbers", function () {
+      // ARRANGE
+      var a = 73;
+      var b = 89;
+      var expected = 162;
+
+      // ACT
+      var actual = Arithmetics.add(a, b);
+
+      // ASSERT
+      expect(actual).toEqual(expected);
+    });
+  });
+
+});
+
+// src/Arithmetics.js
+var Arithmetics = {
+  add: function (a, b) {
+    return a + b;
+  }
+};
+```
+
+### Three "A"s: Arrange, Act and Assert
+
+Have you noticed three comments that I have left in the example tests' code: `ARRANGE`, `ACT` and `ASSERT`? These are three "A"s of writing a good test. Arrange is the part of the test, where we set up the stage: prepare input data, create objects, load resources, change state of the system - it is the part where we create the context for our test. Act is the part of the test, where we call our system under the test. In the `Arithmetics` example it was function `Arithmetics.add(a, b)`. System under the test can return some useful value or change the its own state. To verify that either is correct we, finally, use Assert section of our test - part of the test where we verify the outcome of the call to the system under the test.
+
+The sections `ARRANGE`, `ACT` and `ASSERT` are spelled out in the comments only for the reader's convenience - usually, real projects don't have such comments. It is worth noting that for learning and practicing purposes it is a good idea to name these sections explicitly in our tests - this develops a habit of recognizing which part of the test should belong to which section. Also, the formula Act -> Arrange -> Assert makes it easier to come up with the test when we lack deep experience in testing, or with particular testing framework, or environment.
+
+Going a bit back to our user story scenarios: have you noticed the connection between "Arrange, Act and Assert" and "Given-When-Then"? Arrange part of the test corresponds to the Given part of the scenario, Act part of the test corresponds to the When part of the scenario, and Assert part of the test corresponds to the Then part of the scenario. Let's see it on of our previous example scenarios:
+
+<div class="next-table-is-top-aligned"></div>
+|Test Section|Scenario Step|
+|-|-|
+|<hr>|<hr>|
+|ARRANGE|**Given** User with email ‘john@example.org’ and password ‘welcome’ exists<br>**And** I am at the login page|
+|<br>|<br>|
+|ACT|**When** I enter ‘john@example.org’ in the email field<br>**And** I enter ‘welcome’ in the password field<br>**And** I click on the submit button|
+|<br>|<br>|
+|ASSERT|**Then** I see the profile page<br>**And** I see my name as the title of the profile page|
+
+### Exercises
+
+1. Write tests and implement functions on `Arithmetics` module: `subtract`, `multiply` and `divide`.
+2. Inline Arrange, Act and Assert in one-liner. Can you still recognize implicit Arrange, Act and Assert sections in that one line? Is it more or less readable? Is there a middle ground between two versions? Why would you choose one or the other?
+3. Classify parts of the free-form story for the user log in from before as Arrange, Act and Assert. Was it easier, than classifying formal Given-When-Then form? Was it harder? Or maybe the same? How would it be if you never saw Given-When-Then version of that free-form story?
