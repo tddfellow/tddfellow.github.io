@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Following 3 rules of TDD sounds really simple at first. In practice, there is a moment when one has to implement the whole algorithm at once to make &hellip;">
+  <meta name="description" content="Welcome back to the &ldquo;Getting Stuck While Doing TDD&rdquo; series. Today we are going to see the results of getting stuck while doing TDD and &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,6 +117,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
       </li>
     
@@ -142,10 +146,6 @@
     
       <li class="post">
         <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
       </li>
     
   </ul>
@@ -189,6 +189,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
       </li>
     
@@ -216,10 +220,6 @@
         <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -231,6 +231,82 @@
 
 <div class="blog-index v2-blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2016-08-31T02:35:06+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2016</span></span> <span class='time'>2:35 am</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/getting-stuck-while-doing-tdd/'>getting-stuck-while-doing-tdd</a>, <a class='category' href='/blog/categories/problem-solving/'>problem-solving</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/test-driven-development/'>test-driven-development</a>, <a class='category' href='/blog/categories/triangulation/'>triangulation</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Welcome back to the &ldquo;Getting Stuck While Doing TDD&rdquo; series. Today we are going to see the results of getting stuck while doing TDD and scratch the surface of how to avoid this outcome.</p>
+
+<p>Code examples today will be in Ruby programming language. The technique itself is, of course, language-agnostic.</p>
+
+<h2>TL;DR</h2>
+
+<ul>
+<li>It is painful and difficult to force your way through when getting stuck in TDD.</li>
+<li>It results in degraded guarantees from TDD (such as test coverage, semantical stability, and confidence).</li>
+</ul>
+
+
+<p>Ways to avoid this outcome:</p>
+
+<ul>
+<li>do not write tests that will not fail with the current production code</li>
+<li>choose next test to write that will address particular detail about production code that is wrong or not general enough (Triangulation)</li>
+</ul>
+
+
+<p>Finally, do not forget to remove redundant tests if any.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -3340,66 +3416,6 @@ The same thing would happen if we were to extract methods/functions/objects out 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/06/19/tdd-number-5-english-numbers-kata/">TDD #5: English Numbers Kata</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-
-  
-  <span class="byline author vcard"><span class="fn">
-    
-      <a href="/about-me">Oleksii Fedorov</a>
-    
-  </span></span>
-
-
-        
-
-
-
-
-<time class='entry-date' datetime='2016-06-19T18:41:39+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>19</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>6:41 pm</span></time>
-        
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/baby-steps/'>baby-steps</a>, <a class='category' href='/blog/categories/divide-and-conquer/'>divide-and-conquer</a>, <a class='category' href='/blog/categories/iterative/'>iterative</a>, <a class='category' href='/blog/categories/kata/'>kata</a>, <a class='category' href='/blog/categories/problem-solving/'>problem-solving</a>, <a class='category' href='/blog/categories/screencast/'>screencast</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/tdd-as-if-you-meant-it/'>tdd-as-if-you-meant-it</a>, <a class='category' href='/blog/categories/tdd-screencasts/'>tdd-screencasts</a>, <a class='category' href='/blog/categories/test-driven-development/'>test-driven-development</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><iframe src="https://player.vimeo.com/video/171307899?color=c9ff23" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-
-
-<p><a href="https://vimeo.com/171307899">Test-Driven Development Screencast #5: English Numbers Kata</a></p>
-
-<p><em>(Recommended to watch full-screen and HD: 720p or more)</em></p>
-
-<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
-
-<p>This screencast was born from my previous blog post: <a href="/blog/2016/05/27/iterative-divide-and-conquer-or-how-to-solve-problems/">Iterative Divide &amp; Conquer or How to solve problems</a>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/3">&larr; Older</a>
@@ -3445,6 +3461,10 @@ The same thing would happen if we were to extract methods/functions/objects out 
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
       </li>
     
@@ -3470,10 +3490,6 @@ The same thing would happen if we were to extract methods/functions/objects out 
     
       <li class="post">
         <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
       </li>
     
   </ul>

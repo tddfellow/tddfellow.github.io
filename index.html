@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Have you ever worked with mobile platforms, such as Apple Store or Google Play? How much time it takes to release a new version of the application? &hellip;">
+  <meta name="description" content="Level: Beginner. &ldquo;Learning TDD with Javascript&rdquo; is the series of articles where we learn basics of automated testing and test-driven &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,6 +117,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
       </li>
     
@@ -142,10 +146,6 @@
     
       <li class="post">
         <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
       </li>
     
   </ul>
@@ -189,6 +189,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
       </li>
     
@@ -216,10 +220,6 @@
         <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -231,6 +231,74 @@
 
 <div class="blog-index v2-blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2016-12-23T10:13:33+01:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2016</span></span> <span class='time'>10:13 am</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/learning-tdd-with-js/'>learning-tdd-with-js</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/tutorial/'>tutorial</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>Level: Beginner.</strong></p>
+
+<p>&ldquo;Learning TDD with Javascript&rdquo; is the series of articles where we learn basics of automated testing and test-driven development. While the language of choice for the code examples is Javascript, all described concepts are language-agnostic and are applicable in various technological stacks. In these articles, a reader is expected to do small exercises after each major topic to reinforce that theoretical knowledge with practice. Some of these exercises are practical and will involve coding, or simple writing; others will be food for thought. Also, a reader might want to get their feedback on these exercises, so don&rsquo;t hesitate to send the results my way: <a href="&#x6d;&#x61;&#105;&#x6c;&#x74;&#111;&#x3a;&#x6f;&#108;&#101;&#107;&#x73;&#105;&#105;&#64;&#116;&#x64;&#100;&#102;&#x65;&#108;&#x6c;&#111;&#119;&#x2e;&#x63;&#x6f;&#x6d;">&#x6f;&#108;&#x65;&#107;&#115;&#x69;&#x69;&#x40;&#116;&#100;&#100;&#102;&#101;&#x6c;&#x6c;&#111;&#x77;&#x2e;&#x63;&#111;&#109;</a> - feedback on the practice is quite important as it helps to improve quicker, when you know what is well and what can be improved and how. Also, don&rsquo;t hesitate to send any questions and feedback regarding the content of these articles. Your questions, feedback, and your practical results will help authors shape this content better.</p>
+
+<p>Today we are going to learn how to write tests that imitate real user interaction for the whole application. We are going to build a small web application using Vanilla Javascript. Vanilla Javascript is a plain Javascript without any framework or library. Such tests that imitate real user interaction via User Interface (UI) are called End-to-End Tests. These tests are the most simple to write because we only need to think about our application in the same way user does:</p>
+
+<ul>
+<li>Imitating the user clicking on the button would mean for us to trigger a button click;</li>
+<li>Imitating the user typing text in the input field would mean for us to change input&rsquo;s value;</li>
+<li>Imitating the user clicking on the link would mean for us to trigger a link click;</li>
+<li>And so on.</li>
+</ul>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -826,82 +894,6 @@ Spy <|-- Mock;
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-
-  
-  <span class="byline author vcard"><span class="fn">
-    
-      <a href="/about-me">Oleksii Fedorov</a>
-    
-  </span></span>
-
-
-        
-
-
-
-
-<time class='entry-date' datetime='2016-08-31T02:35:06+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2016</span></span> <span class='time'>2:35 am</span></time>
-        
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/getting-stuck-while-doing-tdd/'>getting-stuck-while-doing-tdd</a>, <a class='category' href='/blog/categories/problem-solving/'>problem-solving</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/test-driven-development/'>test-driven-development</a>, <a class='category' href='/blog/categories/triangulation/'>triangulation</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Welcome back to the &ldquo;Getting Stuck While Doing TDD&rdquo; series. Today we are going to see the results of getting stuck while doing TDD and scratch the surface of how to avoid this outcome.</p>
-
-<p>Code examples today will be in Ruby programming language. The technique itself is, of course, language-agnostic.</p>
-
-<h2>TL;DR</h2>
-
-<ul>
-<li>It is painful and difficult to force your way through when getting stuck in TDD.</li>
-<li>It results in degraded guarantees from TDD (such as test coverage, semantical stability, and confidence).</li>
-</ul>
-
-
-<p>Ways to avoid this outcome:</p>
-
-<ul>
-<li>do not write tests that will not fail with the current production code</li>
-<li>choose next test to write that will address particular detail about production code that is wrong or not general enough (Triangulation)</li>
-</ul>
-
-
-<p>Finally, do not forget to remove redundant tests if any.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/2">&larr; Older</a>
@@ -945,6 +937,10 @@ Spy <|-- Mock;
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
       </li>
     
@@ -970,10 +966,6 @@ Spy <|-- Mock;
     
       <li class="post">
         <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tdd | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/tdd/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2016-12-07T20:25:44+01:00</updated>
+  <updated>2016-12-28T20:49:58+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,1040 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Learning Test-Driven Development With Javascript: End-to-End Testing]]></title>
+    <link href="http://www.tddfellow.com/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/"/>
+    <updated>2016-12-23T10:13:33+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing</id>
+    <content type="html"><![CDATA[<p><strong>Level: Beginner.</strong></p>
+
+<p>&ldquo;Learning TDD with Javascript&rdquo; is the series of articles where we learn basics of automated testing and test-driven development. While the language of choice for the code examples is Javascript, all described concepts are language-agnostic and are applicable in various technological stacks. In these articles, a reader is expected to do small exercises after each major topic to reinforce that theoretical knowledge with practice. Some of these exercises are practical and will involve coding, or simple writing; others will be food for thought. Also, a reader might want to get their feedback on these exercises, so don&rsquo;t hesitate to send the results my way: <a href="&#109;&#x61;&#105;&#x6c;&#x74;&#x6f;&#58;&#x6f;&#x6c;&#x65;&#x6b;&#115;&#105;&#x69;&#x40;&#x74;&#100;&#x64;&#x66;&#101;&#x6c;&#x6c;&#x6f;&#119;&#46;&#99;&#111;&#x6d;">&#x6f;&#x6c;&#101;&#x6b;&#115;&#105;&#x69;&#64;&#116;&#x64;&#x64;&#x66;&#101;&#108;&#x6c;&#111;&#x77;&#46;&#x63;&#111;&#109;</a> - feedback on the practice is quite important as it helps to improve quicker, when you know what is well and what can be improved and how. Also, don&rsquo;t hesitate to send any questions and feedback regarding the content of these articles. Your questions, feedback, and your practical results will help authors shape this content better.</p>
+
+<p>Today we are going to learn how to write tests that imitate real user interaction for the whole application. We are going to build a small web application using Vanilla Javascript. Vanilla Javascript is a plain Javascript without any framework or library. Such tests that imitate real user interaction via User Interface (UI) are called End-to-End Tests. These tests are the most simple to write because we only need to think about our application in the same way user does:</p>
+
+<ul>
+<li>Imitating the user clicking on the button would mean for us to trigger a button click;</li>
+<li>Imitating the user typing text in the input field would mean for us to change input&rsquo;s value;</li>
+<li>Imitating the user clicking on the link would mean for us to trigger a link click;</li>
+<li>And so on.</li>
+</ul>
+
+
+<!-- more -->
+
+
+<p>We don&rsquo;t need to think about specific implementation details, such as: which functions and classes do we have in our code and how they interact with each other, is there any interaction with the back-end server or 3rd-party API. Also, we don&rsquo;t need to be proficient with interaction testing - this is the topic for the future series.</p>
+
+<p>Of course, for that kind of simplicity we are trading something off. In the case of End-to-End tests, they are slower, suffer concurrency, wait, and timeout problems, and are harder to maintain in the long run. We don&rsquo;t have to worry about that just yet because we want to learn how to write tests in general, and this kind of simplicity is perfect for us in this case.</p>
+
+<p>Such simplicity stems from the fact that End-to-End tests, mostly, are direct translations of user stories (use case scenarios) into the UI manipulation code.</p>
+
+<h2>User Story</h2>
+
+<p>User stories are scenarios describing an individual feature of the software via user story context, sequences of user interactions and user expectations. User story context is the description of the situation the user and the software system are in at the beginning of the scenario. An example of the system context: &ldquo;user John is registered in the system with password &lsquo;welcome&rsquo;.&rdquo; An example of the user context: &ldquo;user is at the login page.&rdquo; User interaction is the description of a particular action user takes inside of the system, usually, doing something within the UI, for example: &ldquo;User enters email &lsquo;<a href="&#109;&#97;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#106;&#111;&#x68;&#x6e;&#x40;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#46;&#x6f;&#x72;&#103;">&#x6a;&#111;&#104;&#x6e;&#x40;&#101;&#x78;&#x61;&#109;&#x70;&#108;&#101;&#46;&#111;&#x72;&#103;</a>&rsquo; in the email input field&rdquo; or &ldquo;User clicks on the submit button.&rdquo; Finally, user expectation is the description of what particular information user should receive from the system, for example: &ldquo;User sees the success message on the page&rdquo; or &ldquo;User receives the email with the verification code.&rdquo;</p>
+
+<p>User stories come in different flavor and formats. It can be a free-form text, describing three parts: context, interactions, and expectations; or it can be in a formal &ldquo;Given-When-Then&rdquo; form. &ldquo;Given&rdquo; part is the sequence of the user story context descriptions, &ldquo;When&rdquo; part is the sequence of the user interaction descriptions, and &ldquo;Then&rdquo; part is the sequence of user expectation descriptions. Both forms can be used interchangeably, and some software companies use one or another formal version of the user story format consistently.</p>
+
+<p>Let&rsquo;s take a look at the example of the free-form user story together with the example of the Given-When-Then user story for the same feature:</p>
+
+<div class="next-table-layout-is-fixed"></div>
+
+
+<table>
+<thead>
+<tr>
+<th>Free-form</th>
+<th>Given-When-Then</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><hr></td>
+<td><hr></td>
+</tr>
+<tr>
+<td>User with email &lsquo;<a href="&#109;&#97;&#x69;&#x6c;&#x74;&#111;&#58;&#x6a;&#x6f;&#104;&#110;&#64;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#x65;&#x2e;&#x6f;&#114;&#103;">&#x6a;&#x6f;&#104;&#x6e;&#64;&#101;&#x78;&#97;&#109;&#x70;&#108;&#x65;&#x2e;&#111;&#114;&#103;</a>&rsquo; and password &lsquo;welcome&rsquo; exists in the system<br>John enters his email &lsquo;<a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#x6a;&#111;&#x68;&#x6e;&#x40;&#101;&#x78;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#x2e;&#111;&#114;&#x67;">&#106;&#x6f;&#x68;&#110;&#64;&#x65;&#120;&#97;&#x6d;&#112;&#x6c;&#101;&#x2e;&#x6f;&#114;&#103;</a>&rsquo; into the email field and his password &lsquo;welcome&rsquo; into the password field on the login page<br>After that John submits the login form<br>Finally, John expects to see their profile page with the indication of him being logged in (name &lsquo;John&rsquo; is present on the page)</td>
+<td><strong>Given</strong> User with email &lsquo;<a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#x6a;&#111;&#104;&#110;&#x40;&#101;&#120;&#97;&#x6d;&#x70;&#108;&#x65;&#46;&#x6f;&#x72;&#103;">&#106;&#x6f;&#x68;&#x6e;&#64;&#101;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#46;&#x6f;&#114;&#x67;</a>&rsquo; and password &lsquo;welcome&rsquo; exists<br><strong>And</strong> I am at the login page<br><strong>When</strong> I enter &lsquo;<a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#106;&#x6f;&#104;&#x6e;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x6f;&#x72;&#103;">&#x6a;&#111;&#104;&#110;&#64;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#101;&#x2e;&#x6f;&#114;&#103;</a>&rsquo; in the email field<br><strong>And</strong> I enter &lsquo;welcome&rsquo; in the password field<br><strong>And</strong> I click on the submit button<br><strong>Then</strong> I see the profile page<br><strong>And</strong> I see my name as the title of the profile page</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>As we can see, free-form can be very vague and is very flexible, and formal form is more strict and precise. The free-form on its own doesn&rsquo;t have much upsides or downsides - it is as good as it is written. On the other hand, the formal form does give us some value and also trades something off for that value. They are generally easy to write and, because they are so specific, are easy to translate to the automated test. On the other hand, they may hamper creativity either while creating the user story or when implementing it.</p>
+
+<p>It is important to mention that these use case scenarios are not full user stories or features. One feature can have multiple scenarios like that - together they are called acceptance criteria. When all such scenarios of the given feature work correctly, the feature is done. There is another vital part of the user story - general description, that should contain the rationale behind the story and the value for the user or any other important actor in the system, such as the stakeholder. Before we write scenarios, we often come up with the rationale like that and it drives us to write a scenario. For example, for the feature above we would have used something like that:</p>
+
+<div class="next-table-layout-is-fixed"></div>
+
+
+<table>
+<thead>
+<tr>
+<th>Free-form</th>
+<th>Given-When-Then</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><hr></td>
+<td><hr></td>
+</tr>
+<tr>
+<td>John needs to authenticate to the system so that he can access his private content</td>
+<td><strong>As John</strong>, I want to be able to authenticate to the system<br><strong>So that</strong> I can access my private content</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>Because formal form user stories are more precise, easier to write and simpler to translate to the automated test, we are going to use them to learn End-to-End testing in the context of Test-Driven Development.</p>
+
+<h3>Exercises</h3>
+
+<ol>
+<li>Write a scenario for authentication story, when John enters the wrong password.</li>
+<li>Write a user story with rationale and scenarios for the sign-up feature.</li>
+<li>Imagine we are developing an instant messaging application. What do you think would be the next feature after login/sign-up? Write the user story with rationale and scenarios for this feature.</li>
+</ol>
+
+
+<p>Do you have questions? Or do you want to get quick feedback on how you did the exercises? - mail me: <a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#111;&#58;&#x6f;&#x6c;&#x65;&#x6b;&#x73;&#x69;&#105;&#x40;&#116;&#100;&#x64;&#102;&#101;&#108;&#x6c;&#111;&#119;&#x2e;&#99;&#111;&#x6d;">&#x6f;&#108;&#x65;&#x6b;&#x73;&#105;&#105;&#64;&#116;&#100;&#100;&#102;&#101;&#x6c;&#x6c;&#x6f;&#x77;&#46;&#x63;&#x6f;&#x6d;</a></p>
+
+<h2>Setting Up the Project</h2>
+
+<p>Now we will be writing a simple web application, using Vanilla Javascript (ECMAScript 5), so that our setup is rather simple. For the testing, we will be using a standalone version of the Jasmine testing framework. Also, we will be writing a single page application (SPA), so that we don&rsquo;t have to worry about rendering different pages in our tests for now. We are aiming for the following directory structure of our project:</p>
+
+<pre><code>.
+├── lib
+├───── .. external libraries, such as Jasmine ..
+├── spec
+├───── .. sources with Jasmine automated tests ..
+└── src
+├───── .. sources with our main code ..
+├── index.html       - entry point to the application
+├── SpecRunner.html  - entry point to our test suite
+</code></pre>
+
+<p>First, create required directories: <code>lib</code>, <code>spec</code> and <code>src</code>. Then download the latest standalone Jasmine release here: <a href="https://github.com/jasmine/jasmine/releases">https://github.com/jasmine/jasmine/releases</a> (jasmine-standalone-{version}.zip file). At the time of writing, the version is <code>2.5.2</code>. Unzip that file into your project directory. You should get the following files from it:</p>
+
+<ul>
+<li><code>./lib/jasmine-2.5.2/</code> directory - contains all the resources required by Jasmine.</li>
+<li><code>./SpecRunner.html</code> - example entry point to our test suite.</li>
+<li><code>./src/Player.js</code> and <code>./src/Song.js</code> - example source files.</li>
+<li><code>./spec/PlayerSpec.js</code> and <code>./spec/SpecHelper.js</code> - example automated Jasmine tests.</li>
+</ul>
+
+
+<p>Now, try to open <code>SpecRunner.html</code> in your browser. It should run these example tests, and they should all pass. Here is how it should look like:</p>
+
+<p><img src="/images/learning-tdd-with-js/jasmine-example-run.png" alt="Jasmine example test run with all tests green" /></p>
+
+<p>Also, create an empty <code>index.html</code>:</p>
+
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>And now we should have the desired project structure. So how does that Jasmine testing framework works, anyways?</p>
+
+<h2>Crash Course into Jasmine</h2>
+
+<p>Let&rsquo;s take a look at the example test file to get the gist of how Jasmine works:</p>
+
+<pre><code class="javascript">// spec/PlayerSpec.js
+
+describe("Player", function() {
+  var player;
+  var song;
+
+  beforeEach(function() {
+    player = new Player();
+    song = new Song();
+  });
+
+  it("should be able to play a Song", function() {
+    player.play(song);
+    expect(player.currentlyPlayingSong).toEqual(song);
+
+    //demonstrates use of custom matcher
+    expect(player).toBePlaying(song);
+  });
+
+  describe("when song has been paused", function() {
+    beforeEach(function() {
+      player.play(song);
+      player.pause();
+    });
+
+    it("should indicate that the song is currently paused", function() {
+      expect(player.isPlaying).toBeFalsy();
+
+      // demonstrates use of 'not' with a custom matcher
+      expect(player).not.toBePlaying(song);
+    });
+
+    it("should be possible to resume", function() {
+      player.resume();
+      expect(player.isPlaying).toBeTruthy();
+      expect(player.currentlyPlayingSong).toEqual(song);
+    });
+  });
+
+  // demonstrates use of spies to intercept and test method calls
+  it("tells the current song if the user has made it a favorite", function() {
+    spyOn(song, 'persistFavoriteStatus');
+
+    player.play(song);
+    player.makeFavorite();
+
+    expect(song.persistFavoriteStatus).toHaveBeenCalledWith(true);
+  });
+
+  //demonstrates use of expected exceptions
+  describe("#resume", function() {
+    it("should throw an exception if song is already playing", function() {
+      player.play(song);
+
+      expect(function() {
+        player.resume();
+      }).toThrowError("song is already playing");
+    });
+  });
+});
+</code></pre>
+
+<p>First important concept here is the <code>describe("...", function () { ... })</code>. <code>describe</code> function is used to describe a certain concept or a certain context. For example, <code>describe("Player", ...)</code> means that we are going to define tests for <code>Player</code> class or some other <code>Player</code> concept. Also, describes can be nested to indicate that we are describing some specific context (<code>describe("when a song has been paused", ...)</code>) or sub-concept of current concept, such as the method of currently described class (<code>describe("#resume", ...)</code>). That is a good example, of what the unit test suite might be describing. In the case of End-to-End tests we would like to describe a full feature, so <code>describe("Login Feature", ...)</code> is a good bet. The second argument for the <code>describe</code> is the function that will contain all tests and sub-describes for the described concept. This function is the capturing closure, so defining variables and functions on the outer-level describe will make them available on the inner-level describes and the tests themselves.</p>
+
+<p>Second important concept here is the <code>it("...", function () { ... })</code>. <code>it</code> function is used to create a test for the currently described concept, context or sub-concept. The first argument is the description of what <em>it</em> does, where <em>it</em> is the described concept. For example, given we describe a <code>music player</code> and our context is <code>when the volume is at max</code>, then we might write the test <code>it("is deafening", ...)</code>. In the case of End-to-End tests we are describing a feature, so <em>it</em> will refer to our application, or application&rsquo;s user interface, for example: <code>it("shows user's nickname", ...)</code>. The second argument to the <code>it</code> is the function with the test itself. Here we will setup the stage for the test, call our main code and verify that everything happened as we expect.</p>
+
+<p>Finally, the third important concept is the <code>expect(...).to...</code>. That is Jasmine&rsquo;s form of assertion. That is where we verify that our code worked as we expect it to. As an argument to expect we provide an actual value. The actual value is something that our code has returned as a result of the function or method execution or something that we have read from the UI using UI manipulation code, or something that we have read from some 3rd party service, such as our back-end server, 3rd-party API or database. Essentially, this is the value that we are verifying to be correct. The second part is the Jasmine matcher - the method defined on the object, that is returned from <code>expect(value)</code> call, that allows us to define what we want to assert about that value. The most used one is <code>toEqual(...)</code>, which asserts that the value was equal to some expected value.</p>
+
+<p>These three concepts should be enough to start writing tests. Don&rsquo;t worry about everything else that you see in this example file from standalone Jasmine distribution. We will discover some of these concepts as we go. Now, let&rsquo;s remove <code>src/Player.js</code>, <code>src/Song.js</code>, <code>spec/PlayerSpec.js</code> and <code>spec/SpecHelper.js</code>, and run our test suite - it is enough to reload the page to re-run our test suite. Test run should report that <code>No specs found</code>:</p>
+
+<p><img src="/images/learning-tdd-with-js/jasmine-no-specs-found.png" alt="Jasmine no specs found example" /></p>
+
+<p>To get the gist of how <code>describe("...", function () { ... })</code>, <code>it("...", function () { ... })</code> and <code>expect(...).toEqual(...)</code> works, let&rsquo;s write our first failing test. Also, that will let us see if the testing framework is configured correctly and is capable of showing us the test failure. Let&rsquo;s create a new file called <code>spec/JasmineWorksSpec.js</code>:</p>
+
+<pre><code class="javascript">// spec/JasmineWorksSpec.js
+
+describe("testing framework", function () {
+  it("works", function () {
+    expect(2 + 2).toEqual(5);
+  });
+});
+</code></pre>
+
+<p>And we need to add this test file to the <code>SpecRunner.html</code>:</p>
+
+<p>&#8220;`html</p>
+
+<!-- include source files here... -->
+
+
+
+
+<!-- include spec files here... -->
+
+
+<script src="spec/JasmineWorksSpec.js"></script>
+
+
+<pre><code>
+And if we run our test suite, we should see a failure:
+</code></pre>
+
+<p>testing framework works
+  Expected 4 to equal 5.
+&#8220;`</p>
+
+<p>And we ought to make it pass by fixing our incorrect assertion: <code>expect(2 + 2).toEqual(4);</code>. And if we run the test suite again, by reloading the page in the browser, all the test should pass.</p>
+
+<h2>Writing our First Simple Tests</h2>
+
+<p>Now we can write some real tests to practice usage of <code>describe</code>, <code>it</code> and <code>expect(...).toEqual</code>: let&rsquo;s create <code>ArithmeticsSpec.js</code> and write some tests for behavior of <code>add</code> function:</p>
+
+<pre><code class="javascript">// spec/ArithmeticsSpec.js
+
+describe("Arithmetics", function () {
+
+  describe("#add(a, b)", function () {
+    it("calculates the sum of two numbers", function () {
+      // ARRANGE
+      var a = 3;
+      var b = 4;
+      var expected = 7;
+
+      // ACT
+      var actual = Arithmetics.add(a, b);
+
+      // ASSERT
+      expect(actual).toEqual(expected);
+    });
+  });
+
+});
+</code></pre>
+
+<p>Don&rsquo;t forget to add the <code>&lt;script src="spec/ArithmeticsSpec.js"&gt;&lt;/script&gt;</code> to the <code>SpecRunner.html</code>. This test will fail first because <code>Arithmetics</code> module is not defined. We will define it as an empty object. Next failure is because <code>Arithmetics.add</code> is not a function - it is undefined. We will define that function with two arguments inside of the <code>Arithmetics</code> object. Finally, the test will fail, because we expect the result to be seven, but it was undefined. We will make the simplest thing we can do to pass the failing test - return seven. That will make the test pass. The code will be in <code>src/Arithmetics.js</code>, which we include in our <code>SpecRunner.html</code>, and will look like that:</p>
+
+<pre><code class="javascript">// src/Arithmetics.js
+
+var Arithmetics = {
+  add: function (a, b) {
+    return 7;
+  }
+};
+</code></pre>
+
+<p>That, of course, is not correct implementation, so we need another test to drive out the proper implementation - test with different inputs and a different result. To make it pass we will have to use <code>a + b</code>:</p>
+
+<pre><code class="javascript">// spec/ArithmeticsSpec.js
+describe("Arithmetics", function () {
+
+  describe("#add(a, b)", function () {
+    it("calculates the sum of two numbers", function () { ... });
+
+    it("calculates the sum of two other numbers", function () {
+      // ARRANGE
+      var a = 73;
+      var b = 89;
+      var expected = 162;
+
+      // ACT
+      var actual = Arithmetics.add(a, b);
+
+      // ASSERT
+      expect(actual).toEqual(expected);
+    });
+  });
+
+});
+
+// src/Arithmetics.js
+var Arithmetics = {
+  add: function (a, b) {
+    return a + b;
+  }
+};
+</code></pre>
+
+<h3>Three &ldquo;A&#8221;s: Arrange, Act, and Assert</h3>
+
+<p>Have you noticed three comments that I have left in the example tests&#8217; code: <code>ARRANGE</code>, <code>ACT</code> and <code>ASSERT</code>? These are three &ldquo;A&#8221;s of writing a good test. Arrange is the part of the test, where we set up the stage: prepare input data, create objects, load resources, change the state of the system - it is the part where we create the context for our test. Act is the part of the test, where we call our system under the test. In the <code>Arithmetics</code> example it was a function <code>Arithmetics.add(a, b)</code>. The system under the test can return some useful value or change its state. To verify that either is correct we, finally, use Assert section of our test - part of the test where we verify the outcome of the call to the system under the test.</p>
+
+<p>The sections <code>ARRANGE</code>, <code>ACT</code> and <code>ASSERT</code> are spelled out in the comments only for the reader&rsquo;s convenience - usually, real projects don&rsquo;t have such comments. It is worth noting that for learning and practicing purposes it is a good idea to name these sections explicitly in our tests - this develops a habit of recognizing which part of the test should belong to which section. Also, the formula Act -> Arrange -> Assert makes it easier to come up with the test when we lack deep experience in testing, or with the particular testing framework, or an environment.</p>
+
+<p>Going a bit back to our user story scenarios: have you noticed the connection between &ldquo;Arrange, Act and Assert&rdquo; and &ldquo;Given-When-Then&rdquo;? Arrange part of the test corresponds to the Given part of the scenario, Act part of the test corresponds to the When part of the scenario, and Assert part of the test corresponds to the Then part of the scenario. Let&rsquo;s see it on of our previous example scenarios:</p>
+
+<div class="next-table-is-top-aligned"></div>
+
+
+<table>
+<thead>
+<tr>
+<th>Test Section</th>
+<th>Scenario Step</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><hr></td>
+<td><hr></td>
+</tr>
+<tr>
+<td>ARRANGE</td>
+<td><strong>Given</strong> User with email ‘john@example.org’ and password ‘welcome’ exists<br><strong>And</strong> I am at the login page</td>
+</tr>
+<tr>
+<td><br></td>
+<td><br></td>
+</tr>
+<tr>
+<td>ACT</td>
+<td><strong>When</strong> I enter ‘john@example.org’ in the email field<br><strong>And</strong> I enter ‘welcome’ in the password field<br><strong>And</strong> I click on the submit button</td>
+</tr>
+<tr>
+<td><br></td>
+<td><br></td>
+</tr>
+<tr>
+<td>ASSERT</td>
+<td><strong>Then</strong> I see the profile page<br><strong>And</strong> I see my name as the title of the profile page</td>
+</tr>
+</tbody>
+</table>
+
+
+<h3>Exercises</h3>
+
+<ol>
+<li>Write tests and implement functions on <code>Arithmetics</code> module: <code>subtract</code>, <code>multiply</code> and <code>divide</code>.</li>
+<li>Inline Arrange, Act and Assert in a one-liner. Can you still recognize implicit Arrange, Act and Assert sections in that one line? Is it more or less readable? Is there a middle ground between two versions? Why would you choose one or the other?</li>
+<li>Classify parts of the free-form story for the user log in from before as Arrange, Act, and Assert. Was it easier, than classifying formal Given-When-Then form? Was it harder? Or maybe the same? How would it be if you never saw Given-When-Then version of that free-form story?</li>
+</ol>
+
+
+<h2>Writing our First End-to-End Test</h2>
+
+<p>Now that we know approximately, how to arrange the steps of our scenario into the test, let&rsquo;s give it a shot. We will start by creating a new test file for our login feature called <code>LoginFeatureSpec.js</code>. Don&rsquo;t forget to put an appropriate script tag in the <code>SpecRunner.html</code>. We will start by writing the skeleton of our test suite: <code>describe</code> and <code>it</code> inside of it. Next, we will put scenario steps as comments to our test, and we will split them into three sections: Arrange, Act, and Assert. It will look like this:</p>
+
+<pre><code class="javascript">// spec/LoginFeatureSpec.js
+
+describe("Login Feature", function () {
+
+  it("allows to login with correct credentials", function () {
+    // ARRANGE
+    // Given User with email ‘john@example.org’ and password ‘welcome’ exists
+    // And I am at the login page
+
+    // ACT
+    // When I enter ‘john@example.org’ in the email field
+    // And I enter ‘welcome’ in the password field
+    // And I click on the submit button
+
+    // ASSERT
+    // Then I see the profile page
+    // And I see my name as the title of the profile page
+  });
+
+});
+</code></pre>
+
+<p>Next step would be to change the first <strong>Given</strong> comment to the function call. We should give a good readable name to that function. One straightforward option would be <code>givenUserExists(email, password).' Another good option is</code>addUser({email: email, password: password})<code>. While they are not that different, I prefer</code>addUser<code>for its higher conceptual flexibility - we will likely need that function in some different scenario step in the future. While I prefer that, we should not do that yet, because we might never need the function like that, and</code>givenUserExists<code>will do us more good right now since it resembles the scenario step so much. When we need this flexibility, we'll perform a refactoring. So for now, let's create an empty function with that name in a new file</code>spec/FeatureSteps.js<code>and load this file from our</code>SpecRunner.html`.</p>
+
+<p>This empty function, on its own, doesn&rsquo;t do us much good because all our tests will pass. If we continue replacing our steps in comments with such functions, we will end up with one big failure at the Assert section, and we will have to write a lot of code at once to fix that. To drive ourselves to implement the function <code>givenUserExists</code> properly right now, we should write an assertion right after the call. This assertion is not part of Assert section - it is a part of test-driving the functionality of our feature steps. A good assertion here will be to ask our user storage mechanism if such user exists right after we created that user. Also, it would be a good idea to check that user does not exist, before we created it. Also, we will extract variables <code>email</code> and <code>password</code> because we have to repeat them all over the place already. Let&rsquo;s see how it will look like:</p>
+
+<pre><code class="javascript">// spec/LoginFeatureSpec.js
+
+describe("Login Feature", function () {
+
+  it("allows to login with correct credentials", function () {
+    // ARRANGE
+
+    // Given User with email ‘john@example.org’ and password ‘welcome’ exists
+    var email = "john@example.org";
+    var password = "welcome";
+    expect(Users.exists(email, password)).toEqual(false);
+    givenUserExists(email, password);
+    expect(Users.exists(email, password)).toEqual(true);
+
+    // ...
+  });
+
+});
+</code></pre>
+
+<p>When we run our tests, the breadcrumbs of test failures will drive us to create this basic functionality. First, we will create <code>Users.js</code> with empty <code>Users</code> module and import it from <code>SpecRunner.html</code>. Then, next failure will drive us to add method <code>exists(email, password)</code> on <code>Users</code> module, that will always return <code>false</code>. Next, make function <code>givenUserExists(email, password)</code> call <code>Users.add(email, password)</code>, which in turn will make us create a function <code>Users.add(email, password)</code>, that will store email-password pair to the list of users in the memory. And, finally, make <code>Users.exists</code> to search for the email-password pair in that in-memory list. And finally, our test will pass. Let&rsquo;s take a look at how these steps will look in our code:</p>
+
+<pre><code class="javascript">// =&gt; Error: Users is undefined
+// in src/Users.js:
+var Users = {};
+
+// =&gt; Error: Users.exists is not a function
+// in src/Users.js:
+var Users = {
+  exists: function (email, password) {}
+};
+
+// =&gt; Error: expected undefined to equal false
+// in src/Users.js:
+var Users = {
+  exists: function (email, password) {
+    return false;
+  }
+};
+
+// =&gt; Error: expected false to equal true
+// in the (second assertion)
+// in spec/FeatureSteps.js:
+function givenUserExists(email, password) {
+  Users.add(email, password);
+}
+
+// =&gt; Error: Users.add is not a function
+// in src/Users.js:
+var Users = {
+  users: [],
+
+  exists: function (email, password) { ... },
+
+  add: function (email, password) {
+    this.users.push({email: email, password: password});
+  }
+}
+
+// this still fails with:
+// =&gt; Error: expected false to equal true
+// because we need to implement Users.exists "properly"
+// in src/Users.js:
+var Users = {
+  users: [],
+
+  exists: function (email, password) {
+    return this.users.length &gt; 0;
+  },
+
+  add: function (email, password) { ... }
+}
+
+// =&gt; All tests PASS
+</code></pre>
+
+<p>It is funny, how simple <code>Users.exists(email, password)</code> function is. It verifies that we have at least one user. While this is not a correct code, this is good enough for our current test. As we know that this code is not entirely correct, we need to remember to write the test(s) to prove it incorrect, so that we can make it proper with confidence. Since we want first to finish the current test, we should add a to-do list item to write such test. We have two edge cases here that will not work with our implementation: when we have only one user in the system and the credentials we provided do not match and when we have multiple users in the system, and we provide correct credentials for the second one:</p>
+
+<pre><code class="javascript">xdescribe("when user has different credentials", function () {
+  it("does not allow to login with wrong credentials", function () {
+
+  });
+});
+
+xdescribe("when there are more than one user", function () {
+  it("allows to login with correct credentials", function () {
+
+  });
+});
+</code></pre>
+
+<p>Have you noticed <code>xdescribe</code>? It is a different form of the <code>describe</code>, that allows us to mark the whole context as pending. It won&rsquo;t run the tests inside, and it will mark them as pending in the test run report. That is the ultimate way to maintain a Test-Driven TODO List. As we test-drive our code, we will find more of these. In the report they look like this:</p>
+
+<p><img src="/images/learning-tdd-with-js/jasmine-e2e-pending-tests.png" alt="pending jasmine tests" /></p>
+
+<p>Let&rsquo;s finish continue implementing our steps. The comment <code>And I am at the login page</code> transparently becomes a function <code>givenIAmAtTheLoginPage()</code>. As we already have seen, it doesn&rsquo;t do us any good just to replace the comment with a function call that does nothing - so we should surround it with proper assertions. We know that login page should have some text input for email and another password field for password, and we will need a button to confirm user&rsquo;s intent to log in. Also, because we are developing a single page application, we would need some container for the currently active page. Let&rsquo;s say we need these things:</p>
+
+<ul>
+<li>Initially, we will have only one container with <code>id="page"</code> and no content. We probably ought to define it in our HTML file.</li>
+<li>When we render our login page, we should have:
+
+<ul>
+<li>email text input field with <code>id="email"</code>,</li>
+<li>password input field with <code>id="password"</code>,</li>
+<li>and button with <code>id="do_login"</code>.</li>
+</ul>
+</li>
+</ul>
+
+
+<p>Now that we have spelt this out, it is fairly straightforward to write assertions surrounding the <code>givenIAmAtTheLoginPage()</code> call:</p>
+
+<pre><code class="javascript">// Initially, we will have only one container with `id="page"`
+var container = document.querySelector("#page");
+expect(container).not.toEqual(null);
+// and no content
+expect(container.innerHTML).toEqual("");
+</code></pre>
+
+<p>That fails because we don&rsquo;t have such element in our HTML. We need to create it both in our <code>SpecRunner.html</code>. Also, now it will be important to move all our <code>&lt;script&gt;</code> tags from the <code>&lt;head&gt;</code> to the <code>&lt;body&gt;</code> below the container that we have just created. <code>SpecRunner.html</code> should look this way after that:</p>
+
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;Jasmine Spec Runner v2.5.2&lt;/title&gt;
+
+    &lt;link rel="shortcut icon" type="image/png" href="lib/jasmine-2.5.2/jasmine_favicon.png"&gt;
+    &lt;link rel="stylesheet" href="lib/jasmine-2.5.2/jasmine.css"&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+    &lt;div id="page"&gt;&lt;/div&gt;
+
+    &lt;script src="lib/jasmine-2.5.2/jasmine.js"&gt;&lt;/script&gt;
+    &lt;script src="lib/jasmine-2.5.2/jasmine-html.js"&gt;&lt;/script&gt;
+    &lt;script src="lib/jasmine-2.5.2/boot.js"&gt;&lt;/script&gt;
+
+    &lt;!-- include source files here... --&gt;
+    &lt;script src="src/Arithmetics.js"&gt;&lt;/script&gt;
+    &lt;script src="src/Users.js"&gt;&lt;/script&gt;
+
+    &lt;!-- include spec files here... --&gt;
+    &lt;script src="spec/JasmineWorksSpec.js"&gt;&lt;/script&gt;
+    &lt;script src="spec/ArithmeticsSpec.js"&gt;&lt;/script&gt;
+    &lt;script src="spec/FeatureSteps.js"&gt;&lt;/script&gt;
+    &lt;script src="spec/LoginFeatureSpec.js"&gt;&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>Now, our next failure is that <code>givenIAmAtTheLoginPage()</code> function is not defined. We can define it as empty function in our <code>spec/FeatureSteps.js</code> file for now. This will turn our tests green again. We still haven&rsquo;t made our assertions about the state of the UI after the call to <code>givenIAmAtTheLoginPage</code> - let&rsquo;s do this now:</p>
+
+<pre><code class="javascript">var emailInput = container.querySelector("#email");
+expect(emailInput.tagName).toEqual("input");
+expect(emailInput.type).toEqual("email");
+</code></pre>
+
+<p>That fails with the error <code>Cannot read property tagName of null</code>, which means that we don&rsquo;t have <code>#email</code> element inside of the <code>#page</code> container. Simplest thing to do would be to add that element to the <code>#page</code> container in our <code>SpecRunner.html</code>. And it won&rsquo;t work! Because we have an assertion that verifies, that before calling to the <code>givenIAmAtTheLoginPage</code> we do not have anything in the <code>#page</code> container. Now we have to do something useful in the function <code>givenIAmAtTheLoginPage</code>. For example, we can call <code>LoginPage.render()</code>. Which does not exist yet and we will need to create it in the file <code>src/LoginPage.js</code> and load it from our <code>SpecRunner.html</code>. To fix current failure we will need to create a <code>#email</code> element there and append it to our <code>#page</code> container:</p>
+
+<pre><code class="javascript">// spec/FeatureSteps.js
+function givenIAmAtTheLoginPage() {
+  LoginPage.render();
+}
+
+// src/LoginPage.js
+var LoginPage = {
+  render: function () {
+    var emailInput = document.createElement("div");
+    emailInput.id = "email";
+
+    var container = document.querySelector("#page");
+    container.appendChild(emailInput);
+  }
+};
+</code></pre>
+
+<p>That makes the current test failure go away, but we have two more: <code>Expected 'DIV' to equal 'input'.</code> and <code>Expected undefined to equal 'email'.</code>. To make these pass, we would need to change <code>document.createElement(...)</code> call to use <code>input</code> tag name and also we will need to set the input type to <code>email</code>. And as we see, the tag name stored in <code>emailInput.tagName</code> is all-caps, so we will have to fix our assertion also to expect that:</p>
+
+<pre><code class="javascript">// first we'll fix the assertion:
+// in spec/LoginFeatureSpec.js
+expect(emailInput.tagName).toEqual("INPUT");
+
+// and then we will fix the emailInput creation:
+// in src/LoginPage.js
+var emailInput = document.createElement("input");
+emailInput.id = "email";
+emailInput.type = "email";
+</code></pre>
+
+<p>And if we run our tests, they all pass. Great! We should now do the same for our password input field and the login button:</p>
+
+<pre><code class="javascript">// in spec/LoginFeatureSpec.js
+var passwordInput = container.querySelector("#password");
+expect(passwordInput.tagName).toEqual("INPUT");
+expect(passwordInput.type).toEqual("password");
+var loginButton = container.querySelector("#do_login");
+expect(loginButton.tagName).toEqual("BUTTON");
+expect(loginButton.textContent).toEqual("Login");
+
+// in src/LoginPage.js
+var passwordInput = document.createElement("input");
+passwordInput.id = "password";
+passwordInput.type = "password";
+container.appendChild(passwordInput);
+
+var loginButton = document.createElement("button");
+loginButton.id = "do_login";
+loginButton.textContent = "Login";
+container.appendChild(loginButton);
+</code></pre>
+
+<p>And all tests pass again. Let&rsquo;s take another look at how our test looks like. It is quite complicated, and it has so much stuff, that is hugely detailed and precise, that it is not possible to see a user story scenario there anymore. One possible solution to that problem is to push the assertions that are related to the feature scenario step to the respective step functions. Now it looks much better. We should use the same concept for all our further steps. After refactoring test code looks like this:</p>
+
+<pre><code class="javascript">// in spec/LoginFeatureSpec.js
+it("allows to login with correct credentials", function () {
+  // ARRANGE
+  var email = "john@example.org";
+  var password = "welcome";
+  givenUserExists(email, password);
+  givenIAmAtTheLoginPage();
+
+  // ACT
+  // When I enter ‘john@example.org’ in the email field
+  // And I enter ‘welcome’ in the password field
+  // And I click on the submit button
+
+  // ASSERT
+  // Then I see the profile page
+  // And I see my name as the title of the profile page
+});
+
+// in spec/FeatureSteps.js
+function givenUserExists(email, password) {
+    expect(Users.exists(email, password)).toEqual(false);
+
+    Users.add(email, password);
+
+    expect(Users.exists(email, password)).toEqual(true);
+}
+
+function givenIAmAtTheLoginPage() {
+    var container = document.querySelector("#page");
+    expect(container).not.toEqual(null);
+    expect(container.innerHTML).toEqual("");
+
+    LoginPage.render();
+
+    var emailInput = container.querySelector("#email");
+    expect(emailInput.tagName).toEqual("INPUT");
+    expect(emailInput.type).toEqual("email");
+
+    var passwordInput = container.querySelector("#password");
+    expect(passwordInput.tagName).toEqual("INPUT");
+    expect(passwordInput.type).toEqual("password");
+
+    var loginButton = container.querySelector("#do_login");
+    expect(loginButton.tagName).toEqual("BUTTON");
+    expect(loginButton.textContent).toEqual("Login");
+}
+</code></pre>
+
+<p>Now, let&rsquo;s follow the same pattern for our Act section. First, we will deal with <code>When I enter ‘john@example.org’ in the email field</code>. This seems to be a call to a function <code>whenIEnterInTheField("#email", email)</code> - we will implement it using Javascript&rsquo;s APIs. We will do the same for the <code>And I enter ‘welcome’ in the password field</code>, which will use the same function <code>whenIEnterInTheField("#password", password).</code> Finally, we will implement <code>whenIClickOn("#do_login")</code> as a replacement for the comment <code>And I click on the submit button</code>. We will also sprinkle assertions inside of the steps to make sure that we are using the Javascript APIs correctly. The code will look like this:</p>
+
+<pre><code class="javascript">// in spec/LoginFeatureSpec.js
+it("allows to login with correct credentials", function () {
+    // ARRANGE
+    var email = "john@example.org";
+    var password = "welcome";
+    givenUserExists(email, password);
+    givenIAmAtTheLoginPage();
+
+    // ACT
+    whenIEnterInTheField("#email", email);
+    whenIEnterInTheField("#password", password);
+    whenIClickOn("#do_login");
+
+    // ASSERT
+    // Then I see the profile page
+    // And I see my name as the title of the profile page
+});
+
+// in spec/FeatureSteps.js
+function whenIEnterInTheField(selector, value) {
+    var element = document.querySelector(selector);
+    expect(element).not.toEqual(null);
+    expect(element.value).toEqual("");
+
+    element.value = value;
+
+    var elementAfterChange = document.querySelector(selector);
+    expect(element.value).toEqual(value);
+}
+
+function whenIClickOn(selector) {
+    var element = document.querySelector(selector);
+    expect(element).not.toEqual(null);
+
+    element.click();
+}
+</code></pre>
+
+<p>Now comes the most interesting part of writing this feature test - Assert section. So far, Arrange and Act sections were driving us to create an infrastructure-like code of our application. Now, with Assert section we will have to implement more of our domain logic. Let&rsquo;s start with the <code>Then I see the profile page</code>. Let&rsquo;s try to figure our what that could mean:</p>
+
+<ul>
+<li>We no longer have a login page in our <code>#page</code> container.</li>
+<li><code>#page</code> container should somehow indicate that we are on the <code>Profile</code> page:
+
+<ul>
+<li>could be achieved by adding a sub-container with <code>id="profile_page"</code> to it.</li>
+</ul>
+</li>
+<li>We don&rsquo;t know much more about what the profile page is. What we do know is:
+
+<ul>
+<li>the profile page has a name of the user as the title of the page.</li>
+</ul>
+</li>
+</ul>
+
+
+<p>Interesting, so far, we didn&rsquo;t have a concept of the Name of the User. I guess it is time to create one in our arrange block, with all the changes and additional assertions in our feature steps that we have to do:</p>
+
+<pre><code class="javascript">// in spec/LoginFeatureSpec.js
+// ARRANGE
+var email = "john@example.org";
+var password = "welcome";
+var name = "John Smith";
+givenUserExists(email, password, name);
+
+// in spec/FeatureSteps.js
+function givenUserExists(email, password, name) {
+  expect(Users.exists(email, password)).toEqual(false);
+
+  Users.add(email, password, name);            // &lt;=
+
+  expect(Users.exists(email, password)).toEqual(true);
+
+  expect(Users.nameOf(email)).toEqual(name);   // &lt;=
+}
+
+// also we need to add name field to the user data
+// and implement nameOf(email) function
+// in src/Users.js
+add: function (email, password, name) {
+  this.users.push({
+    email: email,
+    password: password,
+    name: name
+  });
+},
+
+nameOf: function (email) {
+  return this.users[0].name;
+}
+</code></pre>
+
+<p>And the tests will pass again. And now we have a tested concept of the name in our code. Tested - to the extent required for this test, where we have only one user in the system. Now we can replace the comment <code>Then I see the profile page</code> with the scenario step function call <code>thenISeeTheProfilePage()</code>. The implementation of it will verify that <code>#email</code>, <code>#password</code> and <code>#do_login</code> are no longer present on the page and it will verify that container <code>#page-profile</code> is present and it has <code>#title</code> element in it. Making it pass will require us to add a <code>click</code> event listener to the <code>loginButton</code> in the <code>LoginPage</code>, that will remove contents of the <code>#page</code> container and will call to <code>ProfilePage.render()</code> following the analogy of <code>LoginPage</code>. That drives us to create this module and its <code>render()</code> function. According to our next test failure, this function should create <code>#profile_page</code> sub-container in <code>#page</code> container, so we do that. Finally, we have one last failure, that drives us to create <code>#title</code> element in <code>ProfilePage.render()</code> function. And all tests are green again. Let&rsquo;s take a look at these changes:</p>
+
+<pre><code class="javascript">// in spec/LoginFeatureSpec.js
+// ASSERT
+// Then I see the profile page
+thenISeeTheProfilePage();
+
+// in spec/FeatureSteps.js
+function thenISeeTheProfilePage() {
+  // assert login page is gone
+  expect(document.querySelector("#email")).toEqual(null);
+  expect(document.querySelector("#password")).toEqual(null);
+  expect(document.querySelector("#do_login")).toEqual(null);
+
+  // assert profile page is present
+  expect(document.querySelector("#page #profile_page")).not.toEqual(null);
+  expect(document.querySelector("#profile_page #title")).not.toEqual(null);
+}
+
+// in src/LoginPage.js at the end of render() function:
+render: function() {
+  // ...
+
+  loginButton.addEventListener("click", LoginPage.onLogin);
+},
+
+onLogin: function () {
+  container.innerHTML = "";
+  ProfilePage.render();
+}
+
+// in src/ProfilePage.js
+var ProfilePage = {
+  render: function () {
+    var profileContainer = document.createElement("div");
+    profileContainer.id = "profile_page";
+    container.appendChild(profileContainer);
+
+    var title = document.createElement("h1");
+    title.id = "title";
+    profileContainer.appendChild(title);
+  }
+};
+</code></pre>
+
+<p>At last, we can implement the last step - <code>And I see my name as the title of the profile page</code>. A good guess for the step name would be <code>thenISeeTextAt("#title", name)</code>. The function will simply select element <code>#title</code> and verify its <code>element.textContent</code>. As expected, it fails with the error <code>Expected '' to equal 'John Smith'</code> and we should fix that within the <code>ProfilePage.render()</code> function by assigning <code>title.textContent</code> to the <code>Users.currentUser().name</code>. This fails because we didn&rsquo;t define <code>Users.currentUser()</code> function and this is simple to do for our current test - just return the first user. After that all our tests pass. The code will look like this:</p>
+
+<pre><code class="javascript">// in spec/LoginFeatureSpec.js
+thenISeeTextAt("#title", name);
+
+// in spec/FeatureSteps.js
+function thenISeeTextAt(selector, text) {
+  var element = document.querySelector(selector);
+  expect(element.textContent).toEqual(text);
+}
+
+// in src/ProfilePage.js
+title.textContent = Users.currentUser().name;
+
+// in src/Users.js
+currentUser: function () {
+    return this.users[0];
+}
+</code></pre>
+
+<p>We have finally, implemented our first feature test. That was quite some work. Also, the functionality of <code>Users</code> module is way incomplete - we need to write more tests to cover different cases. That is how our test code and production code looks like:</p>
+
+<pre><code class="javascript">// spec/LoginFeatureSpec.js
+describe("Login Feature", function () {
+
+    it("allows to login with correct credentials", function () {
+        // ARRANGE
+        var email = "john@example.org";
+        var password = "welcome";
+        var name = "John Smith";
+        givenUserExists(email, password, name);
+        givenIAmAtTheLoginPage();
+
+        // ACT
+        whenIEnterInTheField("#email", email);
+        whenIEnterInTheField("#password", password);
+        whenIClickOn("#do_login");
+
+        // ASSERT
+        thenISeeTheProfilePage();
+        thenISeeTextAt("#title", name);
+    });
+
+    xdescribe("when user has different credentials", function () {
+        it("does not allow to login with wrong credentials", function () {
+
+        });
+    });
+
+    xdescribe("when there are more than one user", function () {
+        it("allows to login with correct credentials", function () {
+
+        });
+    });
+
+});
+</code></pre>
+
+<pre><code class="javascript">// spec/FeatureSteps.js
+function givenUserExists(email, password, name) {
+    expect(Users.exists(email, password)).toEqual(false);
+
+    Users.add(email, password, name);
+
+    expect(Users.exists(email, password)).toEqual(true);
+    expect(Users.nameOf(email)).toEqual(name);
+}
+
+function givenIAmAtTheLoginPage() {
+    var container = document.querySelector("#page");
+    expect(container).not.toEqual(null);
+    expect(container.innerHTML).toEqual("");
+
+    LoginPage.render();
+
+    var emailInput = container.querySelector("#email");
+    expect(emailInput.tagName).toEqual("INPUT");
+    expect(emailInput.type).toEqual("email");
+
+    var passwordInput = container.querySelector("#password");
+    expect(passwordInput.tagName).toEqual("INPUT");
+    expect(passwordInput.type).toEqual("password");
+
+    var loginButton = container.querySelector("#do_login");
+    expect(loginButton.tagName).toEqual("BUTTON");
+    expect(loginButton.textContent).toEqual("Login");
+}
+
+function whenIEnterInTheField(selector, value) {
+    var element = document.querySelector(selector);
+    expect(element).not.toEqual(null);
+    expect(element.value).toEqual("");
+
+    element.value = value;
+
+    var elementAfterChange = document.querySelector(selector);
+    expect(element.value).toEqual(value);
+}
+
+function whenIClickOn(selector) {
+    var element = document.querySelector(selector);
+    expect(element).not.toEqual(null);
+
+    element.click();
+}
+
+function thenISeeTheProfilePage() {
+    // assert login page is gone
+    expect(document.querySelector("#email")).toEqual(null);
+    expect(document.querySelector("#password")).toEqual(null);
+    expect(document.querySelector("#do_login")).toEqual(null);
+
+    // assert profile page is present
+    expect(document.querySelector("#page #profile_page")).not.toEqual(null);
+    expect(document.querySelector("#profile_page #title")).not.toEqual(null);
+}
+
+function thenISeeTextAt(selector, text) {
+    var element = document.querySelector(selector);
+    expect(element.textContent).toEqual(text);
+}
+</code></pre>
+
+<pre><code class="javascript">// src/Users.js
+var Users = {
+    users: [],
+
+    exists: function (email, password) {
+        return this.users.length &gt; 0;
+    },
+
+    add: function (email, password, name) {
+        this.users.push({
+            email: email,
+            password: password,
+            name: name
+        });
+    },
+
+    nameOf: function (email) {
+        return this.users[0].name;
+    },
+
+    currentUser: function () {
+        return this.users[0];
+    }
+};
+</code></pre>
+
+<pre><code class="javascript">// src/LoginPage.js
+var container = document.querySelector("#page");
+
+var LoginPage = {
+    render: function () {
+        var emailInput = document.createElement("input");
+        emailInput.id = "email";
+        emailInput.type = "email";
+        container.appendChild(emailInput);
+
+        var passwordInput = document.createElement("input");
+        passwordInput.id = "password";
+        passwordInput.type = "password";
+        container.appendChild(passwordInput);
+
+        var loginButton = document.createElement("button");
+        loginButton.id = "do_login";
+        loginButton.textContent = "Login";
+        container.appendChild(loginButton);
+
+        loginButton.addEventListener("click", LoginPage.onLogin);
+    },
+
+    onLogin: function () {
+        container.innerHTML = "";
+        ProfilePage.render();
+    }
+};
+</code></pre>
+
+<pre><code class="javascript">// src/ProfilePage.js
+var ProfilePage = {
+    render: function () {
+        var profileContainer = document.createElement("div");
+        profileContainer.id = "profile_page";
+        container.appendChild(profileContainer);
+
+        var title = document.createElement("h1");
+        title.id = "title";
+        title.textContent = Users.currentUser().name;
+        profileContainer.appendChild(title);
+    }
+};
+</code></pre>
+
+<p>Now we could add <code>&lt;div id="page"&gt;</code> to our <code>index.html</code>, and load our <code>src/*</code> scripts after it, and add <code>&lt;script&gt;Users.add("john@example.org", "welcome", "John Smith"); LoginPage.render();&lt;/script&gt;</code> at the end to start our application. Enjoy the application that implements one happy path of our feature (we still have quite a few different paths to cover). Also, it might be a good idea to style the application slightly better, than plain inputs and buttons, but we are not going to cover that in these series. This single feature test takes a lot of time to write because it is the first feature test in the empty application. Essentially, it has driven a lot of different architectural decisions, which don&rsquo;t necessary need to be done the way they were done in this article. Writing a second test for the same feature is much easier and third one, and all consecutive are also easier.</p>
+
+<h3>Exercises</h3>
+
+<ol>
+<li>Remove <code>x</code> prefix from the <code>xdescribe</code> tests and implement them using techniques described in this article - write a user story scenario, translate it to the test code and make sure to fix all the test failures one feature step at a time.</li>
+<li>Discover more interesting edge cases. Make the tests for them and make them all pass.</li>
+<li>Write sign-up feature&rsquo;s user story and implement it with feature tests.</li>
+</ol>
+
+
+<h2>Bottom Line</h2>
+
+<p>Today we have learned how to write tests for the whole application that imitate real user interaction. We have seen how, test-driving the functionality can help discovering new user story scenarios. Essentially, every time we write simple, but not so correct code that makes our test pass, we need to think what would be the scenario to prove that code wrong and add that scenario on our to-do list, which is represented by pending tests, which have only their descriptions.</p>
+
+<p>In the next article of the series, we will dig deeper on what exactly we did today, what it means to Test-Drive the code, what are the laws, rules, tips and tricks of Test-Driven Development. Next article of the series assumes, that login and sign-up features are fully test-driven and implemented. We will be implementing a brand new feature of our application.</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Understanding Legacy Code Using Explorative Test-Driven Development Technique]]></title>
@@ -1993,608 +3027,6 @@ ReporterSpy_ReporterTest
 <p>Stay tuned!</p>
 
 <h2>Thanks</h2>
-
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Getting Stuck While Doing TDD. Part 3: Triangulation to the Rescue!]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/"/>
-    <updated>2016-08-31T02:35:32+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue</id>
-    <content type="html"><![CDATA[<p>Welcome back to the &ldquo;Getting Stuck While Doing TDD&rdquo; series. Today we are going to learn the Golden Rule of TDD and how to not get stuck while doing TDD.</p>
-
-<h2>TL;DR</h2>
-
-<ul>
-<li>&ldquo;As tests get more specific, production code gets more generic&rdquo;.</li>
-<li><code>RED</code> is as important as other in Red-Green-Refactor cycle. If next test does not fail, it is either: already implemented, or has to wait until a later time (until it will fail).</li>
-<li><p>At its core the Triangulation Technique has the following idea:</p>
-
-<p>After implementing one business rule (with Red-Green-Refactor) make sure to find all &ldquo;weirdnesses&rdquo; or non-generalities in the production code and one-by-one eliminate them by writing a test, that proves such non-generality, and then making it pass while removing non-generality. This is the third cycle of TDD - Mini Cycle.</p></li>
-</ul>
-
-
-<!--more-->
-
-
-<p>This is a series of articles:</p>
-
-<ol>
-<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
-<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
-<li>Part 3: Triangulation to the Rescue! (reading this)</li>
-</ol>
-
-
-<p>Shall we get started?</p>
-
-<h2>Specific/Generic Rule of TDD</h2>
-
-<blockquote><p>As tests get more specific, production code gets more generic.</p></blockquote>
-
-<p>When making the next failing test pass, our production code should also pass a whole class of similar tests. Best shown in the very simple example. The task at hand is to write the function <code>sum(a, b)</code> that will add two numbers. Let&rsquo;s see us a violation of the Specific/Generic rule:</p>
-
-<pre><code class="ruby">expect(sum(2, 2)).to eq(4)
-# =&gt; NoMethodError: undefined method `sum'
-
-def sum(a, b); end
-# =&gt; expected: 4, got: nil
-
-def sum(a, b)
-  4
-end
-# =&gt; PASS
-
-expect(sum(2, 3)).to eq(5)
-# =&gt; expected: 5, got: 4
-
-def sum(a, b)
-  if b == 2
-    4
-  else
-    5
-  end
-end
-# =&gt; PASS
-</code></pre>
-
-<p>The production code to make this last test pass is as specific as the failing test now. The test of the same class (where we change the value of the <code>b</code> parameter) will fail for it:</p>
-
-<pre><code class="ruby">expect(sum(2, 42)).to eq(44)
-# =&gt; expected: 44, got: 5
-</code></pre>
-
-<p>To follow the Specific/Generic rule we ought to make <code>4</code> into <code>2 + b</code> like that:</p>
-
-<pre><code class="ruby">def sum(a, b)
-  2 + b
-end
-# =&gt; PASS
-</code></pre>
-
-<p>This way, when we change <code>b</code> to any value it will still pass the test, aside from the fact, that we didn&rsquo;t do anything about <code>a</code>. This is because we still don&rsquo;t have any test showing us, that parameter <code>a</code> is important, like the following one:</p>
-
-<pre><code class="ruby">expect(sum(4, 7)).to eq(11)
-# =&gt; expected: 11, got: 9
-</code></pre>
-
-<p>Again we can make it pass in a very specific fashion by introducing specific <code>if</code> statement, or we could do it to pass the whole class of such tests:</p>
-
-<pre><code class="ruby">def sum(a, b)
-  a + b
-end
-# =&gt; PASS
-</code></pre>
-
-<p>Have you noticed, that from the test suite side we had to &ldquo;prove&rdquo; that some knowledge in the system is important and had to be used? This technique is called Triangulation.</p>
-
-<p><div class="v2-subscribe--inline">
-  
-
-
-
-
-
-<div class="mc_embed_signup">
-  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div class="mc_embed_signup_scroll">
-      <h3>Want more articles like this delivered to your inbox?</h3>
-      <div class="mc-field-group">
-        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_7f9f94015a" tabindex="-1" value=""></div>
-        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
-        <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
-      </div>
-      <div class="">
-        <em>(we respect your privacy, unsubscribe at any time)</em>
-      </div>
-    </div>
-  </form>
-</div>
-
-
-</div>
-</p>
-
-<h2>Triangulation Technique</h2>
-
-<p>In the essence, Triangulation technique has a very simple idea at its core:</p>
-
-<ol>
-<li>Change certain important* knowledge in the system.</li>
-<li>Assert that the production code behaves in an accordingly expected manner.</li>
-</ol>
-
-
-<p><em>* - important from the perspective of the system or unit under the test</em></p>
-
-<h2>Red-Green-Refactor has to have all stages</h2>
-
-<p>One Red-Green-Refactor cycle really has to have all stages in it. And I&rsquo;m not ranting right now about &ldquo;Refactor&rdquo; stage, that is a given. Rather, I insist on the &ldquo;Red&rdquo; stage - in TDD, when we write a new test, it has to fail. Writing tests that do not fail is another way to get ourselves stuck while doing TDD. One could ask: &ldquo;If I can&rsquo;t write this test because it does not fail, what should I do about the requirement it represents?&rdquo;, and the answer is rather simple - either this requirement is already implemented and tested by other tests, or we still need this test and we will get back to it later when it actually will fail.</p>
-
-<p>As we can remember, in the first part of these series, we were going through an <code>OrderKindValidator</code> example, and we were writing multiple tests in a row, that were all expecting the same outcome and of course they didn&rsquo;t fail, because we had one line in our function that made them all pass. If we were to sprinkle some other tests, that do fail (like a test for a valid order kind), after making it pass, all of these tests will now be failing and therefore they are good candidates for our next test. Let&rsquo;s see it with our own eyes:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can not be empty")
-  .when_order_kind_is_absent
-# =&gt; expected InvalidOrderError with "Order kind can not be empty",
-# =&gt; got #&lt;NoMethodError:
-# =&gt;      undefined method `validate' for #&lt;OrderKindValidator:0x000000020335c0&gt;&gt;
-
-class OrderKindValidator
-  def validate(order)
-  end
-end
-# =&gt; expected InvalidOrderError with "Order kind can not be empty"
-# =&gt; but nothing was raised
-
-def validate(order)
-  raise InvalidOrderError, "Order kind can not be empty"
-end
-# =&gt; PASS
-</code></pre>
-
-<p>Now is the point, where we have to choose our next test, and last time we have chosen the test with the same outcome and it did not go so well. Let&rsquo;s choose a test with different outcome, e.g.: when valid order kind is provided:</p>
-
-<pre><code class="ruby">it_does_not_fail
-  .when_order_kind_is(%w(private))
-# =&gt; expected no Exception,
-# =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;
-</code></pre>
-
-<p>Now, we have 2 options, to either check for <code>order[:kind] == %w(private)</code> or to check for <code>order[:kind]</code> being absent. It does not matter what we choose at this point, so let&rsquo;s go with the first one:</p>
-
-<pre><code class="ruby">def validate(order)
-  if order[:kind] == %w(private)
-    return
-  end
-
-  raise InvalidOrderError, "Order kind can not be empty"
-end
-# =&gt; PASS
-</code></pre>
-
-<p>Now let&rsquo;s apply Triangulation technique. We should always ask ourselves the question: &ldquo;What is weird about this code?&rdquo; and &ldquo;What failing test should I write to point out this weirdness?&rdquo;. First weirdness we can spot is that the validator currently accepts only one order kind - <code>private</code>. According to our requirements it should also accept <code>corporate</code>:</p>
-
-<pre><code class="ruby">it_does_not_fail
-  .when_order_kind_is(%w(corporate))
-# =&gt; expected no Exception,
-# =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;
-
-def validate(order)
-  kinds = order[:kind]
-  if kinds == %w(private) || kinds == %w(corporate)
-    # ...
-end
-# =&gt; PASS
-</code></pre>
-
-<p>We also know, that our system should handle duplicate entries in <code>order[:kind]</code>:</p>
-
-<pre><code class="ruby">it_does_not_fail
-  .when_order_kind_is(%w(private private))
-# =&gt; expected no Exception,
-# =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;
-
-def validate(order)
-  kinds = order[:kind]
-  if kinds.include?("private") || kinds == %w(corporate)
-    # ...
-end
-# =&gt; expected InvalidOrderError with "Order kind can not be empty",
-# =&gt; got #&lt;NoMethodError: undefined method `include?'
-# =&gt; for nil:NilClass&gt;
-</code></pre>
-
-<p>Wow! We, of course, can check for <code>kinds</code> to not be <code>nil</code>, but I would rather listen to this test failure and put a check for <code>kinds</code> being absent (and this makes for our second check, that we could have chosen from):</p>
-
-<pre><code class="ruby">def validate(order)
-  kinds = order[:kind]
-
-  if kinds.nil?
-    raise InvalidOrderError, "Order kind can not be empty"
-  end
-
-  if kinds.include?("private") || kinds == %w(corporate)
-    return
-  end
-
-  raise InvalidOrderError, "Order kind can not be empty"
-end
-# =&gt; PASS
-</code></pre>
-
-<p>So this passes all our tests. It may look weird, and this is exactly the pointer for us which test to write next to prove, that this weirdness is incorrect:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
-  .when_order_kind_is(%w(invalid))
-# =&gt; expected InvalidOrderError
-# =&gt; with "Order kind can be one of: 'private', 'corporate', 'bundle'",
-# =&gt; got #&lt;InvalidOrderError: Order kind can not be empty&gt;
-
-def validate(order)
-  # ...
-
-  raise InvalidOrderError,
-    "Order kind can be one of: 'private', 'corporate', 'bundle'"
-end
-# =&gt; PASS
-</code></pre>
-
-<p>Production code starts looking not so clean and I think it is time to give things proper names:</p>
-
-<pre><code class="ruby">class OrderKindValidator
-  def validate(order)
-    kinds = order[:kind]
-
-    if empty?(kinds)
-      fail_with("Order kind can not be empty")
-    end
-
-    unless valid?(kinds)
-      fail_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
-    end
-  end
-
-  def valid?(kinds)
-    kinds.include?("private") || kinds == %w(corporate)
-  end
-
-  def empty?(kinds)
-    kinds.nil?
-  end
-
-  def fail_with(message)
-    raise InvalidOrderError, message
-  end
-end
-</code></pre>
-
-<p>There is only one weirdness, that is left for triangulation in current production code, before we can move on to the next requirement - <code>private</code> can be duplicated while <code>corporate</code> can not:</p>
-
-<pre><code class="ruby">it_does_not_fail
-  .when_order_kind_is(%w(corporate corporate))
-# =&gt; expected no Exception,
-# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
-
-def valid?(kinds)
-  kinds.include?("private") ||
-      kinds.include?("corporate")
-end
-# =&gt; PASS
-</code></pre>
-
-<p>Great, now we can safely go back to our empty order kind edge cases:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can not be empty")
-  .when_order_kind_is([])
-# =&gt; expected InvalidOrderError with "Order kind can not be empty",
-# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
-
-def empty?(kinds)
-  kinds.nil? ||
-      kinds.empty?
-end
-# =&gt; PASS
-
-it_fails_with("Order kind can not be empty")
-  .when_order_kind_is([nil])
-# =&gt; expected InvalidOrderError with "Order kind can not be empty",
-# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
-
-def empty?(kinds)
-  kinds.nil? ||
-      kinds.empty? ||
-      kinds[0].nil?
-end
-# =&gt; PASS
-
-it_fails_with("Order kind can not be empty")
-  .when_order_kind_is([""])
-# =&gt; expected InvalidOrderError with "Order kind can not be empty",
-# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
-
-def empty?(kinds)
-  kinds.nil? ||
-      kinds.empty? ||
-      kinds[0].nil? ||
-      kinds[0].empty?
-end
-# =&gt; PASS
-</code></pre>
-
-<p>And it is a good opportunity to eliminate some duplication:</p>
-
-<pre><code class="ruby">def empty?(kinds)
-  empty_value?(kinds) ||
-      empty_value?(kinds[0])
-end
-
-def empty_value?(value)
-  value.nil? || value.empty?
-end
-</code></pre>
-
-<p>Now, it is a good time to triangulate, because we have a weirdness in our code: <code>kinds[0]</code>. To prove that this is too specific we can write another test:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can not be empty")
-  .when_order_kind_is(["private", ""])
-# =&gt; expected InvalidOrderError with "Order kind can not be empty"
-# =&gt; but nothing was raised
-
-def empty?(kinds)
-  empty_value?(kinds) ||
-      kinds.any? { |kind| empty_value?(kind) }
-end
-# =&gt; PASS
-</code></pre>
-
-<p>Notice, how every single test that we have written was failing and how easy it was to make it pass. This suggests that we are probably moving in the right direction. Let&rsquo;s test our next requirement - we can combine <code>private</code> and <code>bundle</code>:</p>
-
-<pre><code class="ruby">it_does_not_fail
-  .when_order_kind_is(%w(private bundle))
-# =&gt; PASS
-</code></pre>
-
-<p>Wait a minute. This is really bad. We should have a failing test here. This happened because we are checking only for the inclusion of <code>private</code> or <code>corporate</code> and we do not care about anything else in the <code>order[:kind]</code> array. We have to discard this test and try to go with failing version of the same business rule - invalid order kind can not be combined with <code>private</code>:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
-  .when_order_kind_is(%w(private invalid))
-# =&gt; expected InvalidOrderError
-# =&gt; with "Order kind can be one of: 'private', 'corporate', 'bundle'"
-# =&gt; but nothing was raised
-
-def valid?(kinds)
-  return false if kinds[1] == "invalid"
-
-  kinds.include?("private") ||
-      kinds.include?("corporate")
-end
-# =&gt; PASS
-</code></pre>
-
-<p>While this works, it leads to two other weirdnesses: <code>kinds[1]</code> and <code>"invalid"</code>, let&rsquo;s the latter first:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
-  .when_order_kind_is(%w(private another_invalid))
-# =&gt; expected InvalidOrderError
-# =&gt; with "Order kind can be one of: 'private', 'corporate', 'bundle'"
-# =&gt; but nothing was raised
-
-def valid?(kinds)
-  return false if kinds[1] &amp;&amp; kinds[1] != "private"
-
-  kinds.include?("private") ||
-      kinds.include?("corporate")
-end
-# =&gt; expected no Exception,
-# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
-# .. and more failures ..
-</code></pre>
-
-<p>Other tests fail now, from them it is possible to see, that second kind should be either <code>private</code> or <code>corporate</code>:</p>
-
-<pre><code class="ruby">def valid?(kinds)
-  return false if kinds[1] &amp;&amp;
-      kinds[1] != "private" &amp;&amp;
-      kinds[1] != "corporate"
-
-  kinds.include?("private") ||
-      kinds.include?("corporate")
-end
-# =&gt; PASS
-</code></pre>
-
-<p>This looks rather clunky, we should make it a bit cleaner:</p>
-
-<pre><code class="ruby">ALLOWED_ORDER_KINDS = %w(private corporate)
-
-def valid?(kinds)
-  return false if kinds[1] &amp;&amp;
-      !ALLOWED_ORDER_KINDS.include?(kinds[1])
-
-  kinds.include?("private") ||
-      kinds.include?("corporate")
-end
-</code></pre>
-
-<p>Let&rsquo;s eliminate the other weirdness - <code>kinds[1]</code>, it probably should verify all kinds in the array:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
-  .when_order_kind_is(%w(invalid private))
-# =&gt; expected InvalidOrderError
-# =&gt; with "Order kind can be one of: 'private', 'corporate', 'bundle'"
-# =&gt; but nothing was raised
-
-def valid?(kinds)
-  return false if kinds.any? { |kind|
-    !ALLOWED_ORDER_KINDS.include?(kind)
-  }
-
-  kinds.include?("private") ||
-      kinds.include?("corporate")
-end
-# =&gt; PASS
-</code></pre>
-
-<p>And now this can be greatly simplified by inverting the boolean logic:</p>
-
-<pre><code class="ruby">def valid?(kinds)
-  kinds.all? { |kind|
-    ALLOWED_ORDER_KINDS.include?(kind)
-  }
-end
-</code></pre>
-
-<p>Now that we have dealt with all weirdnesses in our production code, let&rsquo;s get back to our requirement:</p>
-
-<pre><code class="ruby">it_does_not_fail
-  .when_order_kind_is(%w(private bundle))
-# =&gt; expected no Exception,
-# =&gt; got #&lt;InvalidOrderError: Order kind can be one of: 'private', 'corporate', 'bundle'&gt;
-</code></pre>
-
-<p>Wow! Now it fails exactly as it should. This means that it is now the right time for this test! Let&rsquo;s make it pass by adding <code>bundle</code> to the list of allowed order kinds:</p>
-
-<pre><code class="ruby">ALLOWED_ORDER_KINDS = %w(private corporate bundle)
-# =&gt; PASS
-</code></pre>
-
-<p>Nice! Our next requirement is about <code>bundle</code> not being used on its own, i.e.: either <code>private</code> or <code>corporate</code> is required:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind should be 'private' or 'corporate'")
-  .when_order_kind_is(%w(bundle))
-# =&gt; expected InvalidOrderError with "Order kind should be 'private' or 'corporate'"
-# =&gt; but nothing was raised
-
-def validate(order)
-  # ...
-
-  if kinds == %w(bundle)
-    fail_with("Order kind should be 'private' or 'corporate'")
-  end
-end
-# =&gt; PASS
-</code></pre>
-
-<p>And this is good enough, because that is really the only case, when this can happen until the list of allowed order kinds is extended by future business requirements. We should at least give this condition a proper name:</p>
-
-<pre><code class="ruby">unless has_required?(kinds)
-  fail_with("Order kind should be 'private' or 'corporate'")
-end
-
-# ...
-
-def has_required?(kinds)
-  kinds != %w(bundle)
-end
-</code></pre>
-
-<p>Except, that we could provide duplicated <code>bundle</code>:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind should be 'private' or 'corporate'")
-  .when_order_kind_is(%w(bundle bundle))
-# =&gt; expected InvalidOrderError
-# =&gt; with "Order kind should be 'private' or 'corporate'"
-# =&gt; but nothing was raised
-
-def has_required?(kinds)
-  # Easy to fix if we de-duplicate it with #uniq:
-  kinds.uniq != %w(bundle)
-end
-# =&gt; PASS
-</code></pre>
-
-<p>Now it is time to move on to the final requirement about conflicts between <code>private</code> and <code>corporate</code>:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
-  .when_order_kind_is(%w(private corporate))
-# =&gt; expected InvalidOrderError
-# =&gt; with "Order kind can not be 'private' and 'corporate' at the same time"
-# =&gt; but nothing was raised
-
-def validate(order)
-  # ...
-
-  if kinds == %w(private corporate)
-    fail_with("Order kind can not be 'private' and 'corporate' at the same time")
-  end
-end
-# =&gt; PASS
-</code></pre>
-
-<p>Of course, <code>kinds == %w(private corporate)</code> can be considered too specific for production code, we should triangulate it:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
-  .when_order_kind_is(%w(corporate private))
-# =&gt; expected InvalidOrderError
-# =&gt; with "Order kind can not be 'private' and 'corporate' at the same time"
-# =&gt; but nothing was raised
-
-if kinds.include?("private") &amp;&amp;
-    kinds.include?("corporate")
-  fail_with("Order kind can not be 'private' and 'corporate' at the same time")
-end
-# =&gt; PASS
-</code></pre>
-
-<p>And, finally, let&rsquo;s give this condition a proper name:</p>
-
-<pre><code class="ruby">if has_conflicts?(kinds)
-  fail_with("Order kind can not be 'private' and 'corporate' at the same time")
-end
-
-# ...
-
-def has_conflicts?(kinds)
-  kinds.include?("private") &amp;&amp;
-    kinds.include?("corporate")
-end
-</code></pre>
-
-<p>I believe we are done now. Source for this example can be found in <a href="https://github.com/waterlink/order_kind_validator/pull/3">an open pull request here</a>.</p>
-
-<p>Let&rsquo;s recap how Triangulation technique worked for us here.</p>
-
-<h2>Triangulation Technique in Depth</h2>
-
-<p>The main goal of triangulation is to prove that the code is not general enough along some axis (class of tests) by writing a test and then making sure it passes. Effective application of the technique requires to prove and eliminate all such &ldquo;weirdnesses&rdquo; or non-generalities from the production code after each Red-Green-Refactor cycle for business requirements. This is, in fact, the 3rd cycle of Test-Driven-Development called Mini Cycle of TDD, it should be executed about every 10 minutes.</p>
-
-<p>Another observation is that following this technique we are introducing only one small piece of knowledge into our production code, for example:</p>
-
-<ul>
-<li>When writing a test for next business requirement, we are introducing the fact that we need an <code>if</code> statement with a certain body (in this example it was a <code>raise error</code> statement). Since we can not introduce the <code>if</code> statement without a condition we need to put some condition there and we put a very specific condition on purpose since we know that it is tested and it is simple.</li>
-<li>Next, we are proving that this condition is too specific by writing a test, and then making it pass with a more generic solution. This way we are introducing a tiny little bit more knowledge in our production code.</li>
-<li>We are repeating this iterative process until the production code is generic enough for the current specification (test suite). And we start over. This is the Mini Cycle of TDD.</li>
-</ul>
-
-
-<h2>Bottom Line</h2>
-
-<p>Today we have learned the Golden Rule of TDD - &ldquo;As tests get more specific, production code gets more generic&rdquo;, and we have learned the Triangulation Technique, that allows us to follow this rule in an incremental and confident way. Additionally, we have learned, that following Red-Green-Refactor strictly is important, and this includes even the <code>RED</code> stage of this cycle - when the test for business requirement does not fail, it is either: already implemented or it has to wait for later.</p>
-
-<p>This is a series of articles:</p>
-
-<ol>
-<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
-<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/">Part 2: Buggy Code and Forcing Our Way Through</a></li>
-<li>Part 3: Triangulation to the Rescue! (reading this)</li>
-</ol>
-
-
-<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
-
-<ul>
-<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
-<li>Open-Closed Principle - changing behavior by adding new code,</li>
-<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, 4 Cycles of TDD, Test-Driven Development screencasts and so much more!</li>
-</ul>
-
-
-<h2>Thanks!</h2>
 
 <p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
 
