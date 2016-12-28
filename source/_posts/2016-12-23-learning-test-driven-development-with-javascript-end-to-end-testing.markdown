@@ -22,6 +22,8 @@ Today we are going to learn how to write tests that imitate real user interactio
 - Imitating the user clicking on the link would mean for us to trigger a link click;
 - And so on.
 
+<!-- more -->
+
 We don't need to think about specific implementation details, such as: which functions and classes do we have in our code and how they interact with each other, is there any interaction with the back-end server or 3rd-party API. Also, we don't need to be proficient with interaction testing - this is the topic for the future series.
 
 Of course, for that kind of simplicity we are trading something off. In the case of End-to-End tests, they are slower, suffer concurrency, wait, and timeout problems, and are harder to maintain in the long run. We don't have to worry about that just yet because we want to learn how to write tests in general, and this kind of simplicity is perfect for us in this case.
