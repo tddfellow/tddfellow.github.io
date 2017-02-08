@@ -16,9 +16,14 @@ Today we are going to learn the basic principles behind the Test-Driven Developm
 
 ## Basics of Test-Driven Development
 
+A test is a single program, procedure or function, that executes our system under the test and verifies that it works as expected. System under the test is any kind of other program, part of the program or library, procedure or function. System under the test is called SUT for short. SUT is the code that executes with a purpose of satisfying needs of our end users. Using the term "end user" we mean actual people using our system via the user interface (graphical and non-graphical), and other automated systems using our system via application programming interface (for short, API). Different term for the "end user" is "consumer of the system". Another term for the SUT is "production code" - we are going to use the latter, as it is used in Test-Driven Development much more often.
+
+
+
 Test-Driven Development is based on a simple concept of writing production code only when there is a failing test that demands that production code for it to pass.
 
 - what is a test?
+- what is a system under the test?
 - what is a failing test?
 - what is a passing test?
 - what is a production code?
