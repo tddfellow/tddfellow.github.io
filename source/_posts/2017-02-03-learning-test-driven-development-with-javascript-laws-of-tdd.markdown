@@ -28,8 +28,16 @@ We call a test passing when there are no errors happen when we execute it. We, a
 
 In the core of Test-Driven Development there are three rules that we need to follow:
 
-1. First, we write a failing test. We consider any kind of error a failure, including compilation and syntax errors. Meaning, that our first test for any part of the production code will fail for the reason that there is no production code to execute yet. For example: class, method or function is not defined yet.
-2. ...
+1. We start from a failing test. We consider any kind of error a failure, including compilation and syntax errors. Meaning, that our first test for any part of the production code will fail for the reason that there is no production code to execute yet. For example: class, method or function is not defined yet.
+2. Then, we resolve the failure by writing the production code. For example: in canse of missing class, we would create a class; in case of missing method, we would create a method; and in case of failing assertion error, we would fix the logic to pass the test.
+3. We write no more than a simplest production code, that makes our current failing test pass, and, also, still passes all other tests.
+
+We repeat this cycle over and over until we finish the implementation of the system under the test. Strictly following these rules will lock us in a very tight loop, where we will be switching between test code and production code all the time: write one or two lines of the test code and write or change one or two lines of the production code, repeat. This cycle is, probably, twenty or thirty seconds long. It, of course, depends on how fast we can run our tests. Ideally, we want our test suite for the current system under the test to run as fast as one clap of hands, or blink of an eye.
+
+
+- what is a test suite?
+- example of application of 3 rules
+- different types of tests
 
 
 ---
