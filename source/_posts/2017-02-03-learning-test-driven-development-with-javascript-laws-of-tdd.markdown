@@ -22,20 +22,32 @@ SUT is the code that executes with a purpose of satisfying needs of our end user
 
 Test-Driven Development is based on a simple concept of writing production code only when there is a failing test that demands that production code for it to pass.
 
-We call a test failing when there is some sort of error happening when we execute it. Possible failures are the following: there is a syntax error, or code does not compile, or there is a runtime failure during test setup or production code execution, or there is an assertion error. The assertion error is the special kind of error, that happens during the final phase of the test, where we are veryfying the outcomes after running the production code under the test. An assertion error signals that the production code executed successfully, but it produced incorrect results or changed the state of the system in an incorrect fashion.
+We call a test failing when there is some sort of an error happening when we execute it. Possible failures are the following: there is a syntax error, or code does not compile, or there is a runtime failure during test setup or production code execution, or there is an assertion error. The assertion error is the special kind of error, that happens during the final phase of the test, where we are veryfying the outcomes after running the production code under the test. An assertion error signals that the production code executed successfully, but it produced incorrect results or changed the state of the system in an incorrect fashion.
 
 We call a test passing when there are no errors happen when we execute it. We, also, call the failing test "a red test" and we call the passing test "a green test". This is because we can not deliver the code to our customers or consumers when there are "red" tests - think of red traffic light; and we are free to go when all the tests are "green" - think of green traffic light. Most of the testing tools and frameworks format their output to present failing tests in the red color and passing tests in the green color.
 
-In the core of Test-Driven Development there are three rules that we need to follow:
+Multiple tests aiming to test single SUT or a single feature of the system are usually called test suite. Depending on the context, test suite could mean that collection of tests all testing the same thing, or it could mean all tests of the entire system. For example, in the sentence "Let's read `User` class' test suite" that phrase means a collection of tests testing class `User`. On the other hand, in the sentence "Let's run the whole test suite and see if we can deploy that right now" that phrase means all tests of the entire system. The latter, sometimes, is called "suite of tests".
+
+In the core of Test-Driven Development there are three steps that we need to follow:
 
 1. We start from a failing test. We consider any kind of error a failure, including compilation and syntax errors. Meaning, that our first test for any part of the production code will fail for the reason that there is no production code to execute yet. For example: class, method or function is not defined yet.
 2. Then, we resolve the failure by writing the production code. For example: in canse of missing class, we would create a class; in case of missing method, we would create a method; and in case of failing assertion error, we would fix the logic to pass the test.
 3. We write no more than a simplest production code, that makes our current failing test pass, and, also, still passes all other tests.
 
-We repeat this cycle over and over until we finish the implementation of the system under the test. Strictly following these rules will lock us in a very tight loop, where we will be switching between test code and production code all the time: write one or two lines of the test code and write or change one or two lines of the production code, repeat. This cycle is, probably, twenty or thirty seconds long. It, of course, depends on how fast we can run our tests. Ideally, we want our test suite for the current system under the test to run as fast as one clap of hands, or blink of an eye.
+We repeat these steps over and over until we finish the implementation of the system under the test. Strictly following these steps will lock us in a very tight loop, where we will be switching between test code and production code all the time: write one or two lines of the test code and write or change one or two lines of the production code, repeat. This cycle is, probably, twenty or thirty seconds long. It, of course, depends on how fast we can run our tests. Ideally, we want our test suite for the current system under the test to run as fast as one clap of hands, or blink of an eye.
+
+This tight cycle gives us following benefits:
+
+- Alerts us to the mistakes we do while coding immediately. Usually, it is enough to do one or two "Undo" commands in our editor to get back to the "green" state of the system - when all our tests are passing (occasionally, except for the last test we have added, as we will undo the incorrect implementation for it).
+- Provides the safety net from bugs for the future development thanks to the fact, that no single line of production code is written other than to pass a failing test. Meaning, that whenever production code is broken in any fashion, there is a test that will point it out via failure. When adding new features or modifying the behavior of the existing ones, we might inadvertently introduce a bug. Our suite of tests will detect that bug as soon as we run all our tests, which we would certainly do during development and, especially, before the deployment or release of our systems.
+- _
 
 
-- what is a test suite?
+---
+
+
+- benefits of TDD
+- definition of bug
 - example of application of 3 rules
 - different types of tests
 
