@@ -53,6 +53,7 @@ This tight cycle gives us following benefits:
 - benefits of TDD
 - example of application of 3 rules
 - different types of tests
+- cover concern about the speed of the test suite (how to achieve one clap of the hands or blink of an eye)
 
 
 ---
