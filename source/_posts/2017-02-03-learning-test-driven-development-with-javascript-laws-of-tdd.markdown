@@ -28,6 +28,8 @@ We call a test passing when there are no errors happen when we execute it. We, a
 
 Multiple tests aiming to test single SUT or a single feature of the system are usually called test suite. Depending on the context, test suite could mean that collection of tests all testing the same thing, or it could mean all tests of the entire system. For example, in the sentence "Let's read `User` class' test suite" that phrase means a collection of tests testing class `User`. On the other hand, in the sentence "Let's run the whole test suite and see if we can deploy that right now" that phrase means all tests of the entire system. The latter, sometimes, is called "suite of tests".
 
+When the system behaves in an unexpected way and the expected behavior was previously defined or present in the code, it is called a "bug". For example, the behavior that is defined by the development team and is not implemented correctly is considered as a bug; the behavior that is defined by the development team and was implemented correctly, but now it is not working, is considered as a bug; and, finally, the behavior that was not defined may or may not be considered as a bug, depending on the produced results - if it harms or brings any value. This phenomen is called a "bug" for historical reasons: the first bug in computing was a real bug, that stuck in the computer's hardware and was causing short circuits which made the computer misbehave.
+
 In the core of Test-Driven Development there are three steps that we need to follow:
 
 1. We start from a failing test. We consider any kind of error a failure, including compilation and syntax errors. Meaning, that our first test for any part of the production code will fail for the reason that there is no production code to execute yet. For example: class, method or function is not defined yet.
@@ -47,7 +49,6 @@ This tight cycle gives us following benefits:
 
 
 - benefits of TDD
-- definition of bug
 - example of application of 3 rules
 - different types of tests
 
