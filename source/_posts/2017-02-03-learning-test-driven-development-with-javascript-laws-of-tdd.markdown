@@ -48,12 +48,37 @@ This tight cycle gives us following benefits:
 - Promotes cleaner interfaces. As in test-driven development we have to write the usage example before we implement (or even design) the API in the production code, it will be optimized for ease and clarity of use and less so with the internal implementation details of that production code. Generally speaking, test-driven production code is easier to use and understand.
 - Tests that call the production code serve as usage examples of that code. Essentially, in a test-driven code base, to know how a certain API can be used, it is enough to read and understand its test suite. These tests is the perfect low-level documentation for the APIs in our code base that developers can understand and read best. And that documentation is so precise that it can be executed and verified that it is still in sync with the actual code it is describing. Therefore this documentation is always up-to-date.
 
-The most important of these benefits is the confidence to make any kind of change to the software and know in one minute or two, if that change is good to be delivered to the end user or not, with a simple push of the button. No quality assurance (QA) manual testing cycles are required.
+The most important of these benefits is the confidence to make any kind of change to the software and know in one minute or two, if that change is good to be delivered to the end user or not, with a simple push of the button. No quality assurance (QA) manual testing cycles are required. Let's take a look at the example of application of three rules of test-driven development. We will start from a very simple example, so that we don't have to touch more advanced TDD techniques.
+
+> ### English Numbers Kata
+> **Given** an integer number  
+> **When** I call the system with that number  
+> **Then** I receive a string representation of that number in an English language
+> 
+> For example:
+> 
+> - for number `37` I receive `"thirty-seven"`
+> - for number `-17451` I receive `"minus seventeen thousand four hundred fifty-one"`
+
+According to the first rule of TDD, we have to start the implementation from the test. In test-driven development it is important to start from the simplest tests, that can be implemented via a small simple change to production code. For example: with number zero we expect result to be "zero". When writing the first test for the new functionallity we are going to design its API. In our case we are going to come up with the function name and its argument list:
+
+```javascript
+describe("toEnglishNumber", function() {
+	it("converts 0 to zero", function() {
+		// ARRANGE
+		var number = 0;
+		
+		// ACT
+		var englishNumber = toEnglishNumber(number);
+	});
+});
+```
+
+As soon as we write `toEnglishNumber(number)` we have designed the function's signature, at least, for this simplest case. Also, the test suite is failing now, because `toEnglishNumber` is not a function - in fact, it is undefined. This means that we have entered the red stage of test driven development and according to the second rule of TDD
 
 ---
 
 
-- benefits of TDD
 - example of application of 3 rules
 - different types of tests
 - cover concern about the speed of the test suite (how to achieve one clap of the hands or blink of an eye)
