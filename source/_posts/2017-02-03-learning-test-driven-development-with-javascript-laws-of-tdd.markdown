@@ -51,6 +51,7 @@ This tight cycle gives us following benefits:
 The most important of these benefits is the confidence to make any kind of change to the software and know in one minute or two, if that change is good to be delivered to the end user or not, with a simple push of the button. No quality assurance (QA) manual testing cycles are required. Let's take a look at the example of application of three rules of test-driven development. We will start from a very simple example, so that we don't have to touch more advanced TDD techniques.
 
 > ### English Numbers Kata
+> 
 > **Given** an integer number  
 > **When** I call the system with that number  
 > **Then** I receive a string representation of that number in an English language
@@ -74,7 +75,15 @@ describe("toEnglishNumber", function() {
 });
 ```
 
-As soon as we write `toEnglishNumber(number)` we have designed the function's signature, at least, for this simplest case. Also, the test suite is failing now, because `toEnglishNumber` is not a function - in fact, it is undefined. This means that we have entered the red stage of test driven development and according to the second rule of TDD
+As soon as we write `toEnglishNumber(number)` we have designed the function's signature, at least, for the single simplest case. Also, the test suite is failing now, because `toEnglishNumber` is not a function - in fact, it is undefined. This means that we have entered the red stage of test driven development and according to the second rule of TDD we have to switch back to the production code. And according to the third rule we have write just enough of it to make the failing test pass. This means writing the simplest and easiest code possible to make it pass. In this case we could just return string "zero":
+
+```javascript
+function toEnglishNumber(number) {
+	return "zero";
+}
+```
+
+This is going to turn our test suite back to the green stage. At this point it is a good idea to look at both test code and production code and see if there are any opportunities for refactoring, such as: better names, extracting methods/functions, clarifying variable names, de-duplication, etc. Because we are currently in a green state we can safely apply any refactoring, automated or manual, and see if it was successful by running the test again. If, for some reason, the test is failing after the refactoring, we always have an option to CTRL/CMD+Z back to the green state, back to safety. At this point, we have finished applying one cycle of rules of TDD and we need to start over: we go back to our test code and either extend existing test to be more specific or we add more tests. In the case of 
 
 ---
 
