@@ -75,7 +75,37 @@ describe("toEnglishNumber", function() {
 });
 ```
 
-As soon as we write `toEnglishNumber(number)` we have designed the function's signature, at least, for the single simplest case. Also, the test suite is failing now, because `toEnglishNumber` is not a function - in fact, it is undefined. This means that we have entered the red stage of test driven development and according to the second rule of TDD we have to switch back to the production code. And according to the third rule we have write just enough of it to make the failing test pass. This means writing the simplest and easiest code possible to make it pass. In this case we could just return string "zero":
+As soon as we write `toEnglishNumber(number)` we have designed the function's signature, at least, for the single simplest case. Also, the test suite is failing now, because `toEnglishNumber` is not a function - in fact, it is undefined. This means that we have entered the red stage of test driven development and according to the second rule of TDD we have to switch back to the production code. And according to the third rule we have write just enough of it to make the failing test pass. This means writing the simplest and easiest code possible to make it pass. In this case we could just return nothing (`null` in javascript):
+
+```javascript
+function toEnglishNumber(number) {
+	return null;
+}
+```
+
+This is going to turn our test suite back to the green stage. At this point it is a good idea to look at both test code and production code and see if there are any opportunities for refactoring, such as: better names, extracting methods/functions, clarifying variable names, de-duplication, etc. Because we are currently in a green state we can safely apply any refactoring, automated or manual, and see if it was successful by running the test again. If, for some reason, the test is failing after the refactoring, we always have an option to CTRL/CMD+Z back to the green state, back to safety. At this point, we have finished applying one cycle of rules of TDD and we need to start over: we go back to our test code and either extend existing test to be more specific or we add more tests. Since we didn't finish writing the test yet - we have only arrange and act, and we are missing the assert part of the test, - we ought to extend the current test to make it more specific. So what can we assert about the result of the `toEnglishNumber` call? We probably ought to return the string "zero", aren't we? So, let's make an appropriate assertion:
+
+```javascript
+it("converts 0 to zero", function() {
+	// ARRANGE
+	var number = 0;
+	
+	// ACT
+	var englishNumber = toEnglishNumber(number);
+	
+	// ASSERT
+	var expected = "zero";
+	expect(englishNumber).toEqual(expected);
+});
+```
+
+If we run our tests right now, they will fail. We should take a careful look at the failure and see if the failure message is readable and it is what we expected. In the current situation, we will receive an assertion failure, telling us that `null` was not equal to "zero". Imagine now, that we are working on some other feature and we are not in the context of the english number conversion feature. What would be our reaction, when we run this test and see this failure? - We will probably be confused for a moment and will resort to jump to the line in the source code of the test suite that produces that error and try to understand what happened there. This is kind of huge context switch and it will disrupt our current context. So we can do better and make the failure much more readable by just adding a small thing - a cue, what that `null` was supposed to be: "english number":
+
+```javascript
+expect(englishNumber).toEqual(expected, "english number");
+```
+
+In Jasmine, the second argument to the `toEqual` matching function is the description of the failure. I think our test looks great and so is the failure in the test output. And because we are having a good failing test, according to the second rule, we don't have to write any of test code. Now, we should make the test pass according to the third rule. And what would be the simplest way to make it work? - Return "zero":
 
 ```javascript
 function toEnglishNumber(number) {
@@ -83,7 +113,102 @@ function toEnglishNumber(number) {
 }
 ```
 
-This is going to turn our test suite back to the green stage. At this point it is a good idea to look at both test code and production code and see if there are any opportunities for refactoring, such as: better names, extracting methods/functions, clarifying variable names, de-duplication, etc. Because we are currently in a green state we can safely apply any refactoring, automated or manual, and see if it was successful by running the test again. If, for some reason, the test is failing after the refactoring, we always have an option to CTRL/CMD+Z back to the green state, back to safety. At this point, we have finished applying one cycle of rules of TDD and we need to start over: we go back to our test code and either extend existing test to be more specific or we add more tests. In the case of 
+At this point, we should look out for the refactoring opportunities, and I don't think there are any yet. So let's start the cycle over. To apply the first rule, we might simply copy the existing test and change the input and the expected output accordingly. In that case, we would want to test another simple one-digit number - "one":
+
+```javascript
+it("converts 1 to one", function() {
+	// ARRANGE
+	var number = 1;
+	
+	// ACT
+	var englishNumber = toEnglishNumber(number);
+	
+	// ASSERT
+	var expected = "one";
+	expect(englishNumber).toEqual(expected, "english number");
+});
+```
+
+Now, because the test is failing, we apply second rule and switch back to the production code. To make the test pass, according to the third rule, we will need to introduce a simplest change possible: in that case, an if statement (and we will use `===` instead of `==` for comparison to avoid implicit type conversions in javascript):
+
+```javascript
+function toEnglishNumber(number) {
+	if (number === 1) {
+		return "one";
+	}
+	
+	return "zero";
+}
+```
+
+This is going to make all our tests pass. If we continue adding tests for the single-digit numbers while following these 3 rules, we will wind up with something like that:
+
+```javascript
+function toEnglishNumber(number) {
+	if (number === 1) {
+		return "one";
+	}
+	
+	if (number === 2) {
+		return "two";
+	}
+	
+	if (number === 3) {
+		return "three";
+	}
+
+	if (number === 4) {
+		return "four";
+	}
+	
+	if (number === 5) {
+		return "five";
+	}
+	
+	if (number === 6) {
+		return "six";
+	}
+
+	if (number === 7) {
+		return "seven";
+	}
+	
+	if (number === 8) {
+		return "eight";
+	}
+	
+	if (number === 9) {
+		return "nine";
+	}
+	
+	return "zero";
+}
+```
+
+At this point, we can see a clear pattern: one-to-one correspondence of a single-digit integer to the string. This code can be simplified as a pre-defined array with strings at the corresponding indices:
+
+```javascript
+var singleDigitNumbers = [
+	"zero",
+	"one",
+	"two",
+	"three",
+	"four",
+	"five",
+	"six",
+	"seven",
+	"eight",
+	"nine"
+];
+```
+
+We also include string "zero" in that array because `return "zero"` is only happening when the number is equal to zero, since we don't have any other tests right now, only from zero to nine. And the function itself will look much simpler:
+
+```javascript
+function toEnglishNumber(number) {
+	return singleDigitNumbers[number];
+}
+```
 
 ---
 
