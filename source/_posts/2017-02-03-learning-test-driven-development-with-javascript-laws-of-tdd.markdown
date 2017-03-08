@@ -250,8 +250,88 @@ function toEnglishNumber(number) {
 After making this refactoring we need to not forget to run the test suite to see if we didn't make a mistake. When we run it, all the test pass. So we can go back to the first rule of test-driven development again. Going through this cycle again for a few times will produce tests for numbers from eleven to nineteen. The production code will only have those numbers' english string representations added to the `simpleNumbers` array:
 
 ```javascript
+var simpleNumbers = [
+	"zero", "one", "two", "three", "four",
+	"five", "six", "seven", "eight", "nine",
+	
+	"ten", "eleven", "twelve", "thirteen", "fourteen",
+	"fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
+];
 
+function toEnglishNumber(number) {
+	return simpleNumbers[number];
+}
 ```
+
+Now it is time to introduce the concept of a complex number, such as twenty-three. It is a number that consists of the "tens" part and single-digit part. According to the first rule we have to start with the failing test, and I think we should just go for the number twenty-three:
+
+```javascript
+it("converts 23 to twenty-three", function() {
+	// ARRANGE
+	var number = 23;
+	
+	// ACT
+	var englishNumber = toEnglishNumber(number);
+	
+	// ASSERT
+	var expected = "twenty-three";
+	expect(englishNumber).toEqual(expected, "english number");
+});
+```
+
+If we run our test suite, that test will fail. According to the second rule of test-driven development, now we have to switch to the production code. According to the third rule, we will have to choose the simplest code that makes this test pass (and doesn't break any other test). In our case we have multiple options, that are similar in their simplicity. One of them is to return "twenty-three" if the number is greater than or equal to twenty:
+
+```javascript
+function toEnglishNumber(number) {
+	if (number >= 20) {
+		return "twenty-three";
+	}
+
+	return simpleNumbers[number];
+}
+```
+
+If we run our test suite all tests will pass. Now we should see if there are any opportunities for making code more readable and easier to understand. While the whole if statement returning a constant might feel strange, there is a concept that we can already give a name to in there: "three". We already can obtain a string "three" from number three using the method `toEnglishNumber(number)`. Let's try this refactoring:
+
+```javascript
+function toEnglishNumber(number) {
+	if (number >= 20) {
+		return "twenty-" + toEnglishNumber(3);
+	}
+
+	return simpleNumbers[number];
+}
+```
+
+That code now looks quite interesting. And it passes all its tests. Since, obviously, we are not done yet with the implementation, according to the first rule of test-driven development, we ought to write another failing test. And we have a multitude of choices what it could be, we an just come up with other random two-digit number, such as forty-two, or we could leave the "twenty-" part in and change the "three" part to "seven", for example. Also, we could change "twenty-" part to "thirty-". Generally, in test-driven development it is better to go for the test, that will cause the smallest change to the production code, - later we will explore more on why that is. So, we could go for twenty-seven, as it will cause the smallest change to our production code:
+
+```javascript
+it("converts 27 to twenty-seven", function() {
+	// ARRANGE
+	var number = 27;
+	
+	// ACT
+	var englishNumber = toEnglishNumber(number);
+	
+	// ASSERT
+	var expected = "twenty-seven";
+	expect(englishNumber).toEqual(expected, "english number");
+});
+```
+
+This test is failing, as expected. According to the second rule, we have to switch to the production code and make it pass. Also, the simplest change (third rule) that we could do is to change "3" to "number % 10":
+
+```javascript
+function toEnglishNumber(number) {
+	if (number >= 20) {
+		return "twenty-" + toEnglishNumber(number % 10);
+	}
+
+	return simpleNumbers[number];
+}
+```
+
+Now if we run our test suite all the tests will pass.
 
 ---
 
