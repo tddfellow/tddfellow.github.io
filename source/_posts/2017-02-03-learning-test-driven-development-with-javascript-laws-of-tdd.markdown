@@ -202,12 +202,55 @@ var singleDigitNumbers = [
 ];
 ```
 
-We also include string "zero" in that array because `return "zero"` is only happening when the number is equal to zero, since we don't have any other tests right now, only from zero to nine. And the function itself will look much simpler:
+We also include string "zero" in that array because `return "zero"` is only happening when the number is equal to zero, since we don't have any other tests right now - only from zero to nine. And the function itself will look much simpler:
 
 ```javascript
 function toEnglishNumber(number) {
 	return singleDigitNumbers[number];
 }
+```
+
+Since, we are done with the refactoring, we should proceed using the first rule of test-driven development, which means we need to write a test that fails. So let's increase the complexity of our tests and go for teen numbers. We'll start from ten:
+
+```javascript
+it("converts 10 to ten", function() {
+	// ARRANGE
+	var number = 10;
+	
+	// ACT
+	var englishNumber = toEnglishNumber(number);
+	
+	// ASSERT
+	var expected = "ten";
+	expect(englishNumber).toEqual(expected, "english number");
+});
+```
+
+This will fail, because so far our production code tries to fetch a string representation of the english number from the array using the number itself as an index. At the index ten we don't have anything, so our function returns nothing. According to the second rule of test-driven development, we need to switch to production code to make it pass. There are a few ways to fix the current problem: add specific if statement to the production code, or add a string "ten" to the array. Second seems to be simpler, and we know that we can do it for the teen numbers, because they can not be composed of any other small parts. So, according to the third rule, we should go for it because it is simpler:
+
+```javascript
+var singleDigitNumbers = [
+	// ...
+	"ten"
+];
+```
+
+This makes our tests pass. And I think we have a refactoring opportunity: variable name `singleDigitNumbers` does not make any sense anymore - it contains not only single digit numbers, but, also, number "ten", which is a two-digit number. So what is common between single digit numbers and ten? They are simple numbers, i.e.: can not be composed out of other english number string representations. Let's just call them `simpleNumbers` in this case:
+
+```javascript
+var simpleNumbers = [
+	// ...
+];
+
+function toEnglishNumber(number) {
+	return simpleNumbers[number];
+}
+```
+
+After making this refactoring we need to not forget to run the test suite to see if we didn't make a mistake. When we run it, all the test pass. So we can go back to the first rule of test-driven development again. Going through this cycle again for a few times will produce tests for numbers from eleven to nineteen. The production code will only have those numbers' english string representations added to the `simpleNumbers` array:
+
+```javascript
+
 ```
 
 ---
