@@ -12,7 +12,7 @@ categories:
 
 **Level: Beginner**
 
-Today we are going to learn the basic principles behind the Test-Driven Development Discipline. We will take a look at the differences between Test-First and Test-Driven development. We will cover why TDD works so well, when applied skillfully. We will reveal ways to train TDD skills. And we will implement one more feature of our application.
+Today we are going to learn the basic principles behind the Test-Driven Development Discipline. We will learn three rules of TDD. And we will take a look at the example application of these rules.
 
 ## Basics of Test-Driven Development
 
@@ -319,7 +319,7 @@ it("converts 27 to twenty-seven", function() {
 });
 ```
 
-This test is failing, as expected. According to the second rule, we have to switch to the production code and make it pass. Also, the simplest change (third rule) that we could do is to change "3" to "number % 10":
+This test is failing, as expected. According to the second rule, we have to switch to the production code and make it pass. Also, the simplest change (third rule) that we could do is to change "3" to last digit of the number, the remainder of the division by ten - "number % 10":
 
 ```javascript
 function toEnglishNumber(number) {
@@ -331,15 +331,142 @@ function toEnglishNumber(number) {
 }
 ```
 
-Now if we run our test suite all the tests will pass.
+Now if we run our test suite all the tests will pass. "The remainder of division by ten" part looks right and "twenty-" constant still feels like it is not gonna work for every two-digit number. I think it is time to write a new failing test (first rule). This will be the test that will prove that "twenty-" is not correct code. In that case we just need to change the first digit of the number, so we could go for forty-two:
+
+```javascript
+it("converts 42 to forty-two", function() {
+	// ARRANGE
+	var number = 42;
+	
+	// ACT
+	var englishNumber = toEnglishNumber(number);
+	
+	// ASSERT
+	var expected = "forty-two";
+	expect(englishNumber).toEqual(expected, "english number");
+});
+```
+
+As soon as we finish writing the assertion we will have a test failure: we are returning "twenty-two" instead of "forty-two". So it is time to switch to the production code (second rule). And we need to write just enough of it to make this test pass (third rule). We can do that by having yet another if statement:
+
+```javascript
+function toEnglishNumber(number) {
+	if (number >= 20) {
+		if (number / 10 == 2) {
+			return "twenty-" + toEnglishNumber(number % 10);
+		}
+		
+		return "forty-" + toEnglishNumber(number % 10);
+	}
+
+	return simpleNumbers[number];
+}
+```
+
+And this will make the test pass. It looks very similar to what we had with one-digit numbers, where we had an if statement checking that some value is equal to some number and returning an appropriate string. That is where we converted it to array with string values and in the function we were fetching these strings by their index. To see if that pattern applies here we could write another similar test that will make us write another if statement:
+
+```javascript
+it("converts 39 to thirty-nine", function() {
+	// ARRANGE
+	var number = 39;
+	
+	// ACT
+	var englishNumber = toEnglishNumber(number);
+	
+	// ASSERT
+	var expected = "thirty-nine";
+	expect(englishNumber).toEqual(expected, "english number");
+});
+```
+
+And this fails as expected because our production code in no case can return "thirty-". So let's write the simplest if statement to make it pass. Also, to make it uniform, we would wrap "forty-" case in its appropriate if statement as a refactoring after we have a passing test suite:
+
+```javascript
+function toEnglishNumber(number) {
+	if (number >= 20) {
+		if (number / 10 == 2) {
+			return "twenty-" + toEnglishNumber(number % 10);
+		}
+		
+		if (number / 10 == 3) {
+			return "thirty-" + toEnglishNumber(number % 10);
+		}
+		
+		if (number / 10 == 4) {
+			return "forty-" + toEnglishNumber(number % 10);
+		}
+	}
+
+	return simpleNumbers[number];
+}
+```
+
+Certainly, there is a fair bit of duplication right now: "number / 10" and "number % 10". Let's extract them as variables. Also, let's extract "twenty", "thirty", "forty" and "toEnglishNumber(lastDigit)" parts as variables:
+
+```javascript
+function toEnglishNumber(number) {
+	if (number >= 20) {
+		var firstDigit = number / 10;
+		var lastDigit = number % 10;
+		
+		var firstPart;
+		if (firstDigit == 2) {
+			firstPart = "twenty";
+		}
+		
+		if (firstDigit == 3) {
+			firstPart = "thirty";
+		}
+		
+		if (firstDigit == 4) {
+			firstPart = "forty";
+		}
+		
+		var secondPart = toEnglishNumber(lastDigit);
+	
+		return firstPart + "-" + secondPart;
+	}
+
+	return simpleNumbers[number];
+}
+```
+
+Now, we could extract the method for conversion the first digit to the first english part, such as twenty or thirty:
+
+```javascript
+function convertTens(digit) {
+	if (firstDigit == 2) {
+		return "twenty";
+	}
+	
+	if (firstDigit == 3) {
+		return "thirty";
+	}
+	
+	if (firstDigit == 4) {
+		return "forty";
+	}
+}
+
+function toEnglishNumber(number) {
+	if (number >= 20) {
+		var firstDigit = number / 10;
+		var lastDigit = number % 10;
+		
+		var firstPart = convertTens(firstDigit);
+		var secondPart = toEnglishNumber(lastDigit);
+	
+		return firstPart + "-" + secondPart;
+	}
+
+	return simpleNumbers[number];
+}
+```
 
 ---
 
 
 - example of application of 3 rules
-- different types of tests
-- cover concern about the speed of the test suite (how to achieve one clap of the hands or blink of an eye)
-
 
 ---
 
