@@ -1,0 +1,518 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>That TDD Fellow | Tech Blog | Screencasts</title>
+  <meta name="author" content="Oleksii Fedorov (waterlink)">
+
+  
+  <meta name="description" content="rspec-json_expectations library provides powerful include_json matcher for your RSpec suites. It allows to match string with JSON or already parsed &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.tddfellow.com/posts/5/">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="That TDD Fellow | Tech Blog | Screencasts" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
+
+<!-- Twitter Cards -->
+
+  
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@waterlink000">
+<meta name="twitter:creator" content="@waterlink000">
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="http://www.tddfellow.com/images/logo.png">
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-73226470-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+<body  class="no-sidebar">
+  <header role="banner"><hgroup class="v2-header">
+  <ul class="v2-header__navigation">
+    <li class="v2-header__navigation__logo">
+      <h1><a href="/">TDD Fellow</a></h1>
+    </li>
+    <li><a href="/blog/archives">Archives</a></li>
+<li><a href="/about-me">About me</a></li>
+
+  </ul>
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/blog/categories/tdd-screencasts/">Screencasts</a></li>
+  <li><a href="/blog/categories/build-your-own-testing-framework/">Build Testing Framework</a></li>
+  <li><a href="/blog/categories/getting-stuck-while-doing-tdd/">Getting Stuck in TDD</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content" class="v2-content">
+      <aside class="v2-sidebar v2-sidebar--mobile v2-sidebar--mobile--top">
+  <div class="v2-sidebar__subscribe-form v2-sidebar__item--mobile--top-only">
+	
+
+
+
+
+  
+
+
+<div class="mc_embed_signup">
+  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div class="mc_embed_signup_scroll">
+      <h3>Want more articles like this delivered to your inbox?</h3>
+      <div class="mc-field-group">
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_7f9f94015a" tabindex="-1" value=""></div>
+        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
+        <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
+      </div>
+      <div class="">
+        <em>(we respect your privacy, unsubscribe at any time)</em>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+</div>
+
+<div class="v2-sidebar__recent-posts v2-sidebar__item--mobile--bottom-only">
+	<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/10/19/do-more-with-baby-steps-tdd/">Do More With Baby-Steps TDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/30/highscore-kata/">HighScore Kata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
+      </li>
+    
+  </ul>
+</section>
+
+</div>
+
+</aside>
+
+<aside class="v2-sidebar v2-sidebar--non-mobile">
+  <div class="v2-sidebar__subscribe-form v2-sidebar__item--mobile--top-only">
+	
+
+
+
+
+
+<div class="mc_embed_signup">
+  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div class="mc_embed_signup_scroll">
+      <h3>Want more articles like this delivered to your inbox?</h3>
+      <div class="mc-field-group">
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_7f9f94015a" tabindex="-1" value=""></div>
+        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
+        <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
+      </div>
+      <div class="">
+        <em>(we respect your privacy, unsubscribe at any time)</em>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+</div>
+
+<div class="v2-sidebar__recent-posts v2-sidebar__item--mobile--bottom-only">
+	<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/10/19/do-more-with-baby-steps-tdd/">Do More With Baby-Steps TDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/30/highscore-kata/">HighScore Kata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
+      </li>
+    
+  </ul>
+</section>
+
+</div>
+
+</aside>
+
+
+
+<div class="blog-index v2-blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/23/rspec-json-expectations-set-of-matchers-and-helpers-to-allow-you-test-your-api-responses-like-a-pro/">RSpec Json Expectations - Set of Matchers and Helpers to Allow You Test Your API Responses Like a Pro</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2015-01-23T01:56:19+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>1:56 am</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/api/'>api</a>, <a class='category' href='/blog/categories/json/'>json</a>, <a class='category' href='/blog/categories/rspec/'>rspec</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="https://github.com/waterlink/rspec-json_expectations">rspec-json_expectations</a> library provides powerful <code>include_json</code> matcher for your RSpec suites. It allows to match string with JSON or already parsed ruby <code>Hash</code> against other ruby <code>Hash</code>, which is very convenient and creates very readable spec code. Lets jump to some examples.</p>
+
+<p>It can handle some plain json:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has basic info about user&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
+</span><span class='line'>    <span class="nb">id</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">email</span><span class="p">:</span> <span class="s2">&quot;john.smith@example.com&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span>
+</span><span class='line'>  <span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And nested json:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has gamification info for user&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
+</span><span class='line'>    <span class="ss">code</span><span class="p">:</span> <span class="s2">&quot;7wxMw32&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">gamification</span><span class="p">:</span> <span class="p">{</span>
+</span><span class='line'>      <span class="ss">rating</span><span class="p">:</span> <span class="mi">93</span><span class="p">,</span>
+</span><span class='line'>      <span class="ss">score</span><span class="p">:</span> <span class="mi">355</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can even do some regex matching:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">it</span> <span class="s2">&quot;has basic info about user&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">include_json</span><span class="p">(</span>
+</span><span class='line'>    <span class="ss">code</span><span class="p">:</span> <span class="sr">/^[a-z0-9]{10}$/</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">url</span><span class="p">:</span> <span class="sr">%r{api/v5/users/[a-z0-9]{10}.json}</span>
+</span><span class='line'>  <span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Most can agree, that this method of specifying JSON responses in ruby is very readable, but what about failure messages? How helpful they are?</p>
+
+<p>For example with failure in nested JSON things can become tricky, but this gem solves them quite nice:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>             json atom at path "gamification/score" is not equal to expected value:
+</span><span class='line'>
+</span><span class='line'>               expected: 355
+</span><span class='line'>                    got: 397</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you match with nested Arrays you will get numbers in your JSON path within failure message, for example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>             json atom at path "results/2/badges/0" is not equal to expected value:
+</span><span class='line'>
+</span><span class='line'>               expected: "first flight"
+</span><span class='line'>                    got: "day & night"
+</span><span class='line'>
+</span><span class='line'>             json atom at path "results/3" is missing</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For further reading and instructions: <a href="https://github.com/waterlink/rspec-json_expectations">github</a> and <a href="http://www.relishapp.com/waterlink/rspec-json-expectations/docs/json-expectations">cucumber generated documentation</a>.</p>
+
+<p>Feedback is highly appreciated, contact me on twitter (<a href="https://twitter.com/waterlink000">@waterlink000</a>) or on <a href="https://github.com/waterlink/rspec-json_expectations/issues">github issues</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/posts/4">Newer &rarr;</a>
+    
+  </div>
+</div>
+
+<aside class="v2-sidebar v2-sidebar--mobile v2-sidebar--mobile--bottom">
+  <div class="v2-sidebar__subscribe-form v2-sidebar__item--mobile--top-only">
+	
+
+
+
+
+
+<div class="mc_embed_signup">
+  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div class="mc_embed_signup_scroll">
+      <h3>Want more articles like this delivered to your inbox?</h3>
+      <div class="mc-field-group">
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_7f9f94015a" tabindex="-1" value=""></div>
+        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
+        <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
+      </div>
+      <div class="">
+        <em>(we respect your privacy, unsubscribe at any time)</em>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+</div>
+
+<div class="v2-sidebar__recent-posts v2-sidebar__item--mobile--bottom-only">
+	<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/10/19/do-more-with-baby-steps-tdd/">Do More With Baby-Steps TDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/30/highscore-kata/">HighScore Kata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
+      </li>
+    
+  </ul>
+</section>
+
+</div>
+
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+    <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+  </a>
+  <br />
+  Except where otherwise noted, content on this site is licensed under a
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+  <br/>
+
+  Except where otherwise noted, code examples on this site are licensed under a
+  <a rel="license" href="https://github.com/waterlink/waterlink.github.io/tree/source/LICENSE">MIT License</a>.
+  <br/>
+
+  Copyright &copy; 2017 - Oleksii Fedorov (waterlink) -
+  <br/>
+
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+
+  <br/>
+
+  <em>Deployed from tddfellow org</em>
+</p>
+
+</footer>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

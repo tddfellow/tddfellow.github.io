@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://www.tddfellow.com/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/</loc>
+<lastmod>2017-02-03T22:19:40+01:00</lastmod>
+</url>
+<url>
 <loc>http://www.tddfellow.com/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/</loc>
 <lastmod>2016-12-23T10:13:33+01:00</lastmod>
 </url>
@@ -450,14 +454,5 @@
 </url>
 <url>
 <loc>http://www.tddfellow.com/blog/categories/learning-tdd-with-js/</loc>
-</url>
-<url>
-<loc>http://www.tddfellow.com/posts/2/</loc>
-</url>
-<url>
-<loc>http://www.tddfellow.com/posts/3/</loc>
-</url>
-<url>
-<loc>http://www.tddfellow.com/posts/4/</loc>
 </url>
 </urlset>

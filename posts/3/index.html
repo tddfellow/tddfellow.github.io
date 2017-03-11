@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Test-Driven Development Screencast #5: English Numbers Kata (Recommended to watch full-screen and HD: 720p or more) List of all TDD Screencasts can &hellip;">
+  <meta name="description" content="Some time ago, I have discovered, that using your own custom test double classes, instead of a test framework makes my test code more readable and &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,6 +117,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
       </li>
     
@@ -142,10 +146,6 @@
     
       <li class="post">
         <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>
       </li>
     
   </ul>
@@ -189,6 +189,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
       </li>
     
@@ -216,10 +220,6 @@
         <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -231,6 +231,169 @@
 
 <div class="blog-index v2-blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/06/21/why-i-dont-use-mocking-frameworks-anymore/">Why I Don&#8217;t Use Mocking Frameworks Anymore</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2016-06-21T08:04:10+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>21</span><span class='date-suffix'>st</span>, <span class='date-year'>2016</span></span> <span class='time'>8:04 am</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/architecture/'>architecture</a>, <a class='category' href='/blog/categories/clean-code/'>clean-code</a>, <a class='category' href='/blog/categories/mocking/'>mocking</a>, <a class='category' href='/blog/categories/pseudo-code/'>pseudo-code</a>, <a class='category' href='/blog/categories/testing/'>testing</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Some time ago, I have discovered, that using your own custom test double classes, instead of a test framework makes my test code more readable and maintainable. Here is an example (pseudo-code):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">test_password_revealer_when_toggled_reveals_password</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">passwordController</span> <span class="o">=</span> <span class="nx">MockPasswordController</span><span class="p">.</span><span class="k">new</span><span class="p">()</span>
+</span><span class='line'>  <span class="nx">passwordRevealer</span> <span class="o">=</span> <span class="nx">PasswordRevealer</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">passwordRevealer</span><span class="p">.</span><span class="nx">toggle</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">expect</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">isRevealed</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The same test with mocking framework would look this way:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">test_password_revealer_when_toggled_reveals_password</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">passwordController</span> <span class="o">=</span> <span class="nx">MockFramework</span><span class="p">.</span><span class="nx">Mock</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="s2">&quot;PasswordController&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">passwordRevealer</span> <span class="o">=</span> <span class="nx">PasswordRevealer</span><span class="p">.</span><span class="k">new</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">spy</span> <span class="o">=</span> <span class="nx">spyOn</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">reveal</span><span class="p">())</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">passwordRevealer</span><span class="p">.</span><span class="nx">toggle</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">expect</span><span class="p">(</span><span class="nx">spy</span><span class="p">.</span><span class="nx">haveBeenCalled</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you take a closer look at the last example, and, specifically at these 2 lines:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">spy</span> <span class="o">=</span> <span class="nx">spyOn</span><span class="p">(</span><span class="nx">passwordController</span><span class="p">.</span><span class="nx">reveal</span><span class="p">())</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">expect</span><span class="p">(</span><span class="nx">spy</span><span class="p">.</span><span class="nx">haveBeenCalled</span><span class="p">()).</span><span class="nx">toBeTrue</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>They use a language, that is not relevant to the domain, therefore, they make the test less readable.</p>
+
+<p>Additionally, they have knowledge of which exactly method <code>PasswordRevealer#toggle()</code> should call on <code>passwordController</code>. If we were to rename <code>reveal</code> method, all tests for <code>PasswordRevealer</code> would fail.
+The same thing would happen if we were to extract methods/functions/objects out of the <code>PasswordRevealer</code>.</p>
+
+<p>Of course, creating such test doubles yourself will involve some boilerplate code - this is a trade-off. Example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kr">class</span> <span class="nx">MockPasswordController</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">reveal</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;revealed&quot;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">hide</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">isRevealed</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">==</span> <span class="s2">&quot;revealed&quot;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Making this trade-off, will simplify the case when we were to change the name: we would change the name at 3 places:</p>
+
+<ul>
+<li>in test double class,</li>
+<li>in caller class,</li>
+<li>in &ldquo;real&rdquo; implementation class.</li>
+</ul>
+
+
+<p>Whereas with a mocking framework, we would have to hunt for all failing tests, and usually, it means hundreds of failing tests.</p>
+
+<h2>Thank you!</h2>
+
+<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1971,338 +2134,6 @@ Test-Driven-Development Screencast! Have a good day.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/01/08/why-do-you-need-to-be-careful-with-loop-variable-in-go/">Why Do You Need to Be Careful With Loop Variable in Go</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-
-  
-  <span class="byline author vcard"><span class="fn">
-    
-      <a href="/about-me">Oleksii Fedorov</a>
-    
-  </span></span>
-
-
-        
-
-
-
-
-<time class='entry-date' datetime='2016-01-08T02:28:45+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>2:28 am</span></time>
-        
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/computers/'>computers</a>, <a class='category' href='/blog/categories/concurrency/'>concurrency</a>, <a class='category' href='/blog/categories/golang/'>golang</a>, <a class='category' href='/blog/categories/pitfalls/'>pitfalls</a>, <a class='category' href='/blog/categories/programming/'>programming</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>TL;DR</h2>
-
-<p>This post describes two different issues:</p>
-
-<h3>Race conditions when taking reference of loop variable and passing it to another goroutine:</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// WRONG: pass message by reference</span>
-</span><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
-</span><span class='line'>                <span class="c1">// .. more fields here ..</span>
-</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">message</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// CORRECT: pass message by value</span>
-</span><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
-</span><span class='line'>                <span class="c1">// .. more fields here ..</span>
-</span><span class='line'>                <span class="c1">// Pass message by value here</span>
-</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="nx">message</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>See explanation <a href="#taking_reference_of_loop_variable">here</a>.</p>
-
-<h3>Race conditions when using loop variable inside of goroutine inside of loop:</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// WRONG: use loop variable directly from goroutine</span>
-</span><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>                <span class="c1">// .. do something important with message ..</span>
-</span><span class='line'>        <span class="p">}()</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// CORRECT: pass loop variable by value as an argument for goroutine&#39;s function</span>
-</span><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">message</span> <span class="nx">Message</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>                <span class="c1">// .. do something important with message ..</span>
-</span><span class='line'>        <span class="p">}(</span><span class="nx">message</span><span class="p">)</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>See explanation <a href="#running_goroutine_that_uses_loop_variable">here</a>.</p>
-
-<h2><a href="#taking_reference_of_loop_variable" id="taking_reference_of_loop_variable">Taking reference of loop variable</a></h2>
-
-<p>Lets start off with simple code example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
-</span><span class='line'>                <span class="c1">// .. more fields here ..</span>
-</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">message</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Looks quite legit. In practice it will often cause race conditions. Because
-<code>message</code> variable is defined once and then mutated in each loop iteration. The
-variable is passed pointer to some concurrent collaborators, which causes race
-conditions and very confusing bugs.</p>
-
-<p>Above code can be re-written as:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// local scope begins here</span>
-</span><span class='line'>        <span class="kd">var</span> <span class="p">(</span>
-</span><span class='line'>                <span class="nx">message</span> <span class="nx">Message</span>
-</span><span class='line'>                <span class="nx">ok</span> <span class="kt">bool</span>
-</span><span class='line'>        <span class="p">)</span>
-</span><span class='line'>        <span class="k">for</span> <span class="p">{</span>
-</span><span class='line'>                <span class="nx">message</span><span class="p">,</span> <span class="nx">ok</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">inbox</span>
-</span><span class='line'>                <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
-</span><span class='line'>                        <span class="k">break</span>
-</span><span class='line'>                <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>                <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
-</span><span class='line'>                        <span class="c1">// .. more fields here ..</span>
-</span><span class='line'>                        <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">message</span><span class="p">,</span>
-</span><span class='line'>                <span class="p">}</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'><span class="c1">// local scope ends here</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Looking at this code, it is quite obvious why it would have race conditions.</p>
-
-<p>Correct way of doing that would be to either define a new variable manually
-each iteration and copy <code>message</code>&rsquo;s value into it:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">m</span> <span class="o">:=</span> <span class="nx">message</span>
-</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
-</span><span class='line'>                <span class="c1">// ...</span>
-</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">m</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Another way of doing that would be to take control of how loop variable works
-yourself:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">message</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">inbox</span>
-</span><span class='line'>        <span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
-</span><span class='line'>                <span class="k">break</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
-</span><span class='line'>                <span class="c1">// ...</span>
-</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">message</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Taking into account, that until the <code>EnhancedMessage</code> is processed by
-concurrent collaborator and garbage collected, variables, created during each
-iteration, i.e.: <code>m</code> and <code>message</code> for both examples, will stay in memory.
-Therefore it is possible to just use pass-by-value instead of
-pass-by-reference to achieve the same result. It is simpler too:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">outbox</span> <span class="o">&lt;-</span> <span class="nx">EnhancedMessage</span><span class="p">{</span>
-</span><span class='line'>                <span class="c1">// ...</span>
-</span><span class='line'>
-</span><span class='line'>                <span class="c1">// Given the fact that `EnhancedMessage.Original` definition</span>
-</span><span class='line'>                <span class="c1">// changed to be of value type `Message`</span>
-</span><span class='line'>                <span class="nx">Original</span><span class="p">:</span> <span class="nx">message</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Personally, I prefer latter. If you know of any drawbacks of this approach
-comparing to other 2, or if you know of entirely better way of doing that,
-please let me know.</p>
-
-<h2><a href="#running_goroutine_that_uses_loop_variable" id="running_goroutine_that_uses_loop_variable">Running goroutine, that uses loop variable</a></h2>
-
-<p>Example code:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>                <span class="c1">// .. do something important with message ..</span>
-</span><span class='line'>        <span class="p">}()</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This code might look legit too. You might think it will process whole inbox
-concurrently, but most probably it will process only a couple of last elements
-multiple times.</p>
-
-<p>If you rewrite the loop in a similar fashion as in
-<a href="#taking_reference_of_loop_variable">previous section</a>, you would notice that
-<code>message</code> would be mutated while these goroutines are still processing it. This
-will cause confusing race conditions.</p>
-
-<p>Correct way of doing that is:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="k">for</span> <span class="nx">message</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">inbox</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">message</span> <span class="nx">Message</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>                <span class="c1">// .. do something important with message ..</span>
-</span><span class='line'>        <span class="p">}(</span><span class="nx">message</span><span class="p">)</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In this case, it is basically the same as copying the value to the new defined
-variable at each iteration of the loop. It just looks nicer.</p>
-
-<h2>Thanks!</h2>
-
-<p>If you have any questions, suggestions or just want to chat about the topic,
-you can ping me on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a> or
-drop a comment on <a href="https://news.ycombinator.com/item?id=10864593">hackernews</a>.</p>
-
-<p>Especially, if you think I am wrong somewhere in this article, please tell me,
-I will only be happy to learn and iterate over this article to improve it.</p>
-
-<p>Happy coding!</p>
-
-<h2>Credits</h2>
-
-<ul>
-<li>Benjamin Lewis - proofreading. <a href="https://github.com/23inhouse/">Github</a>,
-<a href="https://twitter.com/23inhouse">Twitter</a>.</li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/4">&larr; Older</a>
@@ -2348,6 +2179,10 @@ I will only be happy to learn and iterate over this article to improve it.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
       </li>
     
@@ -2373,10 +2208,6 @@ I will only be happy to learn and iterate over this article to improve it.</p>
     
       <li class="post">
         <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/09/18/introducing-test-doubles/">Introducing Test Doubles</a>
       </li>
     
   </ul>

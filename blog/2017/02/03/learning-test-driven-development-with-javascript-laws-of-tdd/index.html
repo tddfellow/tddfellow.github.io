@@ -1,0 +1,1459 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Learning Test-Driven Development With Javascript: Laws of TDD - That TDD Fellow | Tech Blog | Screencasts</title>
+  <meta name="author" content="Oleksii Fedorov (waterlink)">
+
+  
+  <meta name="description" content="Level: Beginner Today we are going to learn the basic principles behind the Test-Driven Development Discipline. We will learn three rules of TDD. And &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.tddfellow.com/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="That TDD Fellow | Tech Blog | Screencasts" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
+
+<!-- Twitter Cards -->
+
+  
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@waterlink000">
+<meta name="twitter:creator" content="@waterlink000">
+<meta name="twitter:title" content="Learning Test-Driven Development With Javascript: Laws of TDD">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="http://www.tddfellow.com/images/logo.png">
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-73226470-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+<body  class="no-sidebar">
+  <header role="banner"><hgroup class="v2-header">
+  <ul class="v2-header__navigation">
+    <li class="v2-header__navigation__logo">
+      <h1><a href="/">TDD Fellow</a></h1>
+    </li>
+    <li><a href="/blog/archives">Archives</a></li>
+<li><a href="/about-me">About me</a></li>
+
+  </ul>
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/blog/categories/tdd-screencasts/">Screencasts</a></li>
+  <li><a href="/blog/categories/build-your-own-testing-framework/">Build Testing Framework</a></li>
+  <li><a href="/blog/categories/getting-stuck-while-doing-tdd/">Getting Stuck in TDD</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content" class="v2-content">
+      <aside class="v2-sidebar v2-sidebar--non-mobile">
+  <div class="v2-sidebar__subscribe-form v2-sidebar__item--mobile--top-only">
+	
+
+
+
+
+  
+
+
+<div class="mc_embed_signup">
+  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div class="mc_embed_signup_scroll">
+      <h3>Want more articles like this delivered to your inbox?</h3>
+      <div class="mc-field-group">
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_7f9f94015a" tabindex="-1" value=""></div>
+        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
+        <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
+      </div>
+      <div class="">
+        <em>(we respect your privacy, unsubscribe at any time)</em>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+</div>
+
+<div class="v2-sidebar__recent-posts v2-sidebar__item--mobile--bottom-only">
+	<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/10/19/do-more-with-baby-steps-tdd/">Do More With Baby-Steps TDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/30/highscore-kata/">HighScore Kata</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
+      </li>
+    
+  </ul>
+</section>
+
+</div>
+
+</aside>
+
+
+<div class="v2-blog-post">
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Learning Test-Driven Development With Javascript: Laws of TDD</h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2017-02-03T22:19:40+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>3</span><span class='date-suffix'>rd</span>, <span class='date-year'>2017</span></span> <span class='time'>10:19 pm</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/learning-tdd-with-js/'>learning-tdd-with-js</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/tutorial/'>tutorial</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><strong>Level: Beginner</strong></p>
+
+<p>Today we are going to learn the basic principles behind the Test-Driven Development Discipline. We will learn three rules of TDD. And we will take a look at the example application of these laws.</p>
+
+<!-- more -->
+
+
+<p>Articles of these series have exercises and going through them would make for more effective learning. Also, if you feel stuck with these exercises, fell free to shoot me an email or get in touch on Twitter: @waterlink000.</p>
+
+<p>&ldquo;Learning Test-Driven Development with Javascript&rdquo; is a series of articles and you, my dear reader, can shape the content by providing an invaluable feedback. To do that, shoot me an email - <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#x6f;&#x6c;&#101;&#x6b;&#x73;&#x69;&#x69;&#x40;&#x74;&#x64;&#x64;&#102;&#x65;&#x6c;&#108;&#111;&#119;&#x2e;&#99;&#111;&#109;&#x2e;">&#x6f;&#108;&#x65;&#x6b;&#x73;&#105;&#105;&#x40;&#116;&#100;&#x64;&#102;&#x65;&#108;&#x6c;&#x6f;&#x77;&#46;&#99;&#x6f;&#x6d;&#x2e;</a></p>
+
+<h2>Basics of Test-Driven Development</h2>
+
+<p>A test is a single program, procedure or function, that executes our system under the test and verifies that it works as expected. The system under the test is any other program, part of the program or library, procedure or function. The system under the test is called SUT for short.</p>
+
+<p>SUT is the code that executes with a purpose of satisfying needs of our end users. Using the term &ldquo;end user&rdquo; we mean actual people using our system via the user interface (graphical and non-graphical), and other automated systems using our system via application programming interface (for short, API). A different term for the &ldquo;end user&rdquo; is &ldquo;consumer of the system.&rdquo; Another term for the SUT is &ldquo;production code&rdquo; - we are going to use the latter, as it is used in Test-Driven Development much more often.</p>
+
+<p>Test-Driven Development is based on a simple concept of writing production code only when there is a failing test that demands that production code for it to pass.</p>
+
+<p>We call a test failing when there is some error happening when we execute it. Possible failures are the following: there is a syntax error, or code does not compile, or there is a runtime failure during test setup or production code execution, or there is an assertion error. The assertion failure is the particular kind of error that happens during the final phase of the test, where we are verifying the outcomes after running the production code under the test. An assertion error signals that the production code executed successfully, but it produced incorrect results or changed the state of the system in a wrong fashion.</p>
+
+<p>We call a test passing when there are no errors happen when we execute it. We, also, call the failing test &ldquo;a red test&rdquo; and we call the passing test &ldquo;a green test.&rdquo; That is because we can not deliver the code to our customers or consumers when there are &ldquo;red&rdquo; tests - think of red traffic light, and we are free to go when all the tests are &ldquo;green&rdquo; - think of green traffic light. Most of the testing tools and frameworks format their output to present failing tests in the red color and passing tests in the green color.</p>
+
+<p>Multiple tests aiming to test single SUT or a particular feature of the system are usually called test suite. Depending on the context, test suite could mean that collection of tests all testing the same thing, or it could mean all tests of the entire system. For example, in the sentence &ldquo;Let&rsquo;s read <code>User</code> class&#8217; test suite&rdquo; that phrase means a collection of tests testing class <code>User</code>. On the other hand, in the sentence &ldquo;Let&rsquo;s run the whole test suite and see if we can deploy that right now&rdquo; that phrase means all tests of the entire system. The latter, sometimes, is called &ldquo;suite of tests.&rdquo;</p>
+
+<p>When the system behaves in an unexpected way, and the expected behavior was previously defined or present in the code, it is called a &ldquo;bug.&rdquo; For example, the behavior that is specified by the development team and not implemented correctly considered a bug. The behavior that is defined by the development team and implemented correctly, but now it is not working, considered a bug. And, finally, the behavior that was not defined may or may not be considered as a bug. The latter depends on the produced results - if it harms or brings any value. This phenomenon is called a &ldquo;bug&rdquo; for historical reasons: the first bug in computing was a real bug, that stuck in the computer&rsquo;s hardware and was causing short circuits which made the computer misbehave.</p>
+
+<p>In the core of Test-Driven Development there are three steps that we need to follow:</p>
+
+<ol>
+<li>We start with a failing test. We consider any error a failure, including compilation and syntax errors. Meaning, that our first test for any part of the production code will fail for the reason that there is no production code to execute yet. For example class, method or function is undefined.</li>
+<li>Then, we resolve the failure by writing the production code. For example: in the case of missing class, we would create a class; in the event of a missing method, we would create it; and in the instance of a failing assertion error, we would fix the logic to pass the test.</li>
+<li>We write no more than the simplest production code, which makes our current failing test pass, and, also, still passes all other tests.</li>
+</ol>
+
+
+<p>We repeat these steps over and over until we finish the implementation of the system under the test. Strictly following these steps will lock us in a very tight loop, where we will be switching between test code and production code all the time: write one or two lines of the test code and write or change one or two lines of the production code, repeat. This cycle is, probably, twenty or thirty seconds long. It, of course, depends on how fast we can run our tests. Ideally, we want our test suite for the current system under the test to run as fast as one clap of hands, or blink of an eye.</p>
+
+<p>This tight cycle gives us following benefits:</p>
+
+<ul>
+<li>Alerts us to the mistakes we do while coding immediately. Usually, it is enough to do one or two &ldquo;Undo&rdquo; commands in our editor to get back to the &ldquo;green&rdquo; state of the system - when all our tests are passing (occasionally, except for the last test we have added, as we will undo the incorrect implementation for it).</li>
+<li>Provides the safety net from bugs for the future development thanks to the fact, that no single line of production code is written other than to pass a failing test. Meaning, that whenever production code is broken in any fashion, there is a test that will point it out via failure. When adding new features or modifying the behavior of the existing ones, we might inadvertently introduce a bug. Our suite of tests will detect that bug as soon as we run all our tests, which we would certainly do during development and, especially, before the deployment or release of our systems. This is, basically, a near 100% test coverage. Surely, there are subtle and complex bugs that involve whole sub-systems and 3rd-party systems to come together in some special edge case to appear - rarely, such bugs are not prevented by Test-Driven Development. Of course, we are talking about 1-3 such bugs per year - this is much better than having a bug tracker, that contains thousands of unresolved bugs. Who said it was a good idea to have a database that stores the bugs in our system? - When we apply TDD correctly, and our bug counts are so small, as 1-3 per year, we should treat bugs as &ldquo;Red Alerts&rdquo; and concentrate all the effort on shooting them down. Writing a test for these bugs when we already figured them out allows us to programmatically prove, that the system, indeed, does misbehave in a certain edge case, and prevents this bug from reoccurring after we have fixed it.</li>
+<li>Gives the confidence to refactor freely and ruthlessly. Essentially, allows changing the software design of the system on the go without applying the big design upfront (BDUF). Let&rsquo;s take a look at the example. Imagine, we have a system with a perfect design and without any tests. Over time the design will degrade until the code becomes nearly impossible to work with. Now, imagine, we have a system with bad design and close to 100% test coverage. Over time we can improve the design of the application gradually while responding to the changes in the needs of our end users. And we will be faster as the time passes.</li>
+<li>Makes the development team always ready to deploy. While practicing test-driven development, development teams will keep latest implemented features in the version control system for the source code in the state, that is well-known to be &ldquo;green.&rdquo; This condition of the system is deliverable to the end users with one push of the button. That, also, enables teams to do continuous delivery: as soon as the code is checked-in in the version control system (VCS), it is going to be automatically deployed to production and our end users will get the value out of it sooner.</li>
+<li>Promotes simplicity and alleviates the scope creep. &ldquo;Oh, we don&rsquo;t need that yet&rdquo; is the most used phrase in the vocabulary of the typical test-driven development practitioner. Tests that we write specify only the useful functionality that we need to deliver the value to our end users. These tests don&rsquo;t talk about performance optimizations, security concerns, rare edge cases, &ldquo;re-usable&rdquo; abstractions (that, usually, are harder to understand and are difficult to re-use), etc. These things need to be implemented only when there is an actual end user value to be achieved, or the system is obviously running slower than it should, or there is an actual security concern. In that case, a very specific test (or tests) will be written to drive out that additional functionality. Since the most software development cost is in the maintenance of the existing functionality leaving out as much functionality (and code) as possible is a good idea.</li>
+<li>Promotes cleaner interfaces. As in test-driven development, we have to write the usage example before we implement (or even design) the API in the production code, it will be optimized for ease and clarity of use and less so with the internal implementation details of that production code. Generally speaking, test-driven production code is easier to use and understand.</li>
+<li>Tests that call the production code serve as usage examples of that code. Essentially, in a test-driven code base, to know how a particular API can be used, it is enough to read and understand its test suite. These tests are the perfect low-level documentation for the APIs in our code base that developers can understand and read best. And that documentation is so precise that it can be executed and verified that it is still in sync with the actual code it is describing. Therefore this documentation is always up-to-date.</li>
+</ul>
+
+
+<p>The most important of these benefits is the confidence to make any change to the software and know in one minute or two, if that change is good to be delivered to the end user or not, with a simple push of the button. No quality assurance (QA) manual testing cycles are required. Let&rsquo;s take a look at the example of the application of three rules of test-driven development. We will start from a very simple example, so that we don&rsquo;t have to touch more advanced TDD techniques.</p>
+
+<h3>English Numbers Kata</h3>
+
+<blockquote><p><strong>Given</strong> an integer number<br/>
+<strong>When</strong> I call the system with that number<br/>
+<strong>Then</strong> I receive a string representation of that number in an English language</p>
+
+<p>For example:</p>
+
+<ul>
+<li>for number <code>37</code> I receive <code>"thirty-seven"</code></li>
+<li>for number <code>-17451</code> I receive <code>"minus seventeen thousand four hundred fifty-one"</code></li>
+</ul>
+</blockquote>
+
+<p>According to the first rule of TDD, we have to start the implementation from the test. In test-driven development it is important to start from the simplest tests, that can be implemented via a small, simple change to production code. For example: with number zero we expect the result to be &ldquo;zero.&rdquo; When writing the first test for the new functionality we are going to design its API. In our case we are going to come up with the function name and its argument list:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;toEnglishNumber&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 0 to zero&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// ARRANGE</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ACT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As soon as we write <code>toEnglishNumber(number)</code> we have designed the function&rsquo;s signature, at least, for the single simplest case. Also, the test suite is failing now, because <code>toEnglishNumber</code> is not a function - in fact, it is undefined. That means that we have entered the red stage of test driven development and according to the second rule of TDD we have to switch back to the production code. And according to the third rule, we have to write just enough of it to make the failing test pass. That means writing the simplest and easiest code possible to make it succeed. In this case, we could just return nothing (<code>null</code> in javascript):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is going to turn our test suite back to the green stage. At this point it is a good idea to look at both test code and production code and see if there are any opportunities for refactoring, such as better names, extracting methods/functions, clarifying variable names, de-duplication, etc. Because we are currently in a green state, we can safely apply any refactoring, automated or manual, and see if it was successful by running the test again. If for some reason, the test is failing after the refactoring, we always have an option to CTRL/CMD+Z back to the green state, back to safety. At this point, we have finished applying one cycle of rules of TDD. Now we need to start over. We go back to our test code. There we extend the existing test to be more specific. Or we add more tests. Since we didn&rsquo;t finish writing the test yet - we have only &ldquo;arrange&rdquo; and &ldquo;act&rdquo; parts, and we are missing the &ldquo;assert&rdquo; part of the test, - we ought to extend the current test to make it more specific. So what can we assert about the result of the <code>toEnglishNumber</code> call? We probably ought to return the string &ldquo;zero&rdquo;, aren&rsquo;t we? So, let&rsquo;s make an appropriate assertion:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 0 to zero&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ARRANGE</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ACT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ASSERT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;zero&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run our tests right now, they will fail. We should take a careful look at the failure and see if the failure message is readable and it is what we expected. In the current situation, we will receive an assertion failure, telling us that <code>null</code> was not equal to &ldquo;zero.&rdquo; Imagine now, that we are working on some other feature and we are not in the context of the English number conversion feature. What would be our reaction, when we run this test and see this failure? - We will probably be confused for a moment and will resort to jump to the line in the source code of the test suite that produces that error and try to understand what happened there. That is a huge context switch, and it will disrupt our current flow. So we can do better and make the failure much more readable by just adding a small thing - a cue, what that <code>null</code> was supposed to be: &ldquo;english number&rdquo;:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In Jasmine, the second argument to the <code>toEqual</code> matching function is the description of the failure. I think our test looks great, and so is the failure in the test output. And because we are having a good failing test, according to the second rule, we don&rsquo;t have to write any of test code. Now, we should make the test pass according to the third rule. And what would be the simplest way to make it work? - Return &ldquo;zero&rdquo;:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;zero&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point, we should look out for the refactoring opportunities, and I don&rsquo;t think there are any yet. So let&rsquo;s start the cycle over. To apply the first rule, we might just copy the existing test and change the input and the expected output accordingly. In that case, we would want to test another simple one-digit number - &ldquo;one&rdquo;:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 1 to one&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ARRANGE</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ACT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ASSERT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;one&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, because the test is failing, we apply the second rule and switch back to the production code. To make the test pass, according to the third rule, we will need to introduce the simplest change possible: in that case, an &ldquo;if&rdquo; statement (and we will use <code>===</code> instead of <code>==</code> for comparison to avoid implicit type conversions in javascript):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;one&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;zero&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That is going to make all our tests pass. If we continue adding tests for the single-digit numbers while following these three rules, we will wind up with something like that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;one&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;two&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;three&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;four&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;five&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">6</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;six&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">7</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;seven&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">8</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;eight&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">===</span> <span class="mi">9</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;nine&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="s2">&quot;zero&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point, we can see a clear pattern: one-to-one correspondence of a single-digit integer to the string. This code can be simplified as a pre-defined array of strings at the corresponding indices:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">singleDigitNumbers</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>    <span class="s2">&quot;zero&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;one&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;two&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;three&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;four&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;five&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;six&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;seven&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;eight&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;nine&quot;</span>
+</span><span class='line'><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We also include string &ldquo;zero&rdquo; in that array because <code>return "zero"</code> is only happening when the number is equal to zero since we don&rsquo;t have any other tests right now - only from zero to nine. And the function itself will look much simpler:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">singleDigitNumbers</span><span class="p">[</span><span class="nx">number</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Since we are done with the refactoring, we should proceed using the first rule of test-driven development, which means we need to write a test that fails. So let&rsquo;s increase the complexity of our tests and go for teen numbers. We&rsquo;ll start from ten:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 10 to ten&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ARRANGE</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ACT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ASSERT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;ten&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That will fail because so far our production code tries to fetch a string representation of the english number from the array using the number itself as an index. At the index ten, we don&rsquo;t have anything, so our function returns nothing. According to the second rule of test-driven development, we need to switch to production code to make it pass. There are a few ways to fix the current problem: add specific if statement to the production code, or add a string &ldquo;ten&rdquo; to the array. Second seems to be simpler, and we know that we can do it for the teen numbers because they can not be composed of any other small parts. So, according to the third rule, we should go for it because it is a much simpler solution:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">singleDigitNumbers</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'>    <span class="s2">&quot;ten&quot;</span>
+</span><span class='line'><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That makes our tests pass. And I think we have a refactoring opportunity: variable name <code>singleDigitNumbers</code> does not make any sense anymore - it contains not only single digit numbers, but, also, number &ldquo;ten,&rdquo; which is a two-digit number. So what is common between single digit numbers and ten? They are simple numbers, i.e.: can not be composed out of other english number string representations. Let&rsquo;s just call them <code>simpleNumbers</code> in this case:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">simpleNumbers</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span><span class='line'><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">simpleNumbers</span><span class="p">[</span><span class="nx">number</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After making this refactoring, we need not forget to run the test suite to see if we didn&rsquo;t make a mistake. When we run it, then all our tests pass. So we can go back to the first rule of test-driven development again. Going through this cycle again for a few times will produce tests for numbers from eleven to nineteen. The production code will only have those numbers&#8217; english string representations added to the <code>simpleNumbers</code> array:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">simpleNumbers</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>    <span class="s2">&quot;zero&quot;</span><span class="p">,</span> <span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="s2">&quot;three&quot;</span><span class="p">,</span> <span class="s2">&quot;four&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;five&quot;</span><span class="p">,</span> <span class="s2">&quot;six&quot;</span><span class="p">,</span> <span class="s2">&quot;seven&quot;</span><span class="p">,</span> <span class="s2">&quot;eight&quot;</span><span class="p">,</span> <span class="s2">&quot;nine&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="s2">&quot;ten&quot;</span><span class="p">,</span> <span class="s2">&quot;eleven&quot;</span><span class="p">,</span> <span class="s2">&quot;twelve&quot;</span><span class="p">,</span> <span class="s2">&quot;thirteen&quot;</span><span class="p">,</span> <span class="s2">&quot;fourteen&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;fifteen&quot;</span><span class="p">,</span> <span class="s2">&quot;sixteen&quot;</span><span class="p">,</span> <span class="s2">&quot;seventeen&quot;</span><span class="p">,</span> <span class="s2">&quot;eighteen&quot;</span><span class="p">,</span> <span class="s2">&quot;nineteen&quot;</span>
+</span><span class='line'><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">simpleNumbers</span><span class="p">[</span><span class="nx">number</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now it is time to introduce the concept of a complex number, such as twenty-three. It is a number that consists of the &ldquo;tens&rdquo; part and single-digit part. According to the first rule we have to start with the failing test, and I think we should just go for the number twenty-three:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 23 to twenty-three&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ARRANGE</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">23</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ACT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ASSERT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;twenty-three&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run our test suite, that test will fail. According to the second rule of test-driven development, now we have to switch to the production code. According to the third rule, we will have to choose the simplest code that makes this test pass (and doesn&rsquo;t break any other test). In our case, we have multiple options, which are similar in their simplicity. One of them is to return &ldquo;twenty-three&rdquo; if the number is greater than or equal to twenty:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&gt;=</span> <span class="mi">20</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;twenty-three&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">simpleNumbers</span><span class="p">[</span><span class="nx">number</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If we run our test suite, all tests will pass. Now we should see if there are any opportunities for making the code more readable and easier to understand. While the whole if statement returning a constant might feel strange, there is a concept that we can already give a name to in there: &ldquo;three.&rdquo; We already can obtain a string &ldquo;three&rdquo; from number three using the method <code>toEnglishNumber(number)</code>. Let&rsquo;s try this refactoring:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&gt;=</span> <span class="mi">20</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;twenty-&quot;</span> <span class="o">+</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">simpleNumbers</span><span class="p">[</span><span class="nx">number</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That code now looks interesting. And it passes all its tests. Since, of course, we are not done yet with the implementation, according to the first rule of test-driven development, we ought to write another failing test. And we have a multitude of choices what it could be, we can just come up with other random two-digit number, such as forty-two, or we could leave the &ldquo;twenty-&rdquo; part in and change the &ldquo;three&rdquo; part to &ldquo;seven,&rdquo; for example. Also, we could change &ldquo;twenty-&rdquo; part to &ldquo;thirty-.&rdquo; Generally, in test-driven development it is better to go for the test, that will cause the smallest change to the production code, - later we will explore more on why that is. So, we could go for twenty-seven, as it will cause the smallest change to our production code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 27 to twenty-seven&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ARRANGE</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">27</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ACT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ASSERT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;twenty-seven&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This test is failing, as expected. According to the second rule, we have to switch to the production code and make it pass. Also, the simplest change (third rule) that we could do is to change &ldquo;3&rdquo; to the last digit of the number, the remainder of the division by ten - &ldquo;number % 10&rdquo;:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&gt;=</span> <span class="mi">20</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;twenty-&quot;</span> <span class="o">+</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">10</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">simpleNumbers</span><span class="p">[</span><span class="nx">number</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now if we run our test suite all the tests will pass. &ldquo;The remainder of division by ten&rdquo; part looks right and &ldquo;twenty-&rdquo; constant still feels like it is not gonna work for every two-digit number. I think it is time to write a new failing test (first rule). That will be the test that will prove that &ldquo;twenty-&rdquo; is not correct code. In that case, we just need to change the first digit of the number so that we could go for forty-two:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 42 to forty-two&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ARRANGE</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ACT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ASSERT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;forty-two&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As soon as we finish writing the assertion we will have a test failure: we are returning &ldquo;twenty-two&rdquo; instead of &ldquo;forty-two.&rdquo; So it is time to switch to the production code (second rule). And we need to write just enough of it to make this test pass (third rule). We can do that by having yet another if statement:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&gt;=</span> <span class="mi">20</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="s2">&quot;twenty-&quot;</span> <span class="o">+</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">10</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;forty-&quot;</span> <span class="o">+</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">10</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">simpleNumbers</span><span class="p">[</span><span class="nx">number</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And this will make the test pass. It looks very similar to what we had with one-digit numbers, where we had an &ldquo;if&rdquo; statement checking that some value is equal to some number and returning an appropriate string. That is where we converted it to an array with string values, and in the function, we were fetching these strings by their index. To see if that pattern applies here we could write another similar test that will make us write another if statement:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 39 to thirty-nine&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// ARRANGE</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">39</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ACT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// ASSERT</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;thirty-nine&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And this fails as expected because our production code in no case can return &ldquo;thirty-.&rdquo; So let&rsquo;s write the simplest if statement to make it pass. Also, to make it uniform, we would wrap &ldquo;forty-&rdquo; case in its appropriate if statement as a refactoring after we have a passing test suite:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&gt;=</span> <span class="mi">20</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="s2">&quot;twenty-&quot;</span> <span class="o">+</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">10</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="s2">&quot;thirty-&quot;</span> <span class="o">+</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">10</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="s2">&quot;forty-&quot;</span> <span class="o">+</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span> <span class="o">%</span> <span class="mi">10</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">simpleNumbers</span><span class="p">[</span><span class="nx">number</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Certainly, there is a fair bit of duplication right now: &ldquo;number / 10&rdquo; and &ldquo;number % 10&rdquo;. Let&rsquo;s extract them as variables. Also, let&rsquo;s extract &ldquo;twenty&rdquo;, &ldquo;thirty&rdquo;, &ldquo;forty&rdquo; and &ldquo;toEnglishNumber(lastDigit)&rdquo; parts as variables:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&gt;=</span> <span class="mi">20</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">firstDigit</span> <span class="o">=</span> <span class="nx">number</span> <span class="o">/</span> <span class="mi">10</span><span class="p">;</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">lastDigit</span> <span class="o">=</span> <span class="nx">number</span> <span class="o">%</span> <span class="mi">10</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">firstPart</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">firstDigit</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">firstPart</span> <span class="o">=</span> <span class="s2">&quot;twenty&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">firstDigit</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">firstPart</span> <span class="o">=</span> <span class="s2">&quot;thirty&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">firstDigit</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">firstPart</span> <span class="o">=</span> <span class="s2">&quot;forty&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">secondPart</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">lastDigit</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">firstPart</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nx">secondPart</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">simpleNumbers</span><span class="p">[</span><span class="nx">number</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, we could extract the function for conversion of the first digit to the first english part, such as twenty or thirty:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">convertTens</span><span class="p">(</span><span class="nx">digit</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">digit</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;twenty&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">digit</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;thirty&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">digit</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;forty&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&gt;=</span> <span class="mi">20</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">firstDigit</span> <span class="o">=</span> <span class="nx">number</span> <span class="o">/</span> <span class="mi">10</span><span class="p">;</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">lastDigit</span> <span class="o">=</span> <span class="nx">number</span> <span class="o">%</span> <span class="mi">10</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">firstPart</span> <span class="o">=</span> <span class="nx">convertTens</span><span class="p">(</span><span class="nx">firstDigit</span><span class="p">);</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">secondPart</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">lastDigit</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">firstPart</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nx">secondPart</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">simpleNumbers</span><span class="p">[</span><span class="nx">number</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, it looks like the function <code>convertTens</code> can be simplified through usage of array in the same way as we did before with <code>toEnglishNumber</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">tens</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;twenty&quot;</span><span class="p">,</span> <span class="s2">&quot;thirty&quot;</span><span class="p">,</span> <span class="s2">&quot;forty&quot;</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">convertTens</span><span class="p">(</span><span class="nx">digit</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">tens</span><span class="p">[</span><span class="nx">digit</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point, we can write more tests to cover all different first digits, for example fifty-seven, sixty-five, seventy-three, eighty-nine and ninety-one. To make them pass we will have to add corresponding &ldquo;tens&rdquo; number to our array:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">tens</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>    <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="s2">&quot;twenty&quot;</span><span class="p">,</span> <span class="s2">&quot;thirty&quot;</span><span class="p">,</span> <span class="s2">&quot;forty&quot;</span><span class="p">,</span> <span class="s2">&quot;fifty&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;sixty&quot;</span><span class="p">,</span> <span class="s2">&quot;seventy&quot;</span><span class="p">,</span> <span class="s2">&quot;eighty&quot;</span><span class="p">,</span> <span class="s2">&quot;ninety&quot;</span>
+</span><span class='line'><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So, that is how we apply three rules of test-driven development. Here is the full code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">describe</span><span class="p">(</span><span class="s2">&quot;toEnglishNumber&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 0 to zero&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// ARRANGE</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ACT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ASSERT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;zero&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 1 to one&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// ARRANGE</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ACT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ASSERT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;one&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts other one-digit numbers&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">2</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">3</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;three&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">4</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;four&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">5</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;five&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">6</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;six&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">7</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;seven&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">8</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;eight&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">9</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;nine&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 10 to ten&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// ARRANGE</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ACT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ASSERT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;ten&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts other teen numbers&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">11</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;eleven&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">12</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;twelve&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">13</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;thirteen&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">14</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;fourteen&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">15</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;fifteen&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">16</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;sixteen&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">17</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;seventeen&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">18</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;eighteen&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">19</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;nineteen&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 23 to twenty-three&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// ARRANGE</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">23</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ACT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ASSERT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;twenty-three&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 27 to twenty-seven&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// ARRANGE</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">27</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ACT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ASSERT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;twenty-seven&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 42 to forty-two&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// ARRANGE</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ACT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ASSERT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;forty-two&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts 39 to thirty-nine&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// ARRANGE</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">number</span> <span class="o">=</span> <span class="mi">39</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ACT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">englishNumber</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// ASSERT</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">expected</span> <span class="o">=</span> <span class="s2">&quot;thirty-nine&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">englishNumber</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;converts other two-digit numbers&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">57</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;fifty-seven&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">65</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;sixty-five&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">73</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;seventy-three&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">89</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;eighty-nine&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">expect</span><span class="p">(</span><span class="nx">toEnglishNumber</span><span class="p">(</span><span class="mi">91</span><span class="p">)).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s2">&quot;ninety-one&quot;</span><span class="p">,</span> <span class="s2">&quot;english number&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">simpleNumbers</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>    <span class="s2">&quot;zero&quot;</span><span class="p">,</span> <span class="s2">&quot;one&quot;</span><span class="p">,</span> <span class="s2">&quot;two&quot;</span><span class="p">,</span> <span class="s2">&quot;three&quot;</span><span class="p">,</span> <span class="s2">&quot;four&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;five&quot;</span><span class="p">,</span> <span class="s2">&quot;six&quot;</span><span class="p">,</span> <span class="s2">&quot;seven&quot;</span><span class="p">,</span> <span class="s2">&quot;eight&quot;</span><span class="p">,</span> <span class="s2">&quot;nine&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="s2">&quot;ten&quot;</span><span class="p">,</span> <span class="s2">&quot;eleven&quot;</span><span class="p">,</span> <span class="s2">&quot;twelve&quot;</span><span class="p">,</span> <span class="s2">&quot;thirteen&quot;</span><span class="p">,</span> <span class="s2">&quot;fourteen&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;fifteen&quot;</span><span class="p">,</span> <span class="s2">&quot;sixteen&quot;</span><span class="p">,</span> <span class="s2">&quot;seventeen&quot;</span><span class="p">,</span> <span class="s2">&quot;eighteen&quot;</span><span class="p">,</span> <span class="s2">&quot;nineteen&quot;</span>
+</span><span class='line'><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">tens</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>    <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="s2">&quot;twenty&quot;</span><span class="p">,</span> <span class="s2">&quot;thirty&quot;</span><span class="p">,</span> <span class="s2">&quot;forty&quot;</span><span class="p">,</span> <span class="s2">&quot;fifty&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s2">&quot;sixty&quot;</span><span class="p">,</span> <span class="s2">&quot;seventy&quot;</span><span class="p">,</span> <span class="s2">&quot;eighty&quot;</span><span class="p">,</span> <span class="s2">&quot;ninety&quot;</span>
+</span><span class='line'><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">convertTens</span><span class="p">(</span><span class="nx">digit</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">tens</span><span class="p">[</span><span class="nx">digit</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">number</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">number</span> <span class="o">&gt;=</span> <span class="mi">20</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">firstDigit</span> <span class="o">=</span> <span class="nx">number</span> <span class="o">/</span> <span class="mi">10</span><span class="p">;</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">lastDigit</span> <span class="o">=</span> <span class="nx">number</span> <span class="o">%</span> <span class="mi">10</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">firstPart</span> <span class="o">=</span> <span class="nx">convertTens</span><span class="p">(</span><span class="nx">firstDigit</span><span class="p">);</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">secondPart</span> <span class="o">=</span> <span class="nx">toEnglishNumber</span><span class="p">(</span><span class="nx">lastDigit</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">firstPart</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nx">secondPart</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">simpleNumbers</span><span class="p">[</span><span class="nx">number</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Exercises</h2>
+
+<ol>
+<li>Do you see the missing edge case for two-digit numbers? Write a test for it and make it pass using three rules of test-driven development.</li>
+<li>Add support for three-digit numbers.</li>
+<li>Add support for negative numbers.</li>
+<li>Add support for numbers with the floating point.</li>
+</ol>
+
+
+<h2>Bottom Line</h2>
+
+<p>Today we have learned a lot of concepts from testing and test-driven development. Also, we have learned the essence of TDD - three rules of TDD. We have learned how to apply these rules on a very simple example. We have touched on how beneficial test-driven development can be when applied well.</p>
+
+<p>In the next article of the series, we will discuss what different kinds of tests exist, how and when to write them and how to apply TDD in these tests. Also, we will get back to our application and implement a new feature.</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+</div>
+
+
+  <footer>
+    
+      <div class="v2-subscribe--inline">
+	
+	
+	
+	
+	
+	
+	
+
+<div class="mc_embed_signup">
+  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=ecfc38567e" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+    <div class="mc_embed_signup_scroll">
+      <h3>Free Access to My Test-Driven Development Workshop!</h3>
+      <div class="mc-field-group">
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_ecfc38567e" tabindex="-1" value=""></div>
+        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
+        <input type="submit" value="Claim" name="subscribe" class="button mc-embedded-subscribe">
+      </div>
+      <div class="seats-are-limited">
+        <em>Only first 20 subscribers get free seat. Everyone else gets 50% discount!</em>
+      </div>
+    </div>
+  </form>
+</div>
+
+</div>
+
+    
+
+    
+  
+
+
+
+  
+  <div class="expanded-author-card">
+    
+      <img class="author-photo" src="/about-me/oleksii-fedorov__small.jpg" />
+    
+
+    <div class="author-bio">Oleksii Fedorov is an Experienced Software Engineer, Software Craftsperson, Mentor, Polyglot, Public Speaker, Test-Driven Development, Pair-Programming and LEAN Practitioner.</div>
+  </div>
+
+
+
+    <p class="meta">
+      <span class="byline author vcard"></span>
+      
+
+
+
+
+<time class='entry-date' datetime='2017-02-03T22:19:40+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>3</span><span class='date-suffix'>rd</span>, <span class='date-year'>2017</span></span> <span class='time'>10:19 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/learning-tdd-with-js/'>learning-tdd-with-js</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/tutorial/'>tutorial</a>
+  
+</span>
+
+
+    </p>
+
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.tddfellow.com/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/" data-via="waterlink000" data-counturl="http://www.tddfellow.com/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/" title="Previous Post: Learning Test-Driven Development with Javascript: End-to-End Testing">&laquo; Learning Test-Driven Development with Javascript: End-to-End Testing</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+    <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+  </a>
+  <br />
+  Except where otherwise noted, content on this site is licensed under a
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+  <br/>
+
+  Except where otherwise noted, code examples on this site are licensed under a
+  <a rel="license" href="https://github.com/waterlink/waterlink.github.io/tree/source/LICENSE">MIT License</a>.
+  <br/>
+
+  Copyright &copy; 2017 - Oleksii Fedorov (waterlink) -
+  <br/>
+
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+
+  <br/>
+
+  <em>Deployed from tddfellow org</em>
+</p>
+
+</footer>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
