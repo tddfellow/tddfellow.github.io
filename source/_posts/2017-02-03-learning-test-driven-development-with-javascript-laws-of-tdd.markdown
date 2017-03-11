@@ -435,15 +435,15 @@ Now, we could extract the method for conversion the first digit to the first eng
 
 ```javascript
 function convertTens(digit) {
-	if (firstDigit == 2) {
+	if (digit == 2) {
 		return "twenty";
 	}
 	
-	if (firstDigit == 3) {
+	if (digit == 3) {
 		return "thirty";
 	}
 	
-	if (firstDigit == 4) {
+	if (digit == 4) {
 		return "forty";
 	}
 }
@@ -463,11 +463,199 @@ function toEnglishNumber(number) {
 }
 ```
 
+Now, it looks like the function `convertTens` can be simplified through usage of array in the same way as we did before with `toEnglishNumber`:
+
+```javascript
+var tens = ["", "", "twenty", "thirty", "forty"];
+
+function convertTens(digit) {
+	return tens[digit];
+}
+```
+
+At this point we can write more tests to cover all different first digits, for example: fifty-seven, sixty-five, seventy-three, eighty-nine and ninety-one. To make them pass we will have to add corresponding "tens" number to our array:
+
+```javascript
+var tens = [
+	"", "",
+	
+	"twenty", "thirty", "forty", "fifty",
+	"sixty", "seventy", "eighty", "ninety"
+];
+```
+
+So, that is how we apply three rules of test-driven development. Here is the full code:
+
+```javascript
+describe("toEnglishNumber", function() {
+
+	it("converts 0 to zero", function() {
+		// ARRANGE
+		var number = 0;
+
+		// ACT
+		var englishNumber = toEnglishNumber(number);
+
+		// ASSERT
+		var expected = "zero";
+		expect(englishNumber).toEqual(expected);
+	});
+
+	it("converts 1 to one", function() {
+		// ARRANGE
+		var number = 1;
+
+		// ACT
+		var englishNumber = toEnglishNumber(number);
+
+		// ASSERT
+		var expected = "one";
+		expect(englishNumber).toEqual(expected, "english number");
+	});
+
+	it("converts other one-digit numbers", function() {
+		expect(toEnglishNumber(2)).toEqual("two", "english number");
+		expect(toEnglishNumber(3)).toEqual("three", "english number");
+		expect(toEnglishNumber(4)).toEqual("four", "english number");
+		expect(toEnglishNumber(5)).toEqual("five", "english number");
+		expect(toEnglishNumber(6)).toEqual("six", "english number");
+		expect(toEnglishNumber(7)).toEqual("seven", "english number");
+		expect(toEnglishNumber(8)).toEqual("eight", "english number");
+		expect(toEnglishNumber(9)).toEqual("nine", "english number");
+	});
+
+	it("converts 10 to ten", function() {
+		// ARRANGE
+		var number = 10;
+
+		// ACT
+		var englishNumber = toEnglishNumber(number);
+
+		// ASSERT
+		var expected = "ten";
+		expect(englishNumber).toEqual(expected, "english number");
+	});
+
+	it("converts other teen numbers", function() {
+		expect(toEnglishNumber(11)).toEqual("eleven", "english number");
+		expect(toEnglishNumber(12)).toEqual("twelve", "english number");
+		expect(toEnglishNumber(13)).toEqual("thirteen", "english number");
+		expect(toEnglishNumber(14)).toEqual("fourteen", "english number");
+		expect(toEnglishNumber(15)).toEqual("fifteen", "english number");
+		expect(toEnglishNumber(16)).toEqual("sixteen", "english number");
+		expect(toEnglishNumber(17)).toEqual("seventeen", "english number");
+		expect(toEnglishNumber(18)).toEqual("eighteen", "english number");
+		expect(toEnglishNumber(19)).toEqual("nineteen", "english number");
+	});
+
+	it("converts 23 to twenty-three", function() {
+		// ARRANGE
+		var number = 23;
+
+		// ACT
+		var englishNumber = toEnglishNumber(number);
+
+		// ASSERT
+		var expected = "twenty-three";
+		expect(englishNumber).toEqual(expected, "english number");
+	});
+
+	it("converts 27 to twenty-seven", function() {
+		// ARRANGE
+		var number = 27;
+
+		// ACT
+		var englishNumber = toEnglishNumber(number);
+
+		// ASSERT
+		var expected = "twenty-seven";
+		expect(englishNumber).toEqual(expected, "english number");
+	});
+
+	it("converts 42 to forty-two", function() {
+		// ARRANGE
+		var number = 42;
+
+		// ACT
+		var englishNumber = toEnglishNumber(number);
+
+		// ASSERT
+		var expected = "forty-two";
+		expect(englishNumber).toEqual(expected, "english number");
+	});
+
+	it("converts 39 to thirty-nine", function() {
+		// ARRANGE
+		var number = 39;
+
+		// ACT
+		var englishNumber = toEnglishNumber(number);
+
+		// ASSERT
+		var expected = "thirty-nine";
+		expect(englishNumber).toEqual(expected, "english number");
+	});
+
+	it("converts other two-digit numbers", function() {
+		expect(toEnglishNumber(57)).toEqual("fifty-seven", "english number");
+		expect(toEnglishNumber(65)).toEqual("sixty-five", "english number");
+		expect(toEnglishNumber(73)).toEqual("seventy-three", "english number");
+		expect(toEnglishNumber(89)).toEqual("eighty-nine", "english number");
+		expect(toEnglishNumber(91)).toEqual("ninety-one", "english number");
+	});
+
+});
+
+var simpleNumbers = [
+	"zero", "one", "two", "three", "four",
+	"five", "six", "seven", "eight", "nine",
+	
+	"ten", "eleven", "twelve", "thirteen", "fourteen",
+	"fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
+];
+
+var tens = ["", "", "twenty", "thirty", "forty"];
+
+function convertTens(digit) {
+	return tens[digit];
+}
+
+function toEnglishNumber(number) {
+	if (number >= 20) {
+		var firstDigit = number / 10;
+		var lastDigit = number % 10;
+		
+		var firstPart = convertTens(firstDigit);
+		var secondPart = toEnglishNumber(lastDigit);
+	
+		return firstPart + "-" + secondPart;
+	}
+
+	return simpleNumbers[number];
+}
+```
+
+## Exercises
+
+1. Which edge case is missing from two-digit numbers? Write a test for it and make it pass using three rules of test-driven development.
+2. Add support for three-digit numbers.
+3. Add support for negative numbers.
+
+## Bottom Line
+
+Today we have learned a lot of concepts from testing and test-driven development. Also, we have learned the essence of TDD - three rules of TDD. We have learned how to apply these rules on a very simple example. We have touched on how beneficial test-driven development can be when applied well.
+
+In the next article of the series, we will discuss what different kinds of tests exist, how and when to write them and how to apply TDD in these tests. Also, we will get back to our application and implement a new feature.
+
+## Thanks
+
+Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: [@waterlink000](https://twitter.com/waterlink000).
+
+If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: [@waterlink000](https://twitter.com/waterlink000).
+
+
 ---
 
+TODO:
 
-- example of application of 3 rules
-
----
-
-for the next: TDD as in Test-Driven Design
+- Add encouragement to leave feedback
