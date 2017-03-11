@@ -14,9 +14,11 @@ categories:
 
 Today we are going to learn the basic principles behind the Test-Driven Development Discipline. We will learn three rules of TDD. And we will take a look at the example application of these laws.
 
-"Learning Test-Driven Development with Javascript" is a series of articles and you, my dear reader, can shape the content by providing an invaluable feedback. To do that, shoot me an email - oleksii@tddfellow.com.
+<!-- more -->
 
 Articles of these series have exercises and going through them would make for more effective learning. Also, if you feel stuck with these exercises, fell free to shoot me an email or get in touch on Twitter: @waterlink000.
+
+"Learning Test-Driven Development with Javascript" is a series of articles and you, my dear reader, can shape the content by providing an invaluable feedback. To do that, shoot me an email - oleksii@tddfellow.com.
 
 ## Basics of Test-Driven Development
 
@@ -54,8 +56,8 @@ This tight cycle gives us following benefits:
 
 The most important of these benefits is the confidence to make any change to the software and know in one minute or two, if that change is good to be delivered to the end user or not, with a simple push of the button. No quality assurance (QA) manual testing cycles are required. Let's take a look at the example of the application of three rules of test-driven development. We will start from a very simple example, so that we don't have to touch more advanced TDD techniques.
 
-> ### English Numbers Kata
-> 
+### English Numbers Kata
+
 > **Given** an integer number  
 > **When** I call the system with that number  
 > **Then** I receive a string representation of that number in an English language
