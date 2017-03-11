@@ -614,7 +614,12 @@ var simpleNumbers = [
 	"fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
 ];
 
-var tens = ["", "", "twenty", "thirty", "forty"];
+var tens = [
+	"", "",
+	
+	"twenty", "thirty", "forty", "fifty",
+	"sixty", "seventy", "eighty", "ninety"
+];
 
 function convertTens(digit) {
 	return tens[digit];
