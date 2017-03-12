@@ -2,6 +2,7 @@
 layout: post
 title: "Learning Test-Driven Development With Javascript: Laws of TDD"
 date: 2017-02-03 22:19:40 +0100
+twitter_image: "/images/learning-tdd-with-js/feedback.png"
 comments: true
 categories:
 - tdd
@@ -12,7 +13,19 @@ categories:
 
 **Level: Beginner**
 
-Today we are going to learn the basic principles behind the Test-Driven Development Discipline. We will learn three rules of TDD. And we will take a look at the example application of these laws.
+Today we are going to learn the basic principles behind the Test-Driven Development Discipline. We will learn three rules of TDD. We will learn what are the benefits of doing Test-Driven Development. And we will take a look at the example application of these laws.
+
+<div about='https://farm8.static.flickr.com/7430/12500965335_75001934e7.jpg'>
+  <img xmlns:dct='http://purl.org/dc/terms/' href='http://purl.org/dc/dcmitype/StillImage' rel='dct:type' src='/images/learning-tdd-with-js/feedback.png' alt='feedback by Sonti Malonti, on Flickr' title='feedback by Sonti Malonti, on Flickr' border='0'/>
+  <br/>
+  <span class="img-attribution">
+    &quot;
+    <a href='https://www.flickr.com/photos/sontimalonti/12500965335/' target='_blank'>feedback</a>
+    &quot;&nbsp;
+    (<a rel='license' href='https://creativecommons.org/licenses/by-sa/2.0/' target='_blank'>CC BY-SA 2.0</a>)
+    &nbsp;by&nbsp;<a xmlns:cc='http://creativecommons.org/ns#' rel='cc:attributionURL' property='cc:attributionName' href='https://www.flickr.com/people/sontimalonti/' target='_blank'>Sonti Malonti</a>
+  </span>
+</div>
 
 <!-- more -->
 
@@ -36,6 +49,8 @@ Multiple tests aiming to test single SUT or a particular feature of the system a
 
 When the system behaves in an unexpected way, and the expected behavior was previously defined or present in the code, it is called a "bug." For example, the behavior that is specified by the development team and not implemented correctly considered a bug. The behavior that is defined by the development team and implemented correctly, but now it is not working, considered a bug. And, finally, the behavior that was not defined may or may not be considered as a bug. The latter depends on the produced results - if it harms or brings any value. This phenomenon is called a "bug" for historical reasons: the first bug in computing was a real bug, that stuck in the computer's hardware and was causing short circuits which made the computer misbehave.
 
+## Three Rules of Test-Driven Development
+
 In the core of Test-Driven Development there are three steps that we need to follow:
 
 1. We start with a failing test. We consider any error a failure, including compilation and syntax errors. Meaning, that our first test for any part of the production code will fail for the reason that there is no production code to execute yet. For example class, method or function is undefined.
@@ -43,6 +58,8 @@ In the core of Test-Driven Development there are three steps that we need to fol
 3. We write no more than the simplest production code, which makes our current failing test pass, and, also, still passes all other tests.
 
 We repeat these steps over and over until we finish the implementation of the system under the test. Strictly following these steps will lock us in a very tight loop, where we will be switching between test code and production code all the time: write one or two lines of the test code and write or change one or two lines of the production code, repeat. This cycle is, probably, twenty or thirty seconds long. It, of course, depends on how fast we can run our tests. Ideally, we want our test suite for the current system under the test to run as fast as one clap of hands, or blink of an eye.
+
+## Feedback Loop Benefits
 
 This tight cycle gives us following benefits:
 
@@ -56,14 +73,14 @@ This tight cycle gives us following benefits:
 
 The most important of these benefits is the confidence to make any change to the software and know in one minute or two, if that change is good to be delivered to the end user or not, with a simple push of the button. No quality assurance (QA) manual testing cycles are required. Let's take a look at the example of the application of three rules of test-driven development. We will start from a very simple example, so that we don't have to touch more advanced TDD techniques.
 
-### English Numbers Kata
+## English Numbers Kata
 
 > **Given** an integer number  
 > **When** I call the system with that number  
 > **Then** I receive a string representation of that number in an English language
-> 
+>
 > For example:
-> 
+>
 > - for number `37` I receive `"thirty-seven"`
 > - for number `-17451` I receive `"minus seventeen thousand four hundred fifty-one"`
 
@@ -74,7 +91,7 @@ describe("toEnglishNumber", function() {
     it("converts 0 to zero", function() {
         // ARRANGE
         var number = 0;
-        
+
         // ACT
         var englishNumber = toEnglishNumber(number);
     });
@@ -95,10 +112,10 @@ This is going to turn our test suite back to the green stage. At this point it i
 it("converts 0 to zero", function() {
     // ARRANGE
     var number = 0;
-    
+
     // ACT
     var englishNumber = toEnglishNumber(number);
-    
+
     // ASSERT
     var expected = "zero";
     expect(englishNumber).toEqual(expected);
@@ -125,10 +142,10 @@ At this point, we should look out for the refactoring opportunities, and I don't
 it("converts 1 to one", function() {
     // ARRANGE
     var number = 1;
-    
+
     // ACT
     var englishNumber = toEnglishNumber(number);
-    
+
     // ASSERT
     var expected = "one";
     expect(englishNumber).toEqual(expected, "english number");
@@ -142,7 +159,7 @@ function toEnglishNumber(number) {
     if (number === 1) {
         return "one";
     }
-    
+
     return "zero";
 }
 ```
@@ -154,11 +171,11 @@ function toEnglishNumber(number) {
     if (number === 1) {
         return "one";
     }
-    
+
     if (number === 2) {
         return "two";
     }
-    
+
     if (number === 3) {
         return "three";
     }
@@ -166,11 +183,11 @@ function toEnglishNumber(number) {
     if (number === 4) {
         return "four";
     }
-    
+
     if (number === 5) {
         return "five";
     }
-    
+
     if (number === 6) {
         return "six";
     }
@@ -178,15 +195,15 @@ function toEnglishNumber(number) {
     if (number === 7) {
         return "seven";
     }
-    
+
     if (number === 8) {
         return "eight";
     }
-    
+
     if (number === 9) {
         return "nine";
     }
-    
+
     return "zero";
 }
 ```
@@ -222,10 +239,10 @@ Since we are done with the refactoring, we should proceed using the first rule o
 it("converts 10 to ten", function() {
     // ARRANGE
     var number = 10;
-    
+
     // ACT
     var englishNumber = toEnglishNumber(number);
-    
+
     // ASSERT
     var expected = "ten";
     expect(englishNumber).toEqual(expected, "english number");
@@ -259,7 +276,7 @@ After making this refactoring, we need not forget to run the test suite to see i
 var simpleNumbers = [
     "zero", "one", "two", "three", "four",
     "five", "six", "seven", "eight", "nine",
-    
+
     "ten", "eleven", "twelve", "thirteen", "fourteen",
     "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
 ];
@@ -275,10 +292,10 @@ Now it is time to introduce the concept of a complex number, such as twenty-thre
 it("converts 23 to twenty-three", function() {
     // ARRANGE
     var number = 23;
-    
+
     // ACT
     var englishNumber = toEnglishNumber(number);
-    
+
     // ASSERT
     var expected = "twenty-three";
     expect(englishNumber).toEqual(expected, "english number");
@@ -315,10 +332,10 @@ That code now looks interesting. And it passes all its tests. Since, of course, 
 it("converts 27 to twenty-seven", function() {
     // ARRANGE
     var number = 27;
-    
+
     // ACT
     var englishNumber = toEnglishNumber(number);
-    
+
     // ASSERT
     var expected = "twenty-seven";
     expect(englishNumber).toEqual(expected, "english number");
@@ -343,10 +360,10 @@ Now if we run our test suite all the tests will pass. "The remainder of division
 it("converts 42 to forty-two", function() {
     // ARRANGE
     var number = 42;
-    
+
     // ACT
     var englishNumber = toEnglishNumber(number);
-    
+
     // ASSERT
     var expected = "forty-two";
     expect(englishNumber).toEqual(expected, "english number");
@@ -361,7 +378,7 @@ function toEnglishNumber(number) {
         if (number / 10 == 2) {
             return "twenty-" + toEnglishNumber(number % 10);
         }
-        
+
         return "forty-" + toEnglishNumber(number % 10);
     }
 
@@ -375,10 +392,10 @@ And this will make the test pass. It looks very similar to what we had with one-
 it("converts 39 to thirty-nine", function() {
     // ARRANGE
     var number = 39;
-    
+
     // ACT
     var englishNumber = toEnglishNumber(number);
-    
+
     // ASSERT
     var expected = "thirty-nine";
     expect(englishNumber).toEqual(expected, "english number");
@@ -393,11 +410,11 @@ function toEnglishNumber(number) {
         if (number / 10 == 2) {
             return "twenty-" + toEnglishNumber(number % 10);
         }
-        
+
         if (number / 10 == 3) {
             return "thirty-" + toEnglishNumber(number % 10);
         }
-        
+
         if (number / 10 == 4) {
             return "forty-" + toEnglishNumber(number % 10);
         }
@@ -414,22 +431,22 @@ function toEnglishNumber(number) {
     if (number >= 20) {
         var firstDigit = number / 10;
         var lastDigit = number % 10;
-        
+
         var firstPart;
         if (firstDigit == 2) {
             firstPart = "twenty";
         }
-        
+
         if (firstDigit == 3) {
             firstPart = "thirty";
         }
-        
+
         if (firstDigit == 4) {
             firstPart = "forty";
         }
-        
+
         var secondPart = toEnglishNumber(lastDigit);
-    
+
         return firstPart + "-" + secondPart;
     }
 
@@ -444,11 +461,11 @@ function convertTens(digit) {
     if (digit == 2) {
         return "twenty";
     }
-    
+
     if (digit == 3) {
         return "thirty";
     }
-    
+
     if (digit == 4) {
         return "forty";
     }
@@ -458,10 +475,10 @@ function toEnglishNumber(number) {
     if (number >= 20) {
         var firstDigit = number / 10;
         var lastDigit = number % 10;
-        
+
         var firstPart = convertTens(firstDigit);
         var secondPart = toEnglishNumber(lastDigit);
-    
+
         return firstPart + "-" + secondPart;
     }
 
@@ -484,7 +501,7 @@ At this point, we can write more tests to cover all different first digits, for 
 ```javascript
 var tens = [
     "", "",
-    
+
     "twenty", "thirty", "forty", "fifty",
     "sixty", "seventy", "eighty", "ninety"
 ];
@@ -615,14 +632,14 @@ describe("toEnglishNumber", function() {
 var simpleNumbers = [
     "zero", "one", "two", "three", "four",
     "five", "six", "seven", "eight", "nine",
-    
+
     "ten", "eleven", "twelve", "thirteen", "fourteen",
     "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
 ];
 
 var tens = [
     "", "",
-    
+
     "twenty", "thirty", "forty", "fifty",
     "sixty", "seventy", "eighty", "ninety"
 ];
@@ -635,10 +652,10 @@ function toEnglishNumber(number) {
     if (number >= 20) {
         var firstDigit = number / 10;
         var lastDigit = number % 10;
-        
+
         var firstPart = convertTens(firstDigit);
         var secondPart = toEnglishNumber(lastDigit);
-    
+
         return firstPart + "-" + secondPart;
     }
 
@@ -653,7 +670,7 @@ function toEnglishNumber(number) {
 3. Add support for negative numbers.
 4. Add support for numbers with the floating point.
 
-## Bottom Line
+## Conclusion
 
 Today we have learned a lot of concepts from testing and test-driven development. Also, we have learned the essence of TDD - three rules of TDD. We have learned how to apply these rules on a very simple example. We have touched on how beneficial test-driven development can be when applied well.
 
