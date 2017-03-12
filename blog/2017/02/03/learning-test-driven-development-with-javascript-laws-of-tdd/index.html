@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Level: Beginner Today we are going to learn the basic principles behind the Test-Driven Development Discipline. We will learn three rules of TDD. And &hellip;">
+  <meta name="description" content="Level: Beginner Today we are going to learn the basic principles behind the Test-Driven Development Discipline. We will learn three rules of TDD. We &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -37,7 +37,7 @@
 <meta name="twitter:creator" content="@waterlink000">
 <meta name="twitter:title" content="Learning Test-Driven Development With Javascript: Laws of TDD">
 <meta name="twitter:description" content="">
-<meta name="twitter:image" content="http://www.tddfellow.com/images/logo.png">
+<meta name="twitter:image" content="http://www.tddfellow.com/images/learning-tdd-with-js/feedback.png">
 
   
   <script>
@@ -201,14 +201,29 @@
 
 <div class="entry-content"><p><strong>Level: Beginner</strong></p>
 
-<p>Today we are going to learn the basic principles behind the Test-Driven Development Discipline. We will learn three rules of TDD. And we will take a look at the example application of these laws.</p>
+<p>Today we are going to learn the basic principles behind the Test-Driven Development Discipline. We will learn three rules of TDD. We will learn what are the benefits of doing Test-Driven Development. And we will take a look at the example application of these laws.</p>
+
+<div about='https://farm8.static.flickr.com/7430/12500965335_75001934e7.jpg'>
+  <img xmlns:dct='http://purl.org/dc/terms/' href='http://purl.org/dc/dcmitype/StillImage' rel='dct:type' src='/images/learning-tdd-with-js/feedback.png' alt='feedback by Sonti Malonti, on Flickr' title='feedback by Sonti Malonti, on Flickr' border='0'/>
+  <br/>
+  <span class="img-attribution">
+    &quot;
+    <a href='https://www.flickr.com/photos/sontimalonti/12500965335/' target='_blank'>feedback</a>
+    &quot;&nbsp;
+    (<a rel='license' href='https://creativecommons.org/licenses/by-sa/2.0/' target='_blank'>CC BY-SA 2.0</a>)
+    &nbsp;by&nbsp;<a xmlns:cc='http://creativecommons.org/ns#' rel='cc:attributionURL' property='cc:attributionName' href='https://www.flickr.com/people/sontimalonti/' target='_blank'>Sonti Malonti</a>
+  </span>
+</div>
+
+
+
 
 <!-- more -->
 
 
 <p>Articles of these series have exercises and going through them would make for more effective learning. Also, if you feel stuck with these exercises, fell free to shoot me an email or get in touch on Twitter: @waterlink000.</p>
 
-<p>&ldquo;Learning Test-Driven Development with Javascript&rdquo; is a series of articles and you, my dear reader, can shape the content by providing an invaluable feedback. To do that, shoot me an email - <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#x6f;&#x6c;&#101;&#x6b;&#x73;&#x69;&#x69;&#x40;&#x74;&#x64;&#x64;&#102;&#x65;&#x6c;&#108;&#111;&#119;&#x2e;&#99;&#111;&#109;&#x2e;">&#x6f;&#108;&#x65;&#x6b;&#x73;&#105;&#105;&#x40;&#116;&#100;&#x64;&#102;&#x65;&#108;&#x6c;&#x6f;&#x77;&#46;&#99;&#x6f;&#x6d;&#x2e;</a></p>
+<p>&ldquo;Learning Test-Driven Development with Javascript&rdquo; is a series of articles and you, my dear reader, can shape the content by providing an invaluable feedback. To do that, shoot me an email - <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#x6f;&#x3a;&#x6f;&#108;&#x65;&#x6b;&#115;&#x69;&#x69;&#x40;&#x74;&#x64;&#100;&#102;&#x65;&#108;&#108;&#x6f;&#119;&#46;&#99;&#x6f;&#109;&#46;">&#111;&#x6c;&#x65;&#107;&#x73;&#105;&#x69;&#64;&#x74;&#x64;&#x64;&#x66;&#101;&#x6c;&#108;&#x6f;&#119;&#x2e;&#x63;&#111;&#x6d;&#46;</a></p>
 
 <h2>Basics of Test-Driven Development</h2>
 
@@ -226,6 +241,8 @@
 
 <p>When the system behaves in an unexpected way, and the expected behavior was previously defined or present in the code, it is called a &ldquo;bug.&rdquo; For example, the behavior that is specified by the development team and not implemented correctly considered a bug. The behavior that is defined by the development team and implemented correctly, but now it is not working, considered a bug. And, finally, the behavior that was not defined may or may not be considered as a bug. The latter depends on the produced results - if it harms or brings any value. This phenomenon is called a &ldquo;bug&rdquo; for historical reasons: the first bug in computing was a real bug, that stuck in the computer&rsquo;s hardware and was causing short circuits which made the computer misbehave.</p>
 
+<h2>Three Rules of Test-Driven Development</h2>
+
 <p>In the core of Test-Driven Development there are three steps that we need to follow:</p>
 
 <ol>
@@ -236,6 +253,8 @@
 
 
 <p>We repeat these steps over and over until we finish the implementation of the system under the test. Strictly following these steps will lock us in a very tight loop, where we will be switching between test code and production code all the time: write one or two lines of the test code and write or change one or two lines of the production code, repeat. This cycle is, probably, twenty or thirty seconds long. It, of course, depends on how fast we can run our tests. Ideally, we want our test suite for the current system under the test to run as fast as one clap of hands, or blink of an eye.</p>
+
+<h2>Feedback Loop Benefits</h2>
 
 <p>This tight cycle gives us following benefits:</p>
 
@@ -252,7 +271,7 @@
 
 <p>The most important of these benefits is the confidence to make any change to the software and know in one minute or two, if that change is good to be delivered to the end user or not, with a simple push of the button. No quality assurance (QA) manual testing cycles are required. Let&rsquo;s take a look at the example of the application of three rules of test-driven development. We will start from a very simple example, so that we don&rsquo;t have to touch more advanced TDD techniques.</p>
 
-<h3>English Numbers Kata</h3>
+<h2>English Numbers Kata</h2>
 
 <blockquote><p><strong>Given</strong> an integer number<br/>
 <strong>When</strong> I call the system with that number<br/>
@@ -1294,7 +1313,7 @@
 </ol>
 
 
-<h2>Bottom Line</h2>
+<h2>Conclusion</h2>
 
 <p>Today we have learned a lot of concepts from testing and test-driven development. Also, we have learned the essence of TDD - three rules of TDD. We have learned how to apply these rules on a very simple example. We have touched on how beneficial test-driven development can be when applied well.</p>
 
