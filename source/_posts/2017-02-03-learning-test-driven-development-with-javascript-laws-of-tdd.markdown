@@ -3,6 +3,7 @@ layout: post
 title: "Learning Test-Driven Development With Javascript: Laws of TDD"
 date: 2017-02-03 22:19:40 +0100
 twitter_image: "/images/learning-tdd-with-js/feedback.png"
+description: "Today we are going to learn the basic principles behind the Test-Driven Development Discipline. We will learn three rules of TDD. We will learn what are the benefits of doing Test-Driven Development. And we will take a look at the example application of these laws."
 comments: true
 categories:
 - tdd
