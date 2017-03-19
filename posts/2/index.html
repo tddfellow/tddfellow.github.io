@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Welcome back to the &ldquo;Getting Stuck While Doing TDD&rdquo; series. Today we are going to learn the Golden Rule of TDD and how to not get stuck &hellip;">
+  <meta name="description" content="Welcome back to the new issue of &ldquo;Build Your Own Testing Framework&rdquo; series! As you might have noticed, currently, our testing framework &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,6 +117,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests/">Build Your Own Testing Framework. Part 6: Test Suite Does Not Run All Tests!</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
       </li>
     
@@ -142,10 +146,6 @@
     
       <li class="post">
         <a href="/blog/2016/09/30/highscore-kata/">HighScore Kata</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
       </li>
     
   </ul>
@@ -189,6 +189,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests/">Build Your Own Testing Framework. Part 6: Test Suite Does Not Run All Tests!</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
       </li>
     
@@ -216,10 +220,6 @@
         <a href="/blog/2016/09/30/highscore-kata/">HighScore Kata</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -231,6 +231,78 @@
 
 <div class="blog-index v2-blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Build Your Own Testing Framework. Part 4</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2016-09-17T10:00:32+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>10:00 am</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/build-your-own-testing-framework/'>build-your-own-testing-framework</a>, <a class='category' href='/blog/categories/duck-typing/'>duck-typing</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/test-doubles/'>test-doubles</a>, <a class='category' href='/blog/categories/test-driven-development/'>test-driven-development</a>, <a class='category' href='/blog/categories/testing/'>testing</a>, <a class='category' href='/blog/categories/xunit/'>xunit</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Welcome back to the new issue of &ldquo;Build Your Own Testing Framework&rdquo; series! As you might have noticed, currently, our testing framework only outputs failures and nothing else. It is impossible to know if it actually runs any tests when they all pass because there is no output. Today we will implement a simple reporter for our testing framework. It will report the name of the test suite and names of the tests that are being executed, for example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SpyTest
+</span><span class='line'>    testIsNotCalledInitially
+</span><span class='line'>    testAssertNotCalledFailsWhenWasCalled
+</span><span class='line'>    testIsCalledAfterBeingCalled
+</span><span class='line'>    testAssertCalledFailsWhenWasNotCalled</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This article is the fourth one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
+
+<p>Shall we get started?</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/09/17/build-your-own-testing-framework-part-4/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -3171,155 +3243,6 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/06/28/tl-dr-on-sustainable-software-development-paper/">TL;DR on Sustainable Software Development Paper</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-
-  
-  <span class="byline author vcard"><span class="fn">
-    
-      <a href="/about-me">Oleksii Fedorov</a>
-    
-  </span></span>
-
-
-        
-
-
-
-
-<time class='entry-date' datetime='2016-06-28T02:22:07+02:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>28</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>2:22 am</span></time>
-        
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/code-ownership/'>code-ownership</a>, <a class='category' href='/blog/categories/extreme-programming/'>extreme-programming</a>, <a class='category' href='/blog/categories/grounded-theory/'>grounded-theory</a>, <a class='category' href='/blog/categories/sustainable-software-development/'>sustainable-software-development</a>, <a class='category' href='/blog/categories/tldr/'>tldr</a>, <a class='category' href='/blog/categories/white-paper/'>white-paper</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>This is a TL;DR of a white paper <a href="https://www.researchgate.net/publication/304014117_Sustainable_Software_Development_through_Overlapping_Pair_Rotation">Sustainable Software Development through Overlapping Pair Rotation</a> that is created by Todd Sedano, Paul Ralph, and Cécile Péraire.</p>
-
-<p><em>NOTE: this TL;DR includes a lot of compressed awesome information.</em></p>
-
-<h2>Theory of Sustainable Software Development</h2>
-
-<p>The paper introduces us to principles, policies, and practices, that are the results of applying of <a href="https://en.wikipedia.org/wiki/Grounded_theory#Constructivist_grounded_theory">Constructivist Grounded Theory</a> research method to the five projects at Pivotal Labs.</p>
-
-<h3>Principles</h3>
-
-<ol>
-<li>By <strong>Engendering Positive Attitudes Toward Disruption</strong> teams can transform a challenge of team disruption into a business opportunity:
-
-<ul>
-<li>team members rolling off from the project are replaced with new members,</li>
-<li>new members are viewed as a source of fresh perspective and as an opportunity,</li>
-<li>new members often questioned team&rsquo;s assumptions (challenging &ldquo;cargo culting&rdquo;).</li>
-</ul>
-</li>
-<li>Policies &amp; practices that <strong>Encourage Knowledge Sharing and Continuity</strong> mitigate the risk of significant knowledge loss for the project when the team is disrupted. Policies are:
-
-<ul>
-<li><strong>Team Code Ownership</strong>, and <strong>Shared Team Schedule</strong>. While practices are:</li>
-<li><strong>Continuous Pair Programming</strong>, <strong>Overlapping Pair Rotation</strong> and <strong>Knowledge Pollination</strong>.</li>
-</ul>
-</li>
-<li>Sustainable development is not possible if the team is incurring the technical debt. <strong>Caring about Code Quality</strong> is a way to mitigate this risk. Policy here is:
-
-<ul>
-<li><strong>Avoid Technical Debt</strong>, and practices are:</li>
-<li><strong>Test-Driven Development</strong> / <strong>Behavior-Driven Development</strong> and <strong>Continuous Refactoring</strong>.</li>
-</ul>
-</li>
-</ol>
-
-
-<h3>Policies</h3>
-
-<ol>
-<li><strong>Team Code Ownership</strong>: every developer is empowered to work on and to refactor any part of the team&rsquo;s code.</li>
-<li><strong>Shared Schedule</strong>: every team member has agreed to a fixed schedule to achieve the benefits of Sustainable Software Development. Teams are, preferably, co-located.</li>
-<li><strong>Avoid Technical Debt</strong>: a pair creates well-crafted code without shortcuts and short-term fixes. Solutions are best and simplest for <strong>current present</strong> without over-engineering. When inherited a legacy code base, a team is actively paying down technical debt while delivering new features.</li>
-</ol>
-
-
-<h3>Removing Knowledge Silos Practices</h3>
-
-<ol>
-<li><strong>Continuous Pair Programming</strong>: two developers are collaborating to write software together as their normal mode of software development. It enables knowledge transfer, reduces knowledge silos and improves code quality. Developers always work in pairs, unless exceptional circumstances arise.</li>
-<li><strong>Overlapping Pair Rotation</strong>: one developer rolls off the track of work and another developer rolls on, keeping the continuity of one developer at each rotation. It results in knowledge continuity. There are three strategies for spreading the knowledge via pair rotation when fighting emerging knowledge silos:
-
-<ul>
-<li>Optimizing for people rotation: developers try to pair with the person they &ldquo;least recently paired with&rdquo;;</li>
-<li>Optimizing for personal preferences: developer pick with whom they will pair at each rotation, based on personal preferences;</li>
-<li>Optimizing for context sharing: a developer who has not been working on the track for the longest track is rotating onto the track. The goal each day is for the developer leaving the track next to empower the developer who will remain on the track.</li>
-</ul>
-</li>
-<li><strong>Knowledge Pollination</strong>:
-
-<ul>
-<li>Daily stand-ups create awareness of who is working on what.</li>
-<li>Using backlog to communicate information and status of stories.</li>
-<li>Osmotic communication: a developer overhears a discussion in other pair and offers their help.</li>
-<li>The pair can interrupt another pair, product manager or designer to gain the needed information.</li>
-<li>Calling out updates to the entire team.</li>
-<li>Interruptions are encouraged - it makes the team more efficient as knowledge pollinates across the team.</li>
-</ul>
-</li>
-</ol>
-
-
-<h3>Caretaking the Code Practices</h3>
-
-<ol>
-<li><strong>Test-Driven Development/Behavior-Driven Development</strong>: developers use BDD (to describe interactions between the user and the system) and TDD (at unit test level). Design emerges from the creation and exploration of the test cases. Teams use a variety of TDD strategies, including:
-
-<ul>
-<li>testing the responsibilities and interactions, or</li>
-<li>contract testing using mocks.</li>
-</ul>
-</li>
-<li><strong>Continuous Refactoring</strong>: developers do refactoring as part of implementing feature stories. Developers are encouraged to improve the code&rsquo;s design, make the code easier to read, understand, and increase the discoverability of a component based on its responsibility. The team prefers <strong>pre-refactoring</strong>, where the developer makes a complicated work to make the current story as simple and as easy as possible.</li>
-<li><strong>Live on Master</strong>: every pair merges their code to master many times a day. Developers may use branches to save &ldquo;spikes&rdquo; and to move work-in-progress between pairing stations when rotating.</li>
-</ol>
-
-
-<h2>Thanks!</h2>
-
-<p>This is where this TL;DR ends. If you are interested in the topic, go ahead and read the paper, it has the following:</p>
-
-<ul>
-<li>Detailed description of the research method, data collection, and analysis;</li>
-<li>Research context and one project case study;</li>
-<li>Detailed description of Principles, Policies, and Practices of Sustainable Software Development; also anti-patterns for each policy and practice;</li>
-<li>Theory evaluation and conclusions.</li>
-</ul>
-
-
-<p>Great thanks to the original authors of the paper, researchers, and all participants!</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/3">&larr; Older</a>
@@ -3365,6 +3288,10 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests/">Build Your Own Testing Framework. Part 6: Test Suite Does Not Run All Tests!</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
       </li>
     
@@ -3390,10 +3317,6 @@ This will be done through test-driving a simple kata (FizzBuzzKata). For example
     
       <li class="post">
         <a href="/blog/2016/09/30/highscore-kata/">HighScore Kata</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
       </li>
     
   </ul>

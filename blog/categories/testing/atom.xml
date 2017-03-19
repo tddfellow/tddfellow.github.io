@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Testing | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2017-03-12T13:01:04+01:00</updated>
+  <updated>2017-03-19T07:05:43+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,495 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Build Your Own Testing Framework. Part 6: Test Suite Does Not Run All Tests!]]></title>
+    <link href="http://www.tddfellow.com/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests/"/>
+    <updated>2017-03-13T23:13:28+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests</id>
+    <content type="html"><![CDATA[<p>Welcome back to the new issue of &ldquo;Build Your Own Testing Framework&rdquo; series! When trying to implement better formatting, we have discovered that some of our test suites do not run all tests! Today we are going to fix that, and we will make sure that such test suite will fail if it didn&rsquo;t execute all tests.</p>
+
+<!-- more -->
+
+
+<p>This article is the sixth one of the series “Build Your Own Testing Framework” so make sure to stick around for next parts! Find all posts of these series <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
+
+<p>Shall we get started?</p>
+
+<h2>Verify All Tests Run</h2>
+
+<p>We will start from the <code>RunTestSuiteTest</code> and run the test suite with the single test. Then we are going to assert that for that the test with the name <code>testOk</code> has been reported as passing:</p>
+
+<pre><code class="javascript">// test/RunTestSuiteTest.js
+
+this.testItOutputsOkForThePassingTest = function () {
+    runTestSuite(function (t) {
+        this.testOk = function () {
+            t.assertTrue(true);
+        };
+    }, {reporter: reporter});
+
+    reporter.assertHasReportedPassingTest("testOk");
+};
+</code></pre>
+
+<p>If we run this test suite, we can see that only one test executes!</p>
+
+<pre><code>RunTestSuiteTest
+    testItCallsAllTestMethods
+
+Process finished with exit code 0
+</code></pre>
+
+<p>Oh, that is interesting. This test suite does not run. Upon investigating, it turns out, that <code>process.exit(0)</code> is being called during the <code>runTestSuite(...)</code> function run. That is because of the latest feature that we have implemented - &ldquo;exit with an appropriate exit code (zero for success, and one for failure).&rdquo; We should be able to fix that by providing the process spy in the options of the <code>runTestSuite</code> function that we are calling from the inside of the individual tests in the <code>RunTestSuiteTest</code> test suite. And we ought to alleviate this kind of mistake somehow - we need a mechanism that would alert us if not all tests have been run. Maybe something like <code>verifyAllTestsRun: true</code> option for the <code>runTestSuite</code>. For that let&rsquo;s write a test:</p>
+
+<pre><code class="javascript">this.testVerifyAllTestsRun = function () {
+    t.assertThrow("Expected all tests to run", function () {
+
+        runTestSuite(function SuiteWithTwoTests(t) {
+
+            this.testWithRunTestSuite = function () {
+                runTestSuite(function (t) {
+                    this.testOne = function () {};
+                }, {reporter: reporter});
+            };
+
+            this.testThatShouldAlsoRun = function () {};
+
+        }, {reporter: reporter,
+            process: process,
+            verifyAllTestsRun: true});
+
+    });
+};
+</code></pre>
+
+<p>That might be a bit complex at first. Let&rsquo;s take a closer look how this test is supposed to work:</p>
+
+<ol>
+<li>First of all, we do assert that there was an assertion failure about all tests required to run.</li>
+<li>Inside of the action for this assertion we create and run the new test suite with two tests:
+
+<ul>
+<li>test with the <code>runTestSuite</code> without process spy provided</li>
+<li>empty test that should also execute</li>
+</ul>
+</li>
+</ol>
+
+
+<p>If we run this test, it will pass. That is unexpected because we wanted it to fail. Apparently, most inner <code>runTestSuite</code> is doing <code>process.exit(0)</code>.</p>
+
+<p>For that to work, we will need to be able to provide a hook into <code>process.exit(code)</code> function. For that, we would need to create a <code>SimpleProcess</code> class, that allows installation of such hooks. Let&rsquo;s test-drive it!</p>
+
+<h3><code>process.exit</code> with hooks</h3>
+
+<p>First, we should start from the normal behavior without any hooks:</p>
+
+<pre><code class="javascript">// test/SimpleProcessTest.js
+var runTestSuite = require("../src/TestingFramework");
+var SimpleProcess = require("../src/TestingFramework").SimpleProcess;
+var ProcessSpy = require("./ProcessSpy");
+
+runTestSuite(function SimpleProcessTest(t) {
+    this.testWithoutHooks = function () {
+        var globalProcess = new ProcessSpy();
+        var process = new SimpleProcess(globalProcess);
+
+        process.exit(0);
+
+        t.assertEqual(0, globalProcess.hasExitedWithCode);
+    };
+});
+</code></pre>
+
+<p>When running this test, we will get a failure about <code>SimpleProcess</code> being undefined. So let&rsquo;s define it:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+// ...
+// define the class itself
+function SimpleProcess(globalProcess) {
+
+}
+
+// ..
+// and don't forget to export it
+module.exports.SimpleProcess = SimpleProcess;
+</code></pre>
+
+<p>If we run our test suite now, we will get an error <code>TypeError: process.exit is not a function</code>. To fix that failure we will have to define the <code>exit(code)</code> method on our newly created class <code>SimpleProcess</code>:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    this.exit = function (code) {
+
+    };
+}
+</code></pre>
+
+<p>After doing that we will get an assertion failure <code>Error: Expected to equal 0, but got: null</code>, as expected. To make the test pass, it would be enough to call <code>globalProcess.exit(0)</code>:</p>
+
+<pre><code class="javascript">this.exit = function (code) {
+    globalProcess.exit(0);
+};
+</code></pre>
+
+<p>If we run our test suite now, we will get no failures. That is great! Now, we can see that <code>globalProcess.exit(0)</code> is probably not exactly what we want to have there. We ought to pass the <code>code</code> parameter to the <code>exit</code> function. To test-drive this properly, we will have to triangulate, i.e.: add another test with the different value of the <code>code</code> parameter:</p>
+
+<pre><code class="javascript">this.testWithoutHooks_andDifferentExitCode = function () {
+    var globalProcess = new ProcessSpy();
+    var process = new SimpleProcess(globalProcess);
+
+    process.exit(1);
+
+    t.assertEqual(1, globalProcess.hasExitedWithCode);
+};
+</code></pre>
+
+<p>That fails as expected: <code>Error: Expected to equal 1, but got: 0</code>. To make it pass we can either write some weird &ldquo;if&rdquo; statement or we could pass the <code>code</code> parameter to the <code>globalProcess.exit</code> function. The second option is simpler. According to the third rule of test-driven development, we should go for it:</p>
+
+<pre><code class="javascript">this.exit = function (code) {
+    globalProcess.exit(code);
+};
+</code></pre>
+
+<p>That change makes our test suite pass. We probably should refactor the test suite to reduce the level of the duplication by extracting common variables from the tests:</p>
+
+<pre><code class="javascript">runTestSuite(function SimpleProcessTest(t) {
+    var globalProcess = new ProcessSpy();
+    var process = new SimpleProcess(globalProcess);
+
+    this.testWithoutHooks = function () {
+        process.exit(0);
+
+        t.assertEqual(0, globalProcess.hasExitedWithCode);
+    };
+
+    this.testWithoutHooks_andDifferentExitCode = function () {
+        process.exit(1);
+
+        t.assertEqual(1, globalProcess.hasExitedWithCode);
+    };
+});
+</code></pre>
+
+<p>At that point, we should move on to tests for the hook installation functionality. Because right now we need only at most one hook we will not support multiple hooks at the same time - only one:</p>
+
+<pre><code class="javascript">this.testCanInstallOneHook = function () {
+    var aSpy = t.spy();
+
+    process.installHook(aSpy);
+    process.exit(0);
+
+    aSpy.assertCalled();
+};
+</code></pre>
+
+<p>When we run this test, it fails because <code>installHook</code> function is not defined: <code>TypeError: process.installHook is not a function</code>. So we should define it:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    // ..
+    this.installHook = function (aHook) {
+
+    };
+}
+</code></pre>
+
+<p>Upon running these tests, we get <code>Error: Expected to be called</code> because we didn&rsquo;t call this hook yet. The simplest way to make it pass is to just call the hook from the <code>installHook</code> function:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    // ...
+    this.installHook = function (aHook) {
+        aHook();
+    };
+}
+</code></pre>
+
+<p>While that will make the tests pass it is not the behavior that we are after. To drive out the correct behavior, we ought to check that the function is being called only after <code>process.exit(..)</code>, not earlier. For that we will need to have a sanity-check assertion:</p>
+
+<pre><code class="javascript">this.testCanInstallOneHook = function () {
+    var aSpy = t.spy();
+
+    process.installHook(aSpy);
+    aSpy.assertNotCalled();
+
+    process.exit(0);
+
+    aSpy.assertCalled();
+};
+</code></pre>
+
+<p>That fails as expected with the error <code>Error: Expected not to be called</code>. To make it pass we need to store the function in the variable and call it from the <code>process.exit(..)</code>:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    var hook = null;
+
+    this.exit = function (code) {
+        if (hook !== null)
+            hook();
+
+        globalProcess.exit(code);
+    };
+
+    this.installHook = function (aHook) {
+        hook = aHook;
+    };
+}
+</code></pre>
+
+<p>All the tests pass now! Finally, we want to be able to uninstall the hook, so let&rsquo;s write the test for it:</p>
+
+<pre><code class="javascript">this.testCanUninstallTheHook = function () {
+    var aSpy = t.spy();
+
+    process.installHook(aSpy);
+    process.uninstallHook();
+
+    process.exit(0);
+
+    aSpy.assertNotCalled();
+};
+</code></pre>
+
+<p>To make it work it is enough to introduce this function and set <code>hook</code> variable back to <code>null</code> in it:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    // ...
+    this.uninstallHook = function () {
+        hook = null;
+    };
+}
+</code></pre>
+
+<p>And all the tests will pass. Now we, also, want to replace the default value for the <code>options.process</code> option with the instance of <code>SimpleProcess</code> object. And all the tests should work as they were working before:</p>
+
+<pre><code class="javascript">var simpleProcess = new SimpleProcess(global.process);
+
+function TestSuiteRunContext(testSuiteConstructor, options) {
+    // ...
+
+    var process = options.process || simpleProcess;
+    // instead of just "global.process"
+
+    // ...
+}
+</code></pre>
+
+<h3>Installing the &ldquo;verify all tests run&rdquo; hook</h3>
+
+<p>Now, we can get back to our &ldquo;verify all tests run&rdquo; test. It still doesn&rsquo;t fail as expected, so we need to install the hook, count all tests, count tests that had already run and compare them in the hook:</p>
+
+<pre><code class="javascript">function TestSuiteRunContext(testSuiteConstructor, options) {
+    // ...
+    var verifyAllTestsRun = options.verifyAllTestsRun || false;
+    var testCount = 0;
+    var testRun = 0;
+
+    this.invoke = function () {
+        if (verifyAllTestsRun)
+            installVerifyAllTestsRunHook();  // &lt;---
+
+        reportTestSuite();
+        countAllTests();                     // &lt;---
+        runAllTests();
+        finishTestRun();
+    };
+
+    function installVerifyAllTestsRunHook() {
+        simpleProcess.installHook(function () {
+            if (testRun &lt; testCount) {
+                throw new Error("Expected all tests to run");
+            }
+        });
+    }
+
+    // ...
+
+    function countAllTests() {
+        for (var testName in createTestSuite())
+            if (testName.match(/^test/))
+                testCount++;
+    }
+
+    // ...
+
+    function handleTest(testName) {
+        testRun++;                            // &lt;---
+        reportTest(testName);
+        runTest(createTestSuite(), testName);
+    }
+}
+</code></pre>
+
+<p>At this point, this throws an error <code>Expected all tests to run</code> and finishes the test fully without reaching our <code>assertThrow(..)</code> assertion. That happens because we catch this error in the function <code>runTest</code>, where we mark the test as failed, log the error and ignore the error object itself from there. One way to solve this problem is to have a particular error, that can propagate up the stack:</p>
+
+<pre><code class="javascript">function installVerifyAllTestsRunHook() {
+    simpleProcess.installHook(function () {
+        if (testRun &lt; testCount) {
+            var error = new Error("Expected all tests to run");
+            error.bubbleUp = true;
+            throw error;
+        }
+    });
+}
+
+// ...
+
+function runTest(testSuite, testName) {
+    try {
+        testSuite[testName]();
+    } catch (error) {
+        if (error.bubbleUp) throw error;  // &lt;---
+        if (!silenceFailures) console.log(error);
+        status.markAsFailed();
+    }
+}
+</code></pre>
+
+<p>Now our current test is passing, and the next test is failing with the error <code>Expected all tests to run</code>. That happens because we have not uninstalled the hook as soon as it has triggered. Let&rsquo;s do that:</p>
+
+<pre><code class="javascript">function installVerifyAllTestsRunHook() {
+    simpleProcess.installHook(function () {
+        if (testRun &lt; testCount) {
+            simpleProcess.uninstallHook();   // &lt;---
+
+            var error = new Error("Expected all tests to run");
+            error.bubbleUp = true;
+            throw error;
+        }
+    });
+}
+</code></pre>
+
+<p>That makes the next test run, succeed and exit immediately after that with error code zero. Let&rsquo;s see what will happen if we put <code>verifyAllTestsRun: true</code> on the top test suite here:</p>
+
+<pre><code class="javascript">runTestSuite(function RunTestSuiteTest(t) {
+    // ...
+}, {verifyAllTestsRun: true});
+</code></pre>
+
+<p>That doesn&rsquo;t work because we re-install different hook inside of this test and as soon as this test finishes, we uninstall it. So we have two ways out of this situation: allow multiple hooks, or move that single test to its own test suite file. I think the second options is much simpler. Also, we will add the test for the negative case, where all tests run correctly (when we provide proper process spy):</p>
+
+<pre><code class="javascript">// test/VerifyAllTestsRunTest.js
+var runTestSuite = require("../src/TestingFramework");
+var ReporterSpy = require("./ReporterSpy");
+var ProcessSpy = require("./ProcessSpy");
+
+runTestSuite(function VerifyAllTestsRunTest(t) {
+    var reporter = new ReporterSpy(t);
+    var process = new ProcessSpy(t);
+
+    this.testVerifyAllTestsRun = function () {
+        t.assertThrow("Expected all tests to run", function () {
+
+            runTestSuite(function SuiteWithTwoTests(t) {
+
+                this.testWithRunTestSuite = function () {
+                    runTestSuite(function (t) {
+                        this.testOne = function () {};
+                    }, {reporter: reporter});
+                };
+
+                this.testThatShouldAlsoRun = function () {};
+
+            }, {reporter: reporter,
+                process: process,
+                verifyAllTestsRun: true});
+
+        });
+    };
+
+    this.testVerifyAllTestsRun_withoutFailure = function () {
+        t.assertNotThrow(function () {
+
+            runTestSuite(function SuiteWithTwoTests(t) {
+
+                this.testWithRunTestSuite = function () {
+                    runTestSuite(function (t) {
+                        this.testOne = function () {};
+                    }, {reporter: reporter,
+                        process: process});
+                };
+
+                this.testThatShouldAlsoRun = function () {};
+
+            }, {reporter: reporter,
+                process: process,
+                verifyAllTestsRun: true});
+
+        });
+    };
+});
+</code></pre>
+
+<p>And this new test suite passes as expected. Just to double-check that these tests verify anything, we can break them (change expected error message and change <code>assertNotThrow</code> to <code>assertThrow</code>) and see if there is a failure and if it looks as expected:</p>
+
+<pre><code class="javascript">// was: t.assertThrow("some error", ...);
+t.assertThrow("some error", function () {
+    // ...
+});
+// =&gt; Error: Expected to equal some error,
+//    but got: Expected all tests to run
+
+// was: t.assertNotThrow(...);
+t.assertThrow("some error", function () {
+    // ...
+});
+// =&gt; Error: Expected to throw an error,
+//    but nothing was thrown
+</code></pre>
+
+<p>And it fails as expected, which means that our refactored tests still work as they should.</p>
+
+<blockquote><p>We have just applied a neat technique here: whenever we do a major refactoring in tests, we need to make sure they are still functioning correctly. For that, we break every single one of them (by changing the assertion or breaking the production code). Then we see if they fail as we expect them to. When they don&rsquo;t, we know that refactoring didn&rsquo;t quite work.</p></blockquote>
+
+<h3>Fixing test suites to run all tests</h3>
+
+<p>Now we can go back to the <code>RunTestSuiteTest</code> and see if it works as expected without that test. And it does: <code>Error: Expected all tests to run</code>. To fix that we need to provide a process spy in every inner call to <code>runTestSuite</code>. For that we will first extract <code>{reporter: reporter}</code> as a common variable of the test suite:</p>
+
+<pre><code class="javascript">var options = {reporter: reporter};
+
+// ...
+// all the inner calls to "runTestSuite":
+runTestSuite(function(t) {
+    // ...
+}, options);
+</code></pre>
+
+<p>And to make the error go away, we now can create a process spy and provide it through options:</p>
+
+<pre><code class="javascript">var process = new ProcessSpy(t);
+var options = {
+    reporter: reporter,
+    process: process
+};
+</code></pre>
+
+<p>If we run tests now, they all pass. And we can see that they all execute. Now we just need to double-check that all tests, that have inner calls to <code>runTestSuite</code> have <code>verifyAllTestsRun</code> option enabled. The only other test suite is the <code>FailureTest</code>. Adding the option does not produce a failure because this test suite already uses process spy in all inner calls to <code>runTestSuite</code>.</p>
+
+<h2>Conclusion</h2>
+
+<p>Today we learned that it is tricky to work with <code>process.exit</code> or any function that can exit our program in the middle of the test. Such functions need to be mocked out completely inside of the tests. Also, we learned that it is possible to make sure we don&rsquo;t forget to do that. That is quite important because, if we do forget, everything runs smoothly, and we don&rsquo;t know that we made a mistake.</p>
+
+<p>There is still a lot to go through. In a few next episodes we will:</p>
+
+<ul>
+<li>Report OK and FAIL for each test;</li>
+<li>Output carefully formatted failures to the STDERR;</li>
+<li>Enable our testing framework to run multiple test suite files at once;</li>
+<li>Enable our testing framework to run in a browser (it is javascript after all).</li>
+</ul>
+
+
+<p>See you reading the next exciting article of the series: &ldquo;Formatting the Output&rdquo;!</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Understanding Legacy Code Using Explorative Test-Driven Development Technique]]></title>
@@ -1277,244 +1766,6 @@ function RoboDuck() {
 </code></pre>
 
 <p>Not doing contract tests for your ducks may result in a passing test suite and broken production code. For example, when one duck and its test suite have been updated, but others haven&rsquo;t.</p>
-
-<h2>Thanks</h2>
-
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Introducing Test Doubles]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/09/18/introducing-test-doubles/"/>
-    <updated>2016-09-18T16:31:48+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/09/18/introducing-test-doubles</id>
-    <content type="html"><![CDATA[<p>A test double is a test object or a test function, that looks and behaves like its production counterpart, but is actually a simplified version that reduces the complexity and enables simpler testing. One can represent all types of test double as an inheritance tree like this:</p>
-
-<p><img src='//g.gravizo.com/g?
-@startuml;
-object Double;
-object Dummy;
-object Stub;
-object Spy;
-object Mock;
-object Fake;
-Double <|-- Dummy;
-Double <|-- Fake;
-Dummy <|-- Stub;
-Stub <|-- Spy;
-Spy <|-- Mock;
-@enduml;
-'/></p>
-
-<p>Where <code>Double</code> is an abstract test double, which has no functionality - it is a general concept to talk about test doubles.</p>
-
-<!--more-->
-
-
-<p><code>Dummy</code> - is a test double, that is used to fill parameter lists, in cases where these parameters are not used by production code. Simplest <code>Dummy</code> would look like this:</p>
-
-<pre><code class="javascript">function ExampleDummyObject() {
-  this.doSomething = function () {};
-
-  this.getSomething = function () {
-    return null;
-  };
-}
-
-function exampleDummyFunction() {
-  return null;
-}
-
-// Usage example in test
-someObject.someMethod(dummyObject);
-someFunction(exampleDummyFunction);
-</code></pre>
-
-<p><code>Stub</code> - is a test dummy, additionally, providing an indirect input for the production code from the test. &ldquo;Indirect&rdquo; means here via a method call on the stub object or a call of the stub function. For example:</p>
-
-<pre><code class="javascript">function ExampleStubObject() {
-  var something = null;
-
-  this.getSomething = function () {
-    return something;
-  };
-
-  this.stubSomething = function(somethingValue) {
-    something = somethingValue;
-  };
-}
-
-var someValue = null;
-function exampleStubFunction() {
-  return someValue;
-}
-
-// Usage example in the test
-stubObject.stubSomething("a value from the test");
-anObject.aMethod(stubObject);
-
-someValue = "a value from the test";
-someFunction(exampleStubFunction);
-</code></pre>
-
-<p><div class="v2-subscribe--inline">
-  
-
-
-
-
-
-<div class="mc_embed_signup">
-  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div class="mc_embed_signup_scroll">
-      <h3>Want more articles like this delivered to your inbox?</h3>
-      <div class="mc-field-group">
-        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_7f9f94015a" tabindex="-1" value=""></div>
-        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
-        <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
-      </div>
-      <div class="">
-        <em>(we respect your privacy, unsubscribe at any time)</em>
-      </div>
-    </div>
-  </form>
-</div>
-
-
-</div>
-</p>
-
-<p><code>Spy</code> - is a test stub, additionally, verifying an indirect output of the production code, by asserting afterward, without having defined the expectations before the production code is executed. For example:</p>
-
-<pre><code class="javascript">function ExampleSpyObject(assertions) {
-  var didSomethingWithName = null;
-  var somethingValue = null;
-
-  this.doSomethingWith = function (name) {
-    didSomethingWithName = name;
-    return somethingValue;
-  };
-
-  this.stubSomething = function (something) {
-    somethingValue = something;
-  };
-
-  this.assertDidSomethingWithName = function(expectedName) {
-    assertions.assertTrue(
-      didSomethingWithName === expectedName,
-      "Expected to do something with '" + expectedName + "'"
-    )
-  };
-}
-
-var withName = null;
-var exampleValue = null;
-function exampleSpyFunction(name) {
-  withName = name;
-  return exampleValue;
-}
-
-function verifyExampleSpyFunction(expectedName) {
-  t.assertTrue(
-    withName === expectedName,
-    "Expected to be called with '" + expectedName + "'"
-  )
-}
-
-// Usage in the test
-spyObject.stubSomething("a value from the test");
-anObject.aMethod(spyObject);
-spyObject.assertDidSomethingWithName("helloWorld");
-
-exampleValue = "a value from the test";
-someFunction(exampleSpyFunction);
-verifyExampleSpyFunction("helloWorld");
-</code></pre>
-
-<p><code>Mock</code> - is a stub, but the expectations are defined before the execution of the production code and it can verify itself after the execution. A simple example:</p>
-
-<pre><code class="javascript">function ExampleMockObject() {
-  var expectedName = null;
-  var fulfilled = false;
-  var somethingValue = null;
-
-  this.expectWillDoSomethingWithName = function (name) {
-    expectedName = name;
-  };
-
-  this.doSomething = function (name) {
-    assertions.assertTrue(
-      name === expectedName,
-      "Unexpected name '" + name + "',"
-        + " expecting: '" + expectedName + "'"
-    );
-
-    fulfilled = true;
-    return somethingValue;
-  };
-
-  this.stubSomething = function (value) {
-    somethingValue = value;
-  };
-
-  this.verify = function () {
-    assertions.assertTrue(
-      fulfilled,
-      "Expected to receive name '" + expectedName + "', "
-        + "but got nothing"
-    );
-  };
-}
-
-// And the usage from the test:
-mockObject.stubSomething("a value from the test");
-mockObject.expectWillDoSomethingWithName("helloWorld");
-anObject.aMethod(mockObject);
-mockObject.verify();
-</code></pre>
-
-<p>Mocks can be much more complex (verifying order of messages, allowing multiple messages to be sent, etc.). So it is recommended to either:</p>
-
-<ul>
-<li>avoid them and use simpler test doubles, or</li>
-<li>use a full-blown well-tested mocking framework.</li>
-</ul>
-
-
-<p>And if you do have to use your own custom mocks, please, write tests for them, since they can have a lot of logic inside of them.</p>
-
-<p>And, finally, <code>Fake</code> - is a test double providing a simpler implementation used in the tests instead of the real thing. A good example is an in-memory database gateway, that behaves the same way the real one would, but it stores all the data in the memory. A very simple example:</p>
-
-<pre><code class="javascript">function FakeDatabase() {
-  var objects = {};
-
-  this.save = function (id, object) {
-    objects[id] = object;
-  };
-
-  this.findById = function (id) {
-    return objects[id];
-  };
-
-  this.findByName = function (name) {
-    for (var id in objects) {
-      if (objects.hasOwnProperty(id)) {
-        if (objects[id].name === name) {
-          return objects[id];
-        }
-      }
-    }
-
-    return null;
-  };
-}
-</code></pre>
-
-<p>Obviously, fakes require full-blown testing for them. And if the real implementation is testable (even if it is slow), it is a good idea to have the same test suite for both: fake and real implementation. This way we can really be sure, that the fake behaves the same way as the real thing. And don&rsquo;t forget about the edge cases, for example, if the real thing can throw a <code>ConnectionError</code>, the fake should be able too (after being instructed to do so via a special method in the tests).</p>
 
 <h2>Thanks</h2>
 

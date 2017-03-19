@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Test-driven-development | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/test-driven-development/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2017-03-12T13:01:04+01:00</updated>
+  <updated>2017-03-19T07:05:43+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,495 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Build Your Own Testing Framework. Part 6: Test Suite Does Not Run All Tests!]]></title>
+    <link href="http://www.tddfellow.com/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests/"/>
+    <updated>2017-03-13T23:13:28+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests</id>
+    <content type="html"><![CDATA[<p>Welcome back to the new issue of &ldquo;Build Your Own Testing Framework&rdquo; series! When trying to implement better formatting, we have discovered that some of our test suites do not run all tests! Today we are going to fix that, and we will make sure that such test suite will fail if it didn&rsquo;t execute all tests.</p>
+
+<!-- more -->
+
+
+<p>This article is the sixth one of the series “Build Your Own Testing Framework” so make sure to stick around for next parts! Find all posts of these series <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
+
+<p>Shall we get started?</p>
+
+<h2>Verify All Tests Run</h2>
+
+<p>We will start from the <code>RunTestSuiteTest</code> and run the test suite with the single test. Then we are going to assert that for that the test with the name <code>testOk</code> has been reported as passing:</p>
+
+<pre><code class="javascript">// test/RunTestSuiteTest.js
+
+this.testItOutputsOkForThePassingTest = function () {
+    runTestSuite(function (t) {
+        this.testOk = function () {
+            t.assertTrue(true);
+        };
+    }, {reporter: reporter});
+
+    reporter.assertHasReportedPassingTest("testOk");
+};
+</code></pre>
+
+<p>If we run this test suite, we can see that only one test executes!</p>
+
+<pre><code>RunTestSuiteTest
+    testItCallsAllTestMethods
+
+Process finished with exit code 0
+</code></pre>
+
+<p>Oh, that is interesting. This test suite does not run. Upon investigating, it turns out, that <code>process.exit(0)</code> is being called during the <code>runTestSuite(...)</code> function run. That is because of the latest feature that we have implemented - &ldquo;exit with an appropriate exit code (zero for success, and one for failure).&rdquo; We should be able to fix that by providing the process spy in the options of the <code>runTestSuite</code> function that we are calling from the inside of the individual tests in the <code>RunTestSuiteTest</code> test suite. And we ought to alleviate this kind of mistake somehow - we need a mechanism that would alert us if not all tests have been run. Maybe something like <code>verifyAllTestsRun: true</code> option for the <code>runTestSuite</code>. For that let&rsquo;s write a test:</p>
+
+<pre><code class="javascript">this.testVerifyAllTestsRun = function () {
+    t.assertThrow("Expected all tests to run", function () {
+
+        runTestSuite(function SuiteWithTwoTests(t) {
+
+            this.testWithRunTestSuite = function () {
+                runTestSuite(function (t) {
+                    this.testOne = function () {};
+                }, {reporter: reporter});
+            };
+
+            this.testThatShouldAlsoRun = function () {};
+
+        }, {reporter: reporter,
+            process: process,
+            verifyAllTestsRun: true});
+
+    });
+};
+</code></pre>
+
+<p>That might be a bit complex at first. Let&rsquo;s take a closer look how this test is supposed to work:</p>
+
+<ol>
+<li>First of all, we do assert that there was an assertion failure about all tests required to run.</li>
+<li>Inside of the action for this assertion we create and run the new test suite with two tests:
+
+<ul>
+<li>test with the <code>runTestSuite</code> without process spy provided</li>
+<li>empty test that should also execute</li>
+</ul>
+</li>
+</ol>
+
+
+<p>If we run this test, it will pass. That is unexpected because we wanted it to fail. Apparently, most inner <code>runTestSuite</code> is doing <code>process.exit(0)</code>.</p>
+
+<p>For that to work, we will need to be able to provide a hook into <code>process.exit(code)</code> function. For that, we would need to create a <code>SimpleProcess</code> class, that allows installation of such hooks. Let&rsquo;s test-drive it!</p>
+
+<h3><code>process.exit</code> with hooks</h3>
+
+<p>First, we should start from the normal behavior without any hooks:</p>
+
+<pre><code class="javascript">// test/SimpleProcessTest.js
+var runTestSuite = require("../src/TestingFramework");
+var SimpleProcess = require("../src/TestingFramework").SimpleProcess;
+var ProcessSpy = require("./ProcessSpy");
+
+runTestSuite(function SimpleProcessTest(t) {
+    this.testWithoutHooks = function () {
+        var globalProcess = new ProcessSpy();
+        var process = new SimpleProcess(globalProcess);
+
+        process.exit(0);
+
+        t.assertEqual(0, globalProcess.hasExitedWithCode);
+    };
+});
+</code></pre>
+
+<p>When running this test, we will get a failure about <code>SimpleProcess</code> being undefined. So let&rsquo;s define it:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+// ...
+// define the class itself
+function SimpleProcess(globalProcess) {
+
+}
+
+// ..
+// and don't forget to export it
+module.exports.SimpleProcess = SimpleProcess;
+</code></pre>
+
+<p>If we run our test suite now, we will get an error <code>TypeError: process.exit is not a function</code>. To fix that failure we will have to define the <code>exit(code)</code> method on our newly created class <code>SimpleProcess</code>:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    this.exit = function (code) {
+
+    };
+}
+</code></pre>
+
+<p>After doing that we will get an assertion failure <code>Error: Expected to equal 0, but got: null</code>, as expected. To make the test pass, it would be enough to call <code>globalProcess.exit(0)</code>:</p>
+
+<pre><code class="javascript">this.exit = function (code) {
+    globalProcess.exit(0);
+};
+</code></pre>
+
+<p>If we run our test suite now, we will get no failures. That is great! Now, we can see that <code>globalProcess.exit(0)</code> is probably not exactly what we want to have there. We ought to pass the <code>code</code> parameter to the <code>exit</code> function. To test-drive this properly, we will have to triangulate, i.e.: add another test with the different value of the <code>code</code> parameter:</p>
+
+<pre><code class="javascript">this.testWithoutHooks_andDifferentExitCode = function () {
+    var globalProcess = new ProcessSpy();
+    var process = new SimpleProcess(globalProcess);
+
+    process.exit(1);
+
+    t.assertEqual(1, globalProcess.hasExitedWithCode);
+};
+</code></pre>
+
+<p>That fails as expected: <code>Error: Expected to equal 1, but got: 0</code>. To make it pass we can either write some weird &ldquo;if&rdquo; statement or we could pass the <code>code</code> parameter to the <code>globalProcess.exit</code> function. The second option is simpler. According to the third rule of test-driven development, we should go for it:</p>
+
+<pre><code class="javascript">this.exit = function (code) {
+    globalProcess.exit(code);
+};
+</code></pre>
+
+<p>That change makes our test suite pass. We probably should refactor the test suite to reduce the level of the duplication by extracting common variables from the tests:</p>
+
+<pre><code class="javascript">runTestSuite(function SimpleProcessTest(t) {
+    var globalProcess = new ProcessSpy();
+    var process = new SimpleProcess(globalProcess);
+
+    this.testWithoutHooks = function () {
+        process.exit(0);
+
+        t.assertEqual(0, globalProcess.hasExitedWithCode);
+    };
+
+    this.testWithoutHooks_andDifferentExitCode = function () {
+        process.exit(1);
+
+        t.assertEqual(1, globalProcess.hasExitedWithCode);
+    };
+});
+</code></pre>
+
+<p>At that point, we should move on to tests for the hook installation functionality. Because right now we need only at most one hook we will not support multiple hooks at the same time - only one:</p>
+
+<pre><code class="javascript">this.testCanInstallOneHook = function () {
+    var aSpy = t.spy();
+
+    process.installHook(aSpy);
+    process.exit(0);
+
+    aSpy.assertCalled();
+};
+</code></pre>
+
+<p>When we run this test, it fails because <code>installHook</code> function is not defined: <code>TypeError: process.installHook is not a function</code>. So we should define it:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    // ..
+    this.installHook = function (aHook) {
+
+    };
+}
+</code></pre>
+
+<p>Upon running these tests, we get <code>Error: Expected to be called</code> because we didn&rsquo;t call this hook yet. The simplest way to make it pass is to just call the hook from the <code>installHook</code> function:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    // ...
+    this.installHook = function (aHook) {
+        aHook();
+    };
+}
+</code></pre>
+
+<p>While that will make the tests pass it is not the behavior that we are after. To drive out the correct behavior, we ought to check that the function is being called only after <code>process.exit(..)</code>, not earlier. For that we will need to have a sanity-check assertion:</p>
+
+<pre><code class="javascript">this.testCanInstallOneHook = function () {
+    var aSpy = t.spy();
+
+    process.installHook(aSpy);
+    aSpy.assertNotCalled();
+
+    process.exit(0);
+
+    aSpy.assertCalled();
+};
+</code></pre>
+
+<p>That fails as expected with the error <code>Error: Expected not to be called</code>. To make it pass we need to store the function in the variable and call it from the <code>process.exit(..)</code>:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    var hook = null;
+
+    this.exit = function (code) {
+        if (hook !== null)
+            hook();
+
+        globalProcess.exit(code);
+    };
+
+    this.installHook = function (aHook) {
+        hook = aHook;
+    };
+}
+</code></pre>
+
+<p>All the tests pass now! Finally, we want to be able to uninstall the hook, so let&rsquo;s write the test for it:</p>
+
+<pre><code class="javascript">this.testCanUninstallTheHook = function () {
+    var aSpy = t.spy();
+
+    process.installHook(aSpy);
+    process.uninstallHook();
+
+    process.exit(0);
+
+    aSpy.assertNotCalled();
+};
+</code></pre>
+
+<p>To make it work it is enough to introduce this function and set <code>hook</code> variable back to <code>null</code> in it:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    // ...
+    this.uninstallHook = function () {
+        hook = null;
+    };
+}
+</code></pre>
+
+<p>And all the tests will pass. Now we, also, want to replace the default value for the <code>options.process</code> option with the instance of <code>SimpleProcess</code> object. And all the tests should work as they were working before:</p>
+
+<pre><code class="javascript">var simpleProcess = new SimpleProcess(global.process);
+
+function TestSuiteRunContext(testSuiteConstructor, options) {
+    // ...
+
+    var process = options.process || simpleProcess;
+    // instead of just "global.process"
+
+    // ...
+}
+</code></pre>
+
+<h3>Installing the &ldquo;verify all tests run&rdquo; hook</h3>
+
+<p>Now, we can get back to our &ldquo;verify all tests run&rdquo; test. It still doesn&rsquo;t fail as expected, so we need to install the hook, count all tests, count tests that had already run and compare them in the hook:</p>
+
+<pre><code class="javascript">function TestSuiteRunContext(testSuiteConstructor, options) {
+    // ...
+    var verifyAllTestsRun = options.verifyAllTestsRun || false;
+    var testCount = 0;
+    var testRun = 0;
+
+    this.invoke = function () {
+        if (verifyAllTestsRun)
+            installVerifyAllTestsRunHook();  // &lt;---
+
+        reportTestSuite();
+        countAllTests();                     // &lt;---
+        runAllTests();
+        finishTestRun();
+    };
+
+    function installVerifyAllTestsRunHook() {
+        simpleProcess.installHook(function () {
+            if (testRun &lt; testCount) {
+                throw new Error("Expected all tests to run");
+            }
+        });
+    }
+
+    // ...
+
+    function countAllTests() {
+        for (var testName in createTestSuite())
+            if (testName.match(/^test/))
+                testCount++;
+    }
+
+    // ...
+
+    function handleTest(testName) {
+        testRun++;                            // &lt;---
+        reportTest(testName);
+        runTest(createTestSuite(), testName);
+    }
+}
+</code></pre>
+
+<p>At this point, this throws an error <code>Expected all tests to run</code> and finishes the test fully without reaching our <code>assertThrow(..)</code> assertion. That happens because we catch this error in the function <code>runTest</code>, where we mark the test as failed, log the error and ignore the error object itself from there. One way to solve this problem is to have a particular error, that can propagate up the stack:</p>
+
+<pre><code class="javascript">function installVerifyAllTestsRunHook() {
+    simpleProcess.installHook(function () {
+        if (testRun &lt; testCount) {
+            var error = new Error("Expected all tests to run");
+            error.bubbleUp = true;
+            throw error;
+        }
+    });
+}
+
+// ...
+
+function runTest(testSuite, testName) {
+    try {
+        testSuite[testName]();
+    } catch (error) {
+        if (error.bubbleUp) throw error;  // &lt;---
+        if (!silenceFailures) console.log(error);
+        status.markAsFailed();
+    }
+}
+</code></pre>
+
+<p>Now our current test is passing, and the next test is failing with the error <code>Expected all tests to run</code>. That happens because we have not uninstalled the hook as soon as it has triggered. Let&rsquo;s do that:</p>
+
+<pre><code class="javascript">function installVerifyAllTestsRunHook() {
+    simpleProcess.installHook(function () {
+        if (testRun &lt; testCount) {
+            simpleProcess.uninstallHook();   // &lt;---
+
+            var error = new Error("Expected all tests to run");
+            error.bubbleUp = true;
+            throw error;
+        }
+    });
+}
+</code></pre>
+
+<p>That makes the next test run, succeed and exit immediately after that with error code zero. Let&rsquo;s see what will happen if we put <code>verifyAllTestsRun: true</code> on the top test suite here:</p>
+
+<pre><code class="javascript">runTestSuite(function RunTestSuiteTest(t) {
+    // ...
+}, {verifyAllTestsRun: true});
+</code></pre>
+
+<p>That doesn&rsquo;t work because we re-install different hook inside of this test and as soon as this test finishes, we uninstall it. So we have two ways out of this situation: allow multiple hooks, or move that single test to its own test suite file. I think the second options is much simpler. Also, we will add the test for the negative case, where all tests run correctly (when we provide proper process spy):</p>
+
+<pre><code class="javascript">// test/VerifyAllTestsRunTest.js
+var runTestSuite = require("../src/TestingFramework");
+var ReporterSpy = require("./ReporterSpy");
+var ProcessSpy = require("./ProcessSpy");
+
+runTestSuite(function VerifyAllTestsRunTest(t) {
+    var reporter = new ReporterSpy(t);
+    var process = new ProcessSpy(t);
+
+    this.testVerifyAllTestsRun = function () {
+        t.assertThrow("Expected all tests to run", function () {
+
+            runTestSuite(function SuiteWithTwoTests(t) {
+
+                this.testWithRunTestSuite = function () {
+                    runTestSuite(function (t) {
+                        this.testOne = function () {};
+                    }, {reporter: reporter});
+                };
+
+                this.testThatShouldAlsoRun = function () {};
+
+            }, {reporter: reporter,
+                process: process,
+                verifyAllTestsRun: true});
+
+        });
+    };
+
+    this.testVerifyAllTestsRun_withoutFailure = function () {
+        t.assertNotThrow(function () {
+
+            runTestSuite(function SuiteWithTwoTests(t) {
+
+                this.testWithRunTestSuite = function () {
+                    runTestSuite(function (t) {
+                        this.testOne = function () {};
+                    }, {reporter: reporter,
+                        process: process});
+                };
+
+                this.testThatShouldAlsoRun = function () {};
+
+            }, {reporter: reporter,
+                process: process,
+                verifyAllTestsRun: true});
+
+        });
+    };
+});
+</code></pre>
+
+<p>And this new test suite passes as expected. Just to double-check that these tests verify anything, we can break them (change expected error message and change <code>assertNotThrow</code> to <code>assertThrow</code>) and see if there is a failure and if it looks as expected:</p>
+
+<pre><code class="javascript">// was: t.assertThrow("some error", ...);
+t.assertThrow("some error", function () {
+    // ...
+});
+// =&gt; Error: Expected to equal some error,
+//    but got: Expected all tests to run
+
+// was: t.assertNotThrow(...);
+t.assertThrow("some error", function () {
+    // ...
+});
+// =&gt; Error: Expected to throw an error,
+//    but nothing was thrown
+</code></pre>
+
+<p>And it fails as expected, which means that our refactored tests still work as they should.</p>
+
+<blockquote><p>We have just applied a neat technique here: whenever we do a major refactoring in tests, we need to make sure they are still functioning correctly. For that, we break every single one of them (by changing the assertion or breaking the production code). Then we see if they fail as we expect them to. When they don&rsquo;t, we know that refactoring didn&rsquo;t quite work.</p></blockquote>
+
+<h3>Fixing test suites to run all tests</h3>
+
+<p>Now we can go back to the <code>RunTestSuiteTest</code> and see if it works as expected without that test. And it does: <code>Error: Expected all tests to run</code>. To fix that we need to provide a process spy in every inner call to <code>runTestSuite</code>. For that we will first extract <code>{reporter: reporter}</code> as a common variable of the test suite:</p>
+
+<pre><code class="javascript">var options = {reporter: reporter};
+
+// ...
+// all the inner calls to "runTestSuite":
+runTestSuite(function(t) {
+    // ...
+}, options);
+</code></pre>
+
+<p>And to make the error go away, we now can create a process spy and provide it through options:</p>
+
+<pre><code class="javascript">var process = new ProcessSpy(t);
+var options = {
+    reporter: reporter,
+    process: process
+};
+</code></pre>
+
+<p>If we run tests now, they all pass. And we can see that they all execute. Now we just need to double-check that all tests, that have inner calls to <code>runTestSuite</code> have <code>verifyAllTestsRun</code> option enabled. The only other test suite is the <code>FailureTest</code>. Adding the option does not produce a failure because this test suite already uses process spy in all inner calls to <code>runTestSuite</code>.</p>
+
+<h2>Conclusion</h2>
+
+<p>Today we learned that it is tricky to work with <code>process.exit</code> or any function that can exit our program in the middle of the test. Such functions need to be mocked out completely inside of the tests. Also, we learned that it is possible to make sure we don&rsquo;t forget to do that. That is quite important because, if we do forget, everything runs smoothly, and we don&rsquo;t know that we made a mistake.</p>
+
+<p>There is still a lot to go through. In a few next episodes we will:</p>
+
+<ul>
+<li>Report OK and FAIL for each test;</li>
+<li>Output carefully formatted failures to the STDERR;</li>
+<li>Enable our testing framework to run multiple test suite files at once;</li>
+<li>Enable our testing framework to run in a browser (it is javascript after all).</li>
+</ul>
+
+
+<p>See you reading the next exciting article of the series: &ldquo;Formatting the Output&rdquo;!</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Understanding Legacy Code Using Explorative Test-Driven Development Technique]]></title>
@@ -2456,333 +2945,6 @@ end
 <li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
 <li>Open-Closed Principle - changing behavior by adding new code,</li>
 <li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, 4 Cycles of TDD, Test-Driven Development screencasts and so much more!</li>
-</ul>
-
-
-<h2>Thanks!</h2>
-
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Getting Stuck While Doing TDD. Part 2: Buggy Code and Forcing Our Way Through]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through/"/>
-    <updated>2016-08-31T02:35:06+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/08/31/getting-stuck-while-doing-tdd-part-2-buggy-code-and-forcing-our-way-through</id>
-    <content type="html"><![CDATA[<p>Welcome back to the &ldquo;Getting Stuck While Doing TDD&rdquo; series. Today we are going to see the results of getting stuck while doing TDD and scratch the surface of how to avoid this outcome.</p>
-
-<p>Code examples today will be in Ruby programming language. The technique itself is, of course, language-agnostic.</p>
-
-<h2>TL;DR</h2>
-
-<ul>
-<li>It is painful and difficult to force your way through when getting stuck in TDD.</li>
-<li>It results in degraded guarantees from TDD (such as test coverage, semantical stability, and confidence).</li>
-</ul>
-
-
-<p>Ways to avoid this outcome:</p>
-
-<ul>
-<li>do not write tests that will not fail with the current production code</li>
-<li>choose next test to write that will address particular detail about production code that is wrong or not general enough (Triangulation)</li>
-</ul>
-
-
-<p>Finally, do not forget to remove redundant tests if any.</p>
-
-<!--more-->
-
-
-<p>This is a series of articles:</p>
-
-<ol>
-<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
-<li>Part 2: Buggy Code and Forcing Our Way Through (reading this)</li>
-<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
-</ol>
-
-
-<h2>Buggy if-riddled code</h2>
-
-<p>Buggy <code>if</code>-riddled code is what we&rsquo;ve got. It is even not so easy to read. While we can refactor it to be more readable that won&rsquo;t change the presence of bugs, though. Let&rsquo;s still do it to understand what happens in this code better:</p>
-
-<pre><code class="ruby">class OrderKindValidator
-  def validate(order)
-    kinds = order[:kind]
-
-    validate_only_known(kinds)
-    validate_has_required(kinds)
-    validate_no_conflicting(kinds)
-    validate_non_empty(kinds)
-  end
-
-  private
-
-  def validate_non_empty(kinds)
-    if empty?(kinds)
-      fail_with("Order kind can not be empty")
-    end
-  end
-
-  def validate_no_conflicting(kinds)
-    if has_conflicting(kinds)
-      fail_with("Order kind can not be 'private' and 'corporate' at the same time")
-    end
-  end
-
-  def validate_has_required(kinds)
-    if has_no_required(kinds)
-      fail_with("Order kind should be 'private' or 'corporate'")
-    end
-  end
-
-  def validate_only_known(kinds)
-    if invalid?(kinds)
-      fail_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
-    end
-  end
-
-  def empty?(kind)
-    kind != ["private"] &amp;&amp; kind != ["corporate"] &amp;&amp;
-        kind != %w(private bundle) &amp;&amp;
-        kind != %w(corporate bundle)
-  end
-
-  def has_conflicting(kind)
-    kind == %w(private corporate)
-  end
-
-  def has_no_required(kind)
-    kind == ["bundle"]
-  end
-
-  def invalid?(kind)
-    kind == ["invalid"]
-  end
-
-  def fail_with(message)
-    raise InvalidOrderError.new(message)
-  end
-end
-</code></pre>
-
-<p>Structure of the class, actually, sounds just right, but conditions are not good:</p>
-
-<pre><code class="ruby">def empty?(kind)
-  kind != ["private"] &amp;&amp; kind != ["corporate"] &amp;&amp;
-      kind != %w(private bundle) &amp;&amp;
-      kind != %w(corporate bundle)
-end
-</code></pre>
-
-<p>Really? It does not do what it says. At all. It basically just solves the problem very specifically to the tests. I can easily come up with a test that will break it:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
-    .when_order_kind_is ["almost anything"]
-
-# Error: expected InvalidOrderError with
-#    "Order kind can be one of: 'private', 'corporate', 'bundle'",
-# got #&lt;InvalidOrderError: Order kind can not be empty&gt;
-
-# or other test
-it_does_not_fail.when_order_kind_is %w(corporate corporate)
-</code></pre>
-
-<pre><code class="ruby">def has_conflicting(kind)
-  kind == %w(private corporate)
-end
-</code></pre>
-
-<p>This at least does what it says. But only for one specific case, instead of general one. One test that I can come up with right away:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
-    .when_order_kind_is %w(private corporate bundle)
-
-# and another one:
-it_fails_with("Order kind can not be 'private' and 'corporate' at the same time")
-    .when_order_kind_is %w(corporate private)
-</code></pre>
-
-<pre><code class="ruby">def has_no_required(kind)
-  kind == ["bundle"]
-end
-</code></pre>
-
-<p>While this may work for our current requirements, it is really confusing for the reader. Method name says: &ldquo;has no required kind&rdquo; while method body checks if it is only <code>bundle</code>. And it does not work well with that edge case:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind should be 'private' or 'corporate'")
-    .when_order_kind_is %w(bundle bundle)
-</code></pre>
-
-<p>While this case is quite unlikely, nothing in business rules forbid that and some other part of the system may as well duplicate <code>bundle</code> kind for some reason or it may be a user input mistake.</p>
-
-<pre><code class="ruby">def invalid?(kind)
-  kind == ["invalid"]
-end
-</code></pre>
-
-<p>This method, indeed, checks that <code>kind</code> is <code>invalid</code>. Literally <code>"invalid"</code>. Which would mean, that all kinds except exactly <code>"invalid"</code> are allowed. This is not true according to our business rules. In fact, we have already written the failing test for this some moments ago:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
-    .when_order_kind_is ["almost anything"]
-</code></pre>
-
-<p>Let&rsquo;s comment out these failing tests and try to force-TDD our way through these bugs by uncommenting and fixing them one-by-one following Red-Green-Refactor loop:</p>
-
-<h2>Forcing our way through</h2>
-
-<p>So, let&rsquo;s uncomment our first failing test:</p>
-
-<pre><code class="ruby">it_fails_with("Order kind can be one of: 'private', 'corporate', 'bundle'")
-    .when_order_kind_is ["almost anything"]
-</code></pre>
-
-<p>We are expecting <code>validate_only_known</code> to fail with its message and that means <code>invalid?(kinds)</code> should return true. To make it return <code>true</code> in this case and preserve its old behavior we will need to remove <code>private</code>, <code>corporate</code> and <code>bundle</code> from <code>kinds</code> and check that it is not empty:</p>
-
-<pre><code class="ruby">def invalid?(kinds)
-  (kinds - %w(private corporate bundle)).any?
-end
-</code></pre>
-
-<p>See how we had to write the whole thing in one go. There is no chance to write it incrementally because there will be a bunch of tests that fail. Wait! While it does not fail for any tests related to invalid kinds, it fails for all tests related to emptiness:</p>
-
-<pre><code>OrderKindValidator
-  fails with message "Order kind can not be empty"
-    when order kind is [""] (FAILED - 1)
-    when order kind is ["", ""] (FAILED - 2)
-    when order kind is ["private", ""] (FAILED - 3)
-    when order kind is absent (FAILED - 4)
-    when order kind is nil (FAILED - 5)
-</code></pre>
-
-<p>So we need to change more production code to make this one tiny test pass. It looks like <code>validate_non_empty</code> is a culprit now - it is being called after <code>validate_only_known</code>. It should be the other way around:</p>
-
-<pre><code class="ruby">def validate(order)
-  kinds = order[:kind]
-
-  validate_non_empty(kinds)
-# ^ we moved this up here ^
-
-  validate_only_known(kinds)
-  validate_has_required(kinds)
-  validate_no_conflicting(kinds)
-end
-</code></pre>
-
-<p>Oh! Now a bunch of other tests fails:</p>
-
-<pre><code>OrderKindValidator
-  fails with message "Order kind should be 'private' or 'corporate'"
-    when order kind is ["bundle"] (FAILED - 1)
-
-  fails with a message "Order kind can not be 'private' and 'corporate' at the same time"
-    when order kind is ["private", "corporate"] (FAILED - 4)
-
-  fails with a message "Order kind can be one of: 'private', 'corporate', 'bundle'"
-    when order kind is ["almost anything"] (FAILED - 2)
-    when order kind is ["invalid"] (FAILED - 3)
-</code></pre>
-
-<p>From failure messages it is possible to guess, that the culprit is <code>empty?(kinds)</code> function that fails in too much cases now, such as: <code>["bundle"]</code>, <code>["private", "corporate"]</code>, <code>["almost anything"]</code> and <code>["invalid"]</code>. This is because it was not doing what it said it was:</p>
-
-<pre><code class="ruby">def empty?(kinds)
-  kinds != ["private"] &amp;&amp; kinds != ["corporate"] &amp;&amp;
-      kinds != %w(private bundle) &amp;&amp;
-      kinds != %w(corporate bundle)
-end
-</code></pre>
-
-<p>And this is why it was hard to change the order of validations. We will have to completely rewrite this function. Let&rsquo;s start small and see which tests fail:</p>
-
-<pre><code class="ruby">def empty?(kinds)
-  false
-end
-</code></pre>
-
-<p>The failures are:</p>
-
-<pre><code>OrderKindValidator
-  fails with message "Order kind can not be empty"
-    when order kind is ["private", ""] (FAILED - 1)
-    when order kind is [nil] (FAILED - 2)
-    when order kind is ["", ""] (FAILED - 3)
-    when order kind is nil (FAILED - 4)
-    when order kind is [""] (FAILED - 5)
-    when order kind is absent (FAILED - 6)
-    when order kind is [nil, nil] (FAILED - 7)
-    when order kind is ["private", nil] (FAILED - 8)
-    when order kind is [] (FAILED - 9)
-</code></pre>
-
-<p>Good, only tests related directly to this case are failing. So one-by-one we can construct our condition while fixing these test failures:</p>
-
-<ol>
-<li><code>kinds.nil?</code></li>
-<li><code>|| kinds.empty?</code></li>
-<li><code>|| kinds[0].nil?</code>   (turned out to be redundant in the end)</li>
-<li><code>|| kinds[0].empty?</code> (turned out to be redundant in the end)</li>
-<li><code>|| kinds.any? { |k| k.nil? || k.empty? }</code></li>
-</ol>
-
-
-<p>After refactoring <code>empty?</code> the function now is looking this way:</p>
-
-<pre><code class="ruby">def empty?(kinds)
-  absent_or_empty?(kinds) ||
-      kinds.any? { |kind| absent_or_empty?(kind) }
-end
-
-def absent_or_empty?(value)
-  value.nil? || value.empty?
-end
-</code></pre>
-
-<p>And all tests, finally, pass. It took a lot of effort and re-writing to get this one little test to pass. This is what we call &ldquo;Getting Stuck&rdquo; in TDD. There is always an order of tests that will lead to this result almost for any somewhat complex problem.</p>
-
-<p>The code can be found in GitHub repository in <a href="https://github.com/waterlink/order_kind_validator/pull/2/files">an open pull request here</a>.</p>
-
-<p>Almost guaranteed ways to get stuck in TDD:</p>
-
-<ul>
-<li>write tests that do not fail,</li>
-<li>do not address weird results of &ldquo;simplest thing that could possibly work&rdquo; to make the test pass and moving on to the next business rule,</li>
-<li>make production code a mirror of the tests and too specific, not general.</li>
-</ul>
-
-
-<p>And to not get stuck is to do the opposite:</p>
-
-<ul>
-<li>do not write the test that will not fail (wait until later, when it will fail), and</li>
-<li>always first write the test that will point out next deficiency in the current production code (in TDD this is called Triangulation), and</li>
-<li>while making some failing test pass, make sure that the change in production code covers not only this one specific test, rather, a whole class of tests (Golden Rule of TDD: As tests get more specific, production code gets more generic).</li>
-</ul>
-
-
-<h2>Bottom Line</h2>
-
-<p>Today we have seen how bad the results of getting stuck while doing TDD can be. In the next article of these series, we will explore Golden Rule of TDD and the technique called Triangulation, that allows us to incrementally test-drive code in a way, that it will always be conforming to the Golden Rule of TDD and therefore will never get us stuck. Stay tuned!</p>
-
-<p>This is a series of articles:</p>
-
-<ol>
-<li><a href="/blog/2016/08/30/getting-stuck-while-doing-tdd-part-1-example/">Part 1: Example</a></li>
-<li>Part 2: Buggy Code and Forcing Our Way Through (reading this)</li>
-<li><a href="/blog/2016/08/31/getting-stuck-while-doing-tdd-part-3-triangulation-to-the-rescue/">Part 3: Triangulation to the Rescue!</a></li>
-</ol>
-
-
-<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
-
-<ul>
-<li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD (these series),</li>
-<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
-<li>Open-Closed Principle - changing behavior by adding new code,</li>
-<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series, Test-Driven Development screencasts and so much more!</li>
 </ul>
 
 

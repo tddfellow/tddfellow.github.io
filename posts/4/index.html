@@ -9,11 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="TL;DR This post describes two different issues: Race conditions when taking reference of loop variable and passing it to another goroutine: 1
-2
-3
-4
-5 &hellip;">
+  <meta name="description" content="Recommended to watch in a full-screen and on 720p or higher quality. List of all TDD Screencasts can be found here. Script Hello! I am Oleksii &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -121,6 +117,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests/">Build Your Own Testing Framework. Part 6: Test Suite Does Not Run All Tests!</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
       </li>
     
@@ -146,10 +146,6 @@
     
       <li class="post">
         <a href="/blog/2016/09/30/highscore-kata/">HighScore Kata</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
       </li>
     
   </ul>
@@ -193,6 +189,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests/">Build Your Own Testing Framework. Part 6: Test Suite Does Not Run All Tests!</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
       </li>
     
@@ -220,10 +220,6 @@
         <a href="/blog/2016/09/30/highscore-kata/">HighScore Kata</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -235,6 +231,218 @@
 
 <div class="blog-index v2-blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/02/02/test-driven-development-screencast-number-1/">Test-Driven-Development Screencast #1</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2016-02-02T07:59:25+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2016</span></span> <span class='time'>7:59 am</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/screencast/'>screencast</a>, <a class='category' href='/blog/categories/tdd/'>tdd</a>, <a class='category' href='/blog/categories/tdd-screencasts/'>tdd-screencasts</a>, <a class='category' href='/blog/categories/test-driven-development/'>test-driven-development</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><iframe width="560" height="315" src="https://www.youtube.com/embed/QnEvjrszst4?list=PLbNxoJawcer22UE8lT93-fX8ZYFNtoXFu" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Recommended to watch in a full-screen and on 720p or higher quality.</p>
+
+<p>List of all TDD Screencasts can be <a href="/blog/categories/tdd-screencasts/">found here</a>.</p>
+
+<h2>Script</h2>
+
+<p>Hello! I am Oleksii Fedorov, and this is the first episode of
+Test-Driven-Development Screencast.</p>
+
+<p>Today, I am going to briefly address following questions about
+Test-Driven-Development:
+- What TDD is?
+- What are main benefits of doing TDD?</p>
+
+<p>At the end I am going to demonstrate a small example on how to implement simple
+sorting algorithm using TDD.</p>
+
+<p>Let me open my slides. Don&rsquo;t worry: there are only three small slides.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vim ./slides/*</span></code></pre></td></tr></table></div></figure>
+
+
+<p>TDD is Software Development discipline. Therefore, basic rules, defined by TDD,
+are arbitrary, weird and are to be followed to the letter, if you want it to be
+useful. There is a reason for that – but we will talk shortly about that. Let
+me read these basic rules for you:</p>
+
+<ol>
+<li><p>You are not allowed to write a line of production code, unless test fails.</p>
+
+<p>Which means, that I will have to write the test even before I have something
+to test. It may sound stupid. Maybe, it is stupid. Maybe, it is not.</p>
+
+<p>But the next rule is even more weird than the first one:</p></li>
+<li><p>You are not allowed to write more of a test, that is sufficient to fail.</p>
+
+<p>It is important to clarify, what ˝fail˝ means in this context. It means test
+expectation failure, and compilation/parsing/interpretation failure
+(depending if your programming language is compiled or interpreted).</p>
+
+<p>Which means, that you will have to interrupt yourself, while writing a test,
+because you have mentioned the class or package, that does not exist yet. Or
+you have mentioned the method or function, that does not exist yet.</p>
+
+<p>Now that may sound really stupid to you. Bear with me, and lets see how
+weird the last rule is:</p></li>
+<li><p>You are not allowed to write more production code, that is sufficient to
+make the failing test pass.</p>
+
+<p>Which means, that once you have defined a class, that was mentioned - you
+have just fixed a failing test, and you have to go back and write more of
+the test, or add new test.</p>
+
+<p>Which means, that once you have defined a method, that was mentioned - you
+have just fixed a failing test, and you have to got back and write more of
+the test again.</p>
+
+<p>Which means, that once you changed your production code only slightly in
+direction of the correct implementation, you have to go back and write more
+tests.</p>
+
+<p>This is interesting. Now you got yourself in a very tight lock. In a very
+tight feedback loop. Write a line of test, write a line of code, write a
+line of test, write a line of code, and so on. The length of this loop is
+probably 5, 10, 30 seconds. If you have a test suite that needs half an hour
+to run, you will not do TDD.</p></li>
+</ol>
+
+
+<p>What happens if you do not follow this discipline to the letter? If you slip
+there and there?: write a bit more production code, than you had to?, write a
+bit more of a test, than you had to?, or even wrote a test after writing the
+whole class under test?</p>
+
+<p>Well, you have just lost the main benefit of TDD: you can no longer trust the
+test suite. For sure, there will be some untested code if you do it this way.</p>
+
+<p>Why do we need 100% test coverage, you ask? 70% sounds like an awesome
+achievement! Or is it?..</p>
+
+<p>What can you tell from the fact, that only 70% of your code is covered by test
+suite? Only that 30% is not covered, and therefore, there is no quick and easy
+way to verify that it works.</p>
+
+<p>Lets imagine the following scenario:</p>
+
+<ul>
+<li>You open a file on your screen.</li>
+<li>You spot some nasty duplication, and you know you want to fix it.</li>
+<li>You even see an obvious way to fix it.</li>
+<li>You touch your keyboard.</li>
+<li>And now, the fear overwhelms you: this class is not tested.</li>
+<li>And your reaction? - I won&rsquo;t touch it!</li>
+</ul>
+
+
+<p>That is where code starts to rot, while nobody cleans it up, because test suite
+can not be trusted, and the whole codebase slowly down-slides to a big pile of
+mess.</p>
+
+<p>Now, lets imagine, that you have 100% code coverage (Well, maybe 98%, because
+100% is the goal, that is not achievable). And the same scenario:</p>
+
+<ul>
+<li>You open a file on your screen.</li>
+<li>You spot some nasty duplication.</li>
+<li>You fix the duplication.</li>
+<li>You run tests - and they are green.</li>
+<li>You check-in cleaner code in your code control system.</li>
+</ul>
+
+
+<p>Or, lets say, that the problem is not trivial:
+- You spot the long method.
+- You split it in 3 methods - tests are still green.
+- You proceed and extract these methods to the new class.
+- And tests fail.
+- Undo-Undo-Undo. And you are back to the green state.
+- And now you think for a moment, what happened there.
+- And you already have this ˝Gotcha!˝.
+- And you successfully extract a class again - and the test suite is green.
+- You check-in cleaner code in your code control system.</p>
+
+<p>Undo button becomes your best friend. Once you stop knowing what is going on,
+or what you are doing, or you simply confused, you can always go back to the
+green state; that just happens to be 25 seconds ago (or 2-3 undo) away, because
+of the tight feedback loop you got yourself into.</p>
+
+<p>Now, there is a hidden rule of TDD. That feels more, like an implementation
+detail of TDD:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>:next</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As tests become more specific, production code should become more generic.</p>
+
+<p>And it is very true, otherwise, you would end up adding a bunch of <code>if</code>
+statements every time you add a failing test.</p>
+
+<p>What that means, I will point out during the example.</p>
+
+<p>And lets sum up now:</p>
+
+<p>100% Code Coverage =>
+  Lack of Fear =>
+  Consistent Random Kindness to the Code =>
+  Clean Code.</p>
+
+<hr />
+
+<p>60% Code Coverage =>
+  Fear to Break It =>
+  ˝I won&rsquo;t touch it!˝ =>
+  Mess.</p>
+
+<p>Now we can finally move on to the example. Next time, on the next episode of
+Test-Driven-Development Screencast! Have a good day.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2214,250 +2422,6 @@ image.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/01/30/dismantling-effective-go-article/">Dismantling Effective Go Article</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-
-  
-  <span class="byline author vcard"><span class="fn">
-    
-      <a href="/about-me">Oleksii Fedorov</a>
-    
-  </span></span>
-
-
-        
-
-
-
-
-<time class='entry-date' datetime='2015-01-30T22:39:11+01:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:39 pm</span></time>
-        
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/go/'>go</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome.</p>
-
-<p>Article itself: <a href="https://golang.org/doc/effective_go.html">https://golang.org/doc/effective_go.html</a></p>
-
-<p>And here is a list of my thoughts.</p>
-
-<h2>Formatting</h2>
-
-<p>I generally like this approach, it is nice to have such feature in your language tools available right there and with already existing integrations to popular editors.</p>
-
-<p>Except one thing:</p>
-
-<blockquote><p>Parentheses</p>
-
-<p>Go needs fewer parentheses than C and Java: control structures (if, for, switch) do not have parentheses in their syntax. Also, the operator precedence hierarchy is shorter and clearer, so</p>
-
-<pre><code>x&lt;&lt;8 + y&lt;&lt;16
-</code></pre></blockquote>
-
-<p>So we kill parentheses and replace them with whitespace. I am not entirely sure it is better. How will this work then?</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">x</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span> <span class="o">+</span> <span class="nx">y</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>And what about this?</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">x</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span>    <span class="o">+</span>    <span class="nx">y</span>  <span class="o">&lt;&lt;</span>  <span class="mi">16</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Probably nobody will write it like that, but one space miss, and lots of minutes lost in debugging.</p>
-
-<h2>Semicolons</h2>
-
-<p>Oh, lexer inserting semicolons where it pleases? What can go wrong. Reminds me about javascript and its problems when you omit semicolons.</p>
-
-<p>And this example looked strange to me:</p>
-
-<blockquote><p>One consequence of the semicolon insertion rules is that you cannot put the opening brace of a control structure (if, for, switch, or select) on the next line. If you do, a semicolon will be inserted before the brace, which <strong>could cause unwanted effects</strong>. Write them like this</p>
-
-<pre><code> if i &lt; f() {
-     g()
- }
-</code></pre>
-
-<p>not like this</p>
-
-<pre><code> if i &lt; f()  // wrong!
- {           // wrong!
-      g()
- }
-</code></pre></blockquote>
-
-<p>First I thought that it will accept this input, put a semicolon after if, compile successfully and always execute statement inside of block, especially because it said &ldquo;could cause unwanted effects&rdquo;. But turned out this code results in compilation error - so no problem here, but probably this should have been clarified in the article.</p>
-
-<h2>Control Structure</h2>
-
-<p>Mandatory block - looks good to me.</p>
-
-<p>But the last example worries me:</p>
-
-<blockquote><p>This is an example of a common situation where code must guard against a sequence of error conditions. The code reads well if the successful flow of control runs down the page, eliminating error cases as they arise. Since error cases tend to end in return statements, the resulting code needs no else statements.</p>
-
-<pre><code>f, err := os.Open(name)
-if err != nil {
-     return err
-}
-d, err := f.Stat()
-if err != nil {
-     f.Close()
-     return err
-}
-codeUsing(f, d)
-</code></pre></blockquote>
-
-<p>That code is definitely not narrative, I will put some comments with kind of operation that is done:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>   <span class="c1">// get input</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>           <span class="c1">// check errors, guard</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">err</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="nx">d</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>        <span class="c1">// get additional input</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>           <span class="c1">// check for errors, again, guard</span>
-</span><span class='line'>    <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>             <span class="c1">// cleanups</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">err</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>           <span class="c1">// do something</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This way it is hard to understand and reason about.</p>
-
-<p>Why not just:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>         <span class="c1">// get input</span>
-</span><span class='line'><span class="nx">d</span> <span class="p">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>              <span class="c1">// get input</span>
-</span><span class='line'><span class="nx">result</span> <span class="p">=</span> <span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>  <span class="c1">// do something</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">IsErorr</span><span class="p">()</span> <span class="p">{</span>     <span class="c1">// handle errors</span>
-</span><span class='line'>    <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>             <span class="c1">// cleanup</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Of course <code>f</code>, <code>d</code> and <code>result</code> are just <code>Result</code>/<code>Either</code> monads, they can be either in normal or faulty state. Whenever you try to do anything on <code>Result</code> in faulty state, it will just return itself. But <code>Result</code> in normal state will proxy call to its contents and wrap it in another <code>Result</code> monad (normal or faulty - depends on if call was successful or not). Probably I am too critical about that, because here I used some patterns that are not part of the language itself, but yeah, I can&rsquo;t look at code that mixes guards and actions.</p>
-
-<p>Probably, somebody out there in go-lang world can tell me, is it common to use patterns like <code>Maybe</code>, <code>Result</code>, <code>NullObject</code> and so on in go-lang? Or everybody just go with simple code without any magic behind the scenes, and just do it like in the article&rsquo;s example? Feel free to ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<h2>For</h2>
-
-<p>Lets move on..</p>
-
-<blockquote><p>For strings, the range does more work for you, breaking out individual Unicode code points by parsing the UTF-8. Erroneous encodings consume one byte and produce the replacement rune U+FFFD. (The name (with associated builtin type) rune is Go terminology for a single Unicode code point. See the language specification for details.)</p></blockquote>
-
-<p>I really like that a term for this &ldquo;unicode minimal entity&rdquo; was invented. And after some while the name actually makes a lot of sense. And it sounds good.</p>
-
-<h2>Switch</h2>
-
-<p>That surprised me. Feels like assembler:</p>
-
-<blockquote><p>Although they are not nearly as common in Go as some other C-like languages, break statements can be used to terminate a switch early. Sometimes, though, it&rsquo;s necessary to break out of a surrounding loop, not the switch, and in Go that can be accomplished by putting a label on the loop and &ldquo;breaking&rdquo; to that label. This example shows both uses.</p>
-
-<pre><code>Loop:
-    for n := 0; n &lt; len(src); n += size {
-        switch {
-            case src[n] &lt; sizeOne:
-                if validateOnly {
-                    break
-                }
-                size = 1
-                update(src[n])
-
-            case src[n] &lt; sizeTwo:
-                if n+1 &gt;= len(src) {
-                    err = errShortInput
-                    break Loop
-                }
-                if validateOnly {
-                    break
-                }
-                size = 2
-                update(src[n] + src[n+1]&lt;&lt;shift)
-            }
-        }
-</code></pre></blockquote>
-
-<p>Not exactly the original assembler label, one only use it to mark (aka tag) the loop itself and use it to break out of it. Interesting concept, but something clicks in my head when I look at this.</p>
-
-<h2>Type switch</h2>
-
-<p>Good one, &ldquo;Switching on Type&rdquo;, (usually) a code smell, builtin into language. But still it has its own uses when used carefully.</p>
-
-<h2>Multiple return values</h2>
-
-<p>Why not tuples? If you just introduce tuples and destructuring, then you don&rsquo;t need multiple return values, only one return value - tuple itself.</p>
-
-<h2>Defer</h2>
-
-<p>This is a nice one. Allows to simplify previous example with files even more:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">f</span> <span class="p">=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>         <span class="c1">// get input</span>
-</span><span class='line'><span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>           <span class="c1">// deferred cleanup right after acquiring of `f`</span>
-</span><span class='line'><span class="nx">d</span> <span class="p">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Stat</span><span class="p">()</span>              <span class="c1">// get input</span>
-</span><span class='line'><span class="nx">result</span> <span class="p">=</span> <span class="nx">codeUsing</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>  <span class="c1">// do something</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Particularly interesting example with trace/untrace follows in the article.</p>
-
-<hr />
-
-<p>To be continued&hellip;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/5">&larr; Older</a>
@@ -2503,6 +2467,10 @@ codeUsing(f, d)
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests/">Build Your Own Testing Framework. Part 6: Test Suite Does Not Run All Tests!</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
       </li>
     
@@ -2528,10 +2496,6 @@ codeUsing(f, d)
     
       <li class="post">
         <a href="/blog/2016/09/30/highscore-kata/">HighScore Kata</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/09/18/meet-duck-type/">Meet Duck Type</a>
       </li>
     
   </ul>

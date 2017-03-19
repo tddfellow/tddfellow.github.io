@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Xunit | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/xunit/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2017-03-12T13:01:04+01:00</updated>
+  <updated>2017-03-19T07:05:43+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,495 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Build Your Own Testing Framework. Part 6: Test Suite Does Not Run All Tests!]]></title>
+    <link href="http://www.tddfellow.com/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests/"/>
+    <updated>2017-03-13T23:13:28+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests</id>
+    <content type="html"><![CDATA[<p>Welcome back to the new issue of &ldquo;Build Your Own Testing Framework&rdquo; series! When trying to implement better formatting, we have discovered that some of our test suites do not run all tests! Today we are going to fix that, and we will make sure that such test suite will fail if it didn&rsquo;t execute all tests.</p>
+
+<!-- more -->
+
+
+<p>This article is the sixth one of the series “Build Your Own Testing Framework” so make sure to stick around for next parts! Find all posts of these series <a href="/blog/categories/build-your-own-testing-framework/">here</a>.</p>
+
+<p>Shall we get started?</p>
+
+<h2>Verify All Tests Run</h2>
+
+<p>We will start from the <code>RunTestSuiteTest</code> and run the test suite with the single test. Then we are going to assert that for that the test with the name <code>testOk</code> has been reported as passing:</p>
+
+<pre><code class="javascript">// test/RunTestSuiteTest.js
+
+this.testItOutputsOkForThePassingTest = function () {
+    runTestSuite(function (t) {
+        this.testOk = function () {
+            t.assertTrue(true);
+        };
+    }, {reporter: reporter});
+
+    reporter.assertHasReportedPassingTest("testOk");
+};
+</code></pre>
+
+<p>If we run this test suite, we can see that only one test executes!</p>
+
+<pre><code>RunTestSuiteTest
+    testItCallsAllTestMethods
+
+Process finished with exit code 0
+</code></pre>
+
+<p>Oh, that is interesting. This test suite does not run. Upon investigating, it turns out, that <code>process.exit(0)</code> is being called during the <code>runTestSuite(...)</code> function run. That is because of the latest feature that we have implemented - &ldquo;exit with an appropriate exit code (zero for success, and one for failure).&rdquo; We should be able to fix that by providing the process spy in the options of the <code>runTestSuite</code> function that we are calling from the inside of the individual tests in the <code>RunTestSuiteTest</code> test suite. And we ought to alleviate this kind of mistake somehow - we need a mechanism that would alert us if not all tests have been run. Maybe something like <code>verifyAllTestsRun: true</code> option for the <code>runTestSuite</code>. For that let&rsquo;s write a test:</p>
+
+<pre><code class="javascript">this.testVerifyAllTestsRun = function () {
+    t.assertThrow("Expected all tests to run", function () {
+
+        runTestSuite(function SuiteWithTwoTests(t) {
+
+            this.testWithRunTestSuite = function () {
+                runTestSuite(function (t) {
+                    this.testOne = function () {};
+                }, {reporter: reporter});
+            };
+
+            this.testThatShouldAlsoRun = function () {};
+
+        }, {reporter: reporter,
+            process: process,
+            verifyAllTestsRun: true});
+
+    });
+};
+</code></pre>
+
+<p>That might be a bit complex at first. Let&rsquo;s take a closer look how this test is supposed to work:</p>
+
+<ol>
+<li>First of all, we do assert that there was an assertion failure about all tests required to run.</li>
+<li>Inside of the action for this assertion we create and run the new test suite with two tests:
+
+<ul>
+<li>test with the <code>runTestSuite</code> without process spy provided</li>
+<li>empty test that should also execute</li>
+</ul>
+</li>
+</ol>
+
+
+<p>If we run this test, it will pass. That is unexpected because we wanted it to fail. Apparently, most inner <code>runTestSuite</code> is doing <code>process.exit(0)</code>.</p>
+
+<p>For that to work, we will need to be able to provide a hook into <code>process.exit(code)</code> function. For that, we would need to create a <code>SimpleProcess</code> class, that allows installation of such hooks. Let&rsquo;s test-drive it!</p>
+
+<h3><code>process.exit</code> with hooks</h3>
+
+<p>First, we should start from the normal behavior without any hooks:</p>
+
+<pre><code class="javascript">// test/SimpleProcessTest.js
+var runTestSuite = require("../src/TestingFramework");
+var SimpleProcess = require("../src/TestingFramework").SimpleProcess;
+var ProcessSpy = require("./ProcessSpy");
+
+runTestSuite(function SimpleProcessTest(t) {
+    this.testWithoutHooks = function () {
+        var globalProcess = new ProcessSpy();
+        var process = new SimpleProcess(globalProcess);
+
+        process.exit(0);
+
+        t.assertEqual(0, globalProcess.hasExitedWithCode);
+    };
+});
+</code></pre>
+
+<p>When running this test, we will get a failure about <code>SimpleProcess</code> being undefined. So let&rsquo;s define it:</p>
+
+<pre><code class="javascript">// src/TestingFramework.js
+
+// ...
+// define the class itself
+function SimpleProcess(globalProcess) {
+
+}
+
+// ..
+// and don't forget to export it
+module.exports.SimpleProcess = SimpleProcess;
+</code></pre>
+
+<p>If we run our test suite now, we will get an error <code>TypeError: process.exit is not a function</code>. To fix that failure we will have to define the <code>exit(code)</code> method on our newly created class <code>SimpleProcess</code>:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    this.exit = function (code) {
+
+    };
+}
+</code></pre>
+
+<p>After doing that we will get an assertion failure <code>Error: Expected to equal 0, but got: null</code>, as expected. To make the test pass, it would be enough to call <code>globalProcess.exit(0)</code>:</p>
+
+<pre><code class="javascript">this.exit = function (code) {
+    globalProcess.exit(0);
+};
+</code></pre>
+
+<p>If we run our test suite now, we will get no failures. That is great! Now, we can see that <code>globalProcess.exit(0)</code> is probably not exactly what we want to have there. We ought to pass the <code>code</code> parameter to the <code>exit</code> function. To test-drive this properly, we will have to triangulate, i.e.: add another test with the different value of the <code>code</code> parameter:</p>
+
+<pre><code class="javascript">this.testWithoutHooks_andDifferentExitCode = function () {
+    var globalProcess = new ProcessSpy();
+    var process = new SimpleProcess(globalProcess);
+
+    process.exit(1);
+
+    t.assertEqual(1, globalProcess.hasExitedWithCode);
+};
+</code></pre>
+
+<p>That fails as expected: <code>Error: Expected to equal 1, but got: 0</code>. To make it pass we can either write some weird &ldquo;if&rdquo; statement or we could pass the <code>code</code> parameter to the <code>globalProcess.exit</code> function. The second option is simpler. According to the third rule of test-driven development, we should go for it:</p>
+
+<pre><code class="javascript">this.exit = function (code) {
+    globalProcess.exit(code);
+};
+</code></pre>
+
+<p>That change makes our test suite pass. We probably should refactor the test suite to reduce the level of the duplication by extracting common variables from the tests:</p>
+
+<pre><code class="javascript">runTestSuite(function SimpleProcessTest(t) {
+    var globalProcess = new ProcessSpy();
+    var process = new SimpleProcess(globalProcess);
+
+    this.testWithoutHooks = function () {
+        process.exit(0);
+
+        t.assertEqual(0, globalProcess.hasExitedWithCode);
+    };
+
+    this.testWithoutHooks_andDifferentExitCode = function () {
+        process.exit(1);
+
+        t.assertEqual(1, globalProcess.hasExitedWithCode);
+    };
+});
+</code></pre>
+
+<p>At that point, we should move on to tests for the hook installation functionality. Because right now we need only at most one hook we will not support multiple hooks at the same time - only one:</p>
+
+<pre><code class="javascript">this.testCanInstallOneHook = function () {
+    var aSpy = t.spy();
+
+    process.installHook(aSpy);
+    process.exit(0);
+
+    aSpy.assertCalled();
+};
+</code></pre>
+
+<p>When we run this test, it fails because <code>installHook</code> function is not defined: <code>TypeError: process.installHook is not a function</code>. So we should define it:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    // ..
+    this.installHook = function (aHook) {
+
+    };
+}
+</code></pre>
+
+<p>Upon running these tests, we get <code>Error: Expected to be called</code> because we didn&rsquo;t call this hook yet. The simplest way to make it pass is to just call the hook from the <code>installHook</code> function:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    // ...
+    this.installHook = function (aHook) {
+        aHook();
+    };
+}
+</code></pre>
+
+<p>While that will make the tests pass it is not the behavior that we are after. To drive out the correct behavior, we ought to check that the function is being called only after <code>process.exit(..)</code>, not earlier. For that we will need to have a sanity-check assertion:</p>
+
+<pre><code class="javascript">this.testCanInstallOneHook = function () {
+    var aSpy = t.spy();
+
+    process.installHook(aSpy);
+    aSpy.assertNotCalled();
+
+    process.exit(0);
+
+    aSpy.assertCalled();
+};
+</code></pre>
+
+<p>That fails as expected with the error <code>Error: Expected not to be called</code>. To make it pass we need to store the function in the variable and call it from the <code>process.exit(..)</code>:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    var hook = null;
+
+    this.exit = function (code) {
+        if (hook !== null)
+            hook();
+
+        globalProcess.exit(code);
+    };
+
+    this.installHook = function (aHook) {
+        hook = aHook;
+    };
+}
+</code></pre>
+
+<p>All the tests pass now! Finally, we want to be able to uninstall the hook, so let&rsquo;s write the test for it:</p>
+
+<pre><code class="javascript">this.testCanUninstallTheHook = function () {
+    var aSpy = t.spy();
+
+    process.installHook(aSpy);
+    process.uninstallHook();
+
+    process.exit(0);
+
+    aSpy.assertNotCalled();
+};
+</code></pre>
+
+<p>To make it work it is enough to introduce this function and set <code>hook</code> variable back to <code>null</code> in it:</p>
+
+<pre><code class="javascript">function SimpleProcess(globalProcess) {
+    // ...
+    this.uninstallHook = function () {
+        hook = null;
+    };
+}
+</code></pre>
+
+<p>And all the tests will pass. Now we, also, want to replace the default value for the <code>options.process</code> option with the instance of <code>SimpleProcess</code> object. And all the tests should work as they were working before:</p>
+
+<pre><code class="javascript">var simpleProcess = new SimpleProcess(global.process);
+
+function TestSuiteRunContext(testSuiteConstructor, options) {
+    // ...
+
+    var process = options.process || simpleProcess;
+    // instead of just "global.process"
+
+    // ...
+}
+</code></pre>
+
+<h3>Installing the &ldquo;verify all tests run&rdquo; hook</h3>
+
+<p>Now, we can get back to our &ldquo;verify all tests run&rdquo; test. It still doesn&rsquo;t fail as expected, so we need to install the hook, count all tests, count tests that had already run and compare them in the hook:</p>
+
+<pre><code class="javascript">function TestSuiteRunContext(testSuiteConstructor, options) {
+    // ...
+    var verifyAllTestsRun = options.verifyAllTestsRun || false;
+    var testCount = 0;
+    var testRun = 0;
+
+    this.invoke = function () {
+        if (verifyAllTestsRun)
+            installVerifyAllTestsRunHook();  // &lt;---
+
+        reportTestSuite();
+        countAllTests();                     // &lt;---
+        runAllTests();
+        finishTestRun();
+    };
+
+    function installVerifyAllTestsRunHook() {
+        simpleProcess.installHook(function () {
+            if (testRun &lt; testCount) {
+                throw new Error("Expected all tests to run");
+            }
+        });
+    }
+
+    // ...
+
+    function countAllTests() {
+        for (var testName in createTestSuite())
+            if (testName.match(/^test/))
+                testCount++;
+    }
+
+    // ...
+
+    function handleTest(testName) {
+        testRun++;                            // &lt;---
+        reportTest(testName);
+        runTest(createTestSuite(), testName);
+    }
+}
+</code></pre>
+
+<p>At this point, this throws an error <code>Expected all tests to run</code> and finishes the test fully without reaching our <code>assertThrow(..)</code> assertion. That happens because we catch this error in the function <code>runTest</code>, where we mark the test as failed, log the error and ignore the error object itself from there. One way to solve this problem is to have a particular error, that can propagate up the stack:</p>
+
+<pre><code class="javascript">function installVerifyAllTestsRunHook() {
+    simpleProcess.installHook(function () {
+        if (testRun &lt; testCount) {
+            var error = new Error("Expected all tests to run");
+            error.bubbleUp = true;
+            throw error;
+        }
+    });
+}
+
+// ...
+
+function runTest(testSuite, testName) {
+    try {
+        testSuite[testName]();
+    } catch (error) {
+        if (error.bubbleUp) throw error;  // &lt;---
+        if (!silenceFailures) console.log(error);
+        status.markAsFailed();
+    }
+}
+</code></pre>
+
+<p>Now our current test is passing, and the next test is failing with the error <code>Expected all tests to run</code>. That happens because we have not uninstalled the hook as soon as it has triggered. Let&rsquo;s do that:</p>
+
+<pre><code class="javascript">function installVerifyAllTestsRunHook() {
+    simpleProcess.installHook(function () {
+        if (testRun &lt; testCount) {
+            simpleProcess.uninstallHook();   // &lt;---
+
+            var error = new Error("Expected all tests to run");
+            error.bubbleUp = true;
+            throw error;
+        }
+    });
+}
+</code></pre>
+
+<p>That makes the next test run, succeed and exit immediately after that with error code zero. Let&rsquo;s see what will happen if we put <code>verifyAllTestsRun: true</code> on the top test suite here:</p>
+
+<pre><code class="javascript">runTestSuite(function RunTestSuiteTest(t) {
+    // ...
+}, {verifyAllTestsRun: true});
+</code></pre>
+
+<p>That doesn&rsquo;t work because we re-install different hook inside of this test and as soon as this test finishes, we uninstall it. So we have two ways out of this situation: allow multiple hooks, or move that single test to its own test suite file. I think the second options is much simpler. Also, we will add the test for the negative case, where all tests run correctly (when we provide proper process spy):</p>
+
+<pre><code class="javascript">// test/VerifyAllTestsRunTest.js
+var runTestSuite = require("../src/TestingFramework");
+var ReporterSpy = require("./ReporterSpy");
+var ProcessSpy = require("./ProcessSpy");
+
+runTestSuite(function VerifyAllTestsRunTest(t) {
+    var reporter = new ReporterSpy(t);
+    var process = new ProcessSpy(t);
+
+    this.testVerifyAllTestsRun = function () {
+        t.assertThrow("Expected all tests to run", function () {
+
+            runTestSuite(function SuiteWithTwoTests(t) {
+
+                this.testWithRunTestSuite = function () {
+                    runTestSuite(function (t) {
+                        this.testOne = function () {};
+                    }, {reporter: reporter});
+                };
+
+                this.testThatShouldAlsoRun = function () {};
+
+            }, {reporter: reporter,
+                process: process,
+                verifyAllTestsRun: true});
+
+        });
+    };
+
+    this.testVerifyAllTestsRun_withoutFailure = function () {
+        t.assertNotThrow(function () {
+
+            runTestSuite(function SuiteWithTwoTests(t) {
+
+                this.testWithRunTestSuite = function () {
+                    runTestSuite(function (t) {
+                        this.testOne = function () {};
+                    }, {reporter: reporter,
+                        process: process});
+                };
+
+                this.testThatShouldAlsoRun = function () {};
+
+            }, {reporter: reporter,
+                process: process,
+                verifyAllTestsRun: true});
+
+        });
+    };
+});
+</code></pre>
+
+<p>And this new test suite passes as expected. Just to double-check that these tests verify anything, we can break them (change expected error message and change <code>assertNotThrow</code> to <code>assertThrow</code>) and see if there is a failure and if it looks as expected:</p>
+
+<pre><code class="javascript">// was: t.assertThrow("some error", ...);
+t.assertThrow("some error", function () {
+    // ...
+});
+// =&gt; Error: Expected to equal some error,
+//    but got: Expected all tests to run
+
+// was: t.assertNotThrow(...);
+t.assertThrow("some error", function () {
+    // ...
+});
+// =&gt; Error: Expected to throw an error,
+//    but nothing was thrown
+</code></pre>
+
+<p>And it fails as expected, which means that our refactored tests still work as they should.</p>
+
+<blockquote><p>We have just applied a neat technique here: whenever we do a major refactoring in tests, we need to make sure they are still functioning correctly. For that, we break every single one of them (by changing the assertion or breaking the production code). Then we see if they fail as we expect them to. When they don&rsquo;t, we know that refactoring didn&rsquo;t quite work.</p></blockquote>
+
+<h3>Fixing test suites to run all tests</h3>
+
+<p>Now we can go back to the <code>RunTestSuiteTest</code> and see if it works as expected without that test. And it does: <code>Error: Expected all tests to run</code>. To fix that we need to provide a process spy in every inner call to <code>runTestSuite</code>. For that we will first extract <code>{reporter: reporter}</code> as a common variable of the test suite:</p>
+
+<pre><code class="javascript">var options = {reporter: reporter};
+
+// ...
+// all the inner calls to "runTestSuite":
+runTestSuite(function(t) {
+    // ...
+}, options);
+</code></pre>
+
+<p>And to make the error go away, we now can create a process spy and provide it through options:</p>
+
+<pre><code class="javascript">var process = new ProcessSpy(t);
+var options = {
+    reporter: reporter,
+    process: process
+};
+</code></pre>
+
+<p>If we run tests now, they all pass. And we can see that they all execute. Now we just need to double-check that all tests, that have inner calls to <code>runTestSuite</code> have <code>verifyAllTestsRun</code> option enabled. The only other test suite is the <code>FailureTest</code>. Adding the option does not produce a failure because this test suite already uses process spy in all inner calls to <code>runTestSuite</code>.</p>
+
+<h2>Conclusion</h2>
+
+<p>Today we learned that it is tricky to work with <code>process.exit</code> or any function that can exit our program in the middle of the test. Such functions need to be mocked out completely inside of the tests. Also, we learned that it is possible to make sure we don&rsquo;t forget to do that. That is quite important because, if we do forget, everything runs smoothly, and we don&rsquo;t know that we made a mistake.</p>
+
+<p>There is still a lot to go through. In a few next episodes we will:</p>
+
+<ul>
+<li>Report OK and FAIL for each test;</li>
+<li>Output carefully formatted failures to the STDERR;</li>
+<li>Enable our testing framework to run multiple test suite files at once;</li>
+<li>Enable our testing framework to run in a browser (it is javascript after all).</li>
+</ul>
+
+
+<p>See you reading the next exciting article of the series: &ldquo;Formatting the Output&rdquo;!</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Build Your Own Testing Framework. Part 5]]></title>
@@ -2413,541 +2902,6 @@ var assertions = {
 <p>The code is available on Github: <a href="https://github.com/waterlink/BuildYourOwnTestingFrameworkPart2">https://github.com/waterlink/BuildYourOwnTestingFrameworkPart2</a></p>
 
 <p>Now that we have unit-tested some basic assertions, we should unit-test our testing framework test runner: <code>runTestSuite</code> function. This will be covered in next series of &ldquo;Build Your Own Testing Framework&rdquo;. Stay tuned!</p>
-
-<h2>Thanks!</h2>
-
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Build Your Own Testing Framework]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/07/15/build-your-own-testing-framework/"/>
-    <updated>2016-07-15T08:00:06+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/07/15/build-your-own-testing-framework</id>
-    <content type="html"><![CDATA[<p>Today we are going to test-drive the testing framework without any external testing framework.
-This will be done through test-driving a simple kata (FizzBuzzKata). For example:</p>
-
-<ul>
-<li>every time we expect a test to fail and it doesn&rsquo;t, this is a failing test for our testing framework, that we will be fixing,</li>
-<li>every time we expect a test to pass and it doesn&rsquo;t, this is another failing test for our testing framework, that we will be fixing.</li>
-</ul>
-
-
-<p>For practical reasons, today we are going to use concrete programming language instead of pseudo-code - javascript. Except for small details, that we will point out, the techniques shown here are language-agnostic.</p>
-
-<p>This article is only first one of the series &ldquo;Build Your Own Testing Framework&rdquo;, so make sure to stick around for next parts! All articles of these series can be found here: <a href="http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/.">http://www.tddfellow.com/blog/categories/build-your-own-testing-framework/.</a></p>
-
-<p>Shall we begin?</p>
-
-<h2>FizzBuzzKata</h2>
-
-<p>Given the number,</p>
-
-<ul>
-<li>return <code>Fizz</code> when the number is divisible by 3,</li>
-<li>return <code>Buzz</code> when the number is divisible by 5,</li>
-<li>return <code>FizzBuzz</code> when the number is divisible by 3 and 5,</li>
-<li>return string representation of number otherwise.</li>
-</ul>
-
-
-<h2>Writing your first test</h2>
-
-<p>How do we write our first test, when we don&rsquo;t have a testing framework and we want to create one? - It seems, that we have to design how the test should like in our brand new testing framework.</p>
-
-<p>I personally, would go with the xUnit-like design, since it is relatively simple. Given this, we might write our first test and it will look something like that:</p>
-
-<pre><code class="javascript">// test/FizzBuzzKataTest.js
-
-function FizzBuzzKataTest() {
-    this.testNormalNumberIsReturned = function() {
-        this.assertTrue("1" === fizzBuzz(1));
-    };
-}
-</code></pre>
-
-<p>This test should fail, because function <code>fizzBuzz</code> is not defined, but it doesn&rsquo;t fail, since function <code>testNormalNumberIsReturned</code> is never called. In fact, the object with <code>FizzBuzzKataTest</code> is never being created.</p>
-
-<p>Easiest way to solve that:</p>
-
-<pre><code class="javascript">// test/FizzBuzzKataTest.js
-
-function FizzBuzzKataTest() { ... }
-
-var test = new FizzBuzzKataTest();
-test.testNormalNumberIsReturned();
-</code></pre>
-
-<p>If we run this code with <code>node</code>:</p>
-
-<pre><code class="bash">node test/FizzBuzzKataTest.js
-</code></pre>
-
-<p>We will get the expected error:</p>
-
-<pre><code>/path/to/project/test/FizzBuzzKataTest.js:3
-        this.assertTrue("1" === fizzBuzz(1));
-                               ^
-
-ReferenceError: fizzBuzz is not defined
-</code></pre>
-
-<p>So, let&rsquo;s define this function:</p>
-
-<pre><code class="javascript">// test/FizzBuzzKataTest.js
-
-function FizzBuzzKataTest() { ... }
-
-function fizzBuzz() {}
-</code></pre>
-
-<p>If we run our test again, we will get the following error:</p>
-
-<pre><code>/path/to/project/test/FizzBuzzKataTest.js:3
-        this.assertTrue("1" === fizzBuzz(1));
-             ^
-
-TypeError: this.assertTrue is not a function
-</code></pre>
-
-<p>Clearly, to fix it we need to define <code>assertTrue</code> on <code>FizzBuzzKataTest</code> object. Obviously, we do not want our user to define all their assertion for every test suite. This means, that we want to define it on <code>FizzBuzzKataTest</code> object outside of the definition of <code>FizzBuzzKataTest</code>.</p>
-
-<p>There are two ways to go about it:</p>
-
-<ul>
-<li>inheritance: make <code>FizzBuzzKataTest</code> inherit from some other object function <code>assertTrue</code>, or</li>
-<li>composition: make <code>FizzBuzzKataTest</code> accept a special object with function <code>assertTrue</code> defined on it.</li>
-</ul>
-
-
-<p>I would like to go with composition method since it gives us more flexibility in the long run:</p>
-
-<pre><code class="javascript">function FizzBuzzKataTest(t) { ... }
-</code></pre>
-
-<p>and the usage of <code>assertTrue</code> has to change appropriately:</p>
-
-<pre><code class="javascript">    t.assertTrue("1" === fizzBuzz(1));
-</code></pre>
-
-<p>and <code>t</code> has to be created and passed in correctly:</p>
-
-<pre><code class="javascript">function FizzBuzzKataTest(t) { ... }
-
-function fizzBuzz(number) {}
-
-var assertions = {
-    assertTrue: function(condition) {}
-};
-
-var test = new FizzBuzzKataTest(assertions);
-</code></pre>
-
-<p>If we run the test suite again, we will not get any failure anymore. But we were expecting <code>assertTrue</code> to fail, so let&rsquo;s make it fail:</p>
-
-<pre><code class="javascript">    assertTrue: function(condition) {
-        throw new Error("Expected to be true, but was false");
-    }
-</code></pre>
-
-<p>When we run the test suite, we get:</p>
-
-<pre><code>/path/to/project/test/FizzBuzzKataTest.js:11
-        throw new Error("Expected to be true, but got false");
-        ^
-
-Error: Expected to be true, but got false
-</code></pre>
-
-<p>Now, let&rsquo;s customize the error message a bit:</p>
-
-<pre><code class="javascript">    this.testNormalNumberIsReturned = function() {
-        t.assertTrue("1" === fizzBuzz(1), "Expected to equal " + "1" + ", but got: " + fizzBuzz(1));
-    }
-
-// ...
-
-    assertTrue: function(condition, message) {
-        throw new Error(message || "Expected to be true, but got false");
-    }
-</code></pre>
-
-<p>When running this, we are getting the expected error:</p>
-
-<pre><code>/path/to/project/test/FizzBuzzKataTest.js:11
-        throw new Error(message || "Expected to be true, but got false");
-        ^
-
-Error: Expected to equal 1, but got: undefined
-</code></pre>
-
-<p>This looks better now. Let&rsquo;s fix the error now by implementing the simplest thing that could work:</p>
-
-<pre><code class="javascript">function fizzBuzz(number) {
-    return "1";
-}
-</code></pre>
-
-<p>And as we run our test suite we get:</p>
-
-<pre><code>/path/to/project/test/FizzBuzzKataTest.js:13
-        throw new Error(message || "Expected to be true, but got false");
-        ^
-
-Error: Expected to equal 1, but got: 1
-</code></pre>
-
-<p>Oh, it should have passed the test. I know why it didn&rsquo;t: we throw this error unconditionally, let&rsquo;s add an appropriate <code>if</code> statement to <code>assertTrue</code> function:</p>
-
-<pre><code class="javascript">    assertTrue: function(condition, message) {
-        if (!condition) {
-            throw new Error(...);
-        }
-    }
-</code></pre>
-
-<p>If we run this code, it does not fail. That was our first green state - it took as awhile to get here. The reason for this is that we are not only test-driving <code>FizzBuzzKata</code>, additionally, we are writing a feature test for a non-existing testing framework. Now that we are green, we should think about refactoring, i.e.: making the structure of our code right.</p>
-
-<p>Obviously, we should move our testing framework code outside of the test suite file. Probably, somewhere in <code>src/TestingFramework.js</code>. For that, we need to first parametrize <code>FizzBuzzKataTest</code> and extract the function to run the test suite.</p>
-
-<p>Parametrize:</p>
-
-<pre><code class="javascript">var testSuiteConstructor = FizzBuzzKataTest;
-var testSuite = new testSuiteConstructor(assertions);
-testSuite.testNormalNumberIsReturned();
-</code></pre>
-
-<p>and extract method:</p>
-
-<pre><code class="javascript">function runTestSuite(testSuiteConstructor) {
-    var testSuite = new testSuiteConstructor(assertions);
-    testSuite.testNormalNumberIsReturned();
-}
-
-var testSuiteConstructor = FizzBuzzKataTest;
-runTestSuite(testSuiteConstructor);
-</code></pre>
-
-<p>and inline the variable <code>testSuiteConstructor</code>:</p>
-
-<pre><code class="javascript">runTestSuite(FizzBuzzKataTest);
-</code></pre>
-
-<p>Now it is time to move testing code to <code>src/TestingFramework.js</code>:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-var assertions = {
-    assertTrue: function (condition, message) {
-        if (!condition) {
-            throw new Error(message || "Expected to be true, but got false");
-        }
-    }
-};
-
-function runTestSuite(testSuiteConstructor) {
-    var testSuite = new testSuiteConstructor(assertions);
-    testSuite.testNormalNumberIsReturned();
-}
-</code></pre>
-
-<p>And to be able to require <code>runTestSuite</code> function:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-var assertions = { ... };
-
-function runTestSuite(testSuiteConstructor) { ... }
-
-module.exports = runTestSuite;
-</code></pre>
-
-<p>And, finally, let&rsquo;s use that from our test suite:</p>
-
-<pre><code class="javascript">// test/FizzBuzzKataTest.js
-
-var runTestSuite = require("../src/TestingFramework");
-
-function FizzBuzzKataTest(t) { ... }
-
-function fizzBuzz(number) { ... }
-
-runTestSuite(FizzBuzzKataTest);
-</code></pre>
-
-<p>If we run the test suite again, everything should pass. Somehow, I don&rsquo;t feel comfortable now, let&rsquo;s try to break the test suite and see if it will fail as expected:</p>
-
-<pre><code class="javascript">function fizzBuzz(number) {
-    return "2";  // &lt;-- "1" was changed to "2" here
-}
-</code></pre>
-
-<p>And run tests:</p>
-
-<pre><code>/path/to/project/src/TestingFramework.js:4
-            throw new Error(message || "Expected to be true, but got false");
-            ^
-
-Error: Expected to equal 1, but got: 2
-</code></pre>
-
-<p>Yes, it still works as expected. We have just introduced a Mutation to our code, to see if it is still tested properly. Let&rsquo;s undo the Mutation and see the test still pass. And it does.</p>
-
-<p>If you look closely now, it should be possible to inline <code>FizzBuzzKataTest</code> definition as an argument of <code>runTestSuite</code> call:</p>
-
-<pre><code class="javascript">var runTestSuite = require(...);
-
-function fizzBuzz(number) { ... }
-
-runTestSuite(function (t) { ... });
-</code></pre>
-
-<p>And if we run our test suite, it still works. Just to check, that we are still good, let&rsquo;s repeat our Mutation from the previous step. It should still fail as expected. And it does. Undo the mutation and the test is still passing. Great.</p>
-
-<p>I think we are done with Refactoring step, for now, let&rsquo;s get back to writing another failing test.</p>
-
-<h2>Writing the second test</h2>
-
-<pre><code class="javascript">    this.testAnotherNormalNumberIsReturned = function() {
-        t.assertTrue("2" === fizzBuzz(2), "Expected to equal " + "2" + ", but got: " + fizzBuzz(2));
-    };
-</code></pre>
-
-<p>If we run these tests, they do not fail. This is strange, let&rsquo;s look at <code>runTestSuite</code> function again:</p>
-
-<pre><code class="javascript">function runTestSuite(testSuiteConstructor) {
-    var testSuite = new testSuiteConstructor(assertions);
-    testSuite.testNormalNumberIsReturned();
-}
-</code></pre>
-
-<p>Great, it just runs one specific function, we should probably run all functions starting from <code>test</code> instead:</p>
-
-<pre><code class="javascript">function runTestSuite(testSuiteConstructor) {
-    var testSuite = new testSuiteConstructor(assertions);
-
-    for (var testName in testSuite) {
-        if (testName.match(/^test/)) {
-            testSuite[testName]();
-        }
-    }
-}
-</code></pre>
-
-<p><em>REMARK: this code is Javascript specific. Other programming languages will have their own way of iterating over the function/method list and calling a function by its name. Usually, it is some sort of reflection for compiled languages and meta-programming features for interpreted languages.</em></p>
-
-<p>If we run tests now, we get the expected failure:</p>
-
-<pre><code>/path/to/project/src/TestingFramework.js:4
-            throw new Error(message || "Expected to be true, but got false");
-            ^
-
-Error: Expected to equal 2, but got: 1
-</code></pre>
-
-<p>If we try to change <code>return "1"</code> to <code>return "2"</code>, of course this test will pass, but the other will fail:</p>
-
-<pre><code>/path/to/project/src/TestingFramework.js:4
-            throw new Error(message || "Expected to be true, but got false");
-            ^
-
-Error: Expected to equal 1, but got: 2
-</code></pre>
-
-<p>This is great for couple of reasons:</p>
-
-<ul>
-<li>It validates, that our change to how <code>test*</code> functions are discovered is correct, and</li>
-<li>We have to have a bit smarter implementation to pass both tests now:</li>
-</ul>
-
-
-<pre><code class="javascript">function fizzBuzz(number) {
-    return number.toString();
-}
-</code></pre>
-
-<p>And if we run the tests, they pass. Now, that we are in Green state, we should start refactoring. Have you noticed the duplication already?</p>
-
-<pre><code class="javascript">t.assertTrue("1" === fizzBuzz(1), "Expected to equal " + "1" + ", but got: " + fizzBuzz(1));
-
-// and:
-
-t.assertTrue("2" === fizzBuzz(2), "Expected to equal " + "2" + ", but got: " + fizzBuzz(2));
-</code></pre>
-
-<p>Extracting <code>"1"</code> and <code>"2"</code> as variable <code>expected</code>, and <code>fizzBuzz(1)</code> and <code>fizzBuzz(2)</code> as variable <code>actual</code>, makes these 2 lines identical:</p>
-
-<pre><code class="javascript">this.testNormalNumberIsReturned = function () {
-    var expected = "1";
-    var actual = fizzBuzz(1);
-    t.assertTrue(expected === actual, "Expected to equal " + expected + ", but got: " + actual);
-};
-
-this.testAnotherNormalNumberIsReturned = function() {
-    var expected = "2";
-    var actual = fizzBuzz(2);
-    t.assertTrue(expected === actual, "Expected to equal " + expected + ", but got: " + actual);
-};
-</code></pre>
-
-<p>Specifically, this is identical:</p>
-
-<pre><code class="javascript">t.assertTrue(expected === actual, "Expected to equal " + expected + ", but got: " + actual);
-</code></pre>
-
-<p>This sounds like <code>t.assertEqual(expected, actual)</code> to me. So let&rsquo;s extract it:</p>
-
-<pre><code class="javascript">// src/TestingFramework.js
-
-var assertions = {
-    assertTrue: function(condition, message) { ... },
-
-    assertEqual: function(expected, actual) {
-        this.assertTrue(
-          expected === actual,
-          "Expected to equal " + expected + ", but got: " + actual
-        );
-    }
-}
-</code></pre>
-
-<p>Now, let&rsquo;s use it and inline our <code>expected</code> and <code>actual</code> variables:</p>
-
-<pre><code class="javascript">this.testNormalNumberIsReturned = function () {
-    t.assertEqual("1", fizzBuzz(1));
-};
-
-this.testAnotherNormalNumberIsReturned = function() {
-    t.assertEqual("2", fizzBuzz(2));
-};
-</code></pre>
-
-<p>This looks much more readable. If we run tests, they still pass. If we try to break our code by using some Mutation, the tests fail as expected. Great, our refactoring was a success!</p>
-
-<p>Let&rsquo;s finish test-driving our <code>fizzBuzz</code> function.</p>
-
-<h2>Test-Driving Fizz Buzz Kata</h2>
-
-<p>First test for <code>Fizz</code> case:</p>
-
-<pre><code class="javascript">// test:
-this.testFizzIsReturned = function () {
-    t.assertEqual("Fizz", fizzBuzz(3));
-};
-
-// Error: Expected to equal Fizz, but got: 3
-
-// implementation:
-function fizzBuzz(number) {
-    if (number === 3) return "Fizz";
-    return number.toString();
-}
-</code></pre>
-
-<p>This is pretty stupid implementation, but it works for that one tests, so let&rsquo;s write the test, that will break this implementation and force us to write real <code>if</code> condition:</p>
-
-<pre><code class="javascript">// test:
-this.testFizzIsReturnedForDifferentNumber = function () {
-    t.assertEqual("Fizz", fizzBuzz(6));
-};
-
-// Error: Expected to equal Fizz, but got: 6
-
-// implementation:
-function fizzBuzz(number) {
-    if (number % 3 === 0) return "Fizz";
-    return number.toString();
-}
-</code></pre>
-
-<p>This technique is called Triangulation:</p>
-
-<ul>
-<li>the first test is to force us to write some <code>if</code> statement with a correct body,</li>
-<li>second is to force us to make the condition right.</li>
-<li>If we had an <code>else</code> clause, we would have had another test to make that part right.</li>
-</ul>
-
-
-<p>OK, that looks like a right implementation for <code>Fizz</code>, let&rsquo;s write the test for <code>Buzz</code> now:</p>
-
-<pre><code class="javascript">// test:
-this.testBuzzIsReturned = function () {
-    t.assertEqual("Buzz", fizzBuzz(5));
-};
-
-// Error: Expected to equal Buzz, but got: 5
-
-// stupid implementation:
-function fizzBuzz(number) {
-    if (number === 5) return "Buzz";
-    if (number % 3 === 0) return "Fizz";
-    return number.toString();
-}
-
-// Triangulation:
-this.testBuzzIsReturnedForDifferentNumber = function () {
-    t.assertEqual("Buzz", fizzBuzz(10));
-};
-
-// Error: Expected to equal Buzz, but got: 10
-
-// correct implementation:
-function fizzBuzz(number) {
-    if (number % 5 === 0) return "Buzz";
-    if (number % 3 === 0) return "Fizz";
-    return number.toString();
-}
-</code></pre>
-
-<p>And finally let&rsquo;s implement final requirement <code>FizzBuzz</code>:</p>
-
-<pre><code class="javascript">// test:
-this.testFizzBuzzIsReturned = function () {
-    t.assertEqual("FizzBuzz", fizzBuzz(15));
-};
-
-// Error: Expected to equal FizzBuzz, but got: Buzz
-
-// stupid implementation:
-function fizzBuzz(number) {
-    if (number === 15) return "FizzBuzz";
-    if (number % 5 === 0) return "Buzz";
-    if (number % 3 === 0) return "Fizz";
-    return number.toString();
-}
-
-// Triangulation:
-this.testFizzBuzzIsReturnedForDifferentNumber = function () {
-    t.assertEqual("FizzBuzz", fizzBuzz(30));
-};
-
-// Error: Expected to equal FizzBuzz, but got: Buzz
-
-// correct implementation:
-function fizzBuzz(number) {
-    if (number % 15 === 0) return "FizzBuzz";
-    if (number % 5 === 0) return "Buzz";
-    if (number % 3 === 0) return "Fizz";
-    return number.toString();
-}
-</code></pre>
-
-<p>I think we are done with the implementation. <code>FizzBuzzKata</code> has an extended set of requirements, but they are out of the scope of this article. These requirements force us to introduce Strategy pattern and stop using this unmaintainable chain of <code>if</code> statements.</p>
-
-<p>Refactoring this code to Strategy pattern is left as an exercise for the reader.</p>
-
-<h2>Bottom Line</h2>
-
-<p>Congratulations! Using <code>FizzBuzzKata</code> we have test-driven bare-bones testing framework to the point, that we can do Test-Driven Development for a simple Kata. And all that without having any testing framework in place.</p>
-
-<p>The code is available on Github: <a href="https://github.com/waterlink/BuildYourOwnTestingFrameworkPart1">https://github.com/waterlink/BuildYourOwnTestingFrameworkPart1</a></p>
-
-<p>Now, with this minimal framework in place, it should be possible to unit-test the framework itself, so that we can support more use cases. This will be covered in next series of &ldquo;Build Your Own Testing Framework&rdquo;. Stay tuned!</p>
 
 <h2>Thanks!</h2>
 
