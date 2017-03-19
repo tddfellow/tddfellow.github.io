@@ -2,7 +2,7 @@
 layout: post
 title: "Build Your Own Testing Framework. Part 6: Test Suite does not Run All Tests!"
 date: 2017-03-13 23:13:28 +0100
-description: "Welcome back to the new issue of "Build Your Own Testing Framework" series! When trying to implement better formatting, we have discovered that some of our test suites do not run all tests! Today we are going to fix that, and we will make sure that such test suite will fail if it didn't execute all tests."
+description: "When trying to implement better formatting, we have discovered that some of our test suites do not run all tests! Today we are going to fix that, and we will make sure that such test suite will fail if it didn't execute all tests."
 comments: true
 categories:
 - build-your-own-testing-framework
@@ -49,7 +49,7 @@ RunTestSuiteTest
 Process finished with exit code 0
 ```
 
-Oh, that is interesting. This test suite does not run Upon investigating, it turns out, that `process.exit(0)` is being called during the `runTestSuite(...)` function run. That is because of the latest feature that we have implemented - "exit with an appropriate exit code (zero for success, and one for failure)." We should be able to fix that by providing the process spy in the options of the `runTestSuite` function that we are calling from the inside of the individual tests in the `RunTestSuiteTest` test suite. And we ought to alleviate this kind of mistake somehow - we need a mechanism that would alert us if not all tests have been run. Maybe something like `verifyAllTestsRun: true` option for the `runTestSuite`. For that let's write a test:
+Oh, that is interesting. This test suite does not run. Upon investigating, it turns out, that `process.exit(0)` is being called during the `runTestSuite(...)` function run. That is because of the latest feature that we have implemented - "exit with an appropriate exit code (zero for success, and one for failure)." We should be able to fix that by providing the process spy in the options of the `runTestSuite` function that we are calling from the inside of the individual tests in the `RunTestSuiteTest` test suite. And we ought to alleviate this kind of mistake somehow - we need a mechanism that would alert us if not all tests have been run. Maybe something like `verifyAllTestsRun: true` option for the `runTestSuite`. For that let's write a test:
 
 ```javascript
 this.testVerifyAllTestsRun = function () {
@@ -112,7 +112,7 @@ When running this test, we will get a failure about `SimpleProcess` being undefi
 // src/TestingFramework.js
 
 // ...
-// defint the class itself
+// define the class itself
 function SimpleProcess(globalProcess) {
     
 }
@@ -464,6 +464,8 @@ t.assertThrow("some error", function () {
 
 And it fails as expected, which means that our refactored tests still work as they should.
 
+> We have just applied a neat technique here: whenever we do a major refactoring in tests, we need to make sure they are still functioning correctly. For that, we break every single one of them (by changing the assertion or breaking the production code). Then we see if they fail as we expect them to. When they don't, we know that refactoring didn't quite work.
+
 ### Fixing test suites to run all tests
 
 Now we can go back to the `RunTestSuiteTest` and see if it works as expected without that test. And it does: `Error: Expected all tests to run`. To fix that we need to provide a process spy in every inner call to `runTestSuite`. For that we will first extract `{reporter: reporter}` as a common variable of the test suite:
@@ -492,7 +494,7 @@ If we run tests now, they all pass. And we can see that they all execute. Now we
 
 ## Conclusion
 
-Today we learned that it is tricky to work with `process.exit` or any function that can exit our program in the middle of the test. Such functions need to be mocked out completely inside of the tests. Also, we learned that it is possible to make sure we didn't forget to do that. That is quite important because, if we do forget, everything runs smoothly, and we don't know that we made a mistake.
+Today we learned that it is tricky to work with `process.exit` or any function that can exit our program in the middle of the test. Such functions need to be mocked out completely inside of the tests. Also, we learned that it is possible to make sure we don't forget to do that. That is quite important because, if we do forget, everything runs smoothly, and we don't know that we made a mistake.
 
 There is still a lot to go through. In a few next episodes we will:
 
