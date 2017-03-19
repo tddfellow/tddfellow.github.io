@@ -80,9 +80,13 @@ This might be a bit complex at first. Let's take a closer look how this test is 
 	- test with the `runTestSuite` without process spy provided
 	- empty test that should also execute
 
-If we run this test, it will pass. This is unexpected, because we wanted it to fail. Apparently, most inner `runTestSuite` is doing `process.exit(0)`
+If we run this test, it will pass. This is unexpected, because we wanted it to fail. Apparently, most inner `runTestSuite` is doing `process.exit(0)`.
 
-For that to work, we will need to be able to provide a hook into `process.exit(code)` function. For that we would need to create a `SimpleProcess` class, that allows installation of such hooks. Let's test-drive it! First, we should start from the normal behavior without any hooks:
+For that to work, we will need to be able to provide a hook into `process.exit(code)` function. For that we would need to create a `SimpleProcess` class, that allows installation of such hooks. Let's test-drive it!
+
+### `process.exit` with hooks
+
+First, we should start from the normal behavior without any hooks:
 
 ```javascript
 // test/SimpleProcessTest.js
@@ -288,6 +292,8 @@ function TestSuiteRunContext(testSuiteConstructor, options) {
 }
 ```
 
+### Installing the "verify all tests run" hook
+
 Now, we can get back to our "verify all tests run" test. It still doesn't fail as expected, so we need to install the hook, count all tests, count tests that had already run and compare them in the hook:
 
 ```javascript
@@ -456,7 +462,11 @@ t.assertThrow("some error", function () {
 //    but nothing was thrown
 ```
 
-And it fails as expected. Which means that our refactored tests still function as they should. Now we can go back to the `RunTestSuiteTest` and see if it works as expected without that test. And it does: `Error: Expected all tests to run`. To fix that we need to provide a process spy in every inner `runTestSuite` call. For that we will first extract `{reporter: reporter}` as a common variable of the test suite:
+And it fails as expected. Which means that our refactored tests still function as they should.
+
+### Fixing test suites to run all tests
+
+Now we can go back to the `RunTestSuiteTest` and see if it works as expected without that test. And it does: `Error: Expected all tests to run`. To fix that we need to provide a process spy in every inner `runTestSuite` call. For that we will first extract `{reporter: reporter}` as a common variable of the test suite:
 
 ```javascript
 var options = {reporter: reporter};
@@ -479,3 +489,22 @@ var options = {
 ```
 
 If we run tests now, they all pass. And we can see that they all execute. Now we just need to double-check that all tests, that have inner calls to `runTestSuite` have `verifyAllTestsRun` option enabled. The only other test suite is the `FailureTest`. Adding the option does not produce a failure because this test suite already uses process spy in all inner calls to `runTestSuite`.
+
+## Conclusion
+
+Today we learned that it is tricky to work with `process.exit` or any function that can exit our program in the middle of the test. Such functions need to be mocked out completely inside of the tests. Also, we learned that it is possible to make sure we didn't forget to do that. This is quite important because, if we do forget, everything runs smoothly, and we don't know that we made a mistake.
+
+There is still a lot to go through. In a few next episodes we will:
+
+- Report OK and FAIL for each test;
+- Output carefully formatted failures to the STDERR;
+- Enable our testing framework to run multiple test suite files at once;
+- Enable our testing framework to run in a browser (it is javascript after all).
+
+See you reading the next exciting article of the series: "Formatting the Output"!
+
+## Thanks
+
+Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on Twitter: [@waterlink000](https://twitter.com/waterlink000).
+
+If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: [@waterlink000](https://twitter.com/waterlink000).
