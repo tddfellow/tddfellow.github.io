@@ -34,7 +34,7 @@ Enough preaching, let me tell you the challenge itself. For twenty-four hours do
 
 1. Get the stopwatch application running on my smartphone.
 2. Start the stopwatch and leave the app in the background.
-3. Every time we notice a negative thought, or we are saying something negative, reset the stopwatch.
+3. Every time I notice a negative thought, or I am saying something negative, reset the stopwatch.
 
 ### My Experience So Far
 
@@ -42,7 +42,7 @@ Over this year, I felt like I can detect the negative feeling before it manifest
 
 Another thing that I have learned that, as soon as I am tired, I lose these abilities and fall back to reacting instead of responding. Good night sleep helps a lot with that ;)
 
-I highly recommend you try this challenge.
+I highly recommend you try this challenge. Caution: it is very hard.
 
 ## Thanks
 
