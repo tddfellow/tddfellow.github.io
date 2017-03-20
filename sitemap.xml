@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://www.tddfellow.com/blog/2017/03/20/drakes-24-hours-challenge-or-how-to-be-less-negative/</loc>
+<lastmod>2017-03-20T07:53:37+01:00</lastmod>
+</url>
+<url>
 <loc>http://www.tddfellow.com/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests/</loc>
 <lastmod>2017-03-13T23:13:28+01:00</lastmod>
 </url>
@@ -460,15 +464,15 @@
 <loc>http://www.tddfellow.com/blog/categories/learning-tdd-with-js/</loc>
 </url>
 <url>
-<loc>http://www.tddfellow.com/posts/2/</loc>
+<loc>http://www.tddfellow.com/blog/categories/soft-skills/</loc>
 </url>
 <url>
-<loc>http://www.tddfellow.com/posts/3/</loc>
+<loc>http://www.tddfellow.com/blog/categories/empathy/</loc>
 </url>
 <url>
-<loc>http://www.tddfellow.com/posts/4/</loc>
+<loc>http://www.tddfellow.com/blog/categories/awareness/</loc>
 </url>
 <url>
-<loc>http://www.tddfellow.com/posts/5/</loc>
+<loc>http://www.tddfellow.com/blog/categories/emotions/</loc>
 </url>
 </urlset>

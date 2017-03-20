@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Empathy | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/empathy/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2017-03-20T19:37:38+01:00</updated>
+  <id>http://www.tddfellow.com/</id>
+  <author>
+    <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Drake's 24 Hours Challenge or How to Be Less Negative]]></title>
+    <link href="http://www.tddfellow.com/blog/2017/03/20/drakes-24-hours-challenge-or-how-to-be-less-negative/"/>
+    <updated>2017-03-20T07:53:37+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2017/03/20/drakes-24-hours-challenge-or-how-to-be-less-negative</id>
+    <content type="html"><![CDATA[<p>Did you ever look at the chunk of code that is not very pretty, and immediately uttered some bad word or bad remark, such as &ldquo;Who wrote this?&rdquo; And not even noticed it?</p>
+
+<p>Or did you ever had an incident happening in production, and half of your vocabulary at that time was not normative? Also, did you feel stressed and down afterward?</p>
+
+<p>Or did you ever had to converse with a difficult person or someone holding a strong opinion, and thought not very good about them? Or even dismissed a valid argument just because you didn&rsquo;t like the conversation?</p>
+
+<p>Did you ever felt or did something negative, and thought afterward that it would be better not to? Then the technique described in this article is perfect for you!</p>
+
+<!-- more -->
+
+
+<p>Shall we get the ball rolling?</p>
+
+<h2>Drake&rsquo;s Challenge</h2>
+
+<p>About one year ago I was talking to <a href="https://www.danielirvine.com">Daniel Irvine</a> at the Software Craftsmanship meetup in Berlin about the technique that he was applying daily. I was amazed by how challenging it is and what results it can potentially yield. Since then I&rsquo;m using this technique to increase awareness of how I feel, what I think, and what I am about to say.</p>
+
+<p>It gives me the ability to respond to events around me instead of reacting to them. The reaction is the immediate reply executed by the subconscious part of our brain. The response is the delayed reply produced by the concious part of our brain. Responding is much better because it gives us time to think what would be the best response to the current situation. Especially it is better when something negative or weird is happening around us.</p>
+
+<p>Enough preaching, let me tell you the challenge itself. For twenty-four hours do not say anything negative and do not think negatively.</p>
+
+<h3>How I Apply It</h3>
+
+<ol>
+<li>Get the stopwatch application running on my smartphone.</li>
+<li>Start the stopwatch and leave the app in the background.</li>
+<li>Every time I notice a negative thought, or I am saying something negative, reset the stopwatch.</li>
+</ol>
+
+
+<h3>My Experience So Far</h3>
+
+<p>Over this year, I felt like I can detect the negative feeling before it manifests as a negative thought, judgement, or a phrase. That helps me to be calmer, be more patient, and not spend time on insignificant things. If I know that something makes me unhappy or confuses me, I can call it out, and fix the problem without causing people around me to feel bad about it. Additionally, it makes me feel better.</p>
+
+<p>Another thing that I have learned that, as soon as I am tired, I lose these abilities and fall back to reacting instead of responding. Good night sleep helps a lot with that ;)</p>
+
+<p>I highly recommend you try this challenge. Caution: it is very hard.</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>
