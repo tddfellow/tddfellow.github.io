@@ -3,6 +3,7 @@ layout: post
 title: "Drake's 24 Hours Challenge or How to be Less Negative"
 date: 2017-03-20 07:53:37 +0100
 comments: true
+description: "Did you ever felt or did something negative, and thought afterward that it would be better not to? Then the technique described in this article is perfect for you!"
 categories:
 - soft-skills
 - empathy
