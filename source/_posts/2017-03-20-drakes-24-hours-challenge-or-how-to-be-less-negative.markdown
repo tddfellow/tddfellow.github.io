@@ -37,3 +37,16 @@ Enough preaching, let me tell you the challenge itself. For twenty-four hours do
 3. Every time we notice a negative thought or we are saying something negative, reset the stopwatch.
 
 ### My Experience So Far
+
+Over this year, I felt like I am able to detect the negative feeling before it manifests as a negative thought, a judgement, or a phrase. This helps me to be more calm, be more patient, and generally not spend time on worthless things. If I know that something makes me unhappy or confuses me, I am able to call it out, and fix the problem without causing people around me to feel bad about it.
+
+Another thing that I have learned that, as soon as I am tired, I lose these abilities and fall back to reacting instead of responding. Good night sleep helps a lot with that ;)
+
+I highly recommend you try this challenge.
+
+## Thanks
+
+Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on Twitter: [@waterlink000](https://twitter.com/waterlink000).
+
+If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: [@waterlink000](https://twitter.com/waterlink000).
+
