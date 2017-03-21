@@ -9,7 +9,13 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Slides from my talk on RUG-B Mar 2015 A short introduction to a powerful Design by Contract technique and its implementation in ruby contracts.ruby. &hellip;">
+  <meta name="description" content="So, given simple example: 1
+2
+3
+4
+Contract Num, Num =&gt; Num
+def add(a, b) a + b
+end One can ask: &ldquo;But it is ruby, what about duck typing, I &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,6 +123,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/21/on-being-more-productive-in-the-morning-even-if-you-are-an-owl/">On Being More Productive in the Morning. Even if You Are an Owl</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/03/20/drakes-24-hours-challenge-or-how-to-be-less-negative/">Drake&#8217;s 24 Hours Challenge or How to Be Less Negative</a>
       </li>
     
@@ -142,10 +152,6 @@
     
       <li class="post">
         <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/10/19/do-more-with-baby-steps-tdd/">Do More With Baby-Steps TDD</a>
       </li>
     
   </ul>
@@ -189,6 +195,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/21/on-being-more-productive-in-the-morning-even-if-you-are-an-owl/">On Being More Productive in the Morning. Even if You Are an Owl</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/03/20/drakes-24-hours-challenge-or-how-to-be-less-negative/">Drake&#8217;s 24 Hours Challenge or How to Be Less Negative</a>
       </li>
     
@@ -216,10 +226,6 @@
         <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2016/10/19/do-more-with-baby-steps-tdd/">Do More With Baby-Steps TDD</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -231,6 +237,89 @@
 
 <div class="blog-index v2-blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/03/10/how-can-contracts-dot-ruby-be-used-in-the-community-with-duck-typing-culture/">How Can contracts.ruby Be Used in the Community With Duck Typing Culture?</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2015-03-10T11:11:23+01:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>11:11 am</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/contracts-dot-ruby/'>contracts.ruby</a>, <a class='category' href='/blog/categories/design-by-contract/'>design-by-contract</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>So, given simple example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">Num</span><span class="p">,</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One can ask: &ldquo;But it is ruby, what about duck typing, I want just pass two things that have certain methods defined on them&rdquo;</p>
+
+<p>And my answer, you can easily do that:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Contract</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:save</span><span class="p">,</span> <span class="ss">:has_valid?</span><span class="o">]</span><span class="p">,</span> <span class="no">RespondTo</span><span class="o">[</span><span class="ss">:to_s</span><span class="o">]</span> <span class="o">=&gt;</span> <span class="no">Any</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">assign_user_a_default_email</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">default_email</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">default_email</span> <span class="k">unless</span> <span class="n">user</span><span class="o">.</span><span class="n">has_valid?</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">user</span><span class="o">.</span><span class="n">save</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is a built-in <code>RespondTo</code> contract. You can get a list of all of them here: <a href="http://egonschiele.github.io/contracts.ruby/#built-in-contracts">http://egonschiele.github.io/contracts.ruby/#built-in-contracts</a></p>
+
+<p>If you have any questions, you can always ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1022,6 +1111,10 @@ codeUsing(f, d)
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/21/on-being-more-productive-in-the-morning-even-if-you-are-an-owl/">On Being More Productive in the Morning. Even if You Are an Owl</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/03/20/drakes-24-hours-challenge-or-how-to-be-less-negative/">Drake&#8217;s 24 Hours Challenge or How to Be Less Negative</a>
       </li>
     
@@ -1047,10 +1140,6 @@ codeUsing(f, d)
     
       <li class="post">
         <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/10/19/do-more-with-baby-steps-tdd/">Do More With Baby-Steps TDD</a>
       </li>
     
   </ul>
