@@ -13,6 +13,8 @@ Hi there! Today I want to share my experience of a productivity shift from the l
 
 ## Mornings That Start with a Lunch
 
+<!-- more -->
+
 A year ago and before I was pulling out late nights almost every single day. Making an open-source contribution, working on the astounding side project idea, writing a blog post, watching a conference talk or a fun video. As an owl type, I have a lot of bright ideas at that time of day. Also, my productivity is at its top. Or at least it feels that way.
 
 That usually meant, that I would go to work next day somewhere between 10 AM and 12 PM. Mostly, that was okay because a lot of other developers around me did the same thing.
