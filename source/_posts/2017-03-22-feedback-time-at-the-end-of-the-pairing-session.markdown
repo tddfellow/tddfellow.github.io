@@ -16,6 +16,8 @@ Hi there! Today I want to share the technique that we are using to improve the c
 
 First, let me give you some context.
 
+<!-- more -->
+
 ## Pairing ~100% of the Time
 
 At [Pivotal](https://pivotal.io) we pair all the time. It is very rare to see anyone solo. Pairing does not end with pair-programming, it also includes other roles such as design and product. Also, pairing is, at times, cross-functional, e.g.: product designer pairs with a software engineer, or product designer pairs with a product manager, etc. I love that.
