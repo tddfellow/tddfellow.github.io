@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Pairing | That TDD Fellow | Tech Blog | Screencasts]]></title>
+  <link href="http://www.tddfellow.com/blog/categories/pairing/atom.xml" rel="self"/>
+  <link href="http://www.tddfellow.com/"/>
+  <updated>2017-03-23T07:14:40+01:00</updated>
+  <id>http://www.tddfellow.com/</id>
+  <author>
+    <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Feedback Time at the End of the Pairing Session]]></title>
+    <link href="http://www.tddfellow.com/blog/2017/03/22/feedback-time-at-the-end-of-the-pairing-session/"/>
+    <updated>2017-03-22T08:01:29+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2017/03/22/feedback-time-at-the-end-of-the-pairing-session</id>
+    <content type="html"><![CDATA[<p>Hi there! Today I want to share the technique that we are using to improve the collaboration inside of our teams. This technique is most useful in synergy with the pairing. It is so powerful that it can remove the tension from our work and make us more productive in two or three days.</p>
+
+<p>First, let me give you some context.</p>
+
+<!-- more -->
+
+
+<h2>Pairing ~100% of the Time</h2>
+
+<p>At <a href="https://pivotal.io">Pivotal</a> we pair all the time. It is very rare to see anyone solo. Pairing does not end with pair-programming, it also includes other roles such as design and product. Also, pairing is, at times, cross-functional, e.g.: product designer pairs with a software engineer, or product designer pairs with a product manager, etc. I love that.</p>
+
+<p>With pairing, not everything is so shiny.</p>
+
+<h3>Chemistry</h3>
+
+<p>Now and then, you need to pair with someone, you have never paired with before. That happens in the event of new hires, team member rotations between teams, and cross-team pairing sessions.</p>
+
+<p>We are all humans, so, from time to time, it feels like you are not getting along very well with your pair. There is a certain amount of tension. Of course, that harms your productivity, and, also, drains your energy.</p>
+
+<p>On the contrary side, the chemistry between pairs might be so good, that you are just having fun the whole day and enjoy the pairing session, and the amount of work being done is suboptimal.</p>
+
+<p>The pairing session might go not so well not only because of chemistry. Pairs could have chosen a non-suitable style of pairing (one of: ping-pong, switch on red, driver-navigator, etc.). From time to time, how pairs solve the problem, can also be improved.</p>
+
+<h2>Five Minutes Feedback Time</h2>
+
+<p>That is a technique that we are utilizing all the time when we have such problems. First, ask your pair if they want to apply this technique and reserve 5 minutes at the end of the pairing session (end of the work day is the most suitable). Then, when the time comes, give each other the feedback in the format of &ldquo;Pluses and Deltas&rdquo;:</p>
+
+<ul>
+<li>First, tell what went well.</li>
+<li>Second, describe what could be improved.</li>
+</ul>
+
+
+<p>When both pairs are proficient with this technique, then most of the problems can be resolved in 2-4 pairing sessions. By &ldquo;proficient&rdquo; we mean here: both are open to receiving the feedback, and are capable of calling out complicated things without triggering defensiveness on the receiving side.</p>
+
+<p>If the whole team applies this technique daily for two or three weeks, they will have to stop using it because there will be nothing to talk about anymore. That means that the team has solved most of the problems, and there is no longer need in a daily application of such technique.</p>
+
+<h2>Conclusion</h2>
+
+<p>All these problems are not unique to pairing. They are inherent to the collaboration. Essentially, any team will have these problems. It is just that, in non-pairing environments, these problems will become apparent only after months of work. That is all while they continue harming productivity and people&rsquo;s happiness for these long months.</p>
+
+<p>With pairing these problems become apparent immediately. So you can start fixing them on the day one, and not after the half a year of the broken collaboration.</p>
+
+<p>If you pair often, or if you have any other sort of collaboration within the team, I recommend trying out this technique. It will take some time to get proficient at giving feedback.</p>
+
+<p>There is <a href="https://www.infoq.com/presentations/feedback-models-techniques">a marvelous talk</a> from <a href="https://dannorth.net">Dan North</a> on how to provide an effective feedback in different contexts.</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks, Reddit, and Hacker News, and follow me on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

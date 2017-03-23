@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Duck type Duck type is the concept in the domain of the type safety that represents objects, that pass a so-called &ldquo;Duck Test&rdquo;: If it &hellip;">
+  <meta name="description" content="Hello, everyone. Today we will take a look into a little problem involving high scores in some sort of game. The game has only one high score and &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,6 +117,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/22/feedback-time-at-the-end-of-the-pairing-session/">Feedback Time at the End of the Pairing Session</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/03/21/on-being-more-productive-in-the-morning-even-if-you-are-an-owl/">On Being More Productive in the Morning. Even if You Are an Owl</a>
       </li>
     
@@ -142,10 +146,6 @@
     
       <li class="post">
         <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
       </li>
     
   </ul>
@@ -189,6 +189,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/22/feedback-time-at-the-end-of-the-pairing-session/">Feedback Time at the End of the Pairing Session</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/03/21/on-being-more-productive-in-the-morning-even-if-you-are-an-owl/">On Being More Productive in the Morning. Even if You Are an Owl</a>
       </li>
     
@@ -216,10 +220,6 @@
         <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -231,6 +231,66 @@
 
 <div class="blog-index v2-blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/09/30/highscore-kata/">HighScore Kata</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2016-09-30T18:23:21+02:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>30</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>6:23 pm</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/clean-architecture/'>clean-architecture</a>, <a class='category' href='/blog/categories/clean-code/'>clean-code</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/kata/'>kata</a>, <a class='category' href='/blog/categories/testing/'>testing</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hello, everyone. Today we will take a look into a little problem involving high scores in some sort of game. The game has only one high score and when current game&rsquo;s score exceeds that number, it gets updated. Example acceptance test would read like this:</p>
+
+<p><strong>Given</strong> high score is <code>174</code><br/>
+<strong>When</strong> player scores <code>191</code><br/>
+<strong>Then</strong> high score is <code>191</code></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/09/30/highscore-kata/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -860,73 +920,6 @@ Spy <|-- Mock;
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/07/31/parallel-change-refactoring/">Parallel Change Refactoring</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-
-  
-  <span class="byline author vcard"><span class="fn">
-    
-      <a href="/about-me">Oleksii Fedorov</a>
-    
-  </span></span>
-
-
-        
-
-
-
-
-<time class='entry-date' datetime='2016-07-31T09:57:31+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2016</span></span> <span class='time'>9:57 am</span></time>
-        
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/clean-code/'>clean-code</a>, <a class='category' href='/blog/categories/pseudo-code/'>pseudo-code</a>, <a class='category' href='/blog/categories/refactoring/'>refactoring</a>, <a class='category' href='/blog/categories/software-craftsmanship/'>software-craftsmanship</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Parallel Change is the refactoring technique, that allows implementing backward-incompatible changes to an API in a safe manner. It consists of 3 steps:</p>
-
-<ul>
-<li>Expand - add new functionality as an extension of the interface (e.g.: add new methods), instead of editing signatures of existing interfaces</li>
-<li>Migrate - mark (or log a warning) existing interface as deprecated and give time to the clients of the interface to migrate to the new interface. This might be as simple as changing your own code-base one client of this interface at a time in case when you do not have 3rd party clients of these interfaces</li>
-<li>Contract - once all clients have migrated remove old interfaces</li>
-</ul>
-
-
-<p>This technique is tremendously useful when you have 3rd party clients for your API (open-source library, SaaS with REST API, etc). Also, it is as useful for normal application development because it allows such breaking changes to never break your test suite. It allows deploying your code in the middle of the refactoring, in fact, every few minutes (Continuous Integration + Continuous Deployment).</p>
-
-<p>This article contains code examples in a pseudo-code.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2016/07/31/parallel-change-refactoring/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/3">&larr; Older</a>
@@ -972,6 +965,10 @@ Spy <|-- Mock;
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/22/feedback-time-at-the-end-of-the-pairing-session/">Feedback Time at the End of the Pairing Session</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/03/21/on-being-more-productive-in-the-morning-even-if-you-are-an-owl/">On Being More Productive in the Morning. Even if You Are an Owl</a>
       </li>
     
@@ -997,10 +994,6 @@ Spy <|-- Mock;
     
       <li class="post">
         <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
       </li>
     
   </ul>

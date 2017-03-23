@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Today we are going to unit-test existing functionality of our own testing framework, that we have test-driven with FizzBuzzKata in the previous part &hellip;">
+  <meta name="description" content="Parallel Change is the refactoring technique, that allows implementing backward-incompatible changes to an API in a safe manner. It consists of 3 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,6 +117,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/22/feedback-time-at-the-end-of-the-pairing-session/">Feedback Time at the End of the Pairing Session</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/03/21/on-being-more-productive-in-the-morning-even-if-you-are-an-owl/">On Being More Productive in the Morning. Even if You Are an Owl</a>
       </li>
     
@@ -142,10 +146,6 @@
     
       <li class="post">
         <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
       </li>
     
   </ul>
@@ -189,6 +189,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/22/feedback-time-at-the-end-of-the-pairing-session/">Feedback Time at the End of the Pairing Session</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/03/21/on-being-more-productive-in-the-morning-even-if-you-are-an-owl/">On Being More Productive in the Morning. Even if You Are an Owl</a>
       </li>
     
@@ -216,10 +220,6 @@
         <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -231,6 +231,73 @@
 
 <div class="blog-index v2-blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/07/31/parallel-change-refactoring/">Parallel Change Refactoring</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Oleksii Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2016-07-31T09:57:31+02:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2016</span></span> <span class='time'>9:57 am</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/clean-code/'>clean-code</a>, <a class='category' href='/blog/categories/pseudo-code/'>pseudo-code</a>, <a class='category' href='/blog/categories/refactoring/'>refactoring</a>, <a class='category' href='/blog/categories/software-craftsmanship/'>software-craftsmanship</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Parallel Change is the refactoring technique, that allows implementing backward-incompatible changes to an API in a safe manner. It consists of 3 steps:</p>
+
+<ul>
+<li>Expand - add new functionality as an extension of the interface (e.g.: add new methods), instead of editing signatures of existing interfaces</li>
+<li>Migrate - mark (or log a warning) existing interface as deprecated and give time to the clients of the interface to migrate to the new interface. This might be as simple as changing your own code-base one client of this interface at a time in case when you do not have 3rd party clients of these interfaces</li>
+<li>Contract - once all clients have migrated remove old interfaces</li>
+</ul>
+
+
+<p>This technique is tremendously useful when you have 3rd party clients for your API (open-source library, SaaS with REST API, etc). Also, it is as useful for normal application development because it allows such breaking changes to never break your test suite. It allows deploying your code in the middle of the refactoring, in fact, every few minutes (Continuous Integration + Continuous Deployment).</p>
+
+<p>This article contains code examples in a pseudo-code.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2016/07/31/parallel-change-refactoring/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -4140,214 +4207,6 @@ shortest path problem.. Next time, on the TDD Screencast. Have a nice day.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/02/05/why-are-you-slow/">Why Are You Slow?</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-
-  
-  <span class="byline author vcard"><span class="fn">
-    
-      <a href="/about-me">Oleksii Fedorov</a>
-    
-  </span></span>
-
-
-        
-
-
-
-
-<time class='entry-date' datetime='2016-02-05T17:09:47+01:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>5:09 pm</span></time>
-        
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/cleancode/'>cleancode</a>, <a class='category' href='/blog/categories/craftsmanship/'>craftsmanship</a>, <a class='category' href='/blog/categories/preaching/'>preaching</a>, <a class='category' href='/blog/categories/professionalism/'>professionalism</a>, <a class='category' href='/blog/categories/software-industry/'>software-industry</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><blockquote><p>We are slow because we have the worst codebase!</p></blockquote>
-
-<h2>So why don&rsquo;t you clean it?</h2>
-
-<blockquote><p>Because we have to go fast!</p></blockquote>
-
-<p>I will let you figure out logical inconsistency there.</p>
-
-<p>Ask yourself a question: how much times in your career you were slowed down by
-a horrible, dirty, untested code? It doesn&rsquo;t matter who have written it,
-usually, it is already there and already a fact you have to deal with.</p>
-
-<p>If your answer was: &ldquo;Once.. or twice..&rdquo; (and your career is sufficiently long)
-- you can freely stop reading this post and simply be a happy developer.</p>
-
-<p>I was slowed down by bad code horrible amount of times. I come to be sick of
-it. I don&rsquo;t want to be slow, because I am trying to go fast. I want my tool to
-be clean, I want my creations to be manageable, and I don&rsquo;t want to fear the
-code, I have created, or anyone else have created. And I want to go fast while
-enjoying it!</p>
-
-<p>Trust me, I met lots of developers during my career. Not as much as heroes of
-our industry have met, but <strong>enough</strong> to be able to tell you, that <strong>every
-single</strong> one of them, who has any reasonable length of the career, had same
-problems.</p>
-
-<p>And that is totally not normal. Do you understand, that from the outside world,
-we, as an industry, are perceived as very non-professional, because of that?
-Business even came to a conclusion, that they can&rsquo;t trust us to deliver working
-software - and that is how QA role was born.</p>
-
-<p>I will ask again.</p>
-
-<h2>So why don&rsquo;t you clean it?</h2>
-
-<blockquote><p>My company pays me for features, not for &lt;<em>insert your statement here</em>></p></blockquote>
-
-<p>That is very common response. And, in essence, it is the truth.</p>
-
-<p>OK, now, let&rsquo;s think. As time passes by, after certain threshold on every
-codebase, that is not clean, adding next feature costs more time, even if the
-features are of roughly the same size. After 1 year of such development,
-features can literally become 2-4 times more expensive. Couple of years in, and
-it, practically, becomes impossible to develop anything except &ldquo;Change the
-color of this button&rdquo; (or provide your own example).</p>
-
-<h2>What does that mean?</h2>
-
-<p>One would say: &ldquo;Features become more expensive over time&rdquo;. Business usually
-sees it as: &ldquo;Arrgh, our programmers slower and slower with each month&rdquo;. So from
-the business perspective, after <strong>perceived</strong> effectiveness of developers drops
-by 2-4 times, why would business be willing to pay these developers the same
-salary? You should be afraid of this question.</p>
-
-<h2>Now imagine land of unicorns!</h2>
-
-<p>Now imagine, that you started a bit slower in the beginning (like 8% slower),
-but you have kept your effectiveness over time either at roughly same level, or
-even have increased it over time. How hard do you think it would be to ask for
-a raise, after 2 years of loyal work?</p>
-
-<p>Not hard at all. And probably business will be doing just great (if the
-business idea itself was sustainable to begin with, of course), and will be
-capable of satisfying the request.</p>
-
-<h2>Why such a thing happens?</h2>
-
-<p>Because at the moment we are not perceived as professionals, nor as experts of
-our field. We are perceived as just some coding monkeys, who you always need to
-ask: &ldquo;Can this be delivered on Friday&rdquo; with intimidating tone. And we gladly
-reply through our teeth: &ldquo;I will try&rdquo;, meaning &ldquo;Just go already&rdquo;; ending up on
-Friday evening with: &ldquo;I tried&rdquo; - &ldquo;You have tried not enough!&rdquo;.</p>
-
-<h2>Clean your code already!</h2>
-
-<p>Believe me, investing 15-45 minutes every single day into increasing test code
-coverage and some little refactorings will not make you any slower (you
-probably already very slow, so that it will not make any perceivable
-difference). Rather, over time, you (and your fellow programmers) will start to
-actually being bit-by-bit faster, as long as your application (or applications)
-get cleaner and cleaner.</p>
-
-<p>It goes without saying, that you should be using proper XP (pair-programming
-and TDD) techniques, while writing any new piece of code (read: new class,
-module, library, package, etc.). Because it will be extremely easy to unit-test
-it with near-100% test coverage. Believe me, that is easy and fun.</p>
-
-<p>Refactoring and covering old and messy parts of an application is not fun,
-though. You have to face the truth. Consider it as a chore, like the one you do
-to your apartment, when you clean it on a regular basis. And as we all know,
-the more you wait to clean an apartment, the harder it would be to do it. And
-the function is not linear..</p>
-
-<p>If you have a really big legacy application, you are probably in doing that
-sort of thing for 2-3 years, before you can proudly call this application clean
-again.</p>
-
-<p>There is one important trick though: prioritize cleaning of parts of
-application, that change often. If some part changes once half a year, you
-should probably clean it once half a year too.</p>
-
-<h2>You are hired for your expertise!</h2>
-
-<p>Believe me, you do have all the knowledge, required to make it.</p>
-
-<p>The only thing that stops you is your inability to say &ldquo;No&rdquo;, when &ldquo;No&rdquo; is the
-correct answer from your experience and expertise point of view.</p>
-
-<h2>Parallel example</h2>
-
-<p>Do you know that surgeon, before any surgery, washes his hands. You not just
-know, it is your expectation! In some countries if he doesn&rsquo;t, he can easily
-end up in jail.</p>
-
-<h3>Do you know, how surgeon washes his hands?</h3>
-
-<p>He rubs each finger from 4 different sides 10 times. That is stated in Doctors&#8217;
-code of ethics. And they have to follow it, since it has power of law.</p>
-
-<p>Why 10 times? Wouldn&rsquo;t 7 be enough, or maybe 14 should be a minimum? It doesn&rsquo;t
-matter. It is a discipline, that is to be followed to the letter, and there are
-no exceptions.</p>
-
-<p>Well, he probably can rub 11 times, without getting in jail..</p>
-
-<p>Nobody will ever ask surgeon, why he does it. Everyone expects him to do it.</p>
-
-<h2>Back to our universe</h2>
-
-<p>You are surgeons!</p>
-
-<p>You are surgeons, that operate on a heart of the business.</p>
-
-<p>With your wrong move, with your mistake, the whole business can go out of
-business overnight.</p>
-
-<p>With your wrong move, with your mistake, thousands of people can die (if you
-are in certain domains).</p>
-
-<p>So why increasing a chance of your own mistakes (and everybody else on a team)
-by not cleaning the code?</p>
-
-<p>Even if you are not in such critical domain, you are part of industry, and you
-should be a great professional, just to be an example for others, who might end
-up working in such crucial business domain in the future.</p>
-
-<p>And I know, you can pull it off. And you do know it yourself.</p>
-
-<p>So now go, and be professional, be professional for everyone around you.</p>
-
-<h2>Thanks!</h2>
-
-<p>This article might be a bit too rough - I believe that is the truth we face
-now, as an industry. And let us be the ones fixing it!</p>
-
-<p>I recommend reading this: <a href="http://acm.org/about/se-code">Software Engineering Code of Ethics</a>
-by ACM organization (originally, created in 1999, why are we all still not
-using it?!).</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/4">&larr; Older</a>
@@ -4393,6 +4252,10 @@ using it?!).</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2017/03/22/feedback-time-at-the-end-of-the-pairing-session/">Feedback Time at the End of the Pairing Session</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2017/03/21/on-being-more-productive-in-the-morning-even-if-you-are-an-owl/">On Being More Productive in the Morning. Even if You Are an Owl</a>
       </li>
     
@@ -4418,10 +4281,6 @@ using it?!).</p>
     
       <li class="post">
         <a href="/blog/2016/12/05/understanding-legacy-code-using-explorative-test-driven-development-technique/">Understanding Legacy Code Using Explorative Test-Driven Development Technique</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/11/13/build-your-own-testing-framework-part-5/">Build Your Own Testing Framework. Part 5</a>
       </li>
     
   </ul>

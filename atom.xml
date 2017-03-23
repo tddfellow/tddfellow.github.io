@@ -4,7 +4,7 @@
   <title><![CDATA[That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2017-03-21T19:51:03+01:00</updated>
+  <updated>2017-03-23T07:14:40+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -12,6 +12,66 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Feedback Time at the End of the Pairing Session]]></title>
+    <link href="http://www.tddfellow.com/blog/2017/03/22/feedback-time-at-the-end-of-the-pairing-session/"/>
+    <updated>2017-03-22T08:01:29+01:00</updated>
+    <id>http://www.tddfellow.com/blog/2017/03/22/feedback-time-at-the-end-of-the-pairing-session</id>
+    <content type="html"><![CDATA[<p>Hi there! Today I want to share the technique that we are using to improve the collaboration inside of our teams. This technique is most useful in synergy with the pairing. It is so powerful that it can remove the tension from our work and make us more productive in two or three days.</p>
+
+<p>First, let me give you some context.</p>
+
+<!-- more -->
+
+
+<h2>Pairing ~100% of the Time</h2>
+
+<p>At <a href="https://pivotal.io">Pivotal</a> we pair all the time. It is very rare to see anyone solo. Pairing does not end with pair-programming, it also includes other roles such as design and product. Also, pairing is, at times, cross-functional, e.g.: product designer pairs with a software engineer, or product designer pairs with a product manager, etc. I love that.</p>
+
+<p>With pairing, not everything is so shiny.</p>
+
+<h3>Chemistry</h3>
+
+<p>Now and then, you need to pair with someone, you have never paired with before. That happens in the event of new hires, team member rotations between teams, and cross-team pairing sessions.</p>
+
+<p>We are all humans, so, from time to time, it feels like you are not getting along very well with your pair. There is a certain amount of tension. Of course, that harms your productivity, and, also, drains your energy.</p>
+
+<p>On the contrary side, the chemistry between pairs might be so good, that you are just having fun the whole day and enjoy the pairing session, and the amount of work being done is suboptimal.</p>
+
+<p>The pairing session might go not so well not only because of chemistry. Pairs could have chosen a non-suitable style of pairing (one of: ping-pong, switch on red, driver-navigator, etc.). From time to time, how pairs solve the problem, can also be improved.</p>
+
+<h2>Five Minutes Feedback Time</h2>
+
+<p>That is a technique that we are utilizing all the time when we have such problems. First, ask your pair if they want to apply this technique and reserve 5 minutes at the end of the pairing session (end of the work day is the most suitable). Then, when the time comes, give each other the feedback in the format of &ldquo;Pluses and Deltas&rdquo;:</p>
+
+<ul>
+<li>First, tell what went well.</li>
+<li>Second, describe what could be improved.</li>
+</ul>
+
+
+<p>When both pairs are proficient with this technique, then most of the problems can be resolved in 2-4 pairing sessions. By &ldquo;proficient&rdquo; we mean here: both are open to receiving the feedback, and are capable of calling out complicated things without triggering defensiveness on the receiving side.</p>
+
+<p>If the whole team applies this technique daily for two or three weeks, they will have to stop using it because there will be nothing to talk about anymore. That means that the team has solved most of the problems, and there is no longer need in a daily application of such technique.</p>
+
+<h2>Conclusion</h2>
+
+<p>All these problems are not unique to pairing. They are inherent to the collaboration. Essentially, any team will have these problems. It is just that, in non-pairing environments, these problems will become apparent only after months of work. That is all while they continue harming productivity and people&rsquo;s happiness for these long months.</p>
+
+<p>With pairing these problems become apparent immediately. So you can start fixing them on the day one, and not after the half a year of the broken collaboration.</p>
+
+<p>If you pair often, or if you have any other sort of collaboration within the team, I recommend trying out this technique. It will take some time to get proficient at giving feedback.</p>
+
+<p>There is <a href="https://www.infoq.com/presentations/feedback-models-techniques">a marvelous talk</a> from <a href="https://dannorth.net">Dan North</a> on how to provide an effective feedback in different contexts.</p>
+
+<h2>Thanks</h2>
+
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks, Reddit, and Hacker News, and follow me on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+
+<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[On Being More Productive in the Morning. Even if You Are an Owl]]></title>
@@ -983,7 +1043,7 @@
 
 <p>Articles of these series have exercises and going through them would make for more effective learning. Also, if you feel stuck with these exercises, fell free to shoot me an email or get in touch on Twitter: @waterlink000.</p>
 
-<p>&ldquo;Learning Test-Driven Development with Javascript&rdquo; is a series of articles and you, my dear reader, can shape the content by providing an invaluable feedback. To do that, shoot me an email - <a href="&#x6d;&#x61;&#x69;&#108;&#116;&#x6f;&#x3a;&#111;&#x6c;&#x65;&#107;&#115;&#105;&#105;&#x40;&#116;&#x64;&#100;&#x66;&#101;&#x6c;&#108;&#111;&#x77;&#x2e;&#x63;&#x6f;&#109;&#x2e;">&#x6f;&#108;&#101;&#107;&#x73;&#105;&#x69;&#x40;&#x74;&#x64;&#100;&#x66;&#x65;&#108;&#x6c;&#x6f;&#x77;&#x2e;&#x63;&#x6f;&#109;&#x2e;</a></p>
+<p>&ldquo;Learning Test-Driven Development with Javascript&rdquo; is a series of articles and you, my dear reader, can shape the content by providing an invaluable feedback. To do that, shoot me an email - <a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#x6f;&#x3a;&#111;&#108;&#101;&#x6b;&#x73;&#105;&#x69;&#x40;&#116;&#x64;&#100;&#x66;&#x65;&#x6c;&#x6c;&#111;&#x77;&#46;&#99;&#x6f;&#109;&#x2e;">&#x6f;&#108;&#101;&#107;&#x73;&#x69;&#x69;&#64;&#116;&#x64;&#100;&#102;&#101;&#108;&#108;&#111;&#x77;&#x2e;&#x63;&#x6f;&#109;&#46;</a></p>
 
 <h2>Basics of Test-Driven Development</h2>
 
@@ -2094,7 +2154,7 @@
     <id>http://www.tddfellow.com/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing</id>
     <content type="html"><![CDATA[<p><strong>Level: Beginner.</strong></p>
 
-<p>&ldquo;Learning TDD with Javascript&rdquo; is the series of articles where we learn basics of automated testing and test-driven development. While the language of choice for the code examples is Javascript, all described concepts are language-agnostic and are applicable in various technological stacks. In these articles, a reader is expected to do small exercises after each major topic to reinforce that theoretical knowledge with practice. Some of these exercises are practical and will involve coding, or simple writing; others will be food for thought. Also, a reader might want to get their feedback on these exercises, so don&rsquo;t hesitate to send the results my way: <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#x6f;&#x3a;&#x6f;&#x6c;&#101;&#x6b;&#x73;&#x69;&#x69;&#x40;&#116;&#x64;&#x64;&#102;&#101;&#108;&#x6c;&#x6f;&#119;&#46;&#99;&#111;&#109;">&#x6f;&#108;&#x65;&#x6b;&#x73;&#x69;&#x69;&#64;&#116;&#100;&#x64;&#x66;&#101;&#108;&#108;&#x6f;&#x77;&#x2e;&#x63;&#111;&#109;</a> - feedback on the practice is quite important as it helps to improve quicker, when you know what is well and what can be improved and how. Also, don&rsquo;t hesitate to send any questions and feedback regarding the content of these articles. Your questions, feedback, and your practical results will help authors shape this content better.</p>
+<p>&ldquo;Learning TDD with Javascript&rdquo; is the series of articles where we learn basics of automated testing and test-driven development. While the language of choice for the code examples is Javascript, all described concepts are language-agnostic and are applicable in various technological stacks. In these articles, a reader is expected to do small exercises after each major topic to reinforce that theoretical knowledge with practice. Some of these exercises are practical and will involve coding, or simple writing; others will be food for thought. Also, a reader might want to get their feedback on these exercises, so don&rsquo;t hesitate to send the results my way: <a href="&#x6d;&#x61;&#x69;&#x6c;&#116;&#x6f;&#58;&#x6f;&#x6c;&#x65;&#107;&#x73;&#105;&#x69;&#x40;&#x74;&#100;&#x64;&#x66;&#x65;&#108;&#x6c;&#x6f;&#x77;&#46;&#x63;&#x6f;&#109;">&#111;&#108;&#x65;&#x6b;&#x73;&#x69;&#105;&#x40;&#116;&#100;&#100;&#x66;&#x65;&#108;&#108;&#x6f;&#x77;&#46;&#x63;&#x6f;&#x6d;</a> - feedback on the practice is quite important as it helps to improve quicker, when you know what is well and what can be improved and how. Also, don&rsquo;t hesitate to send any questions and feedback regarding the content of these articles. Your questions, feedback, and your practical results will help authors shape this content better.</p>
 
 <p>Today we are going to learn how to write tests that imitate real user interaction for the whole application. We are going to build a small web application using Vanilla Javascript. Vanilla Javascript is a plain Javascript without any framework or library. Such tests that imitate real user interaction via User Interface (UI) are called End-to-End Tests. These tests are the most simple to write because we only need to think about our application in the same way user does:</p>
 
@@ -2117,7 +2177,7 @@
 
 <h2>User Story</h2>
 
-<p>User stories are scenarios describing an individual feature of the software via user story context, sequences of user interactions and user expectations. User story context is the description of the situation the user and the software system are in at the beginning of the scenario. An example of the system context: &ldquo;user John is registered in the system with password &lsquo;welcome&rsquo;.&rdquo; An example of the user context: &ldquo;user is at the login page.&rdquo; User interaction is the description of a particular action user takes inside of the system, usually, doing something within the UI, for example: &ldquo;User enters email &lsquo;<a href="&#x6d;&#x61;&#105;&#108;&#116;&#111;&#58;&#106;&#111;&#x68;&#x6e;&#x40;&#101;&#120;&#97;&#x6d;&#x70;&#108;&#x65;&#x2e;&#x6f;&#114;&#103;">&#x6a;&#x6f;&#x68;&#x6e;&#64;&#x65;&#x78;&#x61;&#109;&#112;&#x6c;&#x65;&#46;&#111;&#x72;&#103;</a>&rsquo; in the email input field&rdquo; or &ldquo;User clicks on the submit button.&rdquo; Finally, user expectation is the description of what particular information user should receive from the system, for example: &ldquo;User sees the success message on the page&rdquo; or &ldquo;User receives the email with the verification code.&rdquo;</p>
+<p>User stories are scenarios describing an individual feature of the software via user story context, sequences of user interactions and user expectations. User story context is the description of the situation the user and the software system are in at the beginning of the scenario. An example of the system context: &ldquo;user John is registered in the system with password &lsquo;welcome&rsquo;.&rdquo; An example of the user context: &ldquo;user is at the login page.&rdquo; User interaction is the description of a particular action user takes inside of the system, usually, doing something within the UI, for example: &ldquo;User enters email &lsquo;<a href="&#109;&#97;&#x69;&#x6c;&#x74;&#x6f;&#58;&#x6a;&#111;&#104;&#x6e;&#64;&#101;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#111;&#114;&#103;">&#106;&#x6f;&#104;&#110;&#x40;&#x65;&#x78;&#97;&#x6d;&#112;&#x6c;&#x65;&#x2e;&#111;&#x72;&#103;</a>&rsquo; in the email input field&rdquo; or &ldquo;User clicks on the submit button.&rdquo; Finally, user expectation is the description of what particular information user should receive from the system, for example: &ldquo;User sees the success message on the page&rdquo; or &ldquo;User receives the email with the verification code.&rdquo;</p>
 
 <p>User stories come in different flavor and formats. It can be a free-form text, describing three parts: context, interactions, and expectations; or it can be in a formal &ldquo;Given-When-Then&rdquo; form. &ldquo;Given&rdquo; part is the sequence of the user story context descriptions, &ldquo;When&rdquo; part is the sequence of the user interaction descriptions, and &ldquo;Then&rdquo; part is the sequence of user expectation descriptions. Both forms can be used interchangeably, and some software companies use one or another formal version of the user story format consistently.</p>
 
@@ -2139,8 +2199,8 @@
 <td><hr></td>
 </tr>
 <tr>
-<td>User with email &lsquo;<a href="&#109;&#97;&#105;&#x6c;&#x74;&#111;&#x3a;&#106;&#111;&#x68;&#110;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#46;&#111;&#114;&#x67;">&#106;&#x6f;&#104;&#x6e;&#x40;&#101;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#46;&#111;&#114;&#x67;</a>&rsquo; and password &lsquo;welcome&rsquo; exists in the system<br>John enters his email &lsquo;<a href="&#109;&#x61;&#x69;&#108;&#116;&#x6f;&#x3a;&#106;&#x6f;&#104;&#x6e;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x6f;&#x72;&#103;">&#106;&#x6f;&#104;&#110;&#x40;&#101;&#120;&#97;&#x6d;&#112;&#x6c;&#x65;&#46;&#x6f;&#114;&#103;</a>&rsquo; into the email field and his password &lsquo;welcome&rsquo; into the password field on the login page<br>After that John submits the login form<br>Finally, John expects to see their profile page with the indication of him being logged in (name &lsquo;John&rsquo; is present on the page)</td>
-<td><strong>Given</strong> User with email &lsquo;<a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#111;&#x3a;&#106;&#x6f;&#x68;&#x6e;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x6f;&#x72;&#x67;">&#106;&#x6f;&#x68;&#x6e;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#108;&#x65;&#46;&#x6f;&#114;&#x67;</a>&rsquo; and password &lsquo;welcome&rsquo; exists<br><strong>And</strong> I am at the login page<br><strong>When</strong> I enter &lsquo;<a href="&#109;&#x61;&#105;&#x6c;&#116;&#111;&#58;&#106;&#111;&#x68;&#x6e;&#x40;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#101;&#46;&#x6f;&#114;&#x67;">&#x6a;&#x6f;&#104;&#110;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#x6c;&#101;&#46;&#x6f;&#114;&#103;</a>&rsquo; in the email field<br><strong>And</strong> I enter &lsquo;welcome&rsquo; in the password field<br><strong>And</strong> I click on the submit button<br><strong>Then</strong> I see the profile page<br><strong>And</strong> I see my name as the title of the profile page</td>
+<td>User with email &lsquo;<a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#106;&#111;&#104;&#x6e;&#x40;&#101;&#120;&#x61;&#x6d;&#x70;&#x6c;&#x65;&#46;&#111;&#114;&#103;">&#106;&#111;&#x68;&#x6e;&#64;&#101;&#120;&#97;&#109;&#x70;&#108;&#x65;&#x2e;&#x6f;&#114;&#x67;</a>&rsquo; and password &lsquo;welcome&rsquo; exists in the system<br>John enters his email &lsquo;<a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#106;&#111;&#x68;&#x6e;&#64;&#101;&#120;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#x6f;&#x72;&#x67;">&#106;&#111;&#x68;&#x6e;&#x40;&#101;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#x6f;&#114;&#x67;</a>&rsquo; into the email field and his password &lsquo;welcome&rsquo; into the password field on the login page<br>After that John submits the login form<br>Finally, John expects to see their profile page with the indication of him being logged in (name &lsquo;John&rsquo; is present on the page)</td>
+<td><strong>Given</strong> User with email &lsquo;<a href="&#x6d;&#97;&#105;&#x6c;&#116;&#111;&#x3a;&#106;&#x6f;&#104;&#x6e;&#x40;&#101;&#120;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#111;&#x72;&#x67;">&#106;&#111;&#x68;&#110;&#x40;&#101;&#x78;&#97;&#x6d;&#x70;&#108;&#101;&#x2e;&#x6f;&#x72;&#x67;</a>&rsquo; and password &lsquo;welcome&rsquo; exists<br><strong>And</strong> I am at the login page<br><strong>When</strong> I enter &lsquo;<a href="&#109;&#x61;&#105;&#x6c;&#x74;&#111;&#58;&#x6a;&#111;&#x68;&#x6e;&#64;&#x65;&#120;&#x61;&#x6d;&#x70;&#108;&#101;&#46;&#111;&#x72;&#103;">&#x6a;&#111;&#104;&#x6e;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#111;&#x72;&#x67;</a>&rsquo; in the email field<br><strong>And</strong> I enter &lsquo;welcome&rsquo; in the password field<br><strong>And</strong> I click on the submit button<br><strong>Then</strong> I see the profile page<br><strong>And</strong> I see my name as the title of the profile page</td>
 </tr>
 </tbody>
 </table>
@@ -2184,7 +2244,7 @@
 </ol>
 
 
-<p>Do you have questions? Or do you want to get quick feedback on how you did the exercises? - mail me: <a href="&#x6d;&#x61;&#105;&#108;&#x74;&#x6f;&#x3a;&#111;&#x6c;&#101;&#x6b;&#x73;&#105;&#x69;&#x40;&#x74;&#x64;&#x64;&#102;&#x65;&#108;&#108;&#111;&#x77;&#46;&#x63;&#x6f;&#109;">&#111;&#x6c;&#x65;&#107;&#115;&#x69;&#105;&#x40;&#116;&#x64;&#100;&#x66;&#101;&#x6c;&#x6c;&#111;&#119;&#46;&#x63;&#x6f;&#x6d;</a></p>
+<p>Do you have questions? Or do you want to get quick feedback on how you did the exercises? - mail me: <a href="&#109;&#97;&#105;&#x6c;&#116;&#111;&#58;&#x6f;&#x6c;&#x65;&#x6b;&#x73;&#x69;&#105;&#x40;&#x74;&#100;&#100;&#102;&#x65;&#x6c;&#x6c;&#x6f;&#x77;&#x2e;&#x63;&#111;&#109;">&#x6f;&#x6c;&#x65;&#107;&#x73;&#x69;&#x69;&#x40;&#116;&#x64;&#x64;&#x66;&#101;&#108;&#x6c;&#111;&#x77;&#46;&#x63;&#x6f;&#109;</a></p>
 
 <h2>Setting Up the Project</h2>
 
@@ -10904,285 +10964,6 @@ Spy <|-- Mock;
 <p>Today we are going to discuss Continuous Integration, what it is and what it isn&rsquo;t. We will define best Check-Out/Check-In cycle. We will explore ways to train our Continuous Integration skills. And we will do some live coding on Kata with special restriction, that allows one to train such skills. Then we will draw a bottom line.</p>
 
 <p>Thanks for watching! If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Parallel Change Refactoring]]></title>
-    <link href="http://www.tddfellow.com/blog/2016/07/31/parallel-change-refactoring/"/>
-    <updated>2016-07-31T09:57:31+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2016/07/31/parallel-change-refactoring</id>
-    <content type="html"><![CDATA[<p>Parallel Change is the refactoring technique, that allows implementing backward-incompatible changes to an API in a safe manner. It consists of 3 steps:</p>
-
-<ul>
-<li>Expand - add new functionality as an extension of the interface (e.g.: add new methods), instead of editing signatures of existing interfaces</li>
-<li>Migrate - mark (or log a warning) existing interface as deprecated and give time to the clients of the interface to migrate to the new interface. This might be as simple as changing your own code-base one client of this interface at a time in case when you do not have 3rd party clients of these interfaces</li>
-<li>Contract - once all clients have migrated remove old interfaces</li>
-</ul>
-
-
-<p>This technique is tremendously useful when you have 3rd party clients for your API (open-source library, SaaS with REST API, etc). Also, it is as useful for normal application development because it allows such breaking changes to never break your test suite. It allows deploying your code in the middle of the refactoring, in fact, every few minutes (Continuous Integration + Continuous Deployment).</p>
-
-<p>This article contains code examples in a pseudo-code.</p>
-
-<!--more-->
-
-
-<h2><code>UserSearch</code></h2>
-
-<p>Let&rsquo;s imagine, that we have some class, that is used to search <code>User</code> by id:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">func</span> <span class="n">search</span><span class="p">(</span><span class="kt">id</span> <span class="o">:</span> <span class="n">UserId</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search ..</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now, new requirement comes in and it seems, that we need to be able to search by e-mail too, so we have to add more functionality here:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
-</span><span class='line'>  <span class="c1">// ...</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_email</span><span class="p">(</span><span class="nl">email</span> <span class="p">:</span> <span class="n">Email</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search ..</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Later, new requirement comes in and now we need to be able to search by the nickname too. So we follow the pattern:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
-</span><span class='line'>  <span class="c1">// ...</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_nickname</span><span class="p">(</span><span class="nl">nickname</span> <span class="p">:</span> <span class="n">Nickname</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search ..</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This is great and all, but we clearly can see, how this class violates Open-Closed Principle: every time there is a new thing to search the user by, we will have to alter this class. This is not good. One of the possible solutions might be closing this class against this kind of change by introducing polymorphic <code>Query</code>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
-</span><span class='line'>  <span class="c1">// all other search_* methods were removed</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">func</span> <span class="n">search</span><span class="p">(</span><span class="nl">query</span> <span class="p">:</span> <span class="n">Query</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After doing that, if we run our test suite, it will be failing, probably, even with compile errors. This is not good because now we have to go through every failure and fix it, this will prevent us from continuously integrating for quite some time (half an hour, or a couple of days, depending on the impact of this change). And this has high chances of resulting in merge conflicts, that will impede work of others on our team.</p>
-
-<p>Instead, let&rsquo;s apply the parallel change.</p>
-
-<h2>Applying Parallel Change</h2>
-
-<h3>Expand</h3>
-
-<p>First, we need to introduce brand new method of our class (of course with unit-tests), without touching anything else:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
-</span><span class='line'>  <span class="c1">// ...</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_query</span><span class="p">(</span><span class="nl">query</span> <span class="p">:</span> <span class="n">Query</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>At this point, we are going to deploy this new code.</p>
-
-<div class="v2-subscribe--inline">
-  
-
-
-
-
-  
-
-
-<div class="mc_embed_signup">
-  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div class="mc_embed_signup_scroll">
-      <h3>Want more articles like this delivered to your inbox?</h3>
-      <div class="mc-field-group">
-        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_7f9f94015a" tabindex="-1" value=""></div>
-        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
-        <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
-      </div>
-      <div class="">
-        <em>(we respect your privacy, unsubscribe at any time)</em>
-      </div>
-    </div>
-  </form>
-</div>
-
-
-</div>
-
-
-<h3>Migrate</h3>
-
-<p>Second, we need to add a deprecation warning to old interface, and, in fact, old functions can be rewritten via new one:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">func</span> <span class="n">search</span><span class="p">(</span><span class="kt">id</span> <span class="o">:</span> <span class="n">UserId</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">warn</span><span class="p">(</span><span class="s">&quot;`UserSearch.search` is deprecated. Use `UserSearch.search_by_query` instead&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">search_by_query</span><span class="p">(</span><span class="n">UserIdQuery</span><span class="p">(</span><span class="kt">id</span><span class="p">))</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_email</span><span class="p">(</span><span class="nl">email</span> <span class="p">:</span> <span class="n">Email</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">warn</span><span class="p">(</span><span class="s">&quot;`UserSearch.search_by_email` is deprecated. Use `UserSearch.search_by_query` instead&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">search_by_query</span><span class="p">(</span><span class="n">UserEmailQuery</span><span class="p">(</span><span class="n">email</span><span class="p">))</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_nickname</span><span class="p">(</span><span class="nl">nickname</span> <span class="p">:</span> <span class="n">Nickname</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
-</span><span class='line'>    <span class="n">warn</span><span class="p">(</span><span class="s">&quot;`UserSearch.search_by_nickname` is deprecated. Use `UserSearch.search_by_query` instead&quot;</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">search_by_query</span><span class="p">(</span><span class="n">UserNicknameQuery</span><span class="p">(</span><span class="n">nickname</span><span class="p">))</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="c1">// ...</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>At this point, we are going to deploy this new code.</p>
-
-<p>Next, we need to:</p>
-
-<ul>
-<li>inform all clients of our system about this deprecation and give them time-frame to migrate, or</li>
-<li>if all clients of <code>UserSearch</code> are under our control, we need to change all calls to use new interface:</li>
-</ul>
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="c1">// was: `user_search.search(user_id)`</span>
-</span><span class='line'><span class="n">user_search</span><span class="p">.</span><span class="n">search_by_query</span><span class="p">(</span><span class="n">UserIdQuery</span><span class="p">(</span><span class="n">user_id</span><span class="p">))</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After every line of change like that (big system probably has a multitude of these) we are going to deploy.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="c1">// was: `user_search.search_by_email(user_email)`</span>
-</span><span class='line'><span class="n">user_search</span><span class="p">.</span><span class="n">search_by_query</span><span class="p">(</span><span class="n">UserEmailQuery</span><span class="p">(</span><span class="n">user_email</span><span class="p">))</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After every line of change like that we are going to deploy.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="c1">// was: `user_search.search_by_nickname(user_nickname)`</span>
-</span><span class='line'><span class="n">user_search</span><span class="p">.</span><span class="n">search_by_query</span><span class="p">(</span><span class="n">UserNicknameQuery</span><span class="p">(</span><span class="n">user_nickname</span><span class="p">))</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Of course, after each line we are going to deploy.</p>
-
-<h3>Contract</h3>
-
-<p>Once all our tests pass and there is no single deprecation warning from <code>UserSession</code>, or the time-frame we have given to our 3rd party clients is finished, we can remove old functionality by simply removing deprecated methods (and their unit-tests), and what we will have left is:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='swift'><span class='line'><span class="k">class</span> <span class="n">UserSearch</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">func</span> <span class="n">search_by_query</span><span class="p">(</span><span class="nl">query</span> <span class="p">:</span> <span class="n">Query</span><span class="p">)</span><span class="o">:</span> <span class="p">[</span><span class="n">User</span><span class="p">]</span> <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// .. we somehow use the database gateway here to search</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Of course, we can deploy our system now.</p>
-
-<h2>Bottom Line</h2>
-
-<p>Notice, how following this technique avoids even a single compile error or test suite failure. And if failure happens, the last small code change (probably one line) was wrong, you just <code>CTRL+Z</code> it to get back to GREEN state.</p>
-
-<p>Was that refactoring necessary? Oh yeah it was, because in next few weeks, there were new requirements that would have forced us to add 2 new <code>search_by_*</code> methods to <code>UserSearch</code> class - instead, we just created new derivatives of <code>Query</code> interface/protocol and used them in the places where they are needed. This way we were able to change how <code>UserSearch</code> class works without modifying its source code, by only adding new code. This is a great win.</p>
-
-<p>You would not want to miss next articles on this tech blog, we still have a lot to talk about:</p>
-
-<ul>
-<li>Continuous Integration and Continuous Delivery - importance of not impeding others,</li>
-<li>Open-Closed Principle - changing behavior by adding new code,</li>
-<li>Triangulation technique in Test-Driven Development - overlooking this technique might cause one fail at doing TDD,</li>
-<li>Mutational Testing, &ldquo;Build Your Own Testing Framework&rdquo; series and so much more!</li>
-</ul>
-
-
-<p>Stay tuned!</p>
-
-<h2>Thanks!</h2>
-
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
 
 <p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
 ]]></content>
