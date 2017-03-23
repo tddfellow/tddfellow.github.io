@@ -21,8 +21,37 @@ At [Pivotal](https://pivotal.io) we pair all the time. It is very rare to see an
 
 With pairing not everything is so shiny.
 
-## Chemistry
+### Chemistry
 
 Now and then, you need to pair with someone, you have never paired with before. That happens in the event of new hires, team member rotations between teams, and cross-team pairing sessions.
 
 We are all humans, so, from time to time, it feels like you are not getting along very well with your pair. There is certain amount of tension. Of course, that harms your productivity, and, also, drains your energy.
+
+On the contrary side, chemistry between pairs might be so good, that you are just having fun the whole day and enjoy the pairing session, and the amount of work being done is suboptimal.
+
+The pairing session might go not so well not only because of chemistry. Pairs could have chosen non-suitable style of pairing (one of: ping-pong, switch on red, driver-navigator, etc). From time to time, how pairs solve the problem, can also be improved.
+
+## Five Minutes Feedback Time
+
+That is a technique that we are utilizing all the time when we have such problems. First, ask your pair if they want to apply this technique, and reserve 5 minutes at the end of the pairing session (end of the work day is the most suitable). Then, when the time comes, give each other the feedback in the format of "Pluses and Deltas":
+
+- First, tell what went well.
+- Second, tell what could be improved.
+
+When both pairs are proficient with this technique, then most of the problems can be resolved in 2-4 pairing sessions. By "proficient" we mean here: both are open for receiving the feedback, and are capable of calling out difficult things without triggering defensiveness on the receiving side.
+
+If the whole team applies this technique daily for two or three weeks, they will have to stop applying it because there will be nothing to talk about anymore. Which means, that most problems will be resolved, and there is no longer a need in a daily application of such technique.
+
+## Conclusion
+
+All these problems are not specific to pairing. They are inherent to the collaboration. Essentially, any team will have these problems. It is just that, in non-pairing environments these problems will become apparent only after months of work. This is all while they continue harming productivity and people's happiness for these long months.
+
+With pairing these problems become apparent immediately. So you can start fixing them on the day one, and not after the half a year of broken collaboration.
+
+If you pair often, or if you have any other sort of collaboration within the team, I definitely recommend trying out this technique. It will take time to get proficient at giving feedback. There is [an amazing talk](https://www.infoq.com/presentations/feedback-models-techniques) from [Dan North](https://dannorth.net) on how to give an effective feedback in different contexts.
+
+## Thanks
+
+Thank you for reading, my dear reader. If you liked it, please share this article on social networks, redit and hacker news, and follow me on Twitter: [@waterlink000](https://twitter.com/waterlink000).
+
+If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: [@waterlink000](https://twitter.com/waterlink000).
