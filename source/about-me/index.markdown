@@ -19,29 +19,36 @@ sidebar: false
 
 ## Bio
 
-Independent, self-managed, very social and competent developer. Polyglot. Never
-stops learning. Always transfers his knowledge around to whoever needs it.
-Strong teaching and leadership skills. Active open-source contributor.
+Oleksii helps software developers create clean applications in Kotlin language. Grab his free Ultimate Tutorial: Getting Started With Kotlin: https://iwillteachyoukotlin.com
 
-Specialities: Microservices, Agile, XP and Open-Source
+Specialities: Kotlin, Clean Code & Architecture, TDD, LEAN & Agile.
 
 ## Skills summary
 
-* Swift/iOS - 3 months
-* Kotlin - 3 months
+Current focus:
+
+* Mentorship, Teaching & Enablement – 2 years
+* Kotlin - 2 years
+* ECMAScript 6 – 1.5 years
+
+Other skills:
+
+* Javascript - 4 years
+* Ruby - 3.5 years
+* Swift/iOS - 8 months
 * Python - 2 years
-* Ruby - 3 years
-* Golang - 1 year
+* Golang - 2 years
 * Clojure - 1.5 year
-* Microservices - 1.5 year
-* Agile + XP - 3 years
+* Microservices - 2.5 year
+* Agile + XP - 4 years
 * Team Lead - 1.5 year
-* DevOps - 2.5 years
+* DevOps - 3 years
 * Open Source - 2 years
+* TypeScript – 7 months
 
 ## Experience
 
-### Software Engineer
+### Senior Software Engineer And Consultant
 
 #### Pivotal Labs -- April 2016 -- Present | Berlin, Germany
 
@@ -180,7 +187,7 @@ JetThoughts is a web software development consultancy.
 #### Learnings
 
 * Highly Agile + XP environment is very good for remote co-working
-* Learned proper TDD and pair-programming techniques. Fault in love with TDD
+* Learned proper TDD and pair-programming techniques. Has fallen in love with TDD
   and pair-programming - they are extremely effective
 * Learned proper code-review culture
 * Learned a lot of Ruby and Ruby on Rails
