@@ -19,7 +19,7 @@ sidebar: false
 
 ## Bio
 
-Oleksii helps software developers create clean applications in Kotlin language. Grab his free Ultimate Tutorial: Getting Started With Kotlin: https://iwillteachyoukotlin.com
+Oleksii helps software developers create clean applications in Kotlin language. [Grab his free Ultimate Tutorial: Getting Started With Kotlin](https://iwillteachyoukotlin.com).
 
 Specialities: Kotlin, Clean Code & Architecture, TDD, LEAN & Agile.
 
