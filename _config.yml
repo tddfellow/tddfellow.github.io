@@ -104,11 +104,11 @@ facebook_like: false
 # Authors
 authors:
   oleksii-fedorov:
-    name: Oleksii Fedorov
+    name: Alex Fedorov
     nick: waterlink
     photo: /about-me/oleksii-fedorov__small.jpg
     url: /about-me
-    bio: "Oleksii Fedorov is Successful Software Engineer, Software Crafter, Writer and Public Speaker. Oleksii helps software developers create clean applications in Kotlin language. <a href=\"https://iwillteachyoukotlin.com\">Grab his free Ultimate Tutorial: Getting Started With Kotlin</a> and start learning Kotlin today!"
+    bio: "Alex has been developing software for the past 20+ years, out of which, 12+ commercially. He has worked for a diverse variety of businesses: early-stage and late-stage start-ups, established product companies, agencies, and consultancies; and in a variety of industries: education, accounting, housing, online marketplaces, automotive, fintech, blockchain, privacy, online marketing, productivity, cloud, and design. He has given tech and inspirational talks at international conferences and local meet-ups since 2015. Alex has spent a significant chunk of his time coaching software developers, engineering managers, and start-up CTOs. He has written production code in 20 programming languages on the back-end, front-end, native mobile, and desktop. Alex cares the most about software industry, professionalism, quality, and well-being of developers."
   ilona-demidenko:
     name: Ilona Demidenko
     nick: ilonade
