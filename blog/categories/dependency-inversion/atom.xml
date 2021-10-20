@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Dependency-inversion | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/dependency-inversion/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2019-06-08T21:27:47+02:00</updated>
+  <updated>2021-09-09T10:53:15+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Object Oriented Design. Important Things]]></title>
-    <link href="http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things/"/>
-    <updated>2015-03-12T23:23:45+01:00</updated>
-    <id>http://www.tddfellow.com/blog/2015/03/12/object-oriented-design-important-things</id>
+    <link href="http://www.tddfellow.com/blog/2015/03/13/object-oriented-design-important-things/"/>
+    <updated>2015-03-13T00:23:45+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2015/03/13/object-oriented-design-important-things</id>
     <content type="html"><![CDATA[<h2>Slides from my talk <a href="https://twitter.com/BrainlyGroup">@brainly</a> 12 Mar 2015</h2>
 
 <p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>, I would love to hear from you.</em></p>

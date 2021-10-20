@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Design-by-contract | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/design-by-contract/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2019-06-08T21:27:47+02:00</updated>
+  <updated>2021-09-09T10:53:15+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -81,7 +81,7 @@ issues on corresponding github project. Pull requests are welcome!</p>
   <entry>
     <title type="html"><![CDATA[Using contracts.ruby With RSpec]]></title>
     <link href="http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec/"/>
-    <updated>2015-04-09T21:51:53+02:00</updated>
+    <updated>2015-04-09T22:51:53+03:00</updated>
     <id>http://www.tddfellow.com/blog/2015/04/09/using-contracts-dot-ruby-with-rspec</id>
     <content type="html"><![CDATA[<h2>Issues with RSpec mocks</h2>
 

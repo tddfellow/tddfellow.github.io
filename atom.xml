@@ -4,7 +4,7 @@
   <title><![CDATA[That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2019-06-08T21:27:47+02:00</updated>
+  <updated>2021-09-09T10:53:15+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -14,113 +14,39 @@
 
   
   <entry>
-    <title type="html"><![CDATA[What I've Been Up to Recently?]]></title>
-    <link href="http://www.tddfellow.com/blog/2017/07/19/what-ive-been-up-to-recently/"/>
-    <updated>2017-07-19T14:49:04+02:00</updated>
-    <id>http://www.tddfellow.com/blog/2017/07/19/what-ive-been-up-to-recently</id>
-    <content type="html"><![CDATA[<p>Hi there!</p>
+    <title type="html"><![CDATA[Are We Addicted to Complexity?]]></title>
+    <link href="http://www.tddfellow.com/blog/2021/09/08/are-we-addicted-to-complexity/"/>
+    <updated>2021-09-08T14:49:04+02:00</updated>
+    <id>http://www.tddfellow.com/blog/2021/09/08/are-we-addicted-to-complexity</id>
+    <content type="html"><![CDATA[<p>As software engineers, we tend to be lifelong learners. Suppose our current job becomes less challenging, and there is nothing more to learn. In that case, we usually resort to one of the following:</p>
 
-<p>As you might know, I haven&rsquo;t posted anything to TDD Fellow blog for quite a while. I wasn&rsquo;t just lazy. I have been severely busy.</p>
+<ul>
+<li>Find a more exciting team or company.</li>
+<li>Start something on the side in our free time.</li>
+<li>Bring more advanced concepts to the current team and codebase.</li>
+</ul>
 
-<p>I was busy creating new things.</p>
 
-<h2>Guest Blogging</h2>
-
-<p>I&rsquo;ve written a few guest blog posts, for example <a href="https://simpleprogrammer.com/2017/05/26/making-decisions-simpler/">this guide might teach you how to make better decisions as a software developer</a>. That article is about stress, willpower, mental health and results in a work of software developer.</p>
-
-<p>Right now I&rsquo;m writing another guest blog post and talking to more blog authors looking for guest posts.</p>
-
-<h2>Reading Complete Software Developer&rsquo;s Guide</h2>
-
-<p>Also, I&rsquo;ve read an amazing book, best seller in Software Engineering category, that I predict will become one of the classics of Software Engineering, alongside Refactoring and Patterns books - <a href="https://www.amazon.com/Complete-Software-Developers-Career-Guide-ebook/dp/B073X6GNJ1/ref=tmm_kin_swatch_0?_encoding=UTF8&amp;qid=1500389436&amp;sr=8-2">The Complete Software Developer&rsquo;s Career Guide</a>.</p>
-
-<p>I loved it. It is a book for a software developer of any stage: beginner that is just learning, professional trying to land THAT first job, competent professional software developer itching to improve or an expert software engineer looking for ways to transcend and go beyond a simple software engineering role? Then this book is for you. Read <a href="https://www.amazon.com/review/R2B6UMN473MTB7/ref=cm_cr_rdp_perm?ie=UTF8&amp;ASIN=B073X6GNJ1">my full review on the Amazon</a>.</p>
-
-<h2>Stories on Productivity, Negotiations, and Stress</h2>
-
-<h4>(for software developers)</h4>
-
-<p>I&rsquo;ve started a whole series of stories and case studies (I call them &ldquo;War Stories&rdquo;) on productivity, negotiations, and stress for software developers. So if you want to learn how to negotiate, be productive and handle stress as a software developer, <a href="http://productivedevelopersonly.com">go and grab my stories</a>.</p>
-
-<p>The stories are published under the name of &ldquo;Productive Developers Only.&rdquo; One might think: &ldquo;What a cheesy name!&rdquo;. I love the name, though. Hehe :) It is not just <strong>for</strong> Productive Developers Only, it is also <strong>for anyone</strong> who wants to be more productive, more successful and healthier as a software developer.</p>
-
-<p>So far, I&rsquo;ve written one case study called &ldquo;How to Get a Better Offer Accidentally.&rdquo; It focuses on one simple negotiation technique. In fact, there were already two revisions of that story. And I&rsquo;ve received some more feedback from my dear friend and colleague Alexis. So I&rsquo;ll write the third version soon, and it&rsquo;ll rock! By the way, check out Alexis&#8217; blog: <a href="http://freeisaverb.com">Free is a Verb</a> - it is amazing!</p>
-
-<p>Also, I&rsquo;m in the process of interviewing a few developers for the next case study called &ldquo;Why You Need to Work Four Hours Only Per Day.&rdquo; In fact, you are not working more than four hours per day, even if it takes you eight or more. Isn&rsquo;t it surprising? If you want to know more, hurry to <a href="http://productivedevelopersonly.com">grab my stories, and you&rsquo;ll receive the case study as soon as I publish it in a few weeks</a>.</p>
-
-<p>If you are still reading, I&rsquo;ll throw some more interesting teaser at you ;) How about I tell you what first case study was about?</p>
-
-<h3>Julia&rsquo;s Story</h3>
-
-<p>Julia was searching for a first job as a developer after graduating. It was tough, as most companies wanted to hire experienced developers. Julia didn&rsquo;t lack qualifications for the junior positions. She was interviewing with two startups in her hometown.</p>
+<p>It&rsquo;s the third one that is the most worrying because it happens way too often, and it&rsquo;s probably more harmful than you think.</p>
 
 <!-- more -->
 
 
-<p>The first startup was one step ahead of the second in the interviewing process. Let&rsquo;s give them names: &ldquo;Milky Way&rdquo; and &ldquo;Stardust.&rdquo; On Monday, Julia had an interview with Stardust. She liked culture, people and enjoyed the interviewing process.</p>
+<p>This article isn&rsquo;t preaching against new technologies, architectures, etc.</p>
 
-<p>On Tuesday, Julia had the last interview with CTO of Milky Way. Same evening she got an offer from
-them. HR Consultant Peter wanted an answer to that offer as soon as possible. Preferably - immediately, the same evening.</p>
+<p>Instead, I&rsquo;d like to point out that in about 95% of the cases, they are introduced years before they are actually necessary. Instead of making the software more straightforward, this makes the software more complex.</p>
 
-<p>Julia told him: she&rsquo;ll be able to decide only on Friday afternoon. After all, she had a final interview with Stardust&rsquo;s CTO on Friday. Peter didn&rsquo;t like it and insisted. Julia firmly kept her decision. What happened Friday morning nobody could anticipate.</p>
+<p>What should we do instead if we want to learn more new stuff then?</p>
 
-<p>To know what happened Friday morning <a href="http://productivedevelopersonly.com">grab negotiations &ldquo;War Story&rdquo;: How to Get a Better Offer Accidentally</a>!</p>
+<p>Well, one thing is to invert your focus. Instead of chasing something more complex, take on the challenge of making what you have much simpler.</p>
 
-<h2>What&rsquo;ll happen to TDD Fellow Blog?</h2>
+<p>In fact, making the existing codebase and architecture more straightforward than it already is — is a considerable challenge, in the process of which you are guaranteed to learn new things!</p>
 
-<p>It&rsquo;ll have more content! I&rsquo;m going to post technical, architectural and TDD related topics here from time to time.</p>
+<p>Suppose you feel the urge to learn something new and deal with a more complex task. Perhaps, you should talk to your business stakeholders to see if they have an idea that they don&rsquo;t even want to mention to product &amp; engineering. (Because they think it&rsquo;s too challenging or impossible)</p>
 
-<p>For example, I&rsquo;m drafting out a blog post about Clean Microservices Architecture right now. Just to tease you a bit:</p>
+<p>These types of ideas are where there is real gold for learning, innovation, and valuable complexity!</p>
 
-<h3>Clean µServices Architecture</h3>
-
-<p>Ever worked in a µServices environment and needed to refactor across services? You need some slow integration tests that run against the whole deployed system to make sure your refactoring didn&rsquo;t break anything. These integration tests make for a slow and annoying feedback loop, which discourages that refactoring!</p>
-
-<p>What if you could launch your whole application as a Monolith on your local machine and run acceptance tests that are as fast as unit tests? And you could deploy the same system as a bunch of µServices? Come and learn about Clean µServices Architecture!</p>
-
-<hr />
-
-<p>You would not want to miss that blog post. So make sure I can notify you when the article is up:</p>
-
-<div class="v2-subscribe--inline">
-  
-
-
-
-
-  
-
-
-<div class="mc_embed_signup">
-  <form action="//tddfellow.us14.list-manage.com/subscribe/post?u=535a10a8c0274c9a7ebac4f34&amp;id=7f9f94015a" method="post" class="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-    <div class="mc_embed_signup_scroll">
-      <h3>Want more articles like this delivered to your inbox?</h3>
-      <div class="mc-field-group">
-        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_535a10a8c0274c9a7ebac4f34_7f9f94015a" tabindex="-1" value=""></div>
-        <input type="email" value="" name="EMAIL" class="required email mce-EMAIL" placeholder="Enter your email">
-        <input type="submit" value="Subscribe" name="subscribe" class="button mc-embedded-subscribe">
-      </div>
-      <div class="">
-        <em>(we respect your privacy, unsubscribe at any time)</em>
-      </div>
-    </div>
-  </form>
-</div>
-
-
-</div>
-
-
-<hr />
-
-<h2>Thank you</h2>
-
-<p>Thank you so much for reading this article! If you liked it, please share this article on social networks, Reddit, and Hacker News, and follow me on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
-
-<p>And don&rsquo;t hesitate to take a look at <a href="http://productivedevelopersonly.com">Productive Developers Only</a>!</p>
+<p>If you have other ideas on the topic, <a href="https://twitter.com/waterlink000">feel free to send me a Tweet</a>!</p>
 ]]></content>
   </entry>
   
@@ -1154,7 +1080,7 @@ them. HR Consultant Peter wanted an answer to that offer as soon as possible. Pr
 
 <p>Articles of these series have exercises and going through them would make for more effective learning. Also, if you feel stuck with these exercises, fell free to shoot me an email or get in touch on Twitter: @waterlink000.</p>
 
-<p>&ldquo;Learning Test-Driven Development with Javascript&rdquo; is a series of articles and you, my dear reader, can shape the content by providing an invaluable feedback. To do that, shoot me an email - <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#x6f;&#x3a;&#x6f;&#x6c;&#101;&#107;&#115;&#x69;&#x69;&#x40;&#x74;&#100;&#x64;&#102;&#101;&#x6c;&#x6c;&#x6f;&#x77;&#46;&#x63;&#111;&#x6d;&#46;">&#111;&#x6c;&#x65;&#107;&#x73;&#105;&#x69;&#64;&#x74;&#100;&#x64;&#x66;&#x65;&#x6c;&#x6c;&#111;&#119;&#46;&#99;&#x6f;&#109;&#46;</a></p>
+<p>&ldquo;Learning Test-Driven Development with Javascript&rdquo; is a series of articles and you, my dear reader, can shape the content by providing an invaluable feedback. To do that, shoot me an email - <a href="&#109;&#x61;&#105;&#108;&#x74;&#111;&#x3a;&#x6f;&#x6c;&#101;&#x6b;&#115;&#x69;&#105;&#64;&#x74;&#100;&#100;&#102;&#x65;&#108;&#108;&#x6f;&#x77;&#46;&#x63;&#x6f;&#109;&#46;">&#x6f;&#108;&#101;&#107;&#115;&#x69;&#105;&#64;&#116;&#x64;&#100;&#102;&#101;&#108;&#108;&#111;&#x77;&#x2e;&#99;&#x6f;&#109;&#46;</a></p>
 
 <h2>Basics of Test-Driven Development</h2>
 
@@ -2265,7 +2191,7 @@ them. HR Consultant Peter wanted an answer to that offer as soon as possible. Pr
     <id>http://www.tddfellow.com/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing</id>
     <content type="html"><![CDATA[<p><strong>Level: Beginner.</strong></p>
 
-<p>&ldquo;Learning TDD with Javascript&rdquo; is the series of articles where we learn basics of automated testing and test-driven development. While the language of choice for the code examples is Javascript, all described concepts are language-agnostic and are applicable in various technological stacks. In these articles, a reader is expected to do small exercises after each major topic to reinforce that theoretical knowledge with practice. Some of these exercises are practical and will involve coding, or simple writing; others will be food for thought. Also, a reader might want to get their feedback on these exercises, so don&rsquo;t hesitate to send the results my way: <a href="&#109;&#97;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#111;&#x6c;&#101;&#x6b;&#115;&#x69;&#x69;&#64;&#x74;&#100;&#x64;&#x66;&#101;&#108;&#x6c;&#x6f;&#119;&#x2e;&#x63;&#111;&#109;">&#111;&#x6c;&#x65;&#107;&#x73;&#105;&#x69;&#x40;&#x74;&#x64;&#x64;&#102;&#x65;&#108;&#x6c;&#111;&#x77;&#x2e;&#x63;&#111;&#x6d;</a> - feedback on the practice is quite important as it helps to improve quicker, when you know what is well and what can be improved and how. Also, don&rsquo;t hesitate to send any questions and feedback regarding the content of these articles. Your questions, feedback, and your practical results will help authors shape this content better.</p>
+<p>&ldquo;Learning TDD with Javascript&rdquo; is the series of articles where we learn basics of automated testing and test-driven development. While the language of choice for the code examples is Javascript, all described concepts are language-agnostic and are applicable in various technological stacks. In these articles, a reader is expected to do small exercises after each major topic to reinforce that theoretical knowledge with practice. Some of these exercises are practical and will involve coding, or simple writing; others will be food for thought. Also, a reader might want to get their feedback on these exercises, so don&rsquo;t hesitate to send the results my way: <a href="&#x6d;&#x61;&#105;&#x6c;&#x74;&#111;&#58;&#111;&#x6c;&#x65;&#x6b;&#x73;&#105;&#105;&#x40;&#x74;&#100;&#x64;&#102;&#x65;&#108;&#108;&#x6f;&#119;&#46;&#99;&#111;&#x6d;">&#111;&#108;&#x65;&#x6b;&#x73;&#x69;&#105;&#64;&#x74;&#100;&#100;&#102;&#101;&#108;&#x6c;&#111;&#119;&#46;&#x63;&#111;&#109;</a> - feedback on the practice is quite important as it helps to improve quicker, when you know what is well and what can be improved and how. Also, don&rsquo;t hesitate to send any questions and feedback regarding the content of these articles. Your questions, feedback, and your practical results will help authors shape this content better.</p>
 
 <p>Today we are going to learn how to write tests that imitate real user interaction for the whole application. We are going to build a small web application using Vanilla Javascript. Vanilla Javascript is a plain Javascript without any framework or library. Such tests that imitate real user interaction via User Interface (UI) are called End-to-End Tests. These tests are the most simple to write because we only need to think about our application in the same way user does:</p>
 
@@ -2288,7 +2214,7 @@ them. HR Consultant Peter wanted an answer to that offer as soon as possible. Pr
 
 <h2>User Story</h2>
 
-<p>User stories are scenarios describing an individual feature of the software via user story context, sequences of user interactions and user expectations. User story context is the description of the situation the user and the software system are in at the beginning of the scenario. An example of the system context: &ldquo;user John is registered in the system with password &lsquo;welcome&rsquo;.&rdquo; An example of the user context: &ldquo;user is at the login page.&rdquo; User interaction is the description of a particular action user takes inside of the system, usually, doing something within the UI, for example: &ldquo;User enters email &lsquo;<a href="&#109;&#97;&#x69;&#108;&#116;&#111;&#x3a;&#x6a;&#111;&#104;&#x6e;&#64;&#x65;&#120;&#x61;&#x6d;&#x70;&#108;&#x65;&#46;&#111;&#x72;&#x67;">&#106;&#111;&#x68;&#110;&#64;&#x65;&#120;&#x61;&#x6d;&#112;&#108;&#x65;&#46;&#111;&#x72;&#x67;</a>&rsquo; in the email input field&rdquo; or &ldquo;User clicks on the submit button.&rdquo; Finally, user expectation is the description of what particular information user should receive from the system, for example: &ldquo;User sees the success message on the page&rdquo; or &ldquo;User receives the email with the verification code.&rdquo;</p>
+<p>User stories are scenarios describing an individual feature of the software via user story context, sequences of user interactions and user expectations. User story context is the description of the situation the user and the software system are in at the beginning of the scenario. An example of the system context: &ldquo;user John is registered in the system with password &lsquo;welcome&rsquo;.&rdquo; An example of the user context: &ldquo;user is at the login page.&rdquo; User interaction is the description of a particular action user takes inside of the system, usually, doing something within the UI, for example: &ldquo;User enters email &lsquo;<a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#x6a;&#111;&#x68;&#x6e;&#x40;&#101;&#120;&#97;&#109;&#x70;&#x6c;&#x65;&#x2e;&#x6f;&#114;&#x67;">&#x6a;&#x6f;&#104;&#x6e;&#64;&#x65;&#120;&#97;&#x6d;&#112;&#108;&#101;&#x2e;&#x6f;&#114;&#103;</a>&rsquo; in the email input field&rdquo; or &ldquo;User clicks on the submit button.&rdquo; Finally, user expectation is the description of what particular information user should receive from the system, for example: &ldquo;User sees the success message on the page&rdquo; or &ldquo;User receives the email with the verification code.&rdquo;</p>
 
 <p>User stories come in different flavor and formats. It can be a free-form text, describing three parts: context, interactions, and expectations; or it can be in a formal &ldquo;Given-When-Then&rdquo; form. &ldquo;Given&rdquo; part is the sequence of the user story context descriptions, &ldquo;When&rdquo; part is the sequence of the user interaction descriptions, and &ldquo;Then&rdquo; part is the sequence of user expectation descriptions. Both forms can be used interchangeably, and some software companies use one or another formal version of the user story format consistently.</p>
 
@@ -2310,8 +2236,8 @@ them. HR Consultant Peter wanted an answer to that offer as soon as possible. Pr
 <td><hr></td>
 </tr>
 <tr>
-<td>User with email &lsquo;<a href="&#x6d;&#x61;&#x69;&#x6c;&#116;&#x6f;&#58;&#x6a;&#111;&#x68;&#110;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#108;&#x65;&#46;&#x6f;&#x72;&#x67;">&#106;&#111;&#104;&#110;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#x6c;&#101;&#46;&#111;&#x72;&#x67;</a>&rsquo; and password &lsquo;welcome&rsquo; exists in the system<br>John enters his email &lsquo;<a href="&#109;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#106;&#111;&#104;&#110;&#x40;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#46;&#x6f;&#114;&#103;">&#106;&#111;&#x68;&#x6e;&#64;&#x65;&#120;&#97;&#x6d;&#112;&#108;&#x65;&#x2e;&#111;&#x72;&#x67;</a>&rsquo; into the email field and his password &lsquo;welcome&rsquo; into the password field on the login page<br>After that John submits the login form<br>Finally, John expects to see their profile page with the indication of him being logged in (name &lsquo;John&rsquo; is present on the page)</td>
-<td><strong>Given</strong> User with email &lsquo;<a href="&#109;&#x61;&#x69;&#x6c;&#116;&#x6f;&#58;&#x6a;&#111;&#104;&#x6e;&#64;&#x65;&#x78;&#97;&#109;&#112;&#x6c;&#x65;&#46;&#111;&#x72;&#103;">&#106;&#x6f;&#104;&#x6e;&#64;&#101;&#120;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#111;&#114;&#103;</a>&rsquo; and password &lsquo;welcome&rsquo; exists<br><strong>And</strong> I am at the login page<br><strong>When</strong> I enter &lsquo;<a href="&#109;&#x61;&#x69;&#x6c;&#116;&#x6f;&#x3a;&#106;&#x6f;&#x68;&#x6e;&#x40;&#x65;&#120;&#97;&#x6d;&#x70;&#108;&#101;&#x2e;&#x6f;&#114;&#x67;">&#106;&#x6f;&#104;&#110;&#64;&#101;&#x78;&#x61;&#109;&#112;&#108;&#x65;&#46;&#x6f;&#x72;&#x67;</a>&rsquo; in the email field<br><strong>And</strong> I enter &lsquo;welcome&rsquo; in the password field<br><strong>And</strong> I click on the submit button<br><strong>Then</strong> I see the profile page<br><strong>And</strong> I see my name as the title of the profile page</td>
+<td>User with email &lsquo;<a href="&#x6d;&#97;&#x69;&#108;&#116;&#x6f;&#x3a;&#106;&#111;&#104;&#110;&#64;&#x65;&#120;&#x61;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x6f;&#114;&#x67;">&#106;&#111;&#104;&#110;&#x40;&#x65;&#x78;&#x61;&#109;&#x70;&#108;&#x65;&#x2e;&#111;&#114;&#103;</a>&rsquo; and password &lsquo;welcome&rsquo; exists in the system<br>John enters his email &lsquo;<a href="&#109;&#97;&#105;&#108;&#x74;&#111;&#58;&#106;&#x6f;&#x68;&#x6e;&#x40;&#101;&#x78;&#97;&#109;&#112;&#108;&#x65;&#x2e;&#x6f;&#114;&#x67;">&#106;&#x6f;&#x68;&#x6e;&#64;&#x65;&#x78;&#97;&#109;&#x70;&#108;&#101;&#46;&#111;&#114;&#x67;</a>&rsquo; into the email field and his password &lsquo;welcome&rsquo; into the password field on the login page<br>After that John submits the login form<br>Finally, John expects to see their profile page with the indication of him being logged in (name &lsquo;John&rsquo; is present on the page)</td>
+<td><strong>Given</strong> User with email &lsquo;<a href="&#109;&#97;&#105;&#x6c;&#116;&#x6f;&#x3a;&#x6a;&#x6f;&#104;&#110;&#x40;&#x65;&#120;&#97;&#x6d;&#x70;&#x6c;&#101;&#x2e;&#x6f;&#x72;&#103;">&#x6a;&#111;&#104;&#x6e;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x6f;&#x72;&#x67;</a>&rsquo; and password &lsquo;welcome&rsquo; exists<br><strong>And</strong> I am at the login page<br><strong>When</strong> I enter &lsquo;<a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#106;&#111;&#x68;&#x6e;&#64;&#101;&#120;&#97;&#x6d;&#x70;&#108;&#x65;&#46;&#x6f;&#x72;&#103;">&#106;&#x6f;&#104;&#110;&#x40;&#x65;&#120;&#x61;&#109;&#x70;&#108;&#101;&#46;&#111;&#114;&#x67;</a>&rsquo; in the email field<br><strong>And</strong> I enter &lsquo;welcome&rsquo; in the password field<br><strong>And</strong> I click on the submit button<br><strong>Then</strong> I see the profile page<br><strong>And</strong> I see my name as the title of the profile page</td>
 </tr>
 </tbody>
 </table>
@@ -2355,7 +2281,7 @@ them. HR Consultant Peter wanted an answer to that offer as soon as possible. Pr
 </ol>
 
 
-<p>Do you have questions? Or do you want to get quick feedback on how you did the exercises? - mail me: <a href="&#109;&#97;&#105;&#108;&#x74;&#x6f;&#58;&#x6f;&#108;&#101;&#x6b;&#115;&#x69;&#105;&#x40;&#x74;&#x64;&#x64;&#102;&#101;&#x6c;&#x6c;&#x6f;&#x77;&#x2e;&#x63;&#x6f;&#x6d;">&#x6f;&#108;&#101;&#x6b;&#115;&#x69;&#x69;&#x40;&#116;&#x64;&#100;&#102;&#101;&#108;&#108;&#x6f;&#119;&#x2e;&#x63;&#x6f;&#109;</a></p>
+<p>Do you have questions? Or do you want to get quick feedback on how you did the exercises? - mail me: <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#111;&#x6c;&#x65;&#x6b;&#x73;&#105;&#105;&#x40;&#x74;&#x64;&#x64;&#x66;&#101;&#x6c;&#x6c;&#x6f;&#x77;&#x2e;&#99;&#111;&#x6d;">&#111;&#108;&#101;&#107;&#115;&#105;&#x69;&#x40;&#x74;&#x64;&#x64;&#102;&#101;&#108;&#108;&#x6f;&#119;&#x2e;&#99;&#x6f;&#x6d;</a></p>
 
 <h2>Setting Up the Project</h2>
 

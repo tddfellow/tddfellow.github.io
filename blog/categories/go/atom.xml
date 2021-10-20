@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Go | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/go/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2019-06-08T21:27:47+02:00</updated>
+  <updated>2021-09-09T10:53:15+02:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Dismantling Effective Go Article]]></title>
     <link href="http://www.tddfellow.com/blog/2015/01/30/dismantling-effective-go-article/"/>
-    <updated>2015-01-30T22:39:11+01:00</updated>
+    <updated>2015-01-30T23:39:11+02:00</updated>
     <id>http://www.tddfellow.com/blog/2015/01/30/dismantling-effective-go-article</id>
     <content type="html"><![CDATA[<p>Go is a nice language and giving tips on how to better write code in that language right away at first language tutorials is awesome.</p>
 
