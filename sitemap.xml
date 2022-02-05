@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://www.tddfellow.com/blog/2022/02/05/why-best-software-engineering-practices-are-insanely-important-really/</loc>
+<lastmod>2022-02-05T14:43:04+02:00</lastmod>
+</url>
+<url>
 <loc>http://www.tddfellow.com/blog/2021/09/08/are-we-addicted-to-complexity/</loc>
 <lastmod>2021-09-08T14:49:04+02:00</lastmod>
 </url>
@@ -510,17 +514,5 @@
 </url>
 <url>
 <loc>http://www.tddfellow.com/blog/categories/feedback/</loc>
-</url>
-<url>
-<loc>http://www.tddfellow.com/posts/2/</loc>
-</url>
-<url>
-<loc>http://www.tddfellow.com/posts/3/</loc>
-</url>
-<url>
-<loc>http://www.tddfellow.com/posts/4/</loc>
-</url>
-<url>
-<loc>http://www.tddfellow.com/posts/5/</loc>
 </url>
 </urlset>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Teaching | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/teaching/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2021-10-20T12:09:31+02:00</updated>
+  <updated>2022-02-05T16:48:18+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -442,7 +442,7 @@ print english_integer(-97)  # minus ninety-seven
 
 <p>I&rsquo;m leaving the final solution as an exercise for you, my dear reader. There is nothing more to this technique. Careful application of this technique and careful choice of smallest baby-steps as new requirements to your current solution will get you there - to the final solution, that supports the range of <code>-999 999 999...999 999 999</code>.</p>
 
-<p>If you have any troubles, don&rsquo;t hesitate to share your questions, ideas and code with me. I will try my best to help you, my dear reader. I am reachable via Twitter by handle <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>If you have any troubles, don&rsquo;t hesitate to share your questions, ideas and code with me. I will try my best to help you, my dear reader. I am reachable via Twitter by handle <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 
 <h2>Challenge</h2>
 

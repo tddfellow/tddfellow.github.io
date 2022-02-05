@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Docker-machine | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/docker-machine/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2021-10-20T12:09:31+02:00</updated>
+  <updated>2022-02-05T16:48:18+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -198,7 +198,7 @@ docker-machine create -d virtualbox dev --virtualbox-memory "5120"
 
 <p>Comments on <a href="https://news.ycombinator.com/item?id=10146082">hackernews</a>.</p>
 
-<p>Happy hacking! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
+<p>Happy hacking! <a href="https://twitter.com/tdd_fellow">@tdd_fellow on twitter</a>.</p>
 ]]></content>
   </entry>
   

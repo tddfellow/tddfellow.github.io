@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Go | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/go/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2021-10-20T12:09:31+02:00</updated>
+  <updated>2022-02-05T16:48:18+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -120,7 +120,7 @@ if result.IsErorr() {     // handle errors
 
 <p>Of course <code>f</code>, <code>d</code> and <code>result</code> are just <code>Result</code>/<code>Either</code> monads, they can be either in normal or faulty state. Whenever you try to do anything on <code>Result</code> in faulty state, it will just return itself. But <code>Result</code> in normal state will proxy call to its contents and wrap it in another <code>Result</code> monad (normal or faulty - depends on if call was successful or not). Probably I am too critical about that, because here I used some patterns that are not part of the language itself, but yeah, I can&rsquo;t look at code that mixes guards and actions.</p>
 
-<p>Probably, somebody out there in go-lang world can tell me, is it common to use patterns like <code>Maybe</code>, <code>Result</code>, <code>NullObject</code> and so on in go-lang? Or everybody just go with simple code without any magic behind the scenes, and just do it like in the article&rsquo;s example? Feel free to ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>Probably, somebody out there in go-lang world can tell me, is it common to use patterns like <code>Maybe</code>, <code>Result</code>, <code>NullObject</code> and so on in go-lang? Or everybody just go with simple code without any magic behind the scenes, and just do it like in the article&rsquo;s example? Feel free to ping me at twitter <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 
 <h2>For</h2>
 

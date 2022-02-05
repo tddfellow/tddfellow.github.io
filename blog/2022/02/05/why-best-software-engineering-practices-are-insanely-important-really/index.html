@@ -1,0 +1,471 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Why Best Software Engineering Practices Are Insanely Important, Really - That TDD Fellow | Tech Blog | Screencasts</title>
+  <meta name="author" content="Oleksii Fedorov (waterlink)">
+
+  
+  <meta name="description" content="&ldquo;So, what software engineering practices do you like to use?&rdquo; — I asked another developer the other day. And the answer has wholly shaken &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.tddfellow.com/blog/2022/02/05/why-best-software-engineering-practices-are-insanely-important-really/">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="That TDD Fellow | Tech Blog | Screencasts" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='//fonts.googleapis.com/css?family=Exo+2:300' rel='stylesheet' type='text/css'>
+
+<!-- Twitter Cards -->
+
+  
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@tdd_fellow">
+<meta name="twitter:creator" content="@tdd_fellow">
+<meta name="twitter:title" content="Why Best software Engineering Practices Are Insanely Important, Really">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="http://www.tddfellow.com/images/logo.png">
+
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-73226470-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+  <script id="mcjs">!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/535a10a8c0274c9a7ebac4f34/c581a0d0b58a6931a119f0fc5.js");</script>
+
+</head>
+
+<body  class="no-sidebar">
+  <header role="banner"><hgroup class="v2-header">
+  <ul class="v2-header__navigation">
+    <li class="v2-header__navigation__logo">
+      <h1><a href="/">TDD Fellow</a></h1>
+    </li>
+    <li><a href="/blog/archives">Archives</a></li>
+<li><a href="/about-me">About me</a></li>
+
+  </ul>
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<ul class="main-navigation">
+  <li><a href="/blog/categories/tdd-screencasts/">Screencasts</a></li>
+  <li><a href="/blog/categories/build-your-own-testing-framework/">Build Testing Framework</a></li>
+  <li><a href="/blog/categories/getting-stuck-while-doing-tdd/">Getting Stuck in TDD</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content" class="v2-content">
+      <aside class="v2-sidebar v2-sidebar--non-mobile">
+  <div class="v2-sidebar__recent-posts v2-sidebar__item--mobile--bottom-only">
+	<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2022/02/05/why-best-software-engineering-practices-are-insanely-important-really/">Why Best Software Engineering Practices Are Insanely Important, Really</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2021/09/08/are-we-addicted-to-complexity/">Are We Addicted to Complexity?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/03/22/feedback-time-at-the-end-of-the-pairing-session/">Feedback Time at the End of the Pairing Session</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/03/21/on-being-more-productive-in-the-morning-even-if-you-are-an-owl/">On Being More Productive in the Morning. Even if You Are an Owl</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/03/20/drakes-24-hours-challenge-or-how-to-be-less-negative/">Drake&#8217;s 24 Hours Challenge or How to Be Less Negative</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/03/13/build-your-own-testing-framework-part-6-test-suite-does-not-run-all-tests/">Build Your Own Testing Framework. Part 6: Test Suite Does Not Run All Tests!</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/02/03/learning-test-driven-development-with-javascript-laws-of-tdd/">Learning Test-Driven Development With Javascript: Laws of TDD</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
+      </li>
+    
+  </ul>
+</section>
+
+</div>
+
+</aside>
+
+
+<div class="v2-blog-post">
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Why Best Software Engineering Practices Are Insanely Important, Really</h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Alex Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2022-02-05T14:43:04+02:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2022</span></span> <span class='time'>2:43 pm</span></time>
+        
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>&ldquo;So, what software engineering practices do you like to use?&rdquo; — I asked another developer the other day. And the answer has wholly shaken me:</p>
+
+<p>&ldquo;What do you mean by &#8220;software engineering practices?&rdquo; — was the developer&rsquo;s response.</p>
+
+<p>When I explain what I mean by these three words (apparently, I took for granted), the person starts listing technologies. This conversation has been repeating a bit too frequently for my liking recently.</p>
+
+<p>Look, I get it. Technologies knowledge and experience are vital for a software engineer. However, the fundamental practices of software engineering are insanely important nevertheless.</p>
+
+<p>Let&rsquo;s discover why.</p>
+
+<!-- more -->
+
+
+<h2>Holy Grail of Software Development</h2>
+
+<p>Why do these practices exist in the first place, and why are countless books written on them? And why is the industry trying to improve on the existing ones and invent new ones?</p>
+
+<p>Why just a bunch of technology skills is not enough?</p>
+
+<p>That&rsquo;s because we all want to get stuff done fast. And we want it done with a high level of quality. And we want it to be valuable.</p>
+
+<p>The &ldquo;Holy Grail of Software Development&rdquo; is the ability to deliver fast and with high quality.</p>
+
+<p>While innovative programming language or framework can improve speed and reduce the chance of making mistakes, the improvement effect is negligible in &ldquo;speed x quality x value.&rdquo;</p>
+
+<p>What matters then?</p>
+
+<p>How the software is developed creates a tremendous effect on speed and quality.</p>
+
+<p>It&rsquo;s the processes applied, techniques used, disciplines practiced.</p>
+
+<h2>Whether You Know it or Not, You&rsquo;re Still Using Practices.</h2>
+
+<p>Just not necessarily the good ones.</p>
+
+<p>Slap some code together, use a lot of copy-paste from StackOverflow and your previous project, and get it to production as quickly as possible? — That&rsquo;s a software engineering practice.</p>
+
+<p>It gives you great speed (at first) and, of course, reduces quality substantially. Do that for a few weeks, and you&rsquo;ll inevitably slow down because you&rsquo;ll constantly be debugging all the bugs produced.</p>
+
+<p>Then, on the other hand, there is another practice of unit-testing and integration-testing the code and refactoring it until it becomes &ldquo;Clean Code.&rdquo; — This is a simple example of a few good practices applied:</p>
+
+<ul>
+<li>Automated testing.</li>
+<li>Refactoring.</li>
+<li>Clean Code.</li>
+</ul>
+
+
+<h2>Not Every &ldquo;Best&rdquo; Practice is Always Good — Context is King</h2>
+
+<p>Let&rsquo;s say that you&rsquo;ve committed to using a whole bunch of best practices, such as keeping your code decoupled and flexible using design patterns. Moreover, you&rsquo;ve decided to exhaustively implement and test all the different scenarios that you think could happen in the future.</p>
+
+<p>These are all that many would consider best practices.</p>
+
+<p>That sounds quite reasonable, however, applied in the wrong context, that could lead to the following:</p>
+
+<ul>
+<li>The business never leveraged that extra flexibility because no need in the future came to pass.</li>
+<li>You still had to maintain more code that was more complex to support these flexibilities for many years. That&rsquo;s an extra cost — WASTE.</li>
+<li>It took you originally longer to implement the functionality — WASTE.</li>
+<li>Oh, and half of the scenarios you came up with also never happened. The feature changed significantly after customer feedback, so most cases became impossible later on. — WASTE.</li>
+<li>Additionally, one of the flexibilities constrained the implementation of another flexibility that became required later on. So the business had to go for a trade-off and deliver less value to the customer. — ACTUAL BUSINESS VALUE DAMAGE.</li>
+</ul>
+
+
+<p>As you can see, the idea was to increase quality, increase speed in the future, and deliver as much customer and business value as possible.</p>
+
+<p>What happened instead?</p>
+
+<p>The quality was excellent — that&rsquo;s all good!</p>
+
+<p>Now, the speed was initially slower, and it kept being slower in the future because none of the expected came to pass.</p>
+
+<p>The best thing you can expect in software development is change (not the one you expected). Also, prepare to have your expectations and assumptions hammered all the time.</p>
+
+<p>Finally, too much flexibility harmed the business value.</p>
+
+<p>The same set of practices could&rsquo;ve been fantastic in another context, where you, for example, precisely know what will happen in the future. An example scenario is when you&rsquo;re rebuilding an existing successful system.</p>
+
+<p>In that case, you would have gotten lots of speed, quality, and business value throughout the endeavor.</p>
+
+<h2>Software Engineering Practices Are Based on Principles</h2>
+
+<p>What are these practices based on? How to detect whether the context is proper or not? When to apply and when not? How to apply?</p>
+
+<p>You guide the choice of practices and patterns by the software engineering principles!</p>
+
+<p>When you adopt multiple principles (such as YAGNI, DRY, SOLID, etc.), they will guide you when you need to act in specific ways (e.g., apply one practice or another, or make this or that choice).</p>
+
+<p>The challenge would be when multiple principles you&rsquo;ve adopted conflict with each other.</p>
+
+<p>That&rsquo;s when you&rsquo;ll have to make trade-offs.</p>
+
+<h2>Where do Principles Come From? How to choose?</h2>
+
+<p>Principles should be based on values. The values that you, your team, and your organization adopts.</p>
+
+<p>For example, when I was talking about the &ldquo;Holy Grail of SWE,&rdquo; I&rsquo;ve mentioned the &ldquo;speed x quality x value&rdquo; as the three most important ones. That&rsquo;s a value statement.</p>
+
+<p>Also, who said that these three values are the silver bullet to success? Nobody knows. Every person and organization can have its own set of values.</p>
+
+<p>However, for any organization or group to achieve a big goal and execute a complex strategy, it would need to align everybody involved on the same set of values.</p>
+
+<p>Once you and your group have agreed on what values you should adopt to achieve the challenging long-term goals, you must pick or create the principles that will get you there.</p>
+
+<p>Picking existing principles that are tried and tested to improve software engineering in terms of the values you&rsquo;ve chosen is the most straightforward approach. However, that shouldn&rsquo;t deter you from thinking about a custom set of principles that would work for your group&rsquo;s values in particular.</p>
+
+<h2>Example Values That I Like to Optimize For</h2>
+
+<p>I&rsquo;ll give you a few values that I usually go for in most software products where the only constant is the change itself:</p>
+
+<ul>
+<li>Shortest lead time — how long does it take from idea inception to value delivery to the hands of the user.</li>
+<li>Lowest inventory — how much work is &ldquo;done&rdquo; but isn&rsquo;t being used by anybody (by users, other developers, or other team members).</li>
+<li>Highest quality — how many bugs or failures the software has. It should behave precisely as the development team expects it to.</li>
+<li>Largest valuable impact — how valuable is the software to the user, customer, and the business.</li>
+</ul>
+
+
+<p>Once these values are defined, it&rsquo;s pretty simple to pick the principles to guide the decisions.</p>
+
+<h2>Example Software Engineering Principles</h2>
+
+<ul>
+<li>LEAN product and development</li>
+<li>YAGNI/KISS</li>
+<li>Evolutionary Design</li>
+<li>Simple Design</li>
+<li>SOLID</li>
+<li>High-coverage automated testing (no manual QA)</li>
+<li>No throwing responsibilities over to another department — Extreme ownership</li>
+<li>Code stewardship (next level after ownership)</li>
+</ul>
+
+
+<p>And given the principles, you can pick or design your software engineering practices.</p>
+
+<h2>Example Software Engineering Practices</h2>
+
+<ul>
+<li>TDD &amp; BDD &amp; ATDD</li>
+<li>Continuous Refactoring</li>
+<li>CI/CD</li>
+<li>Trunk-Based Development (TBD) &amp; &ldquo;Live on Main&rdquo;</li>
+<li>Clean Code</li>
+<li>Slicing work items as small as possible</li>
+<li>Instant Code Review (aka Pair-programming)</li>
+<li>Ensemble programming</li>
+<li>Rolling pair rotation</li>
+<li>Spike &amp; PoC (for experimentation)</li>
+<li>Design Patterns</li>
+</ul>
+
+
+<p>Most of these are parts of original Extreme Programming, and this is no surprise because the values I have listed above are almost the same as values of XP.</p>
+
+<p>Moreover, there are a few more principles and practices that are modern, and they could be considered as the evolution of XP.</p>
+
+<h2>Values, Principles &amp; Practices Are Technology-Agnostic</h2>
+
+<p>Now I want to return to that situation where the developer responded with a list of technologies when asked about practices.</p>
+
+<p>Here&rsquo;s the thing: the practices, principles, and values are universal. No matter which technology you use, you can rely on your practices, given that your principles and values haven&rsquo;t changed.</p>
+
+<p>Moreover, when you master the practices and principles, you&rsquo;ll be able to change technologies and tools like gloves while maintaining high parameters on all your values and delivering excellent results!</p>
+
+<h2>Conclusion</h2>
+
+<p>Of course, if you are starting in software engineering, knowing <strong>specific technologies</strong> is most essential for you.</p>
+
+<p>That&rsquo;s because your effectiveness is a product of your tools experience and the practices you apply. And to use and understand the practices, you need to have at least a bit of skill with the programming language and basic problem-solving.</p>
+
+<p>However, beyond that, the equation:</p>
+
+<p>TOOLS SKILL x PRACTICES SKILL x SOFT SKILLS</p>
+
+<p>kicks in!</p>
+
+<p>So the most effective way to develop as a software engineer is to have both a robust set of hard and soft skills and learn and apply the best software engineering practices (that are applicable in your context).</p>
+
+<p>Thank you for reading!</p>
+
+<p>If you have other ideas on the topic, <a href="https://twitter.com/tdd_fellow">feel free to send me a Tweet</a>!</p>
+</div>
+
+
+  <footer>
+    
+      
+
+    
+
+    
+  
+
+
+
+  
+  <div class="expanded-author-card">
+    
+      <img class="author-photo" src="/about-me/oleksii-fedorov__small.jpg" />
+    
+
+    <div class="author-bio">Alex has been developing software for the past 20+ years, out of which, 12+ commercially. He has worked for a diverse variety of businesses: early-stage and late-stage start-ups, established product companies, agencies, and consultancies; and in a variety of industries: education, accounting, housing, online marketplaces, automotive, fintech, blockchain, privacy, online marketing, productivity, cloud, and design. He has given tech and inspirational talks at international conferences and local meet-ups since 2015. Alex has spent a significant chunk of his time coaching software developers, engineering managers, and start-up CTOs. He has written production code in 20 programming languages on the back-end, front-end, native mobile, and desktop. Alex cares the most about software industry, professionalism, quality, and well-being of developers.</div>
+  </div>
+
+
+
+    <p class="meta">
+      <span class="byline author vcard"></span>
+      
+
+
+
+
+<time class='entry-date' datetime='2022-02-05T14:43:04+02:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2022</span></span> <span class='time'>2:43 pm</span></time>
+      
+
+
+    </p>
+
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.tddfellow.com/blog/2022/02/05/why-best-software-engineering-practices-are-insanely-important-really/" data-via="tdd_fellow" data-counturl="http://www.tddfellow.com/blog/2022/02/05/why-best-software-engineering-practices-are-insanely-important-really/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2021/09/08/are-we-addicted-to-complexity/" title="Previous Post: Are We Addicted to Complexity?">&laquo; Are We Addicted to Complexity?</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+    <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+  </a>
+  <br />
+  Except where otherwise noted, content on this site is licensed under a
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+  <br/>
+
+  Except where otherwise noted, code examples on this site are licensed under a
+  <a rel="license" href="https://github.com/waterlink/waterlink.github.io/tree/source/LICENSE">MIT License</a>.
+  <br/>
+
+  Copyright &copy; 2022 - Oleksii Fedorov (waterlink) -
+  <br/>
+
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+
+  <br/>
+
+  <em>Deployed from tddfellow org</em>
+</p>
+
+</footer>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

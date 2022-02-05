@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Dependency-inversion | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/dependency-inversion/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2021-10-20T12:09:31+02:00</updated>
+  <updated>2022-02-05T16:48:18+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -20,7 +20,7 @@
     <id>http://www.tddfellow.com/blog/2015/03/13/object-oriented-design-important-things</id>
     <content type="html"><![CDATA[<h2>Slides from my talk <a href="https://twitter.com/BrainlyGroup">@brainly</a> 12 Mar 2015</h2>
 
-<p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>, I would love to hear from you.</em></p>
+<p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>, I would love to hear from you.</em></p>
 
 <p>Code examples are in ruby/pseudo-code.</p>
 
@@ -295,7 +295,7 @@ if activity_service.user_is_active?(user)
 
 <h2>Thanks!</h2>
 
-<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 ]]></content>
   </entry>
   

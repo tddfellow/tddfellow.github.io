@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Continuous-integration | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/continuous-integration/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2021-10-20T12:09:31+02:00</updated>
+  <updated>2022-02-05T16:48:18+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -31,9 +31,9 @@
 
 <p>Today we are going to discuss Continuous Integration, what it is and what it isn&rsquo;t. We will define best Check-Out/Check-In cycle. We will explore ways to train our Continuous Integration skills. And we will do some live coding on Kata with special restriction, that allows one to train such skills. Then we will draw a bottom line.</p>
 
-<p>Thanks for watching! If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>Thanks for watching! If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 ]]></content>
   </entry>
   
@@ -103,7 +103,7 @@
 
 <h2>Thank you for reading!</h2>
 
-<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 
 <p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
 ]]></content>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Kitchen-docker | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/kitchen-docker/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2021-10-20T12:09:31+02:00</updated>
+  <updated>2022-02-05T16:48:18+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -37,7 +37,7 @@ platforms:
 
 <p>After making your <code>.kitchen.yml</code> look like this, just use <code>kitchen</code> as you would normally would.</p>
 
-<p>Happy coding! <a href="https://twitter.com/waterlink000">@waterlink000 on twitter</a>.</p>
+<p>Happy coding! <a href="https://twitter.com/tdd_fellow">@tdd_fellow on twitter</a>.</p>
 ]]></content>
   </entry>
   

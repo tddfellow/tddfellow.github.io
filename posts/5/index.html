@@ -9,7 +9,7 @@
   <meta name="author" content="Oleksii Fedorov (waterlink)">
 
   
-  <meta name="description" content="Issues with RSpec mocks Lets start from example: 1
+  <meta name="description" content="TL;DR: .kitchen.yml1
 2
 3
 4
@@ -17,7 +17,12 @@
 6
 7
 8
-class Example include Contracts Contract Something =&gt; Any def do_something( &hellip;">
+9
+10
+11
+# .kitchen.yml
+---
+driver: name: docker use_sudo: false # this depends if you need to do `sudo` to run ` &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -41,8 +46,8 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
   
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@waterlink000">
-<meta name="twitter:creator" content="@waterlink000">
+<meta name="twitter:site" content="@tdd_fellow">
+<meta name="twitter:creator" content="@tdd_fellow">
 <meta name="twitter:title" content="">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="http://www.tddfellow.com/images/logo.png">
@@ -98,6 +103,10 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2022/02/05/why-best-software-engineering-practices-are-insanely-important-really/">Why Best Software Engineering Practices Are Insanely Important, Really</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2021/09/08/are-we-addicted-to-complexity/">Are We Addicted to Complexity?</a>
       </li>
     
@@ -123,10 +132,6 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
     
       <li class="post">
         <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
       </li>
     
   </ul>
@@ -143,6 +148,10 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2022/02/05/why-best-software-engineering-practices-are-insanely-important-really/">Why Best Software Engineering Practices Are Insanely Important, Really</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2021/09/08/are-we-addicted-to-complexity/">Are We Addicted to Complexity?</a>
       </li>
     
@@ -170,10 +179,6 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
         <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -185,6 +190,88 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
 
 <div class="blog-index v2-blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/08/05/running-kitchen-docker-tests-with-upstart/">Running Kitchen-docker Tests With Upstart</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+
+  
+  <span class="byline author vcard"><span class="fn">
+    
+      <a href="/about-me">Alex Fedorov</a>
+    
+  </span></span>
+
+
+        
+
+
+
+
+<time class='entry-date' datetime='2015-08-05T19:10:36+02:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>7:10 pm</span></time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/chef/'>chef</a>, <a class='category' href='/blog/categories/docker/'>docker</a>, <a class='category' href='/blog/categories/kitchen-docker/'>kitchen-docker</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/test-kitchen/'>test-kitchen</a>, <a class='category' href='/blog/categories/ubuntu/'>ubuntu</a>, <a class='category' href='/blog/categories/upstart/'>upstart</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>TL;DR:</p>
+
+<figure class='code'><figcaption><span>.kitchen.yml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="c1"># .kitchen.yml</span>
+</span><span class='line'><span class="nn">---</span>
+</span><span class='line'><span class="l-Scalar-Plain">driver</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">docker</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">use_sudo</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>              <span class="c1"># this depends if you need to do `sudo` to run `docker` command or not</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">disable_upstart</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">image</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu-upstart:14.04</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">run_command</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/sbin/init</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">platforms</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu-14.04</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It is possible because there is this official base image specifically for upstart: <a href="https://registry.hub.docker.com/_/ubuntu-upstart/.">https://registry.hub.docker.com/_/ubuntu-upstart/.</a></p>
+
+<p>After making your <code>.kitchen.yml</code> look like this, just use <code>kitchen</code> as you would normally would.</p>
+
+<p>Happy coding! <a href="https://twitter.com/tdd_fellow">@tdd_fellow on twitter</a>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -384,7 +471,7 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
 
 <h2>Thanks!</h2>
 
-<p>If you have any questions, suggestions or just want to chat about how contracts.ruby is awesome, you can ping me on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues using <a href="https://github.com/egonSchiele/contracts.ruby">contracts.ruby</a> or <a href="https://github.com/waterlink/contracts-rspec">contracts-rspec</a> you can create issues on corresponding github project. Pull requests are welcome!</p>
+<p>If you have any questions, suggestions or just want to chat about how contracts.ruby is awesome, you can ping me on twitter <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>. If you have any issues using <a href="https://github.com/egonSchiele/contracts.ruby">contracts.ruby</a> or <a href="https://github.com/waterlink/contracts-rspec">contracts-rspec</a> you can create issues on corresponding github project. Pull requests are welcome!</p>
 </div>
   
   
@@ -437,7 +524,7 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
 
   <div class="entry-content"><h2>Slides from my talk <a href="https://twitter.com/BrainlyGroup">@brainly</a> 12 Mar 2015</h2>
 
-<p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>, I would love to hear from you.</em></p>
+<p><em>Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>, I would love to hear from you.</em></p>
 
 <p>Code examples are in ruby/pseudo-code.</p>
 
@@ -769,7 +856,7 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
 
 <h2>Thanks!</h2>
 
-<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 </div>
   
   
@@ -852,7 +939,7 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
 
 <p>This is a built-in <code>RespondTo</code> contract. You can get a list of all of them here: <a href="http://egonschiele.github.io/contracts.ruby/#built-in-contracts">http://egonschiele.github.io/contracts.ruby/#built-in-contracts</a></p>
 
-<p>If you have any questions, you can always ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a></p>
+<p>If you have any questions, you can always ping me at twitter <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a></p>
 </div>
   
   
@@ -1211,7 +1298,7 @@ class Example include Contracts Contract Something =&gt; Any def do_something( &
 </ul>
 
 
-<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>. If you have any issues with using <code>contracts.ruby</code>, you can always create an <a href="https://github.com/egonSchiele/contracts.ruby/issues">issue on github</a> and Pull Requests are welcome.</p>
+<p>If you have any questions or suggestions, you can always reach me out on twitter <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>. If you have any issues with using <code>contracts.ruby</code>, you can always create an <a href="https://github.com/egonSchiele/contracts.ruby/issues">issue on github</a> and Pull Requests are welcome.</p>
 </div>
   
   
@@ -1386,7 +1473,7 @@ codeUsing(f, d)
 
 <p>Of course <code>f</code>, <code>d</code> and <code>result</code> are just <code>Result</code>/<code>Either</code> monads, they can be either in normal or faulty state. Whenever you try to do anything on <code>Result</code> in faulty state, it will just return itself. But <code>Result</code> in normal state will proxy call to its contents and wrap it in another <code>Result</code> monad (normal or faulty - depends on if call was successful or not). Probably I am too critical about that, because here I used some patterns that are not part of the language itself, but yeah, I can&rsquo;t look at code that mixes guards and actions.</p>
 
-<p>Probably, somebody out there in go-lang world can tell me, is it common to use patterns like <code>Maybe</code>, <code>Result</code>, <code>NullObject</code> and so on in go-lang? Or everybody just go with simple code without any magic behind the scenes, and just do it like in the article&rsquo;s example? Feel free to ping me at twitter <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>Probably, somebody out there in go-lang world can tell me, is it common to use patterns like <code>Maybe</code>, <code>Result</code>, <code>NullObject</code> and so on in go-lang? Or everybody just go with simple code without any magic behind the scenes, and just do it like in the article&rsquo;s example? Feel free to ping me at twitter <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 
 <h2>For</h2>
 
@@ -1599,7 +1686,7 @@ codeUsing(f, d)
 
 <p>For further reading and instructions: <a href="https://github.com/waterlink/rspec-json_expectations">github</a> and <a href="http://www.relishapp.com/waterlink/rspec-json-expectations/docs/json-expectations">cucumber generated documentation</a>.</p>
 
-<p>Feedback is highly appreciated, contact me on twitter (<a href="https://twitter.com/waterlink000">@waterlink000</a>) or on <a href="https://github.com/waterlink/rspec-json_expectations/issues">github issues</a>.</p>
+<p>Feedback is highly appreciated, contact me on twitter (<a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>) or on <a href="https://github.com/waterlink/rspec-json_expectations/issues">github issues</a>.</p>
 </div>
   
   
@@ -1621,6 +1708,10 @@ codeUsing(f, d)
 	<section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2022/02/05/why-best-software-engineering-practices-are-insanely-important-really/">Why Best Software Engineering Practices Are Insanely Important, Really</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2021/09/08/are-we-addicted-to-complexity/">Are We Addicted to Complexity?</a>
@@ -1650,10 +1741,6 @@ codeUsing(f, d)
         <a href="/blog/2016/12/23/learning-test-driven-development-with-javascript-end-to-end-testing/">Learning Test-Driven Development With Javascript: End-to-End Testing</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2016/12/07/mobile-waterfall-being-agile-again/">Mobile Waterfall. Being Agile Again</a>
-      </li>
-    
   </ul>
 </section>
 
@@ -1677,7 +1764,7 @@ codeUsing(f, d)
   <a rel="license" href="https://github.com/waterlink/waterlink.github.io/tree/source/LICENSE">MIT License</a>.
   <br/>
 
-  Copyright &copy; 2021 - Oleksii Fedorov (waterlink) -
+  Copyright &copy; 2022 - Oleksii Fedorov (waterlink) -
   <br/>
 
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>

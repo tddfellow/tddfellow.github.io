@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Clean-code | That TDD Fellow | Tech Blog | Screencasts]]></title>
   <link href="http://www.tddfellow.com/blog/categories/clean-code/atom.xml" rel="self"/>
   <link href="http://www.tddfellow.com/"/>
-  <updated>2021-10-20T12:09:31+02:00</updated>
+  <updated>2022-02-05T16:48:18+01:00</updated>
   <id>http://www.tddfellow.com/</id>
   <author>
     <name><![CDATA[Oleksii Fedorov (waterlink)]]></name>
@@ -93,9 +93,9 @@ Highscore.prototype.save = function () {
 
 <h2>Thanks</h2>
 
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 ]]></content>
   </entry>
   
@@ -371,9 +371,9 @@ fun issueVerificationToken(deviceId: String, phoneNumber: String, tokenIssuer: T
 
 <h2>Thanks!</h2>
 
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 ]]></content>
   </entry>
   
@@ -578,9 +578,9 @@ user_search.search_by_query(UserNicknameQuery(user_nickname))
 
 <h2>Thanks!</h2>
 
-<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 
-<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>If you have any questions or feedback for me, don&rsquo;t hesitate to reach me out on Twitter: <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 ]]></content>
   </entry>
   
@@ -659,7 +659,7 @@ The same thing would happen if we were to extract methods/functions/objects out 
 
 <h2>Thank you!</h2>
 
-<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/waterlink000">@waterlink000</a>.</p>
+<p>If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: <a href="https://twitter.com/tdd_fellow">@tdd_fellow</a>.</p>
 
 <p>If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.</p>
 ]]></content>
