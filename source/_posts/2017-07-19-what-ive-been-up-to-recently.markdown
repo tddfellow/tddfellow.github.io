@@ -76,8 +76,8 @@ You would not want to miss that blog post. So make sure I can notify you when th
 
 ## Thank you
 
-Thank you so much for reading this article! If you liked it, please share this article on social networks, Reddit, and Hacker News, and follow me on Twitter: [@waterlink000](https://twitter.com/waterlink000).
+Thank you so much for reading this article! If you liked it, please share this article on social networks, Reddit, and Hacker News, and follow me on Twitter: [@tdd_fellow](https://twitter.com/tdd_fellow).
 
-If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: [@waterlink000](https://twitter.com/waterlink000).
+If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: [@tdd_fellow](https://twitter.com/tdd_fellow).
 
 And don't hesitate to take a look at [Productive Developers Only](http://productivedevelopersonly.com)!

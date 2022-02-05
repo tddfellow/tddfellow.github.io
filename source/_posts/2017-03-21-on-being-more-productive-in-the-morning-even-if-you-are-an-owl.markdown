@@ -54,6 +54,6 @@ Another thing that I am experiencing right now is that the quality of the work i
 
 I am amazed so far, how waking up in the morning every day, earlier than you normally have to, allows to build up a significant momentum, complete all the personal tasks that need to be done and transfer that increased momentum to my work. It works very well for me, and I recommend trying it, even if you are an owl type.
 
-Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on Twitter: [@waterlink000](https://twitter.com/waterlink000).
+Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on Twitter: [@tdd_fellow](https://twitter.com/tdd_fellow).
 
-If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: [@waterlink000](https://twitter.com/waterlink000).
+If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: [@tdd_fellow](https://twitter.com/tdd_fellow).

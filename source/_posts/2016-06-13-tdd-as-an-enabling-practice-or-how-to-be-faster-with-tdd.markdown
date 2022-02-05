@@ -70,6 +70,6 @@ I think I can go on like this forever, but I believe the idea should be clear. I
 
 ## Thank you for reading!
 
-If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: [@waterlink000](https://twitter.com/waterlink000).
+If you, my dear reader, have any thoughts, questions or arguments about the topic, feel free to reach out to me on twitter: [@tdd_fellow](https://twitter.com/tdd_fellow).
 
 If you liked my ideas, follow me on twitter, and, even better, provide me with your honest feedback, so that I can improve.

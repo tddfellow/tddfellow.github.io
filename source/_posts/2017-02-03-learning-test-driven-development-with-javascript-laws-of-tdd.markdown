@@ -30,7 +30,7 @@ Today we are going to learn the basic principles behind the Test-Driven Developm
 
 <!-- more -->
 
-Articles of these series have exercises and going through them would make for more effective learning. Also, if you feel stuck with these exercises, fell free to shoot me an email or get in touch on Twitter: @waterlink000.
+Articles of these series have exercises and going through them would make for more effective learning. Also, if you feel stuck with these exercises, fell free to shoot me an email or get in touch on Twitter: @tdd_fellow.
 
 "Learning Test-Driven Development with Javascript" is a series of articles and you, my dear reader, can shape the content by providing an invaluable feedback. To do that, shoot me an email - oleksii@tddfellow.com.
 
@@ -679,6 +679,6 @@ In the next article of the series, we will discuss what different kinds of tests
 
 ## Thanks
 
-Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: [@waterlink000](https://twitter.com/waterlink000).
+Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: [@tdd_fellow](https://twitter.com/tdd_fellow).
 
-If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: [@waterlink000](https://twitter.com/waterlink000).
+If you have any questions or feedback for me, don’t hesitate to reach me out on Twitter: [@tdd_fellow](https://twitter.com/tdd_fellow).

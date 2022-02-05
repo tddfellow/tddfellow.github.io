@@ -33,4 +33,4 @@ It is possible because there is this official base image specifically for upstar
 
 After making your `.kitchen.yml` look like this, just use `kitchen` as you would normally would.
 
-Happy coding! [@waterlink000 on twitter](https://twitter.com/waterlink000).
+Happy coding! [@tdd_fellow on twitter](https://twitter.com/tdd_fellow).

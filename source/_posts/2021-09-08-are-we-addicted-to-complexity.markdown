@@ -30,4 +30,4 @@ Suppose you feel the urge to learn something new and deal with a more complex ta
 
 These types of ideas are where there is real gold for learning, innovation, and valuable complexity!
 
-If you have other ideas on the topic, [feel free to send me a Tweet](https://twitter.com/waterlink000)!
+If you have other ideas on the topic, [feel free to send me a Tweet](https://twitter.com/tdd_fellow)!

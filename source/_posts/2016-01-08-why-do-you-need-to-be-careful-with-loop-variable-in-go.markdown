@@ -189,7 +189,7 @@ variable at each iteration of the loop. It just looks nicer.
 ## Thanks!
 
 If you have any questions, suggestions or just want to chat about the topic,
-you can ping me on twitter [@waterlink000](https://twitter.com/waterlink000) or
+you can ping me on twitter [@tdd_fellow](https://twitter.com/tdd_fellow) or
 drop a comment on [hackernews](https://news.ycombinator.com/item?id=10864593).
 
 Especially, if you think I am wrong somewhere in this article, please tell me,

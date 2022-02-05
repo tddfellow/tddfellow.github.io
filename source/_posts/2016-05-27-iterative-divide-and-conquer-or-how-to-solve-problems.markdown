@@ -418,7 +418,7 @@ Running the program confirms that our new solution now supports integers in the 
 
 I'm leaving the final solution as an exercise for you, my dear reader. There is nothing more to this technique. Careful application of this technique and careful choice of smallest baby-steps as new requirements to your current solution will get you there - to the final solution, that supports the range of `-999 999 999...999 999 999`.
 
-If you have any troubles, don't hesitate to share your questions, ideas and code with me. I will try my best to help you, my dear reader. I am reachable via Twitter by handle [@waterlink000](https://twitter.com/waterlink000).
+If you have any troubles, don't hesitate to share your questions, ideas and code with me. I will try my best to help you, my dear reader. I am reachable via Twitter by handle [@tdd_fellow](https://twitter.com/tdd_fellow).
 
 ## Challenge
 

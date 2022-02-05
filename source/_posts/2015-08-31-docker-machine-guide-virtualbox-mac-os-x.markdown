@@ -202,4 +202,4 @@ docker-machine create -d virtualbox dev --virtualbox-memory "5120"
 
 Comments on [hackernews](https://news.ycombinator.com/item?id=10146082).
 
-Happy hacking! [@waterlink000 on twitter](https://twitter.com/waterlink000).
+Happy hacking! [@tdd_fellow on twitter](https://twitter.com/tdd_fellow).

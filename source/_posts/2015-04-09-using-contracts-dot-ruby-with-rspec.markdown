@@ -114,4 +114,4 @@ You can include it only in contexts you need, or you can do it globally from `sp
 
 ## Thanks!
 
-If you have any questions, suggestions or just want to chat about how contracts.ruby is awesome, you can ping me on twitter [@waterlink000](https://twitter.com/waterlink000). If you have any issues using [contracts.ruby](https://github.com/egonSchiele/contracts.ruby) or [contracts-rspec](https://github.com/waterlink/contracts-rspec) you can create issues on corresponding github project. Pull requests are welcome!
+If you have any questions, suggestions or just want to chat about how contracts.ruby is awesome, you can ping me on twitter [@tdd_fellow](https://twitter.com/tdd_fellow). If you have any issues using [contracts.ruby](https://github.com/egonSchiele/contracts.ruby) or [contracts-rspec](https://github.com/waterlink/contracts-rspec) you can create issues on corresponding github project. Pull requests are welcome!

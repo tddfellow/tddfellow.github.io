@@ -591,6 +591,6 @@ You would not want to miss next articles on this tech blog, we still have a lot 
 
 ## Thanks!
 
-Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: [@waterlink000](https://twitter.com/waterlink000).
+Thank you for reading, my dear reader. If you liked it, please share this article on social networks and follow me on twitter: [@tdd_fellow](https://twitter.com/tdd_fellow).
 
-If you have any questions or feedback for me, don't hesitate to reach me out on Twitter: [@waterlink000](https://twitter.com/waterlink000).
+If you have any questions or feedback for me, don't hesitate to reach me out on Twitter: [@tdd_fellow](https://twitter.com/tdd_fellow).

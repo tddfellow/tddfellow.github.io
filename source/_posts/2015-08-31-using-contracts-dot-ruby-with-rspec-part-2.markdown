@@ -55,10 +55,10 @@ contracts - validators for them will be evaluated only once and memoized.
 
 If you have any questions, suggestions or just want to chat about how
 contracts.ruby is awesome, you can ping me on twitter
-[@waterlink000](https://twitter.com/waterlink000). If you have any issues using
+[@tdd_fellow](https://twitter.com/tdd_fellow). If you have any issues using
 [contracts.ruby](https://github.com/egonSchiele/contracts.ruby) you can create
 issues on corresponding github project. Pull requests are welcome!
 
 Comments on [hackernews](https://news.ycombinator.com/item?id=10147783).
 
-Happy coding! [@waterlink000 on twitter](https://twitter.com/waterlink000).
+Happy coding! [@tdd_fellow on twitter](https://twitter.com/tdd_fellow).

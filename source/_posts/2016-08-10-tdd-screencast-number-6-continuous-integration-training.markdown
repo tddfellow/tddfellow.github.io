@@ -25,6 +25,6 @@ List of all TDD Screencasts can be [found here](/blog/categories/tdd-screencasts
 
 Today we are going to discuss Continuous Integration, what it is and what it isn't. We will define best Check-Out/Check-In cycle. We will explore ways to train our Continuous Integration skills. And we will do some live coding on Kata with special restriction, that allows one to train such skills. Then we will draw a bottom line.
 
-Thanks for watching! If you liked it, please share this article on social networks and follow me on twitter: [@waterlink000](https://twitter.com/waterlink000).
+Thanks for watching! If you liked it, please share this article on social networks and follow me on twitter: [@tdd_fellow](https://twitter.com/tdd_fellow).
 
-If you have any questions or feedback for me, don't hesitate to reach me out on Twitter: [@waterlink000](https://twitter.com/waterlink000).
+If you have any questions or feedback for me, don't hesitate to reach me out on Twitter: [@tdd_fellow](https://twitter.com/tdd_fellow).

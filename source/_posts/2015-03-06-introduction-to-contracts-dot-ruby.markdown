@@ -209,4 +209,4 @@ And you have ability to disable contracts in production with `NO_CONTRACTS=1` en
 - [Creator](https://github.com/egonSchiele)
 - [Me, co-maintainer](https://github.com/waterlink)
 
-If you have any questions or suggestions, you can always reach me out on twitter [@waterlink000](https://twitter.com/waterlink000). If you have any issues with using `contracts.ruby`, you can always create an [issue on github](https://github.com/egonSchiele/contracts.ruby/issues) and Pull Requests are welcome.
+If you have any questions or suggestions, you can always reach me out on twitter [@tdd_fellow](https://twitter.com/tdd_fellow). If you have any issues with using `contracts.ruby`, you can always create an [issue on github](https://github.com/egonSchiele/contracts.ruby/issues) and Pull Requests are welcome.

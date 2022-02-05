@@ -15,7 +15,7 @@ categories:
 
 ## Slides from my talk [@brainly](https://twitter.com/BrainlyGroup) 12 Mar 2015
 
-*Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: [@waterlink000](https://twitter.com/waterlink000), I would love to hear from you.*
+*Disclaimer: This is my personal vision, based on my knowledge and experience. If you want to challenge it, ask questions, provide feedback and discuss, feel free to ping me on twitter: [@tdd_fellow](https://twitter.com/tdd_fellow), I would love to hear from you.*
 
 Code examples are in ruby/pseudo-code.
 
@@ -249,4 +249,4 @@ Recommended reading: "Pragmatic Programmer: From Journeyman to Master" by Andrew
 
 ## Thanks!
 
-If you have any questions or suggestions, you can always reach me out on twitter [@waterlink000](https://twitter.com/waterlink000).
+If you have any questions or suggestions, you can always reach me out on twitter [@tdd_fellow](https://twitter.com/tdd_fellow).

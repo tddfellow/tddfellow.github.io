@@ -108,7 +108,7 @@ if result.IsErorr() {     // handle errors
 
 Of course `f`, `d` and `result` are just `Result`/`Either` monads, they can be either in normal or faulty state. Whenever you try to do anything on `Result` in faulty state, it will just return itself. But `Result` in normal state will proxy call to its contents and wrap it in another `Result` monad (normal or faulty - depends on if call was successful or not). Probably I am too critical about that, because here I used some patterns that are not part of the language itself, but yeah, I can't look at code that mixes guards and actions.
 
-Probably, somebody out there in go-lang world can tell me, is it common to use patterns like `Maybe`, `Result`, `NullObject` and so on in go-lang? Or everybody just go with simple code without any magic behind the scenes, and just do it like in the article's example? Feel free to ping me at twitter [@waterlink000](https://twitter.com/waterlink000).
+Probably, somebody out there in go-lang world can tell me, is it common to use patterns like `Maybe`, `Result`, `NullObject` and so on in go-lang? Or everybody just go with simple code without any magic behind the scenes, and just do it like in the article's example? Feel free to ping me at twitter [@tdd_fellow](https://twitter.com/tdd_fellow).
 
 ## For
 

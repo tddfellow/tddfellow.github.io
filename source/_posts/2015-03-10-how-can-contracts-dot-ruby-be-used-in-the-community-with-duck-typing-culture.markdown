@@ -32,4 +32,4 @@ end
 
 This is a built-in `RespondTo` contract. You can get a list of all of them here: http://egonschiele.github.io/contracts.ruby/#built-in-contracts
 
-If you have any questions, you can always ping me at twitter [@waterlink000](https://twitter.com/waterlink000)
+If you have any questions, you can always ping me at twitter [@tdd_fellow](https://twitter.com/tdd_fellow)
