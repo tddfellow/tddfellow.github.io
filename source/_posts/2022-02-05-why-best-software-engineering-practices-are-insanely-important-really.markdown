@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Why Best software Engineering Practices Are Insanely Important, Really"
-date: 2021-09-08 14:49:04 +0200
+date: 2022-02-05 14:43:04 +0200
 comments: true
 categories:
 ---
